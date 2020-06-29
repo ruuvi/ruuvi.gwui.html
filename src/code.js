@@ -402,7 +402,7 @@ function selected_wifi_auth_required(ssid)
 	
 	if (selectedItem.length) 
 	{ 	
-		return (selectedItem.auth == 0);
+		return (selectedItem.auth != 0);
 	}
 
 	return true;
