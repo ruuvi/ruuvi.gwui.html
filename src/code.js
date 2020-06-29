@@ -539,6 +539,8 @@ function checkStatus()
 					$( "#ok-connect" ).prop("disabled",false);
 					
 					//update wait screen
+					$( "#wifi-response" ).hide();
+					$( "#wifi-connected" ).show();
 					$( "#loading" ).hide();
 					$( "#connect-success" ).show();
 					$( "#connect-fail" ).hide();
@@ -546,7 +548,7 @@ function checkStatus()
 				else if(data["urc"] === 1)
 				{
 					//failed attempt
-					$(".wifi-network-name").text('');
+// 					$(".wifi-network-name").text('');
 					$("#connect-details h1").text('');
 					$("#ip").text('0.0.0.0');
 					$("#netmask").text('0.0.0.0');
@@ -559,6 +561,8 @@ function checkStatus()
 					$( "#ok-connect" ).prop("disabled",false);
 					
 					//update wait screen
+					$( "#wifi-response" ).hide();
+					$( "#wifi-connection-failed" ).show();
 					$( "#loading" ).hide();
 					$( "#connect-fail" ).show();
 					$( "#connect-success" ).hide();
