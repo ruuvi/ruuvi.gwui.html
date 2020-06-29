@@ -1,23 +1,23 @@
 @font-face {
-    font-family: "Muli";
-    src: url("../assets/fonts/Muli-SemiBold.ttf");
-    src: url("../assets/fonts/Muli-SemiBold.ttf") format('truetype');
-    font-weight: 600;
-    font-style: normal;
+  font-family: "Muli";
+  src: url("../assets/fonts/muli_semibold.woff2");
+  src: url("../assets/fonts/muli_semibold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
 }
 @font-face {
-    font-family: "Muli";
-    src: url("../assets/fonts/Muli-Regular.ttf");
-    src: url("../assets/fonts/Muli-Regular.ttf") format('truetype');
-    font-weight: 400;
-    font-style: normal;
+  font-family: "Muli";
+  src: url("../assets/fonts/muli_regular.woff2");
+  src: url("../assets/fonts/muli_regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
 }
 @font-face {
-    font-family: "Montserrat";
-    src: url("../assets/fonts/Montserrat-ExtraBold.ttf");
-    src: url("../assets/fonts/Montserrat-ExtraBold.ttf") format('truetype');
-    font-weight: 800;
-    font-style: normal;
+  font-family: "Montserrat";
+  src: url("../assets/fonts/montserrat_extrabold.woff2");
+  src: url("../assets/fonts/montserrat_extrabold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
 }
 
 @mixin breakpoint($breakpoint) {
