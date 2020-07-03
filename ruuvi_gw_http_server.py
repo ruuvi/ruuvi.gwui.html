@@ -60,6 +60,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
                 resp += f'Pragma: no-cache\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
+                resp += '{}'.encode('ascii')
             self.wfile.write(resp)
         else:
             resp = b''
