@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
@@ -62,10 +62,14 @@
 			<h2>Select your language</h2>	
 
 			<label class="control control-radio">
-		         English<input class="lang_select" name="lang_select" type="radio"  checked="checked" value="en" /><div class="control_indicator"></div>
+		         English
+				<input class="lang_select" name="lang_select" type="radio" checked="checked" value="en"/>
+				<span class="control_indicator"></span>
 		    </label>
 		    <label class="control control-radio">
-		         Suomi<input class="lang_select" name="lang_select" type="radio" value="fi"  /><div class="control_indicator"></div>
+		         Suomi
+				<input class="lang_select" name="lang_select" type="radio" value="fi"/>
+				<span class="control_indicator"></span>
 		    </label>
 							
 			
@@ -107,15 +111,14 @@
 			        <span lang="en">Use Ruuvi Network <small>(an activation code required)</small></span>
 			        <span lang="fi">Käytä Ruuvi Networkia <small>(vaatii aktivointikoodin)</small></span>
 			        <input id="use_ruuvi" value="ruuvi" name="connection_type" type="radio"  class="conf-checkbox" checked="checked"> 
-			            
-			        <div class="control_indicator"></div>
+			        <span class="control_indicator"></span>
 			    </label>
 			
 				<label class="control control-radio">
 			        <span lang="en">Use Custom Server <small>(for advanced users)</small></span> 
 			        <span lang="fi">Käytä omaa palvelinta <small>(tehokäyttäjille)</small></span> 
-			         <input id="use_custom" value="custom" name="connection_type"  type="radio"  class="conf-checkbox">    
-			        <div class="control_indicator"></div>
+			        <input id="use_custom" value="custom" name="connection_type"  type="radio"  class="conf-checkbox">
+			        <span class="control_indicator"></span>
 			    </label>
 			</div>
 
@@ -158,12 +161,12 @@
 				        <span lang="en">HTTP connection</span>
 				        <span lang="fi">HTTP-yhteys</span>
 			            <input id="use_http" value="use_http" type="radio" name="custom_connection" class="conf-checkbox">
-				        <div class="control_indicator"></div>
+				        <span class="control_indicator"></span>
 				    </label>
 					 
 					<div class="hidden conf-settings-http  conf-settings-item ">
 						<p>
-							<label>URL</label> 
+							<label for="http_url">URL</label>
 							<input id="http_url" type="text" placeholder="http://example.com:port/path" value="">
 							<br><small>Add help here if needed.</small>
 						</p>
@@ -174,13 +177,13 @@
 				        <span lang="en">MQTT connection</span>
 				        <span lang="fi">MQTT-yhteys</span>
 		            	<input id="use_mqtt" value="use_mqtt"  type="radio"  name="custom_connection" class="conf-checkbox">
-				        <div class="control_indicator"></div>
+				        <span class="control_indicator"></span>
 				    </label>
 				
 
 					<div class="hidden conf-settings-item conf-settings-mqtt">
 						<p>
-							<label>
+							<label for="mqtt_server">
 								<span lang="en">Server</span>
 								<span lang="fi">Palvelin</span>
 							</label>
@@ -188,7 +191,7 @@
 							<br><small>Add help here if needed, delete if not</small>
 						</p>
 						<p>
-							<label>
+							<label for="mqtt_port">
 								<span lang="en">Port</span>
 								<span lang="fi">Portti</span>
 							</label>
@@ -196,23 +199,20 @@
 							<br><small>Add help here if needed.</small>
 						</p>
 						<p>
-							<label>
+							<label for="mqtt_prefix">
 								<span lang="en">Prefix</span>
 								<span lang="fi">Etuliite</span>
 							</label>
-
 							<input id="mqtt_prefix" type="text" placeholder="MQTT prefix" value="">
 							<br><small lang="en">Example "ruuvidongle/"</small>
 							<small lang="fi">Esim. "ruuvidongle/"</small>
 						</p>
 						<p>
-							<label>
+							<label for="mqtt_user">
 								<span lang="en">User</span>
 								<span lang="fi">Käyttäjä</span>
 							</label>
-	
 							<input id="mqtt_user" type="text" placeholder="User" value="">
-							
 						</p>
 						<p>
 							<label for="mqtt_pass">
@@ -220,7 +220,6 @@
 								<span lang="fi">Salasana</span>
 							</label>
 							<input id="mqtt_pass" type="password" placeholder="Password" value="12345678">
-							
 						</p>
 					</div>
 
@@ -259,19 +258,19 @@
 				<p lang="fi">Gateway kuuntelee kaikkia ympäröiviä Bluetooth-majakoita ja lähettää tiedot eteenpäin määritellylle internet-palvelimelle.</p>
 			</div>
 
-			<div id="conf-scan" class="conf-settings"  >
-				<label class="control control-radio" >
+			<div id="conf-scan" class="conf-settings">
+				<label class="control control-radio">
 			        <span lang="en">Ruuvi sensors only</span>
 			        <span lang="fi">Vain Ruuvi-antureita</span>
-			            <input type="radio" name="filtering" value="1"  checked="checked" placeholder="Scan only Ruuvitags">
-			        <div class="control_indicator"></div>
+			        <input type="radio" name="filtering" value="1"  checked="checked" placeholder="Scan only Ruuvitags">
+			        <span class="control_indicator"></span>
 			    </label>
 
 			    <label class="control control-radio" >
 			        <span lang="en">All nearby Bluetooth beacons <small>(for advanced users)</small></span>
 			        <span lang="fi">Kaikkia Bluetooth-majakoita <small>(tehokäyttäjille)</small></span>
-			            <input  type="radio" name="filtering" value="0" placeholder="Scan all beacons">
-			        <div class="control_indicator"></div>
+			        <input  type="radio" name="filtering" value="0" placeholder="Scan all beacons">
+			        <span class="control_indicator"></span>
 			    </label>
 			</div>
 
@@ -309,15 +308,15 @@
 				<label class="control control-radio">
 					<span lang="en">Wi-Fi</span>
 					<span lang="fi">Wi-Fi</span>
-			         <input name="network_type" value="wifi" type="radio" checked="checked" />
-			         <div class="control_indicator"></div>
+			        <input name="network_type" value="wifi" type="radio" checked="checked" />
+			        <span class="control_indicator"></span>
 			    </label>
 
 				<label class="control control-radio">
 					<span lang="en">Ethernet (RJ-45)</span>
 					<span lang="fi">Ethernet (RJ-45)</span>
-			         <input name="network_type" value="cable" type="radio" />
-			         <div class="control_indicator"></div>
+			        <input name="network_type" value="cable" type="radio" />
+			        <span class="control_indicator"></span>
 			    </label>			    
 			</div>
 
@@ -358,41 +357,41 @@
 	           		<label class="control control-checkbox">
 				        <span lang="en">Use DHCP</span>
 				        <span lang="fi">Käytä DHCP:ta</span>
-		            	<input id="eth_dhcp" type="checkbox" >
-				        <div class="control_indicator"></div>
+		            	<input id="eth_dhcp" type="checkbox">
+				        <span class="control_indicator"></span>
 				    </label>
 				</div>
 
 				<p>
-					<label>
+					<label for="eth_static_ip">
 						<span lang="en">Static ip</span>
 						<span lang="fi">Static ip</span>
 					</label>
 					<input id="eth_static_ip" type="text" placeholder="192.168. 1.1" value="">
 				</p>
 				<p>
-					<label>
+					<label for="eth_netmask">
 						<span lang="en">Netmask</span>
 						<span lang="fi">Netmask</span>
 					</label>
 					<input id="eth_netmask" type="text" placeholder="192.168. 1.1" value="">
 				</p>
 				<p>
-					<label>
+					<label for="eth_gw">
 						<span lang="en">Gateway</span>
 						<span lang="fi">Gateway</span>
 					</label>
 					<input id="eth_gw" type="text" placeholder="192.168. 1.1" value="">
 				</p>
 				<p>
-					<label>
+					<label for="eth_dns1">
 						<span lang="en">DNS 1 ip:</span>
 						<span lang="fi">DNS 1 ip:</span>
 					</label>
 					<input id="eth_dns1" type="text" placeholder="DNS 1" value="">
 				</p>
 				<p>
-					<label>
+					<label for="eth_dns2">
 						<span lang="en">DNS 2 ip:</span>
 						<span lang="fi">DNS 2 ip:</span>
 					</label>
@@ -531,8 +530,10 @@
 				        <h2>Manual Connection</h2>
 
 				        <div class="manual-connection-fields">
-				            <input id="manual_ssid" class="connection-field-manual" type="text" placeholder="SSID" value="">
-				            <input id="manual_pwd" class="connection-field-manual"  type="password" placeholder="Password" value="">
+							<label for="manual_ssid"></label>
+							<input id="manual_ssid" class="connection-field-manual" type="text" placeholder="SSID" value="">
+							<label for="manual_pwd"></label>
+							<input id="manual_pwd" class="connection-field-manual" type="password" placeholder="Password" value="">
 				        </div>
 				        
 				        <div class="connect-buttons">
@@ -646,20 +647,22 @@
 		
 		<!-- WIFI PASSWORD -->
 		<div class="overlay overlay-form-wrap" id="wifi-select-form">
-		       
-	        <h2>
-	        	<span lang="en">Wi-Fi network "<span class="wifi-network-name"></span>" requires a password.</span>
-	        	<span lang="fi">Wi-Fi-verkko "<span class="wifi-network-name"></span>" vaatii salasanan.</span>
-	        </h2>
-	        
-	        <input id="pwd" type="password"  class="connection-field" placeholder="Password" value="">
+
+			<h2>
+				<label for="pwd">
+					<span lang="en">Wi-Fi network "<span class="wifi-network-name"></span>" requires a password.</span>
+					<span lang="fi">Wi-Fi-verkko "<span class="wifi-network-name"></span>" vaatii salasanan.</span>
+				</label>
+			</h2>
+
+			<input id="pwd" type="password" class="connection-field" placeholder="Password" value="">
 
 	        <div class="show-password-wrap">
 	        	<label class="control control-checkbox">
 			        <span lang="en">Show password</span>
 			        <span lang="fi">Näytä salasana</span>
 	            	<input type="checkbox" id="show-password">
-			        <div class="control_indicator"></div>
+			        <span class="control_indicator"></span>
 			    </label>
 	        </div>
 	    
@@ -727,4 +730,4 @@
 
 
 </body>
-<html>
+</html>
