@@ -282,7 +282,13 @@ $(document).ready(function()
 		$('.overlay-container').hide();
 	});
 /*
-	$("#manual_cancel").click(function() 
+	$("#no-auth-overlay-button-cancel").click(function()
+	{
+		selectedSSID = "";
+		$('#manual-overlay').removeClass('loading');
+		$('#manual-overlay').hide();
+	});
+	$("#manual-overlay-button-cancel").click(function()
 	{
 		selectedSSID = "";
 		$('#manual-overlay').removeClass('loading');
