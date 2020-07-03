@@ -19,6 +19,15 @@ var selectedSSID = "";
 var refreshAPInterval = null; 
 var checkStatusInterval = null;
 
+const CONNECTION_STATE = {
+	NOT_CONNECTED: "NOT_CONNECTED",
+	CONNECTING: "CONNECTING",
+	CONNECTED: "CONNECTED",
+	FAILED: "FAILED",
+}
+
+let connectionState = CONNECTION_STATE.NOT_CONNECTED;
+
 
 function stopCheckStatusInterval()
 {
@@ -450,19 +459,24 @@ function performConnect(conntype)
 	
 	
 	$.ajax({
-		url: '/connect.json',
-		dataType: 'json',
-		method: 'POST',
-		cache: false,
-		headers: { 'X-Custom-ssid': selectedSSID, 'X-Custom-pwd': pwd },
-		data: { 'timestamp': Date.now()}
-	});
-
+			url: '/connect.json',
+			dataType: 'json',
+			method: 'POST',
+			cache: false,
+			headers: {'X-Custom-ssid': selectedSSID, 'X-Custom-pwd': pwd},
+			data: {'timestamp': Date.now()},
+			success: function (data, text) {
+				connectionState = CONNECTION_STATE.CONNECTING;
+			},
+			error: function (request, status, error) {
+				alert('HTTP error: ' + status + '\n' + 'Status: ' + request.status + '(' + request.statusText + ')\n' + request.responseText);
+			}
+		}
+	);
 
 	//now we can re-set the intervals regardless of result
 	startCheckStatusInterval();
 	startRefreshAPInterval();
-	
 }
 
 
@@ -539,17 +553,27 @@ function checkStatus()
 					$("#ip").text(data["ip"]);
 					$("#netmask").text(data["netmask"]);
 					$("#gw").text(data["gw"]);
-					$("#wifi-status").slideDown( "fast", function() {});
-					
-					//unlock the wait screen if needed
-					$( "#ok-connect" ).prop("disabled",false);
-					
-					//update wait screen
-					$( "#wifi-response" ).hide();
-					$( "#wifi-connected" ).show();
-					$( "#loading" ).hide();
-					$( "#connect-success" ).show();
-					$( "#connect-fail" ).hide();
+
+					switch (connectionState) {
+						case CONNECTION_STATE.NOT_CONNECTED:
+							break;
+						case CONNECTION_STATE.CONNECTING:
+							$("#wifi-status").slideDown( "fast", function() {});
+							//unlock the wait screen if needed
+							$( "#ok-connect" ).prop("disabled",false);
+							//update wait screen
+							$( "#wifi-response" ).hide();
+							$( "#wifi-connected" ).show();
+							$( "#loading" ).hide();
+							$( "#connect-success" ).show();
+							$( "#connect-fail" ).hide();
+							break;
+						case CONNECTION_STATE.CONNECTED:
+							break;
+						case CONNECTION_STATE.FAILED:
+							break;
+					}
+					connectionState = CONNECTION_STATE.CONNECTED
 				}
 				else if(data["urc"] === 1)
 				{
@@ -560,18 +584,29 @@ function checkStatus()
 					$("#netmask").text('0.0.0.0');
 					$("#gw").text('0.0.0.0');
 					
-					//don't show any connection
-					$("#wifi-status").slideUp( "fast", function() {});
-					
-					//unlock the wait screen
-					$( "#ok-connect" ).prop("disabled",false);
-					
-					//update wait screen
-					$( "#wifi-response" ).hide();
-					$( "#wifi-connection-failed" ).show();
-					$( "#loading" ).hide();
-					$( "#connect-fail" ).show();
-					$( "#connect-success" ).hide();
+					switch (connectionState) {
+						case CONNECTION_STATE.NOT_CONNECTED:
+							break;
+						case CONNECTION_STATE.CONNECTING:
+							//don't show any connection
+							$("#wifi-status").slideUp( "fast", function() {});
+
+							//unlock the wait screen
+							$( "#ok-connect" ).prop("disabled",false);
+
+							//update wait screen
+							$( "#wifi-response" ).hide();
+							$( "#wifi-connection-failed" ).show();
+							$( "#loading" ).hide();
+							$( "#connect-fail" ).show();
+							$( "#connect-success" ).hide();
+							break;
+						case CONNECTION_STATE.CONNECTED:
+							break;
+						case CONNECTION_STATE.FAILED:
+							break;
+					}
+					connectionState = CONNECTION_STATE.FAILED
 				}
 			}
 			else if(data.hasOwnProperty('urc') && data['urc'] === 0)
