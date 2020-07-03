@@ -241,10 +241,14 @@ def handle_wifi_connect():
     while True:
         if g_timestamp is not None:
             if (time.time() - g_timestamp) > 3:
-                if g_password == '12345678':
+                if g_ssid == 'dlink-noauth':
+                    if g_password == '':
+                        print(f'Set simulation mode: WIFI_CONNECTED')
+                        g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
+                elif g_password == '12345678':
                     print(f'Set simulation mode: WIFI_CONNECTED')
                     g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
-                else:
+                if g_simulation_mode != SIMULATION_MODE_WIFI_CONNECTED:
                     print(f'Set simulation mode: WIFI_FAILED')
                     g_simulation_mode = SIMULATION_MODE_WIFI_FAILED
                 g_timestamp = None
