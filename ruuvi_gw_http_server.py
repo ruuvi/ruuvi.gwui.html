@@ -52,15 +52,24 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
                 resp += f'Content-Length: 0\r\n'.encode('ascii')
             else:
-                g_ssid = ssid
-                g_password = password
-                g_timestamp = time.time()
-                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-                resp += f'Content-type: application/json\r\n'.encode('ascii')
-                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-                resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                resp += f'\r\n'.encode('ascii')
-                resp += '{}'.encode('ascii')
+                print(f'Try to connect to SSID:{ssid} with password:{password}')
+                if ssid == 'dlink-noauth-err-400':
+                    resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+                    resp += f'Content-Length: 0\r\n'.encode('ascii')
+                elif ssid == 'dlink-noauth-err-503':
+                    resp += f'HTTP/1.0 503 Service Unavailable\r\n'.encode('ascii')
+                    resp += f'Content-Length: 0\r\n'.encode('ascii')
+                else:
+                    g_ssid = ssid
+                    g_password = password
+                    g_timestamp = time.time()
+                    resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+                    resp += f'Content-type: application/json\r\n'.encode('ascii')
+                    resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+                    resp += f'Pragma: no-cache\r\n'.encode('ascii')
+                    resp += f'\r\n'.encode('ascii')
+                    resp += '{}'.encode('ascii')
+            print(f'Response: {resp}')
             self.wfile.write(resp)
         else:
             resp = b''
@@ -152,7 +161,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 {"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
 {"ssid":"a0308","chan":1,"rssi":-56,"auth":3},
 {"ssid":"dlink-noauth","chan":11,"rssi":-82,"auth":0},
-{"ssid":"Linksys06730","chan":7,"rssi":-85,"auth":3},
+{"ssid":"dlink-noauth-err-400","chan":7,"rssi":-85,"auth":0},
+{"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0},
 {"ssid":"SINGTEL-5171","chan":9,"rssi":-88,"auth":4},
 {"ssid":"1126-1","chan":11,"rssi":-89,"auth":4},
 {"ssid":"The Shah 5GHz-2","chan":1,"rssi":-90,"auth":3},
