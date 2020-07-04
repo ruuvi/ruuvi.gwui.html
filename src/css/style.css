@@ -43,25 +43,15 @@
 .rd {
     color: red;
 }
-#wifi-status {
-    display: none;
-}
-#connect {
-    
-}
 
-
-#join {
+#wifi-overlay-button-connect {
     float: right;
 }
-#manual_join {
-    float: right;
-}
-#yes-disconnect {
+#button-disconnect-wifi-yes {
     display: inline-block;
     margin-left: 20px;
 }
-#no-disconnect {
+#button-disconnect-wifi-no {
     display: inline-block;
 }
 .ctr {
@@ -69,15 +59,6 @@
 }
 .tctr {
     text-align: center;
-}
-#connect-wait {
-    display: none;
-}
-#connect-success {
-    display: none;
-}
-#connect-fail {
-    display: none;
 }
 #connect-details {
     display: none;

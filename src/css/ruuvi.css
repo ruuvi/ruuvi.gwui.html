@@ -293,7 +293,7 @@ hr {
   font-weight: normal;
 }
 
-.btn.connection-join:disabled {
+#wifi-overlay-button-connect:disabled {
   opacity: 0.3;
 }
 
@@ -312,6 +312,14 @@ hr {
 
 .btn-link:disabled {
   color: #999;
+}
+
+#button-toggle-network-info {
+  float:left;
+}
+
+#button-disconnect-wifi {
+  float:right;
 }
 
 .selected {
@@ -361,27 +369,6 @@ hr {
 }
 .overlay h2 {
   font-size: 15px;
-}
-
-#wifi-overlay.loading #wifi-response {
-  display: block;
-}
-
-#wifi-overlay.loading #wifi-select-form {
-  display: none;
-}
-
-.overlay-form-wrap {
-  color: #222;
-}
-
-.connect-manual h2 {
-  color: #222;
-}
-
-#wifi-response {
-  display: none;
-  color: #222;
 }
 
 .spinner {

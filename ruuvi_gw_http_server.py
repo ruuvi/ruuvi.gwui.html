@@ -23,6 +23,7 @@ g_simulation_mode = SIMULATION_MODE_NO_WIFI
 g_ssid = None
 g_password = None
 g_timestamp = None
+g_use_alt_wifi_list = False
 
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):
@@ -52,14 +53,24 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
                 resp += f'Content-Length: 0\r\n'.encode('ascii')
             else:
-                g_ssid = ssid
-                g_password = password
-                g_timestamp = time.time()
-                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-                resp += f'Content-type: application/json\r\n'.encode('ascii')
-                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-                resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                resp += f'\r\n'.encode('ascii')
+                print(f'Try to connect to SSID:{ssid} with password:{password}')
+                if ssid == 'dlink-noauth-err-400':
+                    resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+                    resp += f'Content-Length: 0\r\n'.encode('ascii')
+                elif ssid == 'dlink-noauth-err-503':
+                    resp += f'HTTP/1.0 503 Service Unavailable\r\n'.encode('ascii')
+                    resp += f'Content-Length: 0\r\n'.encode('ascii')
+                else:
+                    g_ssid = ssid
+                    g_password = password
+                    g_timestamp = time.time()
+                    resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+                    resp += f'Content-type: application/json\r\n'.encode('ascii')
+                    resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+                    resp += f'Pragma: no-cache\r\n'.encode('ascii')
+                    resp += f'\r\n'.encode('ascii')
+                    resp += '{}'.encode('ascii')
+            print(f'Response: {resp}')
             self.wfile.write(resp)
         else:
             resp = b''
@@ -147,17 +158,27 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += content.encode('ascii')
                 self.wfile.write(resp)
             elif self.path == '/ap.json':
-                content = '''[
+                if not g_use_alt_wifi_list:
+                    content = '''[
 {"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
 {"ssid":"a0308","chan":1,"rssi":-56,"auth":3},
 {"ssid":"dlink-noauth","chan":11,"rssi":-82,"auth":0},
-{"ssid":"Linksys06730","chan":7,"rssi":-85,"auth":3},
+{"ssid":"dlink-noauth-err-400","chan":7,"rssi":-85,"auth":0},
+{"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0},
 {"ssid":"SINGTEL-5171","chan":9,"rssi":-88,"auth":4},
 {"ssid":"1126-1","chan":11,"rssi":-89,"auth":4},
 {"ssid":"The Shah 5GHz-2","chan":1,"rssi":-90,"auth":3},
 {"ssid":"SINGTEL-1D28 (2G)","chan":11,"rssi":-91,"auth":3},
 {"ssid":"dlink-F864","chan":1,"rssi":-92,"auth":4},
 {"ssid":"dlink-74F0","chan":1,"rssi":-93,"auth":4}
+] '''
+                else:
+                    content = '''[
+{"ssid":"Pantum2","chan":11,"rssi":-55,"auth":4},
+{"ssid":"a0308","chan":1,"rssi":-56,"auth":3},
+{"ssid":"dlink-noauth","chan":11,"rssi":-82,"auth":0},
+{"ssid":"dlink-noauth-err-400","chan":7,"rssi":-85,"auth":0},
+{"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0}
 ] '''
                 print(f'Resp: {content}')
                 resp += content.encode('ascii')
@@ -241,10 +262,13 @@ def handle_wifi_connect():
     while True:
         if g_timestamp is not None:
             if (time.time() - g_timestamp) > 3:
-                if g_password == '12345678':
+                if g_ssid == 'dlink-noauth':
                     print(f'Set simulation mode: WIFI_CONNECTED')
                     g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
-                else:
+                elif g_password == '12345678':
+                    print(f'Set simulation mode: WIFI_CONNECTED')
+                    g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
+                if g_simulation_mode != SIMULATION_MODE_WIFI_CONNECTED:
                     print(f'Set simulation mode: WIFI_FAILED')
                     g_simulation_mode = SIMULATION_MODE_WIFI_FAILED
                 g_timestamp = None
@@ -262,6 +286,7 @@ if __name__ == '__main__':
     print('    1 - WiFi is not connected')
     print('    2 - WiFi is connected')
     print('    3 - failed to connect to WiFi')
+    print('    w - toggle the list of WiFi')
 
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'src'))
 
@@ -271,19 +296,19 @@ if __name__ == '__main__':
     threading.Thread(target=handle_wifi_connect).start()
     while True:
         ch = input()
-        if not ch.isdigit():
-            print(f'Error: incorrect simulation mode: {ch}')
-            continue
-        simulation_mode = int(ch)
-        if simulation_mode == 1:
+        simulation_mode = ch
+        if simulation_mode == '1':
             print(f'Set simulation mode: NO_WIFI')
             g_simulation_mode = SIMULATION_MODE_NO_WIFI
-        elif simulation_mode == 2:
+        elif simulation_mode == '2':
             print(f'Set simulation mode: WIFI_CONNECTED')
             g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
-        elif simulation_mode == 3:
+        elif simulation_mode == '3':
             print(f'Set simulation mode: WIFI_FAILED')
             g_simulation_mode = SIMULATION_MODE_WIFI_FAILED
+        elif simulation_mode == 'w':
+            print(f'Toggle list of WiFi')
+            g_use_alt_wifi_list = not g_use_alt_wifi_list
         else:
             print(f'Error: incorrect simulation mode: {ch}')
             continue
