@@ -366,6 +366,7 @@ function initWifiList()
     	e.preventDefault();
 		let ssid = $(this).text();
     	let isAuthNeeded = selected_wifi_auth_required(ssid);
+		$(".wifi-network-name").text(ssid);
 		showWiFiOverlay(ssid, isAuthNeeded);
 		if (!isAuthNeeded)
     	{
