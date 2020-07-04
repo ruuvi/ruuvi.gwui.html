@@ -457,12 +457,9 @@
 		</div>
     </section>
 
-
-
  	<!-- CONFIRM / THANK YOU -->        
     <section id="thankyou" class="section hidden">
     	<div class="container">
-            
             <h1>
             	<span lang="en">All good!</span>
             	<span lang="fi">Kaikki valmista!</span>
@@ -476,7 +473,7 @@
 			<p class="connect-wifi-name">
 	            <span lang="en">Connected to </span>
 	            <span lang="fi">Yhdistetty verkkoon </span>
-	             "<span class="wifi-network-name"></span>".
+	            "<span class="wifi-network-name"></span>".
 	        </p>
 	        <p class="connect-cable hidden">
 	            <span lang="en">Connected to internet via Ethernet</span>
@@ -486,248 +483,131 @@
 		</div>
 	</section>
 
-
-
-
-
-
-	<!-- WIFI WITH NO AUTHORIZATION OVERLAY -->
-	<div class="hidden overlay-container" id="no-auth-overlay" >
-		
-		<div class="overlay" id="no-auth-form">
-			<section class="connect-manual">
-
-			    <div id="connect_no_auth">
-			       
-			        <h2>
-			        	<span lang="en">Connecting to "<span class="wifi-network-name"></span>".. </span>
-			        </h2>
-
-			       <div class="loading"></div>
-			       
-			        
-			        <div class="connect-buttons">
-			           
-			            <button class="btn btn-cancel"  id="no-auth-overlay-button-cancel" type="button">
-			            	<span lang="en">Cancel</span>
-			            	<span lang="fi">Peruuta</span>
-			            </button>
-			        </div>
-			    </div>
-			 </section>
+	<section id="wifi-connected" class="section hidden">
+		<div class="container">
+			<h1>
+				<span lang="en">Connected to Wi-Fi: "<span class="wifi-network-name"></span>"</span>
+				<span lang="fi">Yhdistetty Wi-Fi-verkkoon: "<span class="wifi-network-name"></span>"</span>
+			</h1>
+			<section>
+				<div class="buttons">
+					<input id="button-toggle-network-info" type="button" value="Show network info" class="btn"/>
+				</div>
+				<div class="buttons">
+					<input id="button-disconnect-wifi" type="button" value="Disconnect" class="btn"/>
+				</div>
+			</section>
+			<br/>
+			<br/>
+			<section>
+				<div id="connect-details">
+						<div id="connect-details-wrap">
+							<section>
+								<div class="ape brdb">IP Address:<div id="ip" class="fr"></div>
+								</div>
+								<div class="ape brdb">Subnet Mask:<div id="netmask" class="fr"></div>
+								</div>
+								<div class="ape">Default Gateway:<div id="gw" class="fr"></div>
+								</div>
+							</section>
+						</div>
+				</div>
+				<div id="diag-disconnect" class="diag-box">
+					<div class="diag-box-win">
+						<p>
+							<span lang="en">Are you sure you would like to disconnect from this wifi?</span>
+						</p>
+						<div class="buttons">
+							<input id="button-disconnect-wifi-no" type="button" value="No" />
+							<input id="button-disconnect-wifi-yes" type="button" value="Yes" />
+						</div>
+					</div>
+				</div>
+			</section>
 		</div>
-	</div>
-
-
-	<!-- PRIVATE WIFI NETWORK OVERLAY -->
-	<div class="hidden overlay-container" id="manual-overlay" >
-		
-		<div class="overlay" id="manual-select-form">
-			<section class="connect-manual">
-
-				    <div id="connect_manual">
-				       
-				        <h2>Manual Connection</h2>
-
-				        <div class="manual-connection-fields">
-							<label for="manual_ssid"></label>
-							<input id="manual_ssid" class="connection-field-manual" type="text" placeholder="SSID" value="">
-							<label for="manual_pwd"></label>
-							<input id="manual_pwd" class="connection-field-manual" type="password" placeholder="Password" value="">
-				        </div>
-				        
-				        <div class="connect-buttons">
-				            <button class="btn btn-ok connection-join manual-connection-join" id="manual_join" data-connect="manual"  type="button">
-				            	<span lang="en">Connect</span>
-				            	<span lang="fi">Yhdistä</span>
-				            </button>
-				            <button class="btn btn-cancel"  id="manual-overlay-button-cancel" type="button">
-				            	<span lang="en">Cancel</span>
-				            	<span lang="fi">Peruuta</span>
-				            </button>
-				        </div>
-				    </div>
-
-
-				    <div id="connect-wait">
-				        <h2>
-				        	<span lang="en">Connecting to</span> <span class="wifi-network-name"></span>
-				        	<span lang="fi">Yhdistetään verkkoon</span> <span class="wifi-network-name"></span>
-				        	 <span id="ssid-wait"></span>
-				        </h2>
-
-				        <section>
-				            <div id="loading">
-				                
-				                <p class="">
-				                	<span lang="en">You may lose wifi access while the esp32 recalibrates its radio. Please wait until your device automatically reconnects. This can take up to 30s.</span>
-				                	<span lang="fi">Voivvv...</span>
-				                </p>
-				            </div>
-				            <div id="connect-success">
-				                <h3 class="gr">
-				                	<span lang="en">Success!</span>
-				                	<span lang="fi">Onnistui!</span>
-				                </h3>
-				            </div>
-				            <div id="connect-fail">
-				                <h3 class="rd">
-				                	<span lang="en">Connection failed</span>
-				                	<span lang="fi">Yhteyden luonti epäonnistui</span>
-				                </h3>
-				                <p class="">
-				                	<span lang="en">Please double-check the Wi-Fi password and make sure that the Wi-Fi network signal strength is good.</span>
-				                	<span lang="fi">Varmista, että salasana on oikein. Varmista myös, että Wi-Fi-verkon kuuluvuus on tarpeeksi hyvä.</span>
-				                </p>
-				            </div>
-				        </section>
-				        <div class="buttons">
-				            <input id="ok-connect" type="button" value="OK" class="btn btn-ok" />
-				        </div>
-				    </div>
-
-				    <div id="connect-details">
-				        <div id="connect-details-wrap">
-				           
-				            <section>
-				                <div class="buttons">
-				                    <input id="disconnect" type="button" value="Disconnect" class="btn btn-cancel" />
-				                </div>
-				            </section>
-				            <h2>IP Address</h2>
-				            <section>
-				                <div class="ape brdb">IP Address:<div id="ip" class="fr"></div>
-				                </div>
-				                <div class="ape brdb">Subnet Mask:<div id="netmask" class="fr"></div>
-				                </div>
-				                <div class="ape">Default Gateway:<div id="gw" class="fr"></div>
-				                </div>
-				            </section>
-				            <div class="buttons">
-				                <input id="ok-details" type="button" value="OK" class="ctr" />
-				            </div>
-				        </div>
-				        <div id="diag-disconnect" class="diag-box">
-				            <div class="diag-box-win">
-				                <p>
-				                	<span lang="en">Are you sure you would like to disconnect from this wifi?</span>
-				                </p>
-				                <div class="buttons">
-				                    <input id="no-disconnect" type="button" value="No" />
-				                    <input id="yes-disconnect" type="button" value="Yes" />
-				                </div>
-				            </div>
-				        </div>
-				     </div>
-
-			   </section>
-			   <!-- /manual -->
-
-
-	            <div id="wifi-status">
-	                <h2>
-	                	<span lang="en">Connected to:</span>
-	                	<span lang="fi">Yhdistetty verkkoon:</span>
-	                </h2>
-	                <section id="connected-to">
-	                    <div class="ape">
-	                        <div class="w0">
-	                            <div class="pw"><span></span></div>
-	                        </div>
-	                    </div>
-	                </section>
-	            </div>
-
-		</div>
-	</div>
-
+	</section>
 
 	<!-- CONNECT USING PUBLIC WIFI -->
-	<div class="hidden overlay-container" id="wifi-overlay" >
-		
+	<div class="hidden overlay-container" id="wifi-overlay">
 		<!-- WIFI PASSWORD -->
-		<div class="overlay overlay-form-wrap" id="wifi-select-form">
-
-			<h2>
-				<label for="pwd">
+		<div class="overlay" id="wifi-overlay-enter-ssid">
+			<div class="hidden" id="wifi-overlay-enter-ssid-title-manual">
+				<h2>Manual Connection</h2>
+				<label for="manual_ssid"></label>
+				<input id="manual_ssid" class="connection-field-manual" type="text" placeholder="SSID" value="">
+			</div>
+			<div class="hidden" id="wifi-overlay-enter-ssid-title-auto">
+				<h2>
 					<span lang="en">Wi-Fi network "<span class="wifi-network-name"></span>" requires a password.</span>
 					<span lang="fi">Wi-Fi-verkko "<span class="wifi-network-name"></span>" vaatii salasanan.</span>
-				</label>
-			</h2>
+				</h2>
+			</div>
 
+			<label for="pwd"></label>
 			<input id="pwd" type="password" class="connection-field" placeholder="Password" value="">
 
-	        <div class="show-password-wrap">
-	        	<label class="control control-checkbox">
-			        <span lang="en">Show password</span>
-			        <span lang="fi">Näytä salasana</span>
-	            	<input type="checkbox" id="show-password">
-			        <span class="control_indicator"></span>
-			    </label>
-	        </div>
-	    
+			<label class="control control-checkbox">
+				<span lang="en">Show password</span>
+				<span lang="fi">Näytä salasana</span>
+				<input type="checkbox" id="wifi-overlay-show-password">
+				<span class="control_indicator"></span>
+			</label>
+
 	        <div class="connect-buttons">
-	            <button class="btn btn-ok connection-join" id="join" type="button">
+	            <button class="btn btn-ok" id="wifi-overlay-button-connect" type="button">
 	            	<span lang="en">Connect</span>
 	            	<span lang="fi">Yhdistä</span>
 	            </button>
-	            <button class="btn btn-cancel cancel" id="cancel2"  type="button">
+	            <button class="btn btn-cancel" id="wifi-overlay-button-cancel"  type="button">
 	            	<span lang="en">Cancel</span>
 	            	<span lang="fi">Peruuta</span>
 	            </button>
 	        </div>
 		</div>
 
-
 		<!-- LOADING WIFI CONNECTION -->
-		<div class="overlay overlay-form-wrap hidden" id="wifi-response">
-		    
-		    	<h2>
-		    		<span lang="en">Connecting to "<span class="wifi-network-name"></span>"... </span>
-		    		<span lang="fi">Yhdistetään verkkoon "<span class="wifi-network-name"></span>"... </span>
-		    	</h2>
-		    	<p id="temp">Temp continue</p>
-
-		    	<div class="spinner">
-					<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; display: block;" width="88px" height="88px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
-						<path d="M8 50A42 42 0 0 0 92 50A42 48.5 0 0 1 8 50" fill="#59bcb1" stroke="none" transform="rotate(107.349 50 53.25)">
-						  <animateTransform attributeName="transform" type="rotate" dur="0.8620689655172413s" repeatCount="indefinite" keyTimes="0;1" values="0 50 53.25;360 50 53.25"></animateTransform>
-						</path>
-					</svg>
-				</div>
-
-				<div class="connect-buttons">
-		            <button class="btn btn-cancel cancel"   type="button">
-		            	<span lang="en">Cancel</span>
-		            	<span lang="fi">Peruuta</span>
-		            </button>
-		        </div>
-		    
+		<div class="overlay hidden" id="wifi-overlay-connecting">
+			<h2>
+				<span lang="en">Connecting to "<span class="wifi-network-name"></span>"... </span>
+				<span lang="fi">Yhdistetään verkkoon "<span class="wifi-network-name"></span>"... </span>
+			</h2>
+			<div class="spinner">
+				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; display: block;" width="88px" height="88px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+					<path d="M8 50A42 42 0 0 0 92 50A42 48.5 0 0 1 8 50" fill="#59bcb1" stroke="none" transform="rotate(107.349 50 53.25)">
+					  <animateTransform attributeName="transform" type="rotate" dur="0.8620689655172413s" repeatCount="indefinite" keyTimes="0;1" values="0 50 53.25;360 50 53.25"></animateTransform>
+					</path>
+				</svg>
+			</div>
+			<div class="connect-buttons">
+				<button class="btn btn-cancel" type="button" id="wifi-overlay-connecting-button-cancel">
+					<span lang="en">Cancel</span>
+					<span lang="fi">Peruuta</span>
+				</button>
+			</div>
 		</div>
-		<div class="overlay overlay-form-wrap hidden" id="wifi-connected">
+		<div class="overlay hidden" id="wifi-overlay-connection-successful">
 			<h2>
 				<span lang="en">Successfully connected to "<span class="wifi-network-name"></span>"</span>
 				<span lang="fi">Yhdistetty onnistuneesti "<span class="wifi-network-name"></span>"</span>
 			</h2>
+			<button class="btn btn-ok" id="wifi-overlay-connection-successful-button-ok" type="button">
+				<span lang="en">OK</span>
+				<span lang="fi">Kunnossa</span>
+			</button>
 		</div>
-		<div class="overlay overlay-form-wrap hidden" id="wifi-connection-failed">
+		<div class="overlay hidden" id="wifi-overlay-connection-failed">
 			<h2>
 				<span lang="en">Failed to connected to "<span class="wifi-network-name"></span>"</span>
 				<span lang="fi">Yhteyden muodostaminen epäonnistui "<span class="wifi-network-name"></span>"</span>
 			</h2>
+			<button class="btn btn-ok" id="wifi-overlay-connection-failed-button-ok" type="button">
+				<span lang="en">OK</span>
+				<span lang="fi">Kunnossa</span>
+			</button>
 		</div>
-
-
 	</div>
-
-
-	<!-- /app -->
 </div>
 </div>
-
-
-
-
 
 </body>
 </html>

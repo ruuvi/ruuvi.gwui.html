@@ -15,7 +15,7 @@ if (!String.prototype.format) {
 
 
 var apList = null;
-var selectedSSID = "";
+let selectedSSID = "";
 var refreshAPInterval = null; 
 var checkStatusInterval = null;
 
@@ -58,63 +58,6 @@ function startRefreshAPInterval()
 }
 
 
-// Check if fields are filled and at least 8 characters to enable join button
-function check_wifi_fields_filled()
-{
-    // disable join button by default
-    $('.connection-join').attr('disabled', 'disabled');
-
-    $('.connection-field').keyup(function() 
-    {
-        var empty = false;
-
-        $('.connection-field').each(function() 
-        {
-            if ($(this).val() == '' || $(this).val().length < 8) 
-            {
-                empty = true;
-            }
-        });
-
-        if (empty) 
-        {
-            $('.connection-join').attr('disabled', 'disabled');
-        } 
-        else 
-        {
-            $('.connection-join').removeAttr('disabled'); 
-        }
-    });
-}
-
-function check_manual_wifi_fields_filled()
-{
-    // disable button by default
-    $('.manual-connection-join').attr('disabled', 'disabled');
-
-    $('#manual_pwd').keyup(function() 
-    {
-        var empty = false;
-        $('#manual_pwd').each(function() 
-        {
-            if ($(this).val() == '' || $(this).val().length < 8) {
-                empty = true;
-            }
-        });
-
-        if (empty) 
-        {
-            $('.manual-connection-join').attr('disabled', 'disabled');
-        } 
-        else 
-        {
-            $('.manual-connection-join').removeAttr('disabled'); 
-        }
-    });
-}
-
-
-
 // The popstate event is fired each time when the current history entry changes.
 window.addEventListener('popstate', function(event) 
 {
@@ -126,43 +69,44 @@ window.addEventListener('popstate', function(event)
 
 }, false);
 
+function connectionDetailsShow()
+{
+	$("#connect-details").slideDown("fast", function () { });
+	$('#button-toggle-network-info').prop('value', "Hide network info");
+}
 
+function connectionDetailsHide()
+{
+	$("#connect-details").slideUp("fast", function () { });
+	$('#button-toggle-network-info').prop('value', "Show network info");
+}
+
+// Navigation
+function change_url(url)
+{
+	$('section.section').hide();
+	$('#'+url).show();
+	window.location.hash = url;
+}
 
 $(document).ready(function()
 {
-
 	// Set initial hash to help back button navigation
 	window.location.hash = 'welcome';	
 
-	// Wifi password field checks
-	check_wifi_fields_filled();
-
-	check_manual_wifi_fields_filled();
-
-
-	// Language switcher 
+	// Language switcher
 	$(".lang_select").change(function() 
 	{
 	    var lang = $(this).val();
 
 	    $("[lang]").each(function () 
 	    {
-	        if ($(this).attr("lang") == lang) $(this).fadeIn();
+	        if ($(this).attr("lang") === lang) $(this).fadeIn();
 	        else $(this).hide();
 	    });
 	});
     
-	// Navigation
-	function change_url(url)
-	{
-		$('section.section').hide();
-		$('#'+url).show();
-
-		window.location.hash = url;
-	}
-
-
-	$("#use_http").change(function() 
+	$("#use_http").change(function()
 	{
 	    if(this.checked) 
 	    {
@@ -234,20 +178,13 @@ $(document).ready(function()
     $("#temp").on("click", function()
     {
         $('section.section').hide();
-    	$('#wifi-overlay').removeClass('loading');
 		$('#wifi-overlay').fadeOut();
-		$('#manual-overlay').removeClass('loading');
-		$('#manual-overlay').fadeOut();
     	$('#thankyou').show();
 
     	save_config();
     });
 
-   
-   
-
-
-    $('#show-password').click(function(e)
+    $('#wifi-overlay-show-password').click(function(e)
     {
 		if ( $('#pwd').prop("type") === "password") 
 		{
@@ -259,97 +196,71 @@ $(document).ready(function()
 		}
 	});
 	
-	$("#wifi-status").on("click", ".ape", function() {
-		$( "#wifi" ).slideUp( "fast", function() {});
-		$( "#connect-details" ).slideDown( "fast", function() {});
-	});
-
-	$("#manual_add").on("click", ".ape", function() {
-		selectedSSID = $(this).text();
-		$( ".wifi-network-name" ).text(selectedSSID);
-		$( "#wifi" ).slideUp( "fast", function() {});
-		$( "#connect_manual" ).slideDown( "fast", function() {});
-		$( "#connect" ).slideUp( "fast", function() {});
-
-		//update wait screen
-		$( "#loading" ).show();
-		$( "#connect-success" ).hide();
-		$( "#connect-fail" ).hide();
-	});
-
 	$('#use-manual-wifi').click(function(e)
 	{
 		e.preventDefault();
-		$('#manual-overlay').fadeIn();
+		showWiFiOverlay(null, true);
 	});
 
-	
-	$(".btn-cancel").click(function() 
-	{
+	$("#wifi-overlay-button-cancel").click(function() {
 		selectedSSID = "";
-		$('.overlay-container').removeClass('loading');
-		$('.overlay-container').hide();
-	});
-/*
-	$("#no-auth-overlay-button-cancel").click(function()
-	{
-		selectedSSID = "";
-		$('#manual-overlay').removeClass('loading');
-		$('#manual-overlay').hide();
-	});
-	$("#manual-overlay-button-cancel").click(function()
-	{
-		selectedSSID = "";
-		$('#manual-overlay').removeClass('loading');
-		$('#manual-overlay').hide();
-	});
-	*/
-	$("#join").click(function() 
-	{
-		$('#wifi-overlay').addClass('loading');
-		performConnect();
+		$('#wifi-overlay').fadeOut();
 	});
 
-	$("#manual_join").click(function() 
-	{
-		performConnect($(this).data('connect'));
+	$("#wifi-overlay-connecting-button-cancel").click(function() {
+		selectedSSID = "";
+		$('#wifi-overlay').fadeOut();
+		$.ajax({
+			url: '/connect.json',
+			dataType: 'json',
+			method: 'DELETE',
+			cache: false,
+			data: { 'timestamp': Date.now()}
+		});
+		startCheckStatusInterval();
+		connectionDetailsHide();
+		change_url('wifi-list');
+	});
+
+	$("#wifi-overlay-button-connect").click(function() {
+		let ssid = $('#manual_ssid').val();
+		let password = $("#pwd").val();
+		performConnect(ssid, password);
+	});
+
+	$("#wifi-overlay-connection-successful-button-ok").click(function () {
+		$("#wifi-overlay-connection-successful").hide();
+		$('#wifi-overlay').fadeOut();
+		change_url('wifi-connected');
+	})
+
+	$("#wifi-overlay-connection-failed-button-ok").click(function () {
+		$("#wifi-overlay-connection-failed").hide();
+		$('#wifi-overlay').fadeOut();
+	})
+
+	$("#button-toggle-network-info").on("click", function() {
+	    if ($("#connect-details").is(":hidden"))
+		{
+			connectionDetailsShow();
+		}
+	    else
+		{
+			connectionDetailsHide();
+		}
 	});
 	
-	$("#ok-details").on("click", function() {
-		$( "#connect-details" ).slideUp( "fast", function() {});
-		$( "#wifi" ).slideDown( "fast", function() {});
-		
+	$("#button-disconnect-wifi").on("click", function() {
+		$("#connect-details-wrap").addClass('blur');
+		$("#diag-disconnect").slideDown("fast", function () { });
 	});
 	
-	$("#ok-credits").on("click", function() {
-		$( "#credits" ).slideUp( "fast", function() {});
-		$( "#app" ).slideDown( "fast", function() {});
-		
+	$("#button-disconnect-wifi-no").on("click", function() {
+		$("#diag-disconnect").slideUp("fast", function () { });
+		$("#connect-details-wrap").removeClass('blur');
 	});
 	
-	$("#acredits").on("click", function(event) {
-		event.preventDefault();
-		$( "#app" ).slideUp( "fast", function() {});
-		$( "#credits" ).slideDown( "fast", function() {});
-	});
-	
-	$("#ok-connect").on("click", function() {
-		$( "#connect-wait" ).slideUp( "fast", function() {});
-		$( "#wifi" ).slideDown( "fast", function() {});
-	});
-	
-	$("#disconnect").on("click", function() {
-		$( "#connect-details-wrap" ).addClass('blur');
-		$( "#diag-disconnect" ).slideDown( "fast", function() {});
-	});
-	
-	$("#no-disconnect").on("click", function() {
-		$( "#diag-disconnect" ).slideUp( "fast", function() {});
-		$( "#connect-details-wrap" ).removeClass('blur');
-	});
-	
-	$("#yes-disconnect").on("click", function() {
-		
+	$("#button-disconnect-wifi-yes").on("click", function() {
 		stopCheckStatusInterval();
 		selectedSSID = "";
 		
@@ -363,11 +274,9 @@ $(document).ready(function()
 			cache: false,
 			data: { 'timestamp': Date.now()}
 		});
-
 		startCheckStatusInterval();
-		
-		$( "#connect-details" ).slideUp( "fast", function() {});
-		$( "#wifi" ).slideDown( "fast", function() {})
+		connectionDetailsHide();
+		change_url('wifi-list');
 	});
 	
 
@@ -378,6 +287,76 @@ $(document).ready(function()
 	
 });
 
+function checkSSIDAndPassword()
+{
+	let ssid = $('#manual_ssid').val();
+	let password = $("#pwd").val();
+	if (ssid === '' || password.length < 8)
+	{
+		$('#wifi-overlay-button-connect').attr('disabled', 'disabled');
+	}
+	else
+	{
+		$('#wifi-overlay-button-connect').removeAttr('disabled');
+	}
+}
+
+/**
+ * @brief Show WiFi overlay with SSID and password
+ * @param ssid - SSID name or null if it must be entered by the user
+ * @param isAuthNeeded - true if a password is required
+ */
+function showWiFiOverlay(ssid, isAuthNeeded)
+{
+	let inputSSID = $('#manual_ssid');
+	let inputPassword = $('#pwd');
+	inputSSID.val(ssid);
+	inputPassword.val('');
+	if (isAuthNeeded)
+	{
+		$("#wifi-overlay-enter-ssid").show();
+		if (ssid)
+		{
+			$('#wifi-overlay-enter-ssid-title-manual').hide();
+			$('#wifi-overlay-enter-ssid-title-auto').show();
+		}
+		else
+		{
+			$('#wifi-overlay-enter-ssid-title-manual').show();
+			$('#wifi-overlay-enter-ssid-title-auto').hide();
+		}
+
+		$('#wifi-overlay-button-connect').attr('disabled', 'disabled');
+
+		inputSSID.keyup(checkSSIDAndPassword);
+		inputPassword.keyup(checkSSIDAndPassword);
+		inputPassword.focus();
+	}
+	else
+	{
+		$("#wifi-overlay-enter-ssid").hide();
+	}
+
+	$("#wifi-overlay-connecting").hide();
+	$("#wifi-overlay-connection-successful").hide();
+	$("#wifi-overlay-connection-failed").hide();
+
+	$('#wifi-overlay').fadeIn();
+}
+
+// Check if need for auth screen
+function selected_wifi_auth_required(ssid)
+{
+	let selectedItem = jQuery.grep(apList, function(item)
+	{
+		return (item.ssid === ssid);
+	});
+	if (selectedItem.length)
+	{
+		return (selectedItem[0].auth !== 0);
+	}
+	return true;
+}
 
 // Init function needed as click events are lost everytime list is updated
 function initWifiList()
@@ -385,46 +364,17 @@ function initWifiList()
 	$('.wifi-list a').click(function(e) 
 	{
     	e.preventDefault();
-
-		selectedSSID = $(this).text();
-
-    	var auth_needed = selected_wifi_auth_required(selectedSSID);
-
-    	if (auth_needed)
+		let ssid = $(this).text();
+    	let isAuthNeeded = selected_wifi_auth_required(ssid);
+		showWiFiOverlay(ssid, isAuthNeeded);
+		if (!isAuthNeeded)
     	{
-			$('#wifi-overlay').fadeIn();
-    		$('#pwd').focus();
-    	}	
-    	else
-    	{
-    		$('#no-auth-overlay').fadeIn();
-    		performConnect();
+    		performConnect(ssid, null);
     	}
-
-		$( ".wifi-network-name" ).text(selectedSSID);
     });
 }
 
-
-// Check if need for auth screen 
-function selected_wifi_auth_required(ssid)
-{
-	var selectedItem = jQuery.grep(apList, function(item) 
-	{
-	    return (item.ssid === ssid);
-	});
-
-	
-	if (selectedItem.length) 
-	{ 	
-		return (selectedItem[0].auth != 0);
-	}
-
-	return true;
-}
-
-
-function performConnect(conntype)
+function performConnect(ssid, password)
 {
 	//stop the status refresh. This prevents a race condition where a status 
 	//request would be refreshed with wrong ip info from a previous connection
@@ -434,41 +384,26 @@ function performConnect(conntype)
 	//stop refreshing wifi list
 	stopRefreshAPInterval();
 
-	var pwd;
-	if (conntype == 'manual') 
-	{
-		//Grab the manual SSID and PWD
-		selectedSSID=$('#manual_ssid').val();
-		pwd = $("#manual_pwd").val();
-	} 
-	else 
-	{
-		pwd = $("#pwd").val();
-	}
+	selectedSSID = ssid;
+	$(".wifi-network-name").text(ssid);
 
-	//reset connection 
-	$( "#loading" ).show();
-	$( "#connect-success" ).hide();
-	$( "#connect-fail" ).hide();
-	
-	$( "#ok-connect" ).prop("disabled",true);
-	$( ".wifi-network-name" ).text(selectedSSID);
-	$( "#connect" ).slideUp( "fast", function() {});
-	$( "#connect_manual" ).slideUp( "fast", function() {});
-	$( "#connect-wait" ).slideDown( "fast", function() {});
-	
-	
+	$('#manual_ssid').onkeyup = null;
+	$('#pwd').onkeyup = null;
+
+	$("#wifi-overlay-enter-ssid").hide();
+	$("#wifi-overlay-connecting").show();
+
 	$.ajax({
 			url: '/connect.json',
 			dataType: 'json',
 			method: 'POST',
 			cache: false,
-			headers: {'X-Custom-ssid': selectedSSID, 'X-Custom-pwd': pwd},
+			headers: {'X-Custom-ssid': ssid, 'X-Custom-pwd': password},
 			data: {'timestamp': Date.now()},
 			success: function (data, text) {
 				connectionState = CONNECTION_STATE.CONNECTING;
 			},
-			error: function (request, status, error) {
+		error: function (request, status, error) {
 				alert('HTTP error: ' + status + '\n' + 'Status: ' + request.status + '(' + request.statusText + ')\n' + request.responseText);
 			}
 		}
@@ -540,16 +475,13 @@ function checkStatus()
 {
 	$.getJSON( "/status.json", function( data ) 
 	{
-		if(data.hasOwnProperty('ssid') && data['ssid'] != "")
+		if(data.hasOwnProperty('ssid') && data['ssid'] !== "")
 		{
 			if(data["ssid"] === selectedSSID)
 			{
 				//that's a connection attempt
 				if(data["urc"] === 0)
 				{
-					//got connection
-					$(".wifi-network-name").text(data["ssid"]);
-					//$("#connect-details h1").text(data["ssid"]);
 					$("#ip").text(data["ip"]);
 					$("#netmask").text(data["netmask"]);
 					$("#gw").text(data["gw"]);
@@ -558,15 +490,9 @@ function checkStatus()
 						case CONNECTION_STATE.NOT_CONNECTED:
 							break;
 						case CONNECTION_STATE.CONNECTING:
-							$("#wifi-status").slideDown( "fast", function() {});
-							//unlock the wait screen if needed
-							$( "#ok-connect" ).prop("disabled",false);
-							//update wait screen
-							$( "#wifi-response" ).hide();
-							$( "#wifi-connected" ).show();
-							$( "#loading" ).hide();
-							$( "#connect-success" ).show();
-							$( "#connect-fail" ).hide();
+							$("#wifi-overlay-connecting").hide();
+							$("#wifi-overlay-connection-successful").show();
+							$("#wifi-overlay-connection-failed").hide();
 							break;
 						case CONNECTION_STATE.CONNECTED:
 							break;
@@ -578,7 +504,6 @@ function checkStatus()
 				else if(data["urc"] === 1)
 				{
 					//failed attempt
-// 					$(".wifi-network-name").text('');
 					$("#connect-details h1").text('');
 					$("#ip").text('0.0.0.0');
 					$("#netmask").text('0.0.0.0');
@@ -588,18 +513,9 @@ function checkStatus()
 						case CONNECTION_STATE.NOT_CONNECTED:
 							break;
 						case CONNECTION_STATE.CONNECTING:
-							//don't show any connection
-							$("#wifi-status").slideUp( "fast", function() {});
-
-							//unlock the wait screen
-							$( "#ok-connect" ).prop("disabled",false);
-
-							//update wait screen
-							$( "#wifi-response" ).hide();
-							$( "#wifi-connection-failed" ).show();
-							$( "#loading" ).hide();
-							$( "#connect-fail" ).show();
-							$( "#connect-success" ).hide();
+							$("#wifi-overlay-connecting").hide();
+							$("#wifi-overlay-connection-successful").hide();
+							$("#wifi-overlay-connection-failed").show();
 							break;
 						case CONNECTION_STATE.CONNECTED:
 							break;
@@ -612,24 +528,33 @@ function checkStatus()
 			else if(data.hasOwnProperty('urc') && data['urc'] === 0)
 			{
 				//ESP32 is already connected to a wifi without having the user do anything
-				if( !($("#wifi-status").is(":visible")) )
-				{
-					$(".wifi-network-name").text(data["ssid"]);
-					$("#connect-details h1").text(data["ssid"]);
-					$("#ip").text(data["ip"]);
-					$("#netmask").text(data["netmask"]);
-					$("#gw").text(data["gw"]);
-					$("#wifi-status").slideDown( "fast", function() {});
+				switch (connectionState) {
+					case CONNECTION_STATE.NOT_CONNECTED:
+						$(".wifi-network-name").text(data["ssid"]);
+						$("#ip").text(data["ip"]);
+						$("#netmask").text(data["netmask"]);
+						$("#gw").text(data["gw"]);
+						change_url('wifi-connected');
+						connectionDetailsShow();
+						connectionState = CONNECTION_STATE.CONNECTED;
+						break;
+					case CONNECTION_STATE.CONNECTING:
+						break;
+					case CONNECTION_STATE.CONNECTED:
+						break;
+					case CONNECTION_STATE.FAILED:
+						break;
 				}
 			}
 		}
 		else if(data.hasOwnProperty('urc') && data['urc'] === 2)
 		{
 			//that's a manual disconnect
-			if($("#wifi-status").is(":visible"))
-			{
-				$("#wifi-status").slideUp( "fast", function() {});
-			}
+            // TODO: implement
+			// if($("#wifi-status").is(":visible"))
+			// {
+			// 	$("#wifi-status").slideUp( "fast", function() {});
+			// }
 		}
 	})
 	.fail(function() 
