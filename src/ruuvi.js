@@ -57,7 +57,11 @@ function get_config()
 
                 if (el.length > 0) 
                 {
-                    if (el[0].type == "checkbox") 
+                    if (el[0].type === "checkbox") 
+                    {
+                        el[0].checked = data[key];
+                    }
+                    else if (el[0].type === "radio") 
                     {
                         el[0].checked = data[key];
                     } 
