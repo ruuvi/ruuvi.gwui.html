@@ -145,6 +145,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         "eth_dns2":     "",
         "use_http":     false,
         "http_url":     "",
+        "http_user":    "",
         "use_mqtt":     false,
         "mqtt_server":  "",
         "mqtt_port":    0,

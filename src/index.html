@@ -152,26 +152,28 @@
 				<p lang="fi">Käytä omaasi tai kolmannen osapuolen palvelinta.</p>
 			</div>
 
-
 			<div id="other-server-connections" >
-
 				<div id="conf-http" class="conf-settings"  >
-
 					<label class="control control-radio">
 				        <span lang="en">HTTP connection</span>
 				        <span lang="fi">HTTP-yhteys</span>
 			            <input id="use_http" value="use_http" type="radio" name="custom_connection" class="conf-checkbox">
 				        <span class="control_indicator"></span>
 				    </label>
-					 
-					<div class="hidden conf-settings-http  conf-settings-item ">
+					<div class="conf-settings-http conf-settings-item">
 						<p>
-							<label for="http_url">URL</label>
+							<label for="http_url">URL:</label>
 							<input id="http_url" type="text" placeholder="http://example.com:port/path" value="">
-							<br><small>Add help here if needed.</small>
+						</p>
+						<p>
+							<label for="http_user">User:</label>
+							<input id="http_user" type="text" placeholder="" value="">
+						</p>
+						<p>
+							<label for="http_pass">Password:</label>
+							<input id="http_pass" type="password" placeholder="" value="">
 						</p>
 					</div>
-				
 
 					<label class="control control-radio">
 				        <span lang="en">MQTT connection</span>
@@ -179,8 +181,6 @@
 		            	<input id="use_mqtt" value="use_mqtt"  type="radio"  name="custom_connection" class="conf-checkbox">
 				        <span class="control_indicator"></span>
 				    </label>
-				
-
 					<div class="hidden conf-settings-item conf-settings-mqtt">
 						<p>
 							<label for="mqtt_server">
@@ -222,12 +222,9 @@
 							<input id="mqtt_pass" type="password" placeholder="Password" value="12345678">
 						</p>
 					</div>
-
 				</div>
-
 			</div>
         
-				
 			<div class="button-container">
 				<a href="" class="btn btn-back btn-navi" data-target="back" >
 					<span lang="en">Go Back</span>
@@ -239,7 +236,6 @@
 
 				</a>
 			</div>  
-
 		</div>
 	</section>
 
