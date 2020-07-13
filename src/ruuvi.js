@@ -21,10 +21,11 @@ function save_config()
 
     data.use_http = ($custom_conn == 'use_http') ? true : false; 
     data.http_url = $("#http_url").val();
+    data.http_user = $("#http_user").val();
+    data.http_pass = $("#http_pass").val();
 
     mqtt_port = parseInt($("#mqtt_port").val())
-
-    if (mqtt_port == NaN) 
+    if (mqtt_port == NaN)
     {
         mqtt_port = 0;
     }
