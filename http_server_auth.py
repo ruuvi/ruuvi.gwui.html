@@ -3,11 +3,13 @@
 # basic auth, based on https://gist.github.com/fxsjy/5465353
 
 from functools import partial
-from http.server import SimpleHTTPRequestHandler
-from http.server import test
+from http.server import SimpleHTTPRequestHandler, BaseHTTPRequestHandler, ThreadingHTTPServer
+# from http.server import test
 import base64
 import os
 import logging
+import ssl
+import sys
 
 
 class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
@@ -98,6 +100,31 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(b"not authenticated")
 
 
+def httpd_run(HandlerClass=BaseHTTPRequestHandler,
+              ServerClass=ThreadingHTTPServer,
+              protocol="HTTP/1.0", port=8000, bind="", ssl_cert=None):
+    """Test the HTTP request handler class.
+
+    This runs an HTTP server on port 8000 (or the port argument).
+
+    """
+    server_address = (bind, port)
+
+    HandlerClass.protocol_version = protocol
+    with ServerClass(server_address, HandlerClass) as httpd:
+        if ssl_cert is not None:
+            httpd.socket = ssl.wrap_socket(httpd.socket, certfile=ssl_cert, server_side=True)
+        sa = httpd.socket.getsockname()
+        serve_message = "Serving {conn_type} on {host} port {port} ({conn_type2}://{host}:{port}/) ..."
+        conn_type = "HTTP" if ssl_cert is None else "HTTPS"
+        print(serve_message.format(conn_type=conn_type.upper(), conn_type2=conn_type.lower(), host=sa[0], port=sa[1]))
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print("\nKeyboard interrupt received, exiting.")
+            sys.exit(0)
+
+
 if __name__ == "__main__":
     import argparse
 
@@ -118,12 +145,16 @@ if __name__ == "__main__":
         help="Specify alternative directory " "[default:current directory]",
     )
     parser.add_argument(
-        "port",
+        "--port",
         action="store",
         default=8000,
         type=int,
         nargs="?",
         help="Specify alternate port [default: 8000]",
+    )
+    parser.add_argument(
+        "--ssl_cert",
+        help="Path to server.pem (for HTTPS)",
     )
     parser.add_argument("--username", "-u", metavar="USERNAME")
     parser.add_argument("--password", "-p", metavar="PASSWORD")
@@ -134,4 +165,4 @@ if __name__ == "__main__":
         password=args.password,
         directory=args.directory,
     )
-    test(HandlerClass=handler_class, port=args.port, bind=args.bind)
+    httpd_run(HandlerClass=handler_class, port=args.port, bind=args.bind, ssl_cert=args.ssl_cert)
