@@ -24,3 +24,11 @@ To run HTTP-server without auth:
 To run HTTP-server with auth:
 
 `pyton http_server_auth.py --bind <IP> -u <username> -p <password>`
+
+To run HTTPS-server with auth:
+
+`pyton http_server_auth.py --bind <IP> --ssl_cert=./server.pem -u <username> -p <password>`
+
+To generate certificate for HTTPS (`server.pem`):
+
+`openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes`
