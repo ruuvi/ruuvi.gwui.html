@@ -8,8 +8,8 @@ function save_config()
     
     console.log( $custom_conn );
 
-    var data = {};
-    data.use_mqtt = ($custom_conn == 'use_mqtt') ? true : false; 
+    let data = {};
+    data.use_mqtt = ($custom_conn === 'use_mqtt');
     data.mqtt_server = $("#mqtt_server").val();
     data.mqtt_prefix = $("#mqtt_prefix").val();
     data.mqtt_user = $("#mqtt_user").val();
@@ -19,7 +19,7 @@ function save_config()
         data.mqtt_pass = $("#mqtt_pass").val();
     }
 
-    data.use_http = ($custom_conn == 'use_http') ? true : false; 
+    data.use_http = ($custom_conn === 'use_http');
     data.http_url = $("#http_url").val();
     data.http_user = $("#http_user").val();
     data.http_pass = $("#http_pass").val();
