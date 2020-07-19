@@ -85,8 +85,22 @@ function connectionDetailsHide()
 function change_url(url)
 {
 	$('section.section').hide();
-	$('#'+url).show();
+	$('#'+url).show('show', function(){
+		$(this).trigger('onShow');
+	});
 	window.location.hash = url;
+}
+
+function on_custom_connection_type_changed() {
+	let custom_connection_type = $("input[name='custom_connection']:checked").val();
+	if (custom_connection_type === 'use_http') {
+		$('.conf-settings-http').slideDown();
+		$('.conf-settings-mqtt').slideUp();
+	}
+	if (custom_connection_type === 'use_mqtt') {
+		$('.conf-settings-mqtt').slideDown();
+		$('.conf-settings-http').slideUp();
+	}
 }
 
 $(document).ready(function()
@@ -105,33 +119,13 @@ $(document).ready(function()
 	        else $(this).hide();
 	    });
 	});
-    
-	$("#use_http").change(function()
-	{
-	    if(this.checked) 
-	    {
-	       $('.conf-settings-http').slideDown();
-	       $('.conf-settings-mqtt').slideUp();
-	       $('#use_mqtt').prop('checked', false);
-	    }
-	    else
-	    {
-	    	$('.conf-settings-http').slideUp();
-	    }
+
+	$("input[name='custom_connection']").change(function (e) {
+		on_custom_connection_type_changed();
 	});
 
-	$("#use_mqtt").change(function() 
-	{
-	    if(this.checked) 
-	    {
-	       $('.conf-settings-mqtt').slideDown();
-	       $('.conf-settings-http').slideUp();
-	       $('#use_http').prop('checked', false);
-	    }
-	    else
-	    {
-	    	$('.conf-settings-mqtt').slideUp();
-	    }
+	$('#settings-custom').bind('onShow', function () {
+		on_custom_connection_type_changed();
 	});
 
 	$('.btn-navi').click(function(e)
