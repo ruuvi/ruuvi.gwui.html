@@ -147,18 +147,20 @@ $(document).ready(function()
 			break;
 
 			case 'settings-custom':
-				var connection_type = $("input[name='connection_type']:checked").val();
-
-				if (connection_type == 'ruuvi') change_url('wifi');
-				else change_url('settings-custom');
-			break;
+				let connection_type = $("input[name='connection_type']:checked").val();
+				if (connection_type === 'ruuvi')
+					change_url('wifi');
+				else
+					change_url('settings-custom');
+				break;
 
 			case 'connect':
-				var network_type = $("input[name='network_type']:checked").val();
-
-				if (network_type == 'wifi') change_url('wifi-list');
-				else change_url('cable-settings');
-			break;
+				let network_type = $("input[name='network_type']:checked").val();
+				if (network_type === 'wifi')
+					change_url('wifi-list');
+				else
+					change_url('cable-settings');
+				break;
 
 			case 'confirm':
 				$('.connect-wifi-name').hide();
@@ -166,10 +168,10 @@ $(document).ready(function()
 
 				change_url('thankyou');
 				save_config();
-			break;	
+				break;
 
 			default: 
-				change_url(target_hash);	
+				change_url(target_hash);
 		} 
 
 	});
