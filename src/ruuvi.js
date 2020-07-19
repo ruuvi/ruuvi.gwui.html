@@ -1,15 +1,15 @@
-var mqtt_pass_changed = false;
+let mqtt_pass_changed = false;
 
 
 function save_config() 
 {
     console.log("save_config");
-    $custom_conn = $("input[name='custom_connection']:checked").val();
-    
-    console.log( $custom_conn );
+    let custom_conn = $("input[name='custom_connection']:checked").val();
+
+    console.log(custom_conn);
 
     let data = {};
-    data.use_mqtt = ($custom_conn === 'use_mqtt');
+    data.use_mqtt = (custom_conn === 'use_mqtt');
     data.mqtt_server = $("#mqtt_server").val();
     data.mqtt_prefix = $("#mqtt_prefix").val();
     data.mqtt_user = $("#mqtt_user").val();
@@ -19,13 +19,13 @@ function save_config()
         data.mqtt_pass = $("#mqtt_pass").val();
     }
 
-    data.use_http = ($custom_conn === 'use_http');
+    data.use_http = (custom_conn === 'use_http');
     data.http_url = $("#http_url").val();
     data.http_user = $("#http_user").val();
     data.http_pass = $("#http_pass").val();
 
-    mqtt_port = parseInt($("#mqtt_port").val())
-    if (mqtt_port == NaN)
+    let mqtt_port = parseInt($("#mqtt_port").val())
+    if (Number.isNaN(mqtt_port))
     {
         mqtt_port = 0;
     }
