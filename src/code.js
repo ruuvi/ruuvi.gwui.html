@@ -138,13 +138,13 @@ $(document).ready(function()
 	{
 		e.preventDefault();
 		
-		var target_hash = $(this).data('target');
+		let target_hash = $(this).data('target');
 
 		switch (target_hash)
 		{
 			case 'back':
-				window.history.back(-1);
-			break;
+				window.history.back();
+				break;
 
 			case 'settings-custom':
 				let connection_type = $("input[name='connection_type']:checked").val();
@@ -172,6 +172,7 @@ $(document).ready(function()
 
 			default: 
 				change_url(target_hash);
+				break;
 		} 
 
 	});
