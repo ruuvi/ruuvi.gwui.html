@@ -47,29 +47,76 @@ function save_config()
     });
 }
 
-function get_config() 
+function get_config()
 {
     $.getJSON("/ruuvi.json", function(data) {
         if (data != null) 
         {
-            for (var key in data) 
+            const keys = Object.keys(data);
+            for (let idx in keys)
             {
-                var el = $("#" + key);
-
-                if (el.length > 0) 
-                {
-                    if (el[0].type === "checkbox") 
-                    {
-                        el[0].checked = data[key];
+                let key = keys[idx];
+                let key_value = data[key];
+                switch (key) {
+                    case "eth_dhcp":
+                        $("#eth_dhcp")[0].checked = key_value;
+                        break;
+                    case "eth_static_ip":
+                        $("#eth_static_ip").val(key_value);
+                        break;
+                    case "eth_netmask":
+                        $("#eth_netmask").val(key_value);
+                        break;
+                    case "eth_gw":
+                        $("#eth_gw").val(key_value);
+                        break;
+                    case "eth_dns1":
+                        $("#eth_dns1").val(key_value);
+                        break;
+                    case "eth_dns2":
+                        $("#eth_dns2").val(key_value);
+                        break;
+                    case "use_http":
+                        $("#use_http")[0].checked = key_value;
+                        break;
+                    case "http_url":
+                        $("#http_url").val(key_value);
+                        break;
+                    case "http_user":
+                        $("#http_user").val(key_value);
+                        break;
+                    case "use_mqtt":
+                        $("#use_mqtt")[0].checked = key_value;
+                        break;
+                    case "mqtt_server":
+                        if (data[key]) {
+                            $("#mqtt_server").val(key_value);
+                        }
+                        break;
+                    case "mqtt_port":
+                        if (data[key]) {
+                            $("#mqtt_port").val(key_value);
+                        }
+                        break;
+                    case "mqtt_user":
+                        $("#mqtt_user").val(key_value);
+                        break;
+                    case "mqtt_prefix":
+                        $("#mqtt_prefix").val(key_value);
+                        break;
+                    case "coordinates":
+                        $("#coordinates").val(key_value);
+                        break;
+                    case "use_filtering": {
+                        let value = key_value ? "1" : "0";
+                        $(`input:radio[name='filtering'][value='${value}']`).attr('checked', 'checked');
+                        break;
                     }
-                    else if (el[0].type === "radio") 
-                    {
-                        el[0].checked = data[key];
-                    } 
-                    else 
-                    {
-                        $("#" + key).val(data[key]);
-                    }
+                    case "company_id":
+                        break;
+                    default:
+                        alert('get_config: unhandled key: ' + key);
+                        break;
                 }
             }
         }
