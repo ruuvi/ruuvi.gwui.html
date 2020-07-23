@@ -85,8 +85,26 @@ function connectionDetailsHide()
 function change_url(url)
 {
 	$('section.section').hide();
-	$('#'+url).show();
+	$('#'+url).show('show', function(){
+		$(this).trigger('onShow');
+	});
 	window.location.hash = url;
+}
+
+function on_custom_connection_type_changed() {
+	let custom_connection_type = $("input[name='custom_connection']:checked").val();
+    if (custom_connection_type === undefined) {
+		$(`input:radio[name='custom_connection'][value='use_http']`).prop('checked', true);
+		custom_connection_type = $("input[name='custom_connection']:checked").val();
+	}
+	if (custom_connection_type === 'use_http') {
+		$('.conf-settings-http').slideDown();
+		$('.conf-settings-mqtt').slideUp();
+	}
+	if (custom_connection_type === 'use_mqtt') {
+		$('.conf-settings-mqtt').slideDown();
+		$('.conf-settings-http').slideUp();
+	}
 }
 
 $(document).ready(function()
@@ -105,60 +123,74 @@ $(document).ready(function()
 	        else $(this).hide();
 	    });
 	});
-    
-	$("#use_http").change(function()
-	{
-	    if(this.checked) 
-	    {
-	       $('.conf-settings-http').slideDown();
-	       $('.conf-settings-mqtt').slideUp();
-	       $('#use_mqtt').prop('checked', false);
-	    }
-	    else
-	    {
-	    	$('.conf-settings-http').slideUp();
-	    }
+
+	$("input[name='custom_connection']").change(function (e) {
+		on_custom_connection_type_changed();
 	});
 
-	$("#use_mqtt").change(function() 
-	{
-	    if(this.checked) 
-	    {
-	       $('.conf-settings-mqtt').slideDown();
-	       $('.conf-settings-http').slideUp();
-	       $('#use_http').prop('checked', false);
-	    }
-	    else
-	    {
-	    	$('.conf-settings-mqtt').slideUp();
-	    }
+	$('#settings-custom').bind('onShow', function () {
+		on_custom_connection_type_changed();
+	});
+
+	$('#mqtt_server').on("input", function () {
+		on_edit_mqtt_settings();
+	});
+	$('#mqtt_port').on("input", function () {
+		on_edit_mqtt_settings();
+	});
+	$('#mqtt_user').on("input", function () {
+		on_edit_mqtt_settings();
+	});
+	$('#mqtt_pass').on("input", function () {
+		on_edit_mqtt_settings();
+	});
+	$('#use_mqtt_prefix_ruuvi').change(function () {
+		on_edit_mqtt_settings();
+	});
+	$('#use_mqtt_prefix_gw_mac').change(function () {
+		on_edit_mqtt_settings();
+	});
+	$('#use_mqtt_prefix_custom').change(function () {
+		on_edit_mqtt_settings();
+	});
+	$('#mqtt_prefix_custom').on("input", function () {
+		on_edit_mqtt_settings();
+	});
+	$('#show_mqtt_examples').change(function () {
+	    if (this.checked) {
+	        $('#mqtt_examples').slideDown();
+		} else {
+			$('#mqtt_examples').slideUp();
+		}
 	});
 
 	$('.btn-navi').click(function(e)
 	{
 		e.preventDefault();
 		
-		var target_hash = $(this).data('target');
+		let target_hash = $(this).data('target');
 
 		switch (target_hash)
 		{
 			case 'back':
-				window.history.back(-1);
-			break;
+				window.history.back();
+				break;
 
 			case 'settings-custom':
-				var connection_type = $("input[name='connection_type']:checked").val();
-
-				if (connection_type == 'ruuvi') change_url('wifi');
-				else change_url('settings-custom');
-			break;
+				let connection_type = $("input[name='connection_type']:checked").val();
+				if (connection_type === 'ruuvi')
+					change_url('wifi');
+				else
+					change_url('settings-custom');
+				break;
 
 			case 'connect':
-				var network_type = $("input[name='network_type']:checked").val();
-
-				if (network_type == 'wifi') change_url('wifi-list');
-				else change_url('cable-settings');
-			break;
+				let network_type = $("input[name='network_type']:checked").val();
+				if (network_type === 'wifi')
+					change_url('wifi-list');
+				else
+					change_url('cable-settings');
+				break;
 
 			case 'confirm':
 				$('.connect-wifi-name').hide();
@@ -166,10 +198,11 @@ $(document).ready(function()
 
 				change_url('thankyou');
 				save_config();
-			break;	
+				break;
 
 			default: 
-				change_url(target_hash);	
+				change_url(target_hash);
+				break;
 		} 
 
 	});

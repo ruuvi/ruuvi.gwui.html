@@ -24,6 +24,28 @@ g_ssid = None
 g_password = None
 g_timestamp = None
 g_use_alt_wifi_list = False
+g_gw_mac = "AA:BB:CC:DD:EE:FF"
+
+g_ruuvi_dict = {
+    'eth_dhcp': True,
+    'eth_static_ip': "",
+    'eth_netmask': "",
+    'eth_gw': "",
+    'eth_dns1': "",
+    'eth_dns2': "",
+    'use_mqtt': False,
+    'mqtt_server': '',
+    'mqtt_port': 0,
+    'mqtt_prefix': '',
+    'mqtt_user': '',
+    'use_http': False,
+    'http_url': 'https://network.ruuvi.com:443/gwapi/v1',
+    'http_user': '',
+    'use_filtering': True,
+    'coordinates':  "",
+    'company_id': "0x0499",
+    'gw_mac': g_gw_mac
+}
 
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):
@@ -72,6 +94,25 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     resp += '{}'.encode('ascii')
             print(f'Response: {resp}')
             self.wfile.write(resp)
+        elif self.path == '/ruuvi.json':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode('ascii')
+            global g_ruuvi_dict
+            new_dict = json.loads(post_data)
+            for key, value in new_dict.items():
+                if key == 'http_pass':
+                    continue
+                if key == 'mqtt_pass':
+                    continue
+                g_ruuvi_dict[key] = value
+            resp = b''
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            self.wfile.write(resp)
+            pass
         else:
             resp = b''
             resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
@@ -135,26 +176,9 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
+            global g_ruuvi_dict
+            content = json.dumps(g_ruuvi_dict)
             if self.path == '/ruuvi.json':
-                content = '''{
-        "eth_dhcp":     true,
-        "eth_static_ip":        "",
-        "eth_netmask":  "",
-        "eth_gw":       "",
-        "eth_dns1":     "",
-        "eth_dns2":     "",
-        "use_http":     false,
-        "http_url":     "",
-        "http_user":    "",
-        "use_mqtt":     false,
-        "mqtt_server":  "",
-        "mqtt_port":    0,
-        "mqtt_prefix":  "",
-        "mqtt_user":    "",
-        "coordinates":  "",
-        "use_filtering":        true,
-        "company_id":   "0x0499"
-}'''
                 print(f'Resp: {content}')
                 resp += content.encode('ascii')
                 self.wfile.write(resp)
