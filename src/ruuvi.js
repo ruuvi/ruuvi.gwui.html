@@ -239,12 +239,12 @@ function get_config()
                         use_mqtt = key_value
                         break;
                     case "mqtt_server":
-                        if (data[key]) {
+                        if (key_value) {
                             $("#mqtt_server").val(key_value);
                         }
                         break;
                     case "mqtt_port":
-                        if (data[key]) {
+                        if (key_value) {
                             $("#mqtt_port").val(key_value);
                         }
                         break;
