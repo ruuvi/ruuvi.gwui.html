@@ -113,15 +113,14 @@ $(document).ready(function()
 	window.location.hash = 'welcome';	
 
 	// Language switcher
-	$(".lang_select").change(function() 
-	{
-	    var lang = $(this).val();
-
-	    $("[lang]").each(function () 
-	    {
-	        if ($(this).attr("lang") === lang) $(this).fadeIn();
-	        else $(this).hide();
-	    });
+	$(".lang_select").change(function() {
+	    const lang = $(this).val();
+	    $("p[lang], span[lang]").each(function () {
+			if ($(this).attr("lang") === lang)
+				$(this).fadeIn();
+			else
+				$(this).hide();
+		})
 	});
 
 	$("input[name='custom_connection']").change(function (e) {
