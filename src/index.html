@@ -40,7 +40,7 @@
    	
 			<h1>
 				<span lang="en">Ruuvi Gateway configuration wizard</span>
-				<span lang="fi">Ruuvi Gatewayn asennusvelho</span>
+				<span lang="fi">Ruuvi Gatewayn määritystoiminto</span>
 			</h1>
 
 			<div class="" style="padding:50px;color:#999;border:1px dashed #ccc;margin:30px 0 0">An informative and cool looking animation</div>
@@ -52,8 +52,8 @@
 				<p lang="en">Please note that your internet connection may be turned off for the duration of the wizard.</p>
 				<p lang="en">In-depth documentation is available at <strong>ruuvi.com/manuals</strong>.</p>
 				
-				<p lang="fi">Asennus on helppoa. Sinun tarvitsee ainoastaan seurata ohjeiden askelia ja kaikki on valmiina käyttöön! </p>
-				<p lang="fi">Huomaathan, että internetyhteytesi saattaa olla pois päältä tämän asennuksen ajan.</p>
+				<p lang="fi">Ruuvi Gatewayn käyttöönotto on helppoa! Tarvitsemme sinulta vain muutamat tiedot, jotta Ruuvi Gateway toimisi haluamallasi tavalla!</p>
+				<p lang="fi">Huomaathan, että internet-yhteytesi saattaa olla hetkellisesti poissa käytöstä tämän asennuksen aikana.</p>
 				<p lang="fi">Yksityiskohtaiset ohjeet ovat saatavilla osoitteessa <strong>ruuvi.com/manuals</strong>.</p>
 			</div>
 
@@ -76,7 +76,7 @@
 			<div class="button-container">
 				<a href="" class="btn btn-navi" data-target="settings" id="get-started">
 					<span lang="en">Let's get started</span>
-					<span lang="fi">Aloita asennus</span>
+					<span lang="fi">Selvä! Aloitetaan.</span>
 				</a>
 			</div>  
 
@@ -100,7 +100,7 @@
 				<p lang="en">By default, you can access all your sensor data through <strong>Ruuvi Network</strong>.</p>
 				<p lang="en">If you're an advanced user, you can adjust the settings manually.</p>
 				<p lang="fi">Oletuksena käytössä on <strong>Ruuvi Network</strong>.</p>
-				<p lang="fi">Jos olet tehokäyttäjä, voit säätää asetukset manuaalisesti.</p>
+				<p lang="fi">Edistyneet asetukset voidaan määrittää myös manuaalisesti.</p>
 			</div>
 
 			<span id="ssid-pwd"></span>
@@ -109,14 +109,14 @@
 			<div class="" id="conf-ruuvi">
 				<label class="control control-radio ">
 			        <span lang="en">Use Ruuvi Network <small>(an activation code required)</small></span>
-			        <span lang="fi">Käytä Ruuvi Networkia <small>(vaatii aktivointikoodin)</small></span>
+			        <span lang="fi">Käytä Ruuvi Network -verkkoa <small>(vaatii aktivointikoodin)</small></span>
 			        <input id="use_ruuvi" value="ruuvi" name="connection_type" type="radio"  class="conf-checkbox" checked="checked"> 
 			        <span class="control_indicator"></span>
 			    </label>
 			
 				<label class="control control-radio">
 			        <span lang="en">Use Custom Server <small>(for advanced users)</small></span> 
-			        <span lang="fi">Käytä omaa palvelinta <small>(tehokäyttäjille)</small></span> 
+			        <span lang="fi">Käytä mukautettua palvelinta <small>(tehokäyttäjille)</small></span> 
 			        <input id="use_custom" value="custom" name="connection_type"  type="radio"  class="conf-checkbox">
 			        <span class="control_indicator"></span>
 			    </label>
@@ -145,11 +145,11 @@
 		<div class="container">
 			<h1>
 				<span lang="en">Custom Server Settings</span>
-				<span lang="fi">Manuaaliset palvelinasetukset</span>
+				<span lang="fi">Mukautetut palvelinasetukset</span>
 			</h1>
 			<div class="ingress">
 				<p lang="en">Use your own or a third party server.</p>
-				<p lang="fi">Käytä omaasi tai kolmannen osapuolen palvelinta.</p>
+				<p lang="fi">Käytä omaa tai kolmannen osapuolen palvelinta.</p>
 			</div>
 
 			<div id="other-server-connections" >
@@ -187,7 +187,7 @@
 								<td>
 									<label for="mqtt_server">
 										<span lang="en">MQTT Server</span>
-										<span lang="fi">MQTT Palvelin</span>
+										<span lang="fi">MQTT-palvelin</span>
 									</label>
 								</td>
                                 <td>
@@ -198,7 +198,7 @@
 								<td>
 									<label for="mqtt_port">
 										<span lang="en">MQTT Port</span>
-										<span lang="fi">MQTT Portti</span>
+										<span lang="fi">MQTT-portti</span>
 									</label>
 								</td>
                                 <td>
@@ -232,7 +232,7 @@
 									<small>
 										<label for="mqtt_prefix">
 											<span lang="en">MQTT topic prefix:</span>
-											<span lang="fi">MQTT aiheen etuliite:</span>
+											<span lang="fi">MQTT-aiheen etuliite:</span>
 										</label>
 									</small>
 								</td>
@@ -254,7 +254,7 @@
 								<td colspan="2">
 									<label class="control control-checkbox">
 										<span lang="en">Add Gateway MAC as MQTT topic prefix</span>
-										<span lang="fi">Lisää Gateway MAC MQTT-aiheen etuliitteeksi</span>
+										<span lang="fi">Lisää Gateway-laitteen MAC-osoite MQTT-aiheen etuliitteeksi</span>
 										<input id="use_mqtt_prefix_gw_mac" type="checkbox" checked class="conf-checkbox">
 										<span class="control_indicator"></span>
 									</label>
@@ -264,7 +264,7 @@
 								<td colspan="2">
 									<label class="control control-checkbox">
 										<span lang="en">Add custom MQTT topic prefix</span>
-										<span lang="fi">Lisää mukautettu MQTT-aiheetuliite</span>
+										<span lang="fi">Lisää mukautettu MQTT-aiheen etuliite</span>
 										<input id="use_mqtt_prefix_custom" type="checkbox" class="conf-checkbox">
 										<span class="control_indicator"></span>
 									</label>
@@ -274,7 +274,7 @@
 								<td>
 									<label for="mqtt_prefix_custom">
 										<span lang="en">Custom prefix</span>
-										<span lang="fi">Muokattu etuliite</span>
+										<span lang="fi">Mukautettu etuliite</span>
 									</label>
 								</td>
 								<td>
@@ -299,17 +299,17 @@
 								</li>
                                 <li>
 									<p lang="en">Subscribe to service messages from any gateway:</p>
-									<p lang="fi">Tilaa palvelusanomat mistä tahansa yhdyskäytävästä:</p>
+									<p lang="fi">Tilaa palveluviestit mistä tahansa yhdyskäytävästä:</p>
 									<p><div id="mqtt_example2">mosquitto_sub -h test.mosquitto.org -p 1883 -t "ruuvi/#/gw_status" -v</div></p>
 								</li>
                                 <li>
 									<p lang="en">Subscribe to messages from the bluetooth tag with MAC:</p>
-									<p lang="fi">Tilaa viestit MAC-osoitteen sisältävästä Bluetooth-tunnisteesta:</p>
+									<p lang="fi">Tilaa viestit tämän MAC-osoitteen sisältävästä Bluetooth-anturista:</p>
 									<p><div id="mqtt_example3">mosquitto_sub -h test.mosquitto.org -p 1883 -t "ruuvi/#/&lt;TAG_MAC&gt;/#" -v</div></p>
 								</li>
 								<li>
 									<p lang="en">Subscribe to messages from any bluetooth tags connected to this Gateway:</p>
-									<p lang="fi">Tilaa viestit kaikista tähän yhdyskäytävään liitetyistä Bluetooth-tunnisteista:</p>
+									<p lang="fi">Tilaa viestit kaikista tähän yhdyskäytävään liitetyistä Bluetooth-antureista:</p>
 									<p><div id="mqtt_example4">mosquitto_sub -h test.mosquitto.org -p 1883 -t "ruuvi/AA:BB:CC:DD:EE:FF/#/#" -v</div></p>
 								</li>
 								<li>
@@ -350,20 +350,20 @@
 
 			<div class="ingress">
 				<p lang="en">Gateway receives signal from all nearby beacons and can send them all to your selected web server.</p>
-				<p lang="fi">Gateway kuuntelee kaikkia ympäröiviä Bluetooth-majakoita ja lähettää tiedot eteenpäin määritellylle internet-palvelimelle.</p>
+				<p lang="fi">Gateway kuuntelee kaikkia lähietäisyydellä olevia Bluetooth-antureita ja lähettää tiedot eteenpäin valitsemallesi verkkopalvelimelle.</p>
 			</div>
 
 			<div id="conf-scan" class="conf-settings">
 				<label class="control control-radio">
 			        <span lang="en">Ruuvi sensors only</span>
-			        <span lang="fi">Vain Ruuvi-antureita</span>
+			        <span lang="fi">Vain Ruuvi-anturit</span>
 			        <input type="radio" name="filtering" value="1" checked="checked" placeholder="Scan only Ruuvitags">
 			        <span class="control_indicator"></span>
 			    </label>
 
 			    <label class="control control-radio" >
 			        <span lang="en">All nearby Bluetooth beacons <small>(for advanced users)</small></span>
-			        <span lang="fi">Kaikkia Bluetooth-majakoita <small>(tehokäyttäjille)</small></span>
+			        <span lang="fi">Kaikki lähellä olevat Bluetooth-anturit <small>(tehokäyttäjille)</small></span>
 			        <input type="radio" name="filtering" value="0" placeholder="Scan all beacons">
 			        <span class="control_indicator"></span>
 			    </label>
@@ -390,19 +390,19 @@
 
             <h1>
             	<span lang="en">Internet connection</span>
-            	<span lang="fi">Internetyhteys</span>
+            	<span lang="fi">Internet-yhteys</span>
             </h1>
 
             <div class="ingress">
             	<p lang="en">The Gateway needs an internet connection to send your data to a Cloud service. You can connect either via a Wi-Fi network or using an Ethernet cable (RJ-45).</p>
-				<p lang="fi">Gateway tarvitsee internetyhteyden voidakseen lähettää kuulemansa anturitiedot eteenpäin. Voit yhdistää internetiin joko Wi-Fi-yhteydellä tai Ethernet-kaapelilla (RJ-45).</p>
+				<p lang="fi">Ruuvi Gateway käyttää internet-yhteyttä kerättyjen tietojen välittämiseen. Voit yhdistää internetiin joko WLAN-yhteyden tai Ethernet-kaapelin (RJ-45) avulla.</p>
             </div>
 
 
 			<div class="control-group">
 				<label class="control control-radio">
 					<span lang="en">Wi-Fi</span>
-					<span lang="fi">Wi-Fi</span>
+					<span lang="fi">WLAN</span>
 			        <input name="network_type" value="wifi" type="radio" checked="checked" />
 			        <span class="control_indicator"></span>
 			    </label>
@@ -436,7 +436,7 @@
 		<div class="container">
 			<h1>
             	<span lang="en">Ethernet settings</span>
-            	<span lang="fi">Ethernet asetukset</span>
+            	<span lang="fi">Ethernet-asetukset</span>
             </h1>
 
             <div class="ingress">
@@ -451,7 +451,7 @@
 				<div class="control-group control-sep">
 	           		<label class="control control-checkbox">
 				        <span lang="en">Use DHCP</span>
-				        <span lang="fi">Käytä DHCP:ta</span>
+				        <span lang="fi">Käytä DHCP-palvelinta</span>
 		            	<input id="eth_dhcp" type="checkbox">
 				        <span class="control_indicator"></span>
 				    </label>
@@ -460,35 +460,35 @@
 				<p>
 					<label for="eth_static_ip">
 						<span lang="en">Static ip</span>
-						<span lang="fi">Static ip</span>
+						<span lang="fi">Kiinteä IP-osoite</span>
 					</label>
 					<input id="eth_static_ip" type="text" placeholder="192.168. 1.1" value="">
 				</p>
 				<p>
 					<label for="eth_netmask">
 						<span lang="en">Netmask</span>
-						<span lang="fi">Netmask</span>
+						<span lang="fi">Verkon peite</span>
 					</label>
 					<input id="eth_netmask" type="text" placeholder="192.168. 1.1" value="">
 				</p>
 				<p>
 					<label for="eth_gw">
 						<span lang="en">Gateway</span>
-						<span lang="fi">Gateway</span>
+						<span lang="fi">Yhdyskäytävä</span>
 					</label>
 					<input id="eth_gw" type="text" placeholder="192.168. 1.1" value="">
 				</p>
 				<p>
 					<label for="eth_dns1">
 						<span lang="en">DNS 1 ip:</span>
-						<span lang="fi">DNS 1 ip:</span>
+						<span lang="fi">DNS 1 IP-osoite:</span>
 					</label>
 					<input id="eth_dns1" type="text" placeholder="DNS 1" value="">
 				</p>
 				<p>
 					<label for="eth_dns2">
 						<span lang="en">DNS 2 ip:</span>
-						<span lang="fi">DNS 2 ip:</span>
+						<span lang="fi">DNS 2 IP-osoite:</span>
 					</label>
 					<input id="eth_dns2" type="text" placeholder="DNS 2" value="">
 				</p>
@@ -515,12 +515,12 @@
             
             <h1>
             	<span lang="en">Select a Wi-Fi network</span>
-            	<span lang="fi">Valitse Wi-Fi-verkko</span>
+            	<span lang="fi">Valitse WLAN-verkko</span>
             </h1>
 
             <div class="ingress">
             	<p lang="en">This is the last step. Once the Gateway has successfully connected to your Wi-Fi hotspot, the setup is completed and the Gateway starts to send sensor data to the server we just configured.</p>
-				<p lang="fi">Tämä on viimeinen askel. Kun Gateway on yhdistänyt verkkoon, kaikki on valmiina käyttöön ja Gateway alkaa lähettämään anturitietoja aikaisemmin asetetulle palvelimelle.</p>
+				<p lang="fi">Tämä on määrityksen viimeinen vaihe. Ruuvi Gateway aloittaa anturitietojen lähettämisen määrittämääsi palvelinosoitteeseen verkkoyhteyden muodostamisen jälkeen.</p>
             </div>
 
 	        <ul class="wifi-list" id="ssid-list">
@@ -533,11 +533,11 @@
 	        <p class="connection-selection">
 	        	<a href="" id="use-manual-wifi" class="grey">
 	        		<span lang="en">Wi-Fi network settings</span>
-	        		<span lang="fi">Wi-Fi-verkon asetukset</span>
+	        		<span lang="fi">WLAN-verkon asetukset</span>
 	        	</a>
 	        	<a href="" id="use-wifi-connection" class="hidden">
 	        		<span lang="en">Connect to public Wi-Fi.</span>
-	        		<span lang="fi">Yhdistä julkiseen Wi-Fi-verkkoon.</span>
+	        		<span lang="fi">Yhdistä julkiseen WLAN-verkkoon.</span>
 	        	</a>
 			</p>
 
@@ -562,7 +562,7 @@
 
             <div class="ingress">
             	<p lang="en">Your Ruuvi Gateway is now connected! If you want to modify the settings, press RESET button on bottom of the Gateway.</p>
-            	<p lang="fi">Ruuvi Gatewaysi on nyt toiminnassa! Jos haluat muuttaa asetuksia, paina Gatewayn pohjasta löytyvää RESET-nappia.</p>
+            	<p lang="fi">Ruuvi Gateway on nyt toiminnassa! Pääset muokkaamaan näitä asetuksia milloin tahansa laitteen pohjassa olevan RESET-painikkeen avulla.</p>
             </div>
 
 			<p class="connect-wifi-name">
@@ -582,7 +582,7 @@
 		<div class="container">
 			<h1>
 				<span lang="en">Connected to Wi-Fi: "<span class="wifi-network-name"></span>"</span>
-				<span lang="fi">Yhdistetty Wi-Fi-verkkoon: "<span class="wifi-network-name"></span>"</span>
+				<span lang="fi">Yhdistetty WLAN-verkkoon: "<span class="wifi-network-name"></span>"</span>
 			</h1>
 			<section>
 				<div class="buttons">
@@ -634,7 +634,7 @@
 			<div class="hidden" id="wifi-overlay-enter-ssid-title-auto">
 				<h2>
 					<span lang="en">Wi-Fi network "<span class="wifi-network-name"></span>" requires a password.</span>
-					<span lang="fi">Wi-Fi-verkko "<span class="wifi-network-name"></span>" vaatii salasanan.</span>
+					<span lang="fi">WLAN-verkko "<span class="wifi-network-name"></span>" vaatii salasanan.</span>
 				</h2>
 			</div>
 
@@ -683,21 +683,21 @@
 		<div class="overlay hidden" id="wifi-overlay-connection-successful">
 			<h2>
 				<span lang="en">Successfully connected to "<span class="wifi-network-name"></span>"</span>
-				<span lang="fi">Yhdistetty onnistuneesti "<span class="wifi-network-name"></span>"</span>
+				<span lang="fi">Yhdistetty onnistuneesti verkkoon ”<span class="wifi-network-name"></span>"</span>
 			</h2>
 			<button class="btn btn-ok" id="wifi-overlay-connection-successful-button-ok" type="button">
 				<span lang="en">OK</span>
-				<span lang="fi">Kunnossa</span>
+				<span lang="fi">OK</span>
 			</button>
 		</div>
 		<div class="overlay hidden" id="wifi-overlay-connection-failed">
 			<h2>
 				<span lang="en">Failed to connected to "<span class="wifi-network-name"></span>"</span>
-				<span lang="fi">Yhteyden muodostaminen epäonnistui "<span class="wifi-network-name"></span>"</span>
+				<span lang="fi">WLAN-yhteyden muodostaminen epäonnistui "<span class="wifi-network-name"></span>"</span>
 			</h2>
 			<button class="btn btn-ok" id="wifi-overlay-connection-failed-button-ok" type="button">
 				<span lang="en">OK</span>
-				<span lang="fi">Kunnossa</span>
+				<span lang="fi">OK</span>
 			</button>
 		</div>
 	</div>
