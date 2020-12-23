@@ -285,7 +285,7 @@ function get_config()
                         break;
                 }
             }
-            $("#use_custom")[0].checked = use_mqtt || (use_http && http_url !== "https://network.ruuvi.com:443/gwapi/v1");
+            $("#use_custom")[0].checked = use_mqtt || (use_http && http_url !== "https://network.ruuvi.com/record");
             if (!mqtt_prefix) {
                 $('#use_mqtt_prefix_ruuvi').prop('checked', true);
                 $('#use_mqtt_prefix_gw_mac').prop('checked', true);
