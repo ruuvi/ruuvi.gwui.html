@@ -584,13 +584,35 @@
 				<span lang="en">Connected to Wi-Fi: "<span class="wifi-network-name"></span>"</span>
 				<span lang="fi">Yhdistetty WLAN-verkkoon: "<span class="wifi-network-name"></span>"</span>
 			</h1>
+			<h2>
+				<span lang="en">Ruuvi Gateway is now ready to be used.</span>
+				<span lang="fi">Ruuvi Gateway on nyt valmiina käytettäväksi.</span>
+			</h2>
 			<section>
-				<div class="buttons">
-					<input id="button-toggle-network-info" type="button" value="Show network info" class="btn"/>
-				</div>
-				<div class="buttons">
-					<input id="button-disconnect-wifi" type="button" value="Disconnect" class="btn"/>
-				</div>
+                <table>
+					<tr>
+						<td>
+							<div class="buttons">
+								<a href="" class="btn" id="button-toggle-network-info-show">
+									<span lang="en">Show network info</span>
+									<span lang="fi">Näytä verkon tiedot</span>
+								</a>
+								<a href="" class="btn" id="button-toggle-network-info-hide">
+									<span lang="en">Hide network info</span>
+									<span lang="fi">Piilota verkon tiedot</span>
+								</a>
+							</div>
+						</td>
+						<td>
+							<div class="buttons">
+								<a href="" class="btn" id="button-disconnect-wifi">
+									<span lang="en">Disconnect</span>
+									<span lang="fi">Katkaise yhteys</span>
+								</a>
+							</div>
+						</td>
+					</tr>
+				</table>
 			</section>
 			<br/>
 			<br/>
@@ -598,24 +620,52 @@
 				<div id="connect-details">
 						<div id="connect-details-wrap">
 							<section>
-								<div class="ape brdb">IP Address:<div id="ip" class="fr"></div>
+								<div class="ape brdb">
+									<span lang="en">IP Address:</span>
+									<span lang="fi">IP-osoite:</span>
+									<div id="ip" class="fr"></div>
 								</div>
-								<div class="ape brdb">Subnet Mask:<div id="netmask" class="fr"></div>
+								<div class="ape brdb">
+									<span lang="en">Subnet Mask:</span>
+									<span lang="fi">Aliverkon peite:</span>
+									<div id="netmask" class="fr"></div>
 								</div>
-								<div class="ape">Default Gateway:<div id="gw" class="fr"></div>
+								<div class="ape">
+									<span lang="en">Default Gateway:</span>
+									<span lang="fi">Oletysyhdyskäytävä:</span>
+									<div id="gw" class="fr"></div>
 								</div>
 							</section>
 						</div>
 				</div>
 				<div id="diag-disconnect" class="diag-box">
 					<div class="diag-box-win">
-						<p>
-							<span lang="en">Are you sure you would like to disconnect from this wifi?</span>
-						</p>
-						<div class="buttons">
-							<input id="button-disconnect-wifi-no" type="button" value="No" />
-							<input id="button-disconnect-wifi-yes" type="button" value="Yes" />
-						</div>
+						<table>
+                            <tr>
+								<td colspan="2">
+									<span lang="en">Are you sure you would like to disconnect from this wifi?</span>
+									<span lang="fi">Haluatko varmasti katkaista yhteyden tähän verkkoon?</span>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="buttons">
+										<a href="" class="btn" id="button-disconnect-wifi-no">
+											<span lang="en">No</span>
+											<span lang="fi">En</span>
+										</a>
+									</div>
+								</td>
+								<td>
+									<div class="buttons">
+										<a href="" class="btn" id="button-disconnect-wifi-yes">
+											<span lang="en">Yes</span>
+											<span lang="fi">Kyllä</span>
+										</a>
+									</div>
+								</td>
+							</tr>
+						</table>
 					</div>
 				</div>
 			</section>
@@ -627,7 +677,10 @@
 		<!-- WIFI PASSWORD -->
 		<div class="overlay" id="wifi-overlay-enter-ssid">
 			<div class="hidden" id="wifi-overlay-enter-ssid-title-manual">
-				<h2>Manual Connection</h2>
+				<h2>
+					<span lang="en">Manual Connection</span>
+					<span lang="fi">Manuaalinen yhdistäminen</span>
+				</h2>
 				<label for="manual_ssid"></label>
 				<input id="manual_ssid" class="connection-field-manual" type="text" placeholder="SSID" value="">
 			</div>
