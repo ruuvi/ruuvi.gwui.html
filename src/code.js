@@ -18,6 +18,7 @@ var apList = null;
 let selectedSSID = "";
 var refreshAPInterval = null; 
 var checkStatusInterval = null;
+let flagShowNetworkInfo = false;
 
 const CONNECTION_STATE = {
 	NOT_CONNECTED: "NOT_CONNECTED",
@@ -69,16 +70,32 @@ window.addEventListener('popstate', function(event)
 
 }, false);
 
+function connectionDetailsUpdate()
+{
+	if (flagShowNetworkInfo)
+	{
+		$("#button-toggle-network-info-show").hide();
+		$("#button-toggle-network-info-hide").show();
+	}
+	else
+	{
+		$("#button-toggle-network-info-hide").hide();
+		$("#button-toggle-network-info-show").show();
+	}
+}
+
 function connectionDetailsShow()
 {
+	flagShowNetworkInfo = true;
 	$("#connect-details").slideDown("fast", function () { });
-	$('#button-toggle-network-info').prop('value', "Hide network info");
+	connectionDetailsUpdate();
 }
 
 function connectionDetailsHide()
 {
+	flagShowNetworkInfo = false;
 	$("#connect-details").slideUp("fast", function () { });
-	$('#button-toggle-network-info').prop('value', "Show network info");
+	connectionDetailsUpdate();
 }
 
 // Navigation
@@ -120,6 +137,10 @@ $(document).ready(function()
 				$(this).fadeIn();
 			else
 				$(this).hide();
+			if (lang === 'en')
+				$('input#pwd').attr('placeholder', "Password");
+			else if (lang === 'fi')
+				$('input#pwd').attr('placeholder', "Salasana");
 		})
 	});
 
@@ -271,28 +292,29 @@ $(document).ready(function()
 		$('#wifi-overlay').fadeOut();
 	})
 
-	$("#button-toggle-network-info").on("click", function() {
-	    if ($("#connect-details").is(":hidden"))
-		{
-			connectionDetailsShow();
-		}
-	    else
-		{
-			connectionDetailsHide();
-		}
+	$("#button-toggle-network-info-show").on("click", function(e) {
+		e.preventDefault();
+		connectionDetailsShow();
 	});
-	
-	$("#button-disconnect-wifi").on("click", function() {
+	$("#button-toggle-network-info-hide").on("click", function(e) {
+		e.preventDefault();
+		connectionDetailsHide();
+	});
+
+	$("#button-disconnect-wifi").on("click", function(e) {
+		e.preventDefault();
 		$("#connect-details-wrap").addClass('blur');
 		$("#diag-disconnect").slideDown("fast", function () { });
 	});
 	
-	$("#button-disconnect-wifi-no").on("click", function() {
+	$("#button-disconnect-wifi-no").on("click", function(e) {
+		e.preventDefault();
 		$("#diag-disconnect").slideUp("fast", function () { });
 		$("#connect-details-wrap").removeClass('blur');
 	});
 	
-	$("#button-disconnect-wifi-yes").on("click", function() {
+	$("#button-disconnect-wifi-yes").on("click", function(e) {
+		e.preventDefault();
 		stopCheckStatusInterval();
 		selectedSSID = "";
 		
@@ -533,6 +555,7 @@ function checkStatus()
 							break;
 					}
 					connectionState = CONNECTION_STATE.CONNECTED
+					connectionDetailsUpdate();
 				}
 				else if(data["urc"] === 1)
 				{
@@ -556,6 +579,7 @@ function checkStatus()
 							break;
 					}
 					connectionState = CONNECTION_STATE.FAILED
+					connectionDetailsUpdate();
 				}
 			}
 			else if(data.hasOwnProperty('urc') && data['urc'] === 0)
@@ -568,7 +592,7 @@ function checkStatus()
 						$("#netmask").text(data["netmask"]);
 						$("#gw").text(data["gw"]);
 						change_url('wifi-connected');
-						connectionDetailsShow();
+						connectionDetailsUpdate();
 						connectionState = CONNECTION_STATE.CONNECTED;
 						break;
 					case CONNECTION_STATE.CONNECTING:
