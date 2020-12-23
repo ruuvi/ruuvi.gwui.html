@@ -588,27 +588,66 @@
 				<span lang="en">Ruuvi Gateway is now ready to be used.</span>
 				<span lang="fi">Ruuvi Gateway on nyt valmiina käytettäväksi.</span>
 			</h2>
-			<section>
+			<section id="wifi-connected-buttons">
                 <table>
 					<tr>
 						<td>
 							<div class="buttons">
-								<a href="" class="btn" id="button-toggle-network-info-show">
+								<a href="" class="btn-wifi" id="button-disconnect-wifi">
+									<span lang="en">Disconnect</span>
+									<span lang="fi">Katkaise yhteys</span>
+								</a>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="buttons">
+								<a href="" class="btn-wifi" id="button-toggle-network-info-show">
 									<span lang="en">Show network info</span>
 									<span lang="fi">Näytä verkon tiedot</span>
 								</a>
-								<a href="" class="btn" id="button-toggle-network-info-hide">
+								<a href="" class="btn-wifi" id="button-toggle-network-info-hide">
 									<span lang="en">Hide network info</span>
 									<span lang="fi">Piilota verkon tiedot</span>
 								</a>
 							</div>
 						</td>
-						<td>
-							<div class="buttons">
-								<a href="" class="btn" id="button-disconnect-wifi">
-									<span lang="en">Disconnect</span>
-									<span lang="fi">Katkaise yhteys</span>
-								</a>
+					</tr>
+					<tr>
+                        <td>
+							<div id="connect-details">
+								<div id="connect-details-wrap">
+                                    <table>
+										<tr class="brdb">
+											<td class="connect-details-col1">
+												<span lang="en">IP Address:</span>
+												<span lang="fi">IP-osoite:</span>
+											</td>
+											<td class="connect-details-col2">
+												<div id="ip"></div>
+											</td>
+										</tr>
+										<tr class="brdb">
+											<td class="connect-details-col1">
+												<span lang="en">Subnet Mask:</span>
+												<span lang="fi">Aliverkon peite:</span>
+											</td>
+											<td class="connect-details-col2">
+												<div id="netmask"></div>
+											</td>
+										</tr>
+										<tr>
+											<td class="connect-details-col1">
+												<span lang="en">Default Gateway:</span>
+												<span lang="fi">Oletysyhdyskäytävä:</span>
+											</td>
+											<td class="connect-details-col2">
+												<div id="gw"></div>
+											</td>
+										</tr>
+									</table>
+								</div>
 							</div>
 						</td>
 					</tr>
@@ -617,27 +656,6 @@
 			<br/>
 			<br/>
 			<section>
-				<div id="connect-details">
-						<div id="connect-details-wrap">
-							<section>
-								<div class="ape brdb">
-									<span lang="en">IP Address:</span>
-									<span lang="fi">IP-osoite:</span>
-									<div id="ip" class="fr"></div>
-								</div>
-								<div class="ape brdb">
-									<span lang="en">Subnet Mask:</span>
-									<span lang="fi">Aliverkon peite:</span>
-									<div id="netmask" class="fr"></div>
-								</div>
-								<div class="ape">
-									<span lang="en">Default Gateway:</span>
-									<span lang="fi">Oletysyhdyskäytävä:</span>
-									<div id="gw" class="fr"></div>
-								</div>
-							</section>
-						</div>
-				</div>
 				<div id="diag-disconnect" class="diag-box">
 					<div class="diag-box-win">
 						<table>

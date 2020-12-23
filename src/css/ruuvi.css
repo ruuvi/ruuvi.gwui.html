@@ -297,6 +297,21 @@ hr {
   font-weight: normal;
 }
 
+.btn-wifi {
+  background-color: #50AA9D;
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+  text-transform: uppercase;
+  /*margin-left: 15px;*/
+  border: 1px solid #50AA9D;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
 #wifi-overlay-button-connect:disabled {
   opacity: 0.3;
 }
@@ -322,8 +337,37 @@ hr {
   float:left;
 }
 
+#wifi-connected-buttons {
+    position:absolute;
+    width: 300px;
+}
+
 #button-disconnect-wifi {
-  float:right;
+  width: 100%;
+  text-align: center;
+}
+
+#button-toggle-network-info-show {
+  width: 100%;
+  text-align: center;
+}
+
+#button-toggle-network-info-hide {
+  width: 100%;
+  text-align: center;
+}
+
+#connect-details {
+  width: 100%;
+  text-align: center;
+}
+
+.connect-details-col1 {
+  text-align: left;
+}
+
+.connect-details-col2 {
+  text-align: right;
 }
 
 .selected {
