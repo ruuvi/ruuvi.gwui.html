@@ -268,6 +268,18 @@ function get_config()
                     case "gw_mac":
                         gw_mac = key_value;
                         break;
+                    case "use_coded_phy":
+                        break;
+                    case "use_1mbit_phy":
+                        break;
+                    case "use_extended_payload":
+                        break;
+                    case "use_channel_37":
+                        break;
+                    case "use_channel_38":
+                        break;
+                    case "use_channel_39":
+                        break;
                     default:
                         alert('get_config: unhandled key: ' + key);
                         break;
