@@ -285,7 +285,14 @@ function get_config()
                         break;
                 }
             }
-            $("#use_custom")[0].checked = use_mqtt || (use_http && http_url !== "https://network.ruuvi.com/record");
+            let flag_use_ruuvi_server = !use_mqtt && (!use_http || (use_http && (http_url === "https://network.ruuvi.com/record")));
+            if (flag_use_ruuvi_server) {
+                $("#use_custom")[0].checked = false;
+                $("#use_ruuvi")[0].checked = true;
+            } else {
+                $("#use_ruuvi")[0].checked = false;
+                $("#use_custom")[0].checked = true;
+            }
             if (!mqtt_prefix) {
                 $('#use_mqtt_prefix_ruuvi').prop('checked', true);
                 $('#use_mqtt_prefix_gw_mac').prop('checked', true);
