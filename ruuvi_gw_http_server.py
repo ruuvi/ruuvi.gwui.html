@@ -39,7 +39,7 @@ g_ruuvi_dict = {
     'mqtt_prefix': '',
     'mqtt_user': '',
     'use_http': False,
-    'http_url': 'https://network.ruuvi.com:443/gwapi/v1',
+    'http_url': 'https://network.ruuvi.com/record',
     'http_user': '',
     'use_filtering': True,
     'coordinates':  "",
