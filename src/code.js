@@ -330,6 +330,8 @@ $(document).ready(function()
 		});
 		startCheckStatusInterval();
 		connectionDetailsHide();
+		window.history.replaceState(null, "", "#wifi-list");
+		window.history.back();
 		change_url('wifi-list');
 	});
 	
