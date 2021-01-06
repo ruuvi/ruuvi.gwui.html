@@ -313,7 +313,7 @@ if __name__ == '__main__':
     print('    3 - failed to connect to WiFi')
     print('    w - toggle the list of WiFi')
 
-    os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'src'))
+    os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../src'))
 
     server = SimpleHttpServer(args.ip, args.port)
     print('HTTP Server Running: IP:%s, port:%d' % (args.ip, args.port))
