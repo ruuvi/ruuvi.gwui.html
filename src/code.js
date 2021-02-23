@@ -253,6 +253,7 @@ $(document).ready(function () {
         $("#wifi-overlay-connection-successful").hide();
         $('#wifi-overlay').fadeOut();
         change_url('wifi-connected');
+        save_config();
     })
 
     $("#wifi-overlay-connection-failed-button-ok").click(function () {
