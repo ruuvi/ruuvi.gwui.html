@@ -358,12 +358,4 @@ function showError(error) {
 $(document).ready(function () {
     //get configuration from flash and fill the web page
     get_config();
-
-    $("#save_config").on("click", function () {
-        save_config();
-    });
-
-    $("#mqtt_pass").on("change", function () {
-        mqtt_pass_changed = true;
-    });
 });
