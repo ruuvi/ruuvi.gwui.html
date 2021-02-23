@@ -1,8 +1,7 @@
 let mqtt_pass_changed = false;
 let gw_mac = "";
 
-function get_mqtt_topic_prefix()
-{
+function get_mqtt_topic_prefix() {
     let mqtt_topic = "";
     if ($('#use_mqtt_prefix_ruuvi').prop('checked')) {
         mqtt_topic += 'ruuvi';
@@ -23,8 +22,7 @@ function get_mqtt_topic_prefix()
 }
 
 
-function save_config() 
-{
+function save_config() {
     console.log("save_config");
     let custom_conn = $("input[name='custom_connection']:checked").val();
 
@@ -34,8 +32,7 @@ function save_config()
     data.use_mqtt = (custom_conn === 'use_mqtt');
     data.mqtt_server = $("#mqtt_server").val();
     let mqtt_port = parseInt($("#mqtt_port").val())
-    if (Number.isNaN(mqtt_port))
-    {
+    if (Number.isNaN(mqtt_port)) {
         mqtt_port = 0;
     }
     data.mqtt_port = mqtt_port;
@@ -52,7 +49,7 @@ function save_config()
 
     //data.coordinates = $("#coordinates").val();  // Removed from v1
 
-    console.log( data );
+    console.log(data);
 
     $.ajax({
         url: '/ruuvi.json',
@@ -64,8 +61,7 @@ function save_config()
     });
 }
 
-function on_edit_mqtt_settings()
-{
+function on_edit_mqtt_settings() {
     let mqtt_topic = get_mqtt_topic_prefix();
     if (mqtt_topic.length > 0) {
         mqtt_topic += '/';
@@ -82,9 +78,11 @@ function on_edit_mqtt_settings()
     let mqtt_use_prefix_custom = $('#use_mqtt_prefix_custom').prop('checked');
 
     if (mqtt_use_prefix_custom) {
-        $('#mqtt_prefix_custom_tr').slideDown("fast", function () { });
+        $('#mqtt_prefix_custom_tr').slideDown("fast", function () {
+        });
     } else {
-        $('#mqtt_prefix_custom_tr').slideUp("fast", function () { });
+        $('#mqtt_prefix_custom_tr').slideUp("fast", function () {
+        });
     }
 
     let mqtt_host = $('#mqtt_server').val();
@@ -190,18 +188,15 @@ function on_edit_mqtt_settings()
     }
 }
 
-function get_config()
-{
-    $.getJSON("/ruuvi.json", function(data) {
-        if (data != null)
-        {
+function get_config() {
+    $.getJSON("/ruuvi.json", function (data) {
+        if (data != null) {
             let use_http = false;
             let use_mqtt = false;
             let http_url = "";
             let mqtt_prefix = "";
             const keys = Object.keys(data);
-            for (let idx in keys)
-            {
+            for (let idx in keys) {
                 let key = keys[idx];
                 let key_value = data[key];
                 switch (key) {
@@ -297,9 +292,7 @@ function get_config()
                 $('#use_mqtt_prefix_ruuvi').prop('checked', true);
                 $('#use_mqtt_prefix_gw_mac').prop('checked', true);
                 $('#use_mqtt_prefix_custom').prop('checked', false);
-            }
-            else
-            {
+            } else {
                 let start_idx = 0;
                 let prefix_ruuvi = 'ruuvi';
                 let mqtt_topic = mqtt_prefix;
@@ -336,10 +329,8 @@ function get_config()
     });
 }
 
-function showError(error)
-{
-    switch (error.code)
-    {
+function showError(error) {
+    switch (error.code) {
         case error.PERMISSION_DENIED:
             msg = "Error: Geolocation not allowed."
             console.log(msg)
@@ -364,16 +355,15 @@ function showError(error)
 }
 
 
-$(document).ready(function() 
-{
+$(document).ready(function () {
     //get configuration from flash and fill the web page
     get_config();
 
-    $("#save_config").on("click", function() {
+    $("#save_config").on("click", function () {
         save_config();
     });
 
-    $("#mqtt_pass").on("change", function() {
+    $("#mqtt_pass").on("change", function () {
         mqtt_pass_changed = true;
     });
 });
