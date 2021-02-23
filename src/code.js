@@ -210,15 +210,6 @@ $(document).ready(function () {
 
     });
 
-
-    $("#temp").on("click", function () {
-        $('section.section').hide();
-        $('#wifi-overlay').fadeOut();
-        $('#thankyou').show();
-
-        save_config();
-    });
-
     $('#wifi-overlay-show-password').click(function (e) {
         if ($('#pwd').prop("type") === "password") {
             $("#pwd").prop("type", "text");
