@@ -21,14 +21,16 @@ function get_mqtt_topic_prefix() {
     return mqtt_topic;
 }
 
-
 function save_config() {
     console.log("save_config");
     let custom_conn = $("input[name='custom_connection']:checked").val();
 
+    let network_type = $("input[name='network_type']:checked").val();
+
     console.log(custom_conn);
 
     let data = {};
+    data.use_eth = !(network_type === 'wifi');
     data.use_mqtt = (custom_conn === 'use_mqtt');
     data.mqtt_server = $("#mqtt_server").val();
     let mqtt_port = parseInt($("#mqtt_port").val())
@@ -191,6 +193,7 @@ function on_edit_mqtt_settings() {
 function get_config() {
     $.getJSON("/ruuvi.json", function (data) {
         if (data != null) {
+            let use_eth = false;
             let use_http = false;
             let use_mqtt = false;
             let http_url = "";
@@ -200,6 +203,9 @@ function get_config() {
                 let key = keys[idx];
                 let key_value = data[key];
                 switch (key) {
+                    case "use_eth":
+                        use_eth = key_value
+                        break;
                     case "eth_dhcp":
                         $("#eth_dhcp")[0].checked = key_value;
                         break;
@@ -279,6 +285,13 @@ function get_config() {
                         alert('get_config: unhandled key: ' + key);
                         break;
                 }
+            }
+            if (use_eth) {
+                $("#network_type_wifi")[0].checked = false;
+                $("#network_type_cable")[0].checked = true;
+            } else {
+                $("#network_type_cable")[0].checked = false;
+                $("#network_type_wifi")[0].checked = true;
             }
             let flag_use_ruuvi_server = !use_mqtt && (!use_http || (use_http && (http_url === "https://network.ruuvi.com/record")));
             if (flag_use_ruuvi_server) {
