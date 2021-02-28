@@ -31,6 +31,18 @@ function save_config() {
 
     let data = {};
     data.use_eth = !(network_type === 'wifi');
+    if (data.use_eth) {
+        data.eth_dhcp = $("#eth_dhcp")[0].checked;
+        if (!data.eth_dhcp)
+        {
+            data.eth_static_ip = $("#eth_static_ip").val()
+            data.eth_netmask = $("#eth_netmask").val()
+            data.eth_gw = $("#eth_gw").val()
+            data.eth_dns1 = $("#eth_dns1").val()
+            data.eth_dns2 = $("#eth_dns2").val()
+        }
+    }
+
     data.use_mqtt = (custom_conn === 'use_mqtt');
     data.mqtt_server = $("#mqtt_server").val();
     let mqtt_port = parseInt($("#mqtt_port").val())
