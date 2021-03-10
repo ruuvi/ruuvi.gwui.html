@@ -15,11 +15,14 @@ import io
 import select
 
 
-SIMULATION_MODE_NO_WIFI = 1
+SIMULATION_MODE_NO_CONNECTION = 0
+SIMULATION_MODE_ETH_CONNECTED = 1
 SIMULATION_MODE_WIFI_CONNECTED = 2
-SIMULATION_MODE_WIFI_FAILED = 3
+SIMULATION_MODE_WIFI_FAILED_ATTEMPT = 3
+SIMULATION_MODE_USER_DISCONNECT = 4
+SIMULATION_MODE_LOST_CONNECTION = 5
 
-g_simulation_mode = SIMULATION_MODE_NO_WIFI
+g_simulation_mode = SIMULATION_MODE_NO_CONNECTION
 g_ssid = None
 g_password = None
 g_timestamp = None
@@ -27,6 +30,7 @@ g_use_alt_wifi_list = False
 g_gw_mac = "AA:BB:CC:DD:EE:FF"
 
 g_ruuvi_dict = {
+    'use_eth': False,
     'eth_dhcp': True,
     'eth_static_ip': "",
     'eth_netmask': "",
@@ -71,7 +75,18 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             ssid = self._get_value_from_headers('X-Custom-ssid: ')
             password = self._get_value_from_headers('X-Custom-pwd: ')
             resp = b''
-            if ssid is None or password is None:
+            if ssid is None and password is None:
+                print(f'Try to connect to Ethernet')
+                g_ssid = None
+                g_password = None
+                g_timestamp = time.time()
+                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+                resp += f'Content-type: application/json\r\n'.encode('ascii')
+                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+                resp += f'Pragma: no-cache\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                resp += '{}'.encode('ascii')
+            elif ssid is None or password is None:
                 resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
                 resp += f'Content-Length: 0\r\n'.encode('ascii')
             else:
@@ -105,6 +120,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 if key == 'mqtt_pass':
                     continue
                 g_ruuvi_dict[key] = value
+                # if key == 'use_eth':
+                #     g_ssid = None
+                #     g_password = None
+                #     g_timestamp = time.time()
             resp = b''
             resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
@@ -129,9 +148,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         print('DELETE %s' % self.path)
         if self.path == '/connect.json':
             g_timestamp = None
-            g_ssid = None
-            g_password = None
-            g_simulation_mode = SIMULATION_MODE_NO_WIFI
+            g_simulation_mode = SIMULATION_MODE_USER_DISCONNECT
 
             resp = b''
             resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
@@ -209,12 +226,33 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += content.encode('ascii')
                 self.wfile.write(resp)
             elif self.path == '/status.json':
-                if g_simulation_mode == SIMULATION_MODE_NO_WIFI:
+                if g_ssid is None:
+                    ssid_key_with_val = '"ssid":null'
+                else:
+                    ssid_key_with_val = f'"ssid":"{g_ssid}"'
+                if g_simulation_mode == SIMULATION_MODE_NO_CONNECTION:
                     content = '{}'
+                elif g_simulation_mode == SIMULATION_MODE_ETH_CONNECTED:
+                    if g_ruuvi_dict['eth_dhcp']:
+                        ip = '192.168.100.119'
+                        netmask = '255.255.255.0'
+                        gw = '192.168.100.1'
+                    else:
+                        ip = g_ruuvi_dict['eth_static_ip']
+                        netmask = g_ruuvi_dict['eth_netmask']
+                        gw = g_ruuvi_dict['eth_gw']
+                    content = f'{{{ssid_key_with_val},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":0}}'
                 elif g_simulation_mode == SIMULATION_MODE_WIFI_CONNECTED:
-                    content = '{"ssid":"%s","ip":"192.168.1.119","netmask":"255.255.255.0","gw":"192.168.1.1","urc":0}' % g_ssid
-                elif g_simulation_mode == SIMULATION_MODE_WIFI_FAILED:
-                    content = '{"ssid":"%s","ip":"0","netmask":"0","gw":"0","urc":1}' % g_ssid
+                    ip = '192.168.1.119'
+                    netmask = '255.255.255.0'
+                    gw = '192.168.1.1'
+                    content = f'{{{ssid_key_with_val},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":0}}'
+                elif g_simulation_mode == SIMULATION_MODE_WIFI_FAILED_ATTEMPT:
+                    content = f'{{{ssid_key_with_val},"ip":"0","netmask":"0","gw":"0","urc":1}}'
+                elif g_simulation_mode == SIMULATION_MODE_USER_DISCONNECT:
+                    content = f'{{{ssid_key_with_val},"ip":"0","netmask":"0","gw":"0","urc":2}}'
+                elif g_simulation_mode == SIMULATION_MODE_LOST_CONNECTION:
+                    content = f'{{{ssid_key_with_val},"ip":"0","netmask":"0","gw":"0","urc":3}}'
                 else:
                     content = ''
                 print(f'Resp: {content}')
@@ -287,15 +325,19 @@ def handle_wifi_connect():
     while True:
         if g_timestamp is not None:
             if (time.time() - g_timestamp) > 3:
-                if g_ssid == 'dlink-noauth':
+                if g_ssid is None:
+                    print(f'Set simulation mode: ETH_CONNECTED')
+                    g_simulation_mode = SIMULATION_MODE_ETH_CONNECTED
+                elif g_ssid == 'dlink-noauth':
                     print(f'Set simulation mode: WIFI_CONNECTED')
                     g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
                 elif g_password == '12345678':
                     print(f'Set simulation mode: WIFI_CONNECTED')
                     g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
-                if g_simulation_mode != SIMULATION_MODE_WIFI_CONNECTED:
-                    print(f'Set simulation mode: WIFI_FAILED')
-                    g_simulation_mode = SIMULATION_MODE_WIFI_FAILED
+                if (g_simulation_mode != SIMULATION_MODE_WIFI_CONNECTED) and (
+                        g_simulation_mode != SIMULATION_MODE_ETH_CONNECTED):
+                    print(f'Set simulation mode: WIFI_FAILED_ATTEMPT')
+                    g_simulation_mode = SIMULATION_MODE_WIFI_FAILED_ATTEMPT
                 g_timestamp = None
         time.sleep(0.5)
     pass
@@ -308,9 +350,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print('To change the simulation mode, press digit and then Enter')
     print('Simulation modes:')
-    print('    1 - WiFi is not connected')
+    print('    0 - WiFi is not connected')
+    print('    1 - Eth is connected')
     print('    2 - WiFi is connected')
     print('    3 - failed to connect to WiFi')
+    print('    4 - disconnected by the user command')
+    print('    5 - lost connection')
     print('    w - toggle the list of WiFi')
 
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../src'))
@@ -322,15 +367,26 @@ if __name__ == '__main__':
     while True:
         ch = input()
         simulation_mode = ch
-        if simulation_mode == '1':
-            print(f'Set simulation mode: NO_WIFI')
-            g_simulation_mode = SIMULATION_MODE_NO_WIFI
+        if simulation_mode == '0':
+            print(f'Set simulation mode: NO_CONNECTION')
+            g_simulation_mode = SIMULATION_MODE_NO_CONNECTION
+        elif simulation_mode == '1':
+            print(f'Set simulation mode: ETH_CONNECTED')
+            g_simulation_mode = SIMULATION_MODE_ETH_CONNECTED
         elif simulation_mode == '2':
             print(f'Set simulation mode: WIFI_CONNECTED')
             g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
+            g_ssid = 'Pantum-AP-A6D49F'
+            g_password = '12345678'
         elif simulation_mode == '3':
-            print(f'Set simulation mode: WIFI_FAILED')
-            g_simulation_mode = SIMULATION_MODE_WIFI_FAILED
+            print(f'Set simulation mode: WIFI_FAILED_ATTEMPT')
+            g_simulation_mode = SIMULATION_MODE_WIFI_FAILED_ATTEMPT
+        elif simulation_mode == '4':
+            print(f'Set simulation mode: USER_DISCONNECT')
+            g_simulation_mode = SIMULATION_MODE_USER_DISCONNECT
+        elif simulation_mode == '5':
+            print(f'Set simulation mode: LOST_CONNECTION')
+            g_simulation_mode = SIMULATION_MODE_LOST_CONNECTION
         elif simulation_mode == 'w':
             print(f'Toggle list of WiFi')
             g_use_alt_wifi_list = not g_use_alt_wifi_list
