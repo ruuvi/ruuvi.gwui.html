@@ -203,10 +203,7 @@ $(document).ready(function () {
                 break;
 
             case 'confirm':
-                $('.connect-wifi-name').hide();
-                $('.connect-cable').show();
                 save_config();
-
                 performConnect(null, null);
                 break;
 
