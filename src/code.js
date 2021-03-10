@@ -23,7 +23,14 @@ const CONNECTION_STATE = {
     CONNECTING: "CONNECTING",
     CONNECTED: "CONNECTED",
     FAILED: "FAILED",
-}
+};
+
+const URC_CODE = {
+    CONNECTED: 0,
+    FAILED: 1,
+    DISCONNECTED: 2,
+    LOST_CONNECTION: 3,
+};
 
 let connectionState = CONNECTION_STATE.NOT_CONNECTED;
 
@@ -477,7 +484,7 @@ function checkStatus() {
         if (data.hasOwnProperty('ssid') && data['ssid'] !== "") {
             if (data["ssid"] === selectedSSID) {
                 //that's a connection attempt
-                if (data["urc"] === 0) {
+                if (data["urc"] === URC_CODE.CONNECTED) {
                     $("#ip").text(data["ip"]);
                     $("#netmask").text(data["netmask"]);
                     $("#gw").text(data["gw"]);
@@ -497,7 +504,7 @@ function checkStatus() {
                     }
                     connectionState = CONNECTION_STATE.CONNECTED
                     connectionDetailsUpdate();
-                } else if (data["urc"] === 1) {
+                } else if (data["urc"] === URC_CODE.FAILED) {
                     //failed attempt
                     $("#connect-details h1").text('');
                     $("#ip").text('0.0.0.0');
@@ -520,7 +527,7 @@ function checkStatus() {
                     connectionState = CONNECTION_STATE.FAILED
                     connectionDetailsUpdate();
                 }
-            } else if (data.hasOwnProperty('urc') && data['urc'] === 0) {
+            } else if (data.hasOwnProperty('urc') && data['urc'] === URC_CODE.CONNECTED) {
                 //ESP32 is already connected to a wifi without having the user do anything
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
@@ -540,7 +547,7 @@ function checkStatus() {
                         break;
                 }
             }
-        } else if (data.hasOwnProperty('urc') && data['urc'] === 2) {
+        } else if (data.hasOwnProperty('urc') && data['urc'] === URC_CODE.DISCONNECTED) {
             //that's a manual disconnect
             // TODO: implement
             // if($("#wifi-status").is(":visible"))
