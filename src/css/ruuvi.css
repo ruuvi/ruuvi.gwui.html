@@ -337,7 +337,7 @@ hr {
   float:left;
 }
 
-#wifi-connected-buttons {
+#network-connected-buttons {
     position:absolute;
     width: 300px;
 }

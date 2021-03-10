@@ -276,7 +276,7 @@ $(document).ready(function () {
         $('#wifi-overlay').fadeOut();
         $("#connected-eth").hide()
         $("#connected-wifi").show()
-        change_url('wifi-connected');
+        change_url('network-connected');
         save_config();
     })
 
@@ -289,7 +289,7 @@ $(document).ready(function () {
         $("#eth-overlay-connection-successful").hide();
         $("#connected-wifi").hide()
         $("#connected-eth").show()
-        change_url('wifi-connected');
+        change_url('network-connected');
     })
 
     $("#button-toggle-network-info-show").on("click", function (e) {
@@ -567,7 +567,7 @@ function checkStatus() {
                         $("#gw").text(data["gw"]);
                         $("#connected-eth").hide()
                         $("#connected-wifi").show()
-                        change_url('wifi-connected');
+                        change_url('network-connected');
                         connectionDetailsUpdate();
                         break;
                     case CONNECTION_STATE.CONNECTING:
