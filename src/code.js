@@ -205,9 +205,9 @@ $(document).ready(function () {
             case 'confirm':
                 $('.connect-wifi-name').hide();
                 $('.connect-cable').show();
-
-                change_url('thankyou');
                 save_config();
+
+                performConnect(null, null);
                 break;
 
             default:
@@ -250,6 +250,21 @@ $(document).ready(function () {
         change_url('wifi-list');
     });
 
+    $("#eth-overlay-connecting-button-cancel").click(function () {
+        selectedSSID = "";
+        $('#wifi-overlay').fadeOut();
+        $.ajax({
+            url: '/connect.json',
+            dataType: 'json',
+            method: 'DELETE',
+            cache: false,
+            data: {'timestamp': Date.now()}
+        });
+        startCheckStatusInterval();
+        connectionDetailsHide();
+        change_url('wifi');
+    });
+
     $("#wifi-overlay-button-connect").click(function () {
         let ssid = $('#manual_ssid').val();
         let password = $("#pwd").val();
@@ -259,6 +274,8 @@ $(document).ready(function () {
     $("#wifi-overlay-connection-successful-button-ok").click(function () {
         $("#wifi-overlay-connection-successful").hide();
         $('#wifi-overlay').fadeOut();
+        $("#connected-eth").hide()
+        $("#connected-wifi").show()
         change_url('wifi-connected');
         save_config();
     })
@@ -266,6 +283,13 @@ $(document).ready(function () {
     $("#wifi-overlay-connection-failed-button-ok").click(function () {
         $("#wifi-overlay-connection-failed").hide();
         $('#wifi-overlay').fadeOut();
+    })
+
+    $("#eth-overlay-connection-successful-button-ok").click(function () {
+        $("#eth-overlay-connection-successful").hide();
+        $("#connected-wifi").hide()
+        $("#connected-eth").show()
+        change_url('wifi-connected');
     })
 
     $("#button-toggle-network-info-show").on("click", function (e) {
@@ -396,7 +420,7 @@ function initWifiList() {
 function performConnect(ssid, password) {
     //stop the status refresh. This prevents a race condition where a status
     //request would be refreshed with wrong ip info from a previous connection
-    //and the request would automatically shows as succesful.
+    //and the request would automatically shows as successful.
     stopCheckStatusInterval();
 
     //stop refreshing wifi list
@@ -408,15 +432,21 @@ function performConnect(ssid, password) {
     $('#manual_ssid').onkeyup = null;
     $('#pwd').onkeyup = null;
 
-    $("#wifi-overlay-enter-ssid").hide();
-    $("#wifi-overlay-connecting").show();
+    let req_connect_header = null;
+    if (ssid) {
+        $("#wifi-overlay-enter-ssid").hide();
+        $("#wifi-overlay-connecting").show();
+        req_connect_header = {'X-Custom-ssid': ssid, 'X-Custom-pwd': password};
+    } else {
+        $("#eth-overlay-connecting").show();
+    }
 
     $.ajax({
             url: '/connect.json',
             dataType: 'json',
             method: 'POST',
             cache: false,
-            headers: {'X-Custom-ssid': ssid, 'X-Custom-pwd': password},
+            headers: req_connect_header,
             data: {'timestamp': Date.now()},
             success: function (data, text) {
                 connectionState = CONNECTION_STATE.CONNECTING;
@@ -481,7 +511,7 @@ function refreshAPHTML(data) {
 
 function checkStatus() {
     $.getJSON("/status.json", function (data) {
-        if (data.hasOwnProperty('ssid') && data['ssid'] !== "") {
+        if (data.hasOwnProperty('ssid') && !!data['ssid'] && data['ssid'] !== "") {
             if (data["ssid"] === selectedSSID) {
                 //that's a connection attempt
                 if (data["urc"] === URC_CODE.CONNECTED) {
@@ -535,25 +565,52 @@ function checkStatus() {
                         $("#ip").text(data["ip"]);
                         $("#netmask").text(data["netmask"]);
                         $("#gw").text(data["gw"]);
+                        $("#connected-eth").hide()
+                        $("#connected-wifi").show()
                         change_url('wifi-connected');
                         connectionDetailsUpdate();
-                        connectionState = CONNECTION_STATE.CONNECTED;
                         break;
                     case CONNECTION_STATE.CONNECTING:
+                        $("#eth-overlay-connecting").hide();
+                        $("#eth-overlay-connection-successful").show();
                         break;
                     case CONNECTION_STATE.CONNECTED:
                         break;
                     case CONNECTION_STATE.FAILED:
                         break;
                 }
+                connectionState = CONNECTION_STATE.CONNECTED;
             }
-        } else if (data.hasOwnProperty('urc') && data['urc'] === URC_CODE.DISCONNECTED) {
-            //that's a manual disconnect
-            // TODO: implement
-            // if($("#wifi-status").is(":visible"))
-            // {
-            // 	$("#wifi-status").slideUp( "fast", function() {});
-            // }
+        } else if (data.hasOwnProperty('urc')) {
+            if (data["urc"] === URC_CODE.CONNECTED) {
+                // connected to Ethernet
+                $("#ip").text(data["ip"]);
+                $("#netmask").text(data["netmask"]);
+                $("#gw").text(data["gw"]);
+
+                switch (connectionState) {
+                    case CONNECTION_STATE.NOT_CONNECTED:
+                        break;
+                    case CONNECTION_STATE.CONNECTING:
+                        $("#eth-overlay-connecting").hide();
+                        $("#eth-overlay-connection-successful").show();
+                        break;
+                    case CONNECTION_STATE.CONNECTED:
+                        break;
+                    case CONNECTION_STATE.FAILED:
+                        break;
+                }
+                connectionState = CONNECTION_STATE.CONNECTED
+                connectionDetailsUpdate();
+            }
+            else if (data["urc"] === URC_CODE.DISCONNECTED) {
+                //that's a manual disconnect
+                // TODO: implement
+                // if($("#wifi-status").is(":visible"))
+                // {
+                // 	$("#wifi-status").slideUp( "fast", function() {});
+                // }
+            }
         }
     })
         .fail(function () {
