@@ -610,18 +610,23 @@
                     "<span class="wifi-network-name"></span>".
                 </p>
                 <p class="connect-cable hidden">
-                    <span lang="en">Connected to internet via Ethernet</span>
-                    <span lang="fi">Yhdistetty internetiin Ethernet-yhteydellä</span>
+                    <span lang="en">Connected to Ethernet</span>
+                    <span lang="fi">Yhdistetty Ethernetiin</span>
                 </p>
-
             </div>
         </section>
 
         <section id="wifi-connected" class="section hidden">
             <div class="container">
                 <h1>
-                    <span lang="en">Connected to Wi-Fi: "<span class="wifi-network-name"></span>"</span>
-                    <span lang="fi">Yhdistetty WLAN-verkkoon: "<span class="wifi-network-name"></span>"</span>
+                    <div id="connected-wifi">
+                        <span lang="en">Connected to Wi-Fi: "<span class="wifi-network-name"></span>"</span>
+                        <span lang="fi">Yhdistetty WLAN-verkkoon: "<span class="wifi-network-name"></span>"</span>
+                    </div>
+                    <div id="connected-eth" class="hidden">
+                        <span lang="en">Connected to Ethernet</span>
+                        <span lang="fi">Yhdistetty Ethernetiin</span>
+                    </div>
                 </h1>
                 <h2>
                     <span lang="en">Ruuvi Gateway is now ready to be used.</span>
@@ -796,6 +801,7 @@
                     </button>
                 </div>
             </div>
+
             <div class="overlay hidden" id="wifi-overlay-connection-successful">
                 <h2>
                     <span lang="en">Successfully connected to "<span class="wifi-network-name"></span>"</span>
@@ -806,6 +812,7 @@
                     <span lang="fi">OK</span>
                 </button>
             </div>
+
             <div class="overlay hidden" id="wifi-overlay-connection-failed">
                 <h2>
                     <span lang="en">Failed to connected to "<span class="wifi-network-name"></span>"</span>
@@ -818,6 +825,44 @@
                 </button>
             </div>
         </div>
+
+        <!-- WAITING ETHERNET CONNECTION -->
+        <div class="overlay hidden" id="eth-overlay-connecting">
+            <h2>
+                <span lang="en">Please connect Ethernet cable to the Ruuvi Gateway</span>
+                <span lang="fi">Liitä Ethernet-kaapeli Ruuvi Gateway</span>
+            </h2>
+            <div class="spinner">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                     style="margin: auto; display: block;" width="88px" height="88px" viewBox="0 0 100 100"
+                     preserveAspectRatio="xMidYMid">
+                    <path d="M8 50A42 42 0 0 0 92 50A42 48.5 0 0 1 8 50" fill="#59bcb1" stroke="none"
+                          transform="rotate(107.349 50 53.25)">
+                        <animateTransform attributeName="transform" type="rotate" dur="0.8620689655172413s"
+                                          repeatCount="indefinite" keyTimes="0;1"
+                                          values="0 50 53.25;360 50 53.25"></animateTransform>
+                    </path>
+                </svg>
+            </div>
+            <div class="connect-buttons">
+                <button class="btn btn-cancel" type="button" id="eth-overlay-connecting-button-cancel">
+                    <span lang="en">Cancel</span>
+                    <span lang="fi">Peruuta</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="overlay hidden" id="eth-overlay-connection-successful">
+            <h2>
+                <span lang="en">Successfully connected via Ethernet</span>
+                <span lang="fi">Yhdistäminen onnistui Ethernet-yhteyden kautta</span>
+            </h2>
+            <button class="btn btn-ok" id="eth-overlay-connection-successful-button-ok" type="button">
+                <span lang="en">OK</span>
+                <span lang="fi">OK</span>
+            </button>
+        </div>
+
     </div>
 </div>
 
