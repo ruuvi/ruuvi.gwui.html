@@ -47,11 +47,11 @@
 #wifi-overlay-button-connect {
     float: right;
 }
-#button-disconnect-wifi-yes {
+#button-disconnect-network-yes {
     display: inline-block;
     margin-left: 20px;
 }
-#button-disconnect-wifi-no {
+#button-disconnect-network-no {
     display: inline-block;
 }
 .ctr {
@@ -59,9 +59,6 @@
 }
 .tctr {
     text-align: center;
-}
-#connect-details {
-    display: none;
 }
 .fr {
     float: right;

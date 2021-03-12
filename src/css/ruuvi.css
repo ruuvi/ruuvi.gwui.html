@@ -347,19 +347,9 @@ hr {
   text-align: center;
 }
 
-#button-toggle-network-info-show {
-  width: 100%;
-  text-align: center;
-}
-
-#button-toggle-network-info-hide {
-  width: 100%;
-  text-align: center;
-}
-
 #connect-details {
   width: 100%;
-  text-align: center;
+  text-align: left;
 }
 
 .connect-details-col1 {
@@ -367,7 +357,7 @@ hr {
 }
 
 .connect-details-col2 {
-  text-align: right;
+  text-align: left;
 }
 
 .selected {
