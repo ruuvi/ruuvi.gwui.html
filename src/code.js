@@ -108,6 +108,49 @@ $(document).ready(function () {
     // Set initial hash to help back button navigation
     window.location.hash = 'welcome';
 
+    $('.btn-back').click(function (e) {
+        e.preventDefault();
+        window.history.back();
+    });
+
+    $('#page-welcome-button-get-started').click(function (e) {
+        e.preventDefault();
+        change_url('settings');
+    });
+
+    $('#page-settings-button-continue').click(function(e) {
+        e.preventDefault();
+        let connection_type = $("input[name='connection_type']:checked").val();
+        if (connection_type === 'ruuvi')
+            change_url('connection_type');
+        else
+            change_url('settings_custom');
+    });
+
+    $('#page-settings_custom-button-continue').click(function (e) {
+        e.preventDefault();
+        change_url('settings_scan');
+    });
+
+    $('#page-settings_scan-button-continue').click(function (e) {
+        e.preventDefault();
+        change_url('connection_type');
+    });
+
+    $('#page-connection_type-button-continue').click(function (e) {
+        e.preventDefault();
+        let network_type = $("input[name='network_type']:checked").val();
+        if (network_type === 'wifi')
+            change_url('wifi_list');
+        else
+            change_url('cable_settings');
+    });
+
+    $('#page-cable_settings-button-continue').click(function (e) {
+        e.preventDefault();
+        saveConfigAndPerformConnect(null, null);
+    });
+
     // Language switcher
     $(".lang_select").change(function () {
         const lang = $(this).val();
@@ -127,7 +170,7 @@ $(document).ready(function () {
         on_custom_connection_type_changed();
     });
 
-    $('#settings-custom').bind('onShow', function () {
+    $('#settings_custom').bind('onShow', function () {
         on_custom_connection_type_changed();
     });
 
@@ -155,50 +198,13 @@ $(document).ready(function () {
     $('#mqtt_prefix_custom').on("input", function () {
         on_edit_mqtt_settings();
     });
+
     $('#show_mqtt_examples').change(function () {
         if (this.checked) {
             $('#mqtt_examples').slideDown();
         } else {
             $('#mqtt_examples').slideUp();
         }
-    });
-
-    $('.btn-navi').click(function (e) {
-        e.preventDefault();
-
-        let target_hash = $(this).data('target');
-
-        switch (target_hash) {
-            case 'back':
-                window.history.back();
-                break;
-
-            case 'settings-custom':
-                let connection_type = $("input[name='connection_type']:checked").val();
-                if (connection_type === 'ruuvi')
-                    change_url('wifi');
-                else
-                    change_url('settings-custom');
-                break;
-
-            case 'connect':
-                let network_type = $("input[name='network_type']:checked").val();
-                if (network_type === 'wifi')
-                    change_url('wifi-list');
-                else
-                    change_url('cable-settings');
-                break;
-
-            case 'confirm':
-                save_config();
-                performConnect(null, null);
-                break;
-
-            default:
-                change_url(target_hash);
-                break;
-        }
-
     });
 
     $('#wifi-overlay-show-password').click(function (e) {
@@ -230,7 +236,7 @@ $(document).ready(function () {
             data: {'timestamp': Date.now()}
         });
         startCheckStatusInterval();
-        change_url('wifi');
+        change_url('connection_type');
     });
 
     $("#eth-overlay-connecting-button-cancel").click(function () {
@@ -244,20 +250,19 @@ $(document).ready(function () {
             data: {'timestamp': Date.now()}
         });
         startCheckStatusInterval();
-        change_url('wifi');
+        change_url('connection_type');
     });
 
     $("#wifi-overlay-button-connect").click(function () {
         let ssid = $('#manual_ssid').val();
         let password = $("#pwd").val();
-        performConnect(ssid, password);
+        saveConfigAndPerformConnect(ssid, password);
     });
 
     $("#wifi-overlay-connection-successful-button-ok").click(function () {
         $("#wifi-overlay-connection-successful").hide();
         $('#wifi-overlay').fadeOut();
         change_url_network_connected_wifi();
-        save_config();
     })
 
     $("#wifi-overlay-connection-failed-button-ok").click(function () {
@@ -305,9 +310,8 @@ $(document).ready(function () {
         window.history.back();
         window.history.replaceState(null, "", "#wifi");
         window.history.back();
-        change_url('wifi');
+        change_url('connection_type');
     });
-
 
     //first time the page loads: attempt get the connection status and start the wifi scan
     refreshAP();
@@ -382,7 +386,7 @@ function initWifiList() {
         $(".wifi-network-name").text(ssid);
         showWiFiOverlay(ssid, isAuthNeeded);
         if (!isAuthNeeded) {
-            performConnect(ssid, null);
+            saveConfigAndPerformConnect(ssid, null);
         }
     });
 }
@@ -432,6 +436,10 @@ function performConnect(ssid, password) {
     startRefreshAPInterval();
 }
 
+function saveConfigAndPerformConnect(ssid, password) {
+    save_config();
+    performConnect(ssid, password);
+}
 
 function rssiToIcon(rssi) {
     if (rssi >= -60) {
