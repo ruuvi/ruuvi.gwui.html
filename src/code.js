@@ -16,7 +16,6 @@ var apList = null;
 let selectedSSID = "";
 var refreshAPInterval = null;
 var checkStatusInterval = null;
-let flagShowNetworkInfo = false;
 
 const CONNECTION_STATE = {
     NOT_CONNECTED: "NOT_CONNECTED",
@@ -68,30 +67,6 @@ window.addEventListener('popstate', function (event) {
 
 }, false);
 
-function connectionDetailsUpdate() {
-    if (flagShowNetworkInfo) {
-        $("#button-toggle-network-info-show").hide();
-        $("#button-toggle-network-info-hide").show();
-    } else {
-        $("#button-toggle-network-info-hide").hide();
-        $("#button-toggle-network-info-show").show();
-    }
-}
-
-function connectionDetailsShow() {
-    flagShowNetworkInfo = true;
-    $("#connect-details").slideDown("fast", function () {
-    });
-    connectionDetailsUpdate();
-}
-
-function connectionDetailsHide() {
-    flagShowNetworkInfo = false;
-    $("#connect-details").slideUp("fast", function () {
-    });
-    connectionDetailsUpdate();
-}
-
 // Navigation
 function change_url(url) {
     $('section.section').hide();
@@ -99,6 +74,18 @@ function change_url(url) {
         $(this).trigger('onShow');
     });
     window.location.hash = url;
+}
+
+function change_url_network_connected_wifi(url) {
+    $("#connected-eth").hide()
+    $("#connected-wifi").show()
+    change_url('network-connected');
+}
+
+function change_url_network_connected_eth(url) {
+    $("#connected-wifi").hide()
+    $("#connected-eth").show()
+    change_url('network-connected');
 }
 
 function on_custom_connection_type_changed() {
@@ -243,8 +230,7 @@ $(document).ready(function () {
             data: {'timestamp': Date.now()}
         });
         startCheckStatusInterval();
-        connectionDetailsHide();
-        change_url('wifi-list');
+        change_url('wifi');
     });
 
     $("#eth-overlay-connecting-button-cancel").click(function () {
@@ -258,7 +244,6 @@ $(document).ready(function () {
             data: {'timestamp': Date.now()}
         });
         startCheckStatusInterval();
-        connectionDetailsHide();
         change_url('wifi');
     });
 
@@ -271,9 +256,7 @@ $(document).ready(function () {
     $("#wifi-overlay-connection-successful-button-ok").click(function () {
         $("#wifi-overlay-connection-successful").hide();
         $('#wifi-overlay').fadeOut();
-        $("#connected-eth").hide()
-        $("#connected-wifi").show()
-        change_url('network-connected');
+        change_url_network_connected_wifi();
         save_config();
     })
 
@@ -284,42 +267,31 @@ $(document).ready(function () {
 
     $("#eth-overlay-connection-successful-button-ok").click(function () {
         $("#eth-overlay-connection-successful").hide();
-        $("#connected-wifi").hide()
-        $("#connected-eth").show()
-        change_url('network-connected');
+        change_url_network_connected_eth();
     })
-
-    $("#button-toggle-network-info-show").on("click", function (e) {
-        e.preventDefault();
-        connectionDetailsShow();
-    });
-    $("#button-toggle-network-info-hide").on("click", function (e) {
-        e.preventDefault();
-        connectionDetailsHide();
-    });
 
     $("#button-disconnect-wifi").on("click", function (e) {
         e.preventDefault();
-        $("#connect-details-wrap").addClass('blur');
+        $("#connect-connected-wrap").addClass('blur');
         $("#diag-disconnect").slideDown("fast", function () {
         });
     });
 
-    $("#button-disconnect-wifi-no").on("click", function (e) {
+    $("#button-disconnect-network-no").on("click", function (e) {
         e.preventDefault();
         $("#diag-disconnect").slideUp("fast", function () {
         });
-        $("#connect-details-wrap").removeClass('blur');
+        $("#connect-connected-wrap").removeClass('blur');
     });
 
-    $("#button-disconnect-wifi-yes").on("click", function (e) {
+    $("#button-disconnect-network-yes").on("click", function (e) {
         e.preventDefault();
         stopCheckStatusInterval();
         selectedSSID = "";
 
         $("#diag-disconnect").slideUp("fast", function () {
         });
-        $("#connect-details-wrap").removeClass('blur');
+        $("#connect-connected-wrap").removeClass('blur');
 
         $.ajax({
             url: '/connect.json',
@@ -329,10 +301,11 @@ $(document).ready(function () {
             data: {'timestamp': Date.now()}
         });
         startCheckStatusInterval();
-        connectionDetailsHide();
-        window.history.replaceState(null, "", "#wifi-list");
+        window.history.replaceState(null, "", "#wifi");
         window.history.back();
-        change_url('wifi-list');
+        window.history.replaceState(null, "", "#wifi");
+        window.history.back();
+        change_url('wifi');
     });
 
 
@@ -530,7 +503,6 @@ function checkStatus() {
                             break;
                     }
                     connectionState = CONNECTION_STATE.CONNECTED
-                    connectionDetailsUpdate();
                 } else if (data["urc"] === URC_CODE.FAILED) {
                     //failed attempt
                     $("#connect-details h1").text('');
@@ -552,20 +524,18 @@ function checkStatus() {
                             break;
                     }
                     connectionState = CONNECTION_STATE.FAILED
-                    connectionDetailsUpdate();
                 }
             } else if (data.hasOwnProperty('urc') && data['urc'] === URC_CODE.CONNECTED) {
                 //ESP32 is already connected to a wifi without having the user do anything
+                $(".wifi-network-name").text(data["ssid"]);
+                $("#ip").text(data["ip"]);
+                $("#netmask").text(data["netmask"]);
+                $("#gw").text(data["gw"]);
+                if (!$('#network-connected').is(':visible')) {
+                    change_url_network_connected_wifi();
+                }
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
-                        $(".wifi-network-name").text(data["ssid"]);
-                        $("#ip").text(data["ip"]);
-                        $("#netmask").text(data["netmask"]);
-                        $("#gw").text(data["gw"]);
-                        $("#connected-eth").hide()
-                        $("#connected-wifi").show()
-                        change_url('network-connected');
-                        connectionDetailsUpdate();
                         break;
                     case CONNECTION_STATE.CONNECTING:
                         $("#eth-overlay-connecting").hide();
@@ -581,9 +551,13 @@ function checkStatus() {
         } else if (data.hasOwnProperty('urc')) {
             if (data["urc"] === URC_CODE.CONNECTED) {
                 // connected to Ethernet
+                $(".wifi-network-name").text("");
                 $("#ip").text(data["ip"]);
                 $("#netmask").text(data["netmask"]);
                 $("#gw").text(data["gw"]);
+                if (!$('#network-connected').is(':visible')) {
+                    change_url_network_connected_eth();
+                }
 
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
@@ -598,7 +572,6 @@ function checkStatus() {
                         break;
                 }
                 connectionState = CONNECTION_STATE.CONNECTED
-                connectionDetailsUpdate();
             }
             else if (data["urc"] === URC_CODE.DISCONNECTED) {
                 //that's a manual disconnect
