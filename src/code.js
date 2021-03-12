@@ -166,6 +166,20 @@ $(document).ready(function () {
         })
     });
 
+    $('#cable_settings').bind('onShow', function () {
+        if (!$('#eth_dhcp')[0].checked) {
+            $('#page-cable_settings-section-manual_settings').slideDown();
+        }
+    });
+
+    $('#eth_dhcp').change(function (e) {
+        if ($('#eth_dhcp')[0].checked) {
+            $('#page-cable_settings-section-manual_settings').slideUp();
+        } else {
+            $('#page-cable_settings-section-manual_settings').slideDown();
+        }
+    });
+
     $("input[name='custom_connection']").change(function (e) {
         on_custom_connection_type_changed();
     });
