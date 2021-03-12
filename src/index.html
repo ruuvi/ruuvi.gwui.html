@@ -32,8 +32,6 @@
         <!-- WELCOME INTO -->
         <section id="welcome" class="section page-content">
             <div class="container">
-
-
                 <h1>
                     <span lang="en">Ruuvi Gateway configuration wizard</span>
                     <span lang="fi">Ruuvi Gatewayn määritystoiminto</span>
@@ -42,7 +40,6 @@
                 <div class="" style="padding:50px;color:#999;border:1px dashed #ccc;margin:30px 0 0">An informative and
                     cool looking animation
                 </div>
-
 
                 <div class="ingress ingress-welcome">
                     <p lang="en">Setting up your Ruuvi Gateway is easy. You just need to follow a few simple steps and
@@ -59,7 +56,6 @@
                     </p>
                 </div>
 
-
                 <h2>Select your language</h2>
 
                 <label class="control control-radio">
@@ -73,14 +69,12 @@
                     <span class="control_indicator"></span>
                 </label>
 
-
                 <div class="button-container">
-                    <a href="" class="btn btn-navi" data-target="settings" id="get-started">
+                    <a href="" id="page-welcome-button-get-started" class="btn">
                         <span lang="en">Let's get started</span>
                         <span lang="fi">Selvä! Aloitetaan.</span>
                     </a>
                 </div>
-
             </div>
         </section>
 
@@ -88,8 +82,6 @@
         <!-- SERVER SETTINGS -->
         <section id="settings" class="section page-content hidden">
             <div class="container">
-
-
                 <h1>
                     <span lang="en">Server settings</span>
                     <span lang="fi">Palvelinasetukset</span>
@@ -104,7 +96,6 @@
                 </div>
 
                 <span id="ssid-pwd"></span>
-
 
                 <div class="" id="conf-ruuvi">
                     <label class="control control-radio ">
@@ -124,24 +115,21 @@
                 </div>
 
                 <div class="button-container">
-                    <a href="" class="btn btn-back btn-navi" data-target="back">
+                    <a href="" id="page-settings-button-back" class="btn btn-back">
                         <span lang="en">Go Back</span>
                         <span lang="fi">Takaisin</span>
                     </a>
-                    <a href="" class="btn btn-navi" data-target="settings-custom">
+                    <a href="" id="page-settings-button-continue" class="btn">
                         <span lang="en">Continue</span>
                         <span lang="fi">Jatka</span>
-
                     </a>
                 </div>
-
-
             </div>
         </section>
 
 
         <!-- CUSTOM SERVER SETTINGS -->
-        <section id="settings-custom" class="section page-content hidden">
+        <section id="settings_custom" class="section page-content hidden">
             <div class="container">
                 <h1>
                     <span lang="en">Custom Server Settings</span>
@@ -353,11 +341,11 @@
                 </div>
 
                 <div class="button-container">
-                    <a href="" class="btn btn-back btn-navi" data-target="back">
+                    <a href="" id="page-settings_custom-button-back" class="btn btn-back">
                         <span lang="en">Go Back</span>
                         <span lang="fi">Takaisin</span>
                     </a>
-                    <a href="" class="btn btn-navi" data-target="settings-scan">
+                    <a href="" id="page-settings_custom-button-continue" class="btn">
                         <span lang="en">Continue</span>
                         <span lang="fi">Jatka</span>
 
@@ -368,7 +356,7 @@
 
 
         <!-- DEVICE FILTERING -->
-        <section id="settings-scan" class="section page-content hidden">
+        <section id="settings_scan" class="section page-content hidden">
             <div class="container">
 
                 <h1>
@@ -401,12 +389,12 @@
                 </div>
 
                 <div class="button-container">
-                    <a href="" class="btn btn-back btn-navi" data-target="back">
+                    <a href="" id="page-settings_scan-button-back" class="btn btn-back">
                         <span lang="en">Go Back</span>
                         <span lang="fi">Takaisin</span>
                     </a>
 
-                    <a href="" class="btn btn-navi" data-target="wifi">
+                    <a href="" id="page-settings_scan-button-continue" class="btn">
                         <span lang="en">Continue</span>
                         <span lang="fi">Jatka</span>
                     </a>
@@ -416,9 +404,8 @@
 
 
         <!-- CONNECTION TYPE -->
-        <section id="wifi" class="section hidden">
+        <section id="connection_type" class="section hidden">
             <div class="container">
-
                 <h1>
                     <span lang="en">Internet connection</span>
                     <span lang="fi">Internet-yhteys</span>
@@ -430,7 +417,6 @@
                     <p lang="fi">Ruuvi Gateway käyttää internet-yhteyttä kerättyjen tietojen välittämiseen. Voit
                         yhdistää internetiin joko WLAN-yhteyden tai Ethernet-kaapelin (RJ-45) avulla.</p>
                 </div>
-
 
                 <div class="control-group">
                     <label class="control control-radio">
@@ -448,24 +434,21 @@
                     </label>
                 </div>
 
-
                 <div class="button-container">
-                    <a href="" class="btn btn-back btn-navi" data-target="back">
+                    <a href="" id="page-connection_type-button-back" class="btn btn-back">
                         <span lang="en">Go Back</span>
                         <span lang="fi">Takaisin</span>
                     </a>
-                    <a href="" class="btn btn-navi" data-target="connect">
+                    <a href="" id="page-connection_type-button-continue" class="btn">
                         <span lang="en">Continue</span>
                         <span lang="fi">Jatka</span>
                     </a>
                 </div>
-
-
             </div>
         </section>
 
 
-        <section id="cable-settings" class="section hidden">
+        <section id="cable_settings" class="section hidden">
             <div class="container">
                 <h1>
                     <span lang="en">Ethernet settings</span>
@@ -478,7 +461,6 @@
                     <p lang="fi">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repudiandae ratione veritatis
                         quos libero expedita, officiis nesciunt?</p>
                 </div>
-
 
                 <div class="conf-settings-item conf-settings-ethernet">
 
@@ -528,23 +510,21 @@
                     </p>
                 </div>
 
-
                 <div class="button-container">
-                    <a href="" class="btn btn-back btn-navi" data-target="back">
+                    <a href="" id="page-cable_settings-button-back" class="btn btn-back">
                         <span lang="en">Go Back</span>
                         <span lang="fi">Takaisin</span>
                     </a>
-                    <a href="" class="btn btn-navi" data-target="confirm" id="">
+                    <a href="" id="page-cable_settings-button-continue" class="btn">
                         <span lang="en">Continue</span>
                         <span lang="fi">Jatka</span>
                     </a>
                 </div>
-
             </div>
         </section>
 
         <!-- WIFI LIST -->
-        <section id="wifi-list" class="section hidden">
+        <section id="wifi_list" class="section hidden">
             <div class="container">
 
                 <h1>
@@ -560,7 +540,7 @@
                         määrittämääsi palvelinosoitteeseen verkkoyhteyden muodostamisen jälkeen.</p>
                 </div>
 
-                <ul class="wifi-list" id="ssid-list">
+                <ul id="ssid-list" class="wifi-list">
                     <li><a href="">Upstairs</a></li>
                     <li><a href="" class="w1">Beer club</a></li>
                     <li><a href="" class="w2">FBI network</a></li>
@@ -579,12 +559,11 @@
                 </p>
 
                 <div class="button-container">
-                    <a href="" class="btn btn-back btn-navi" data-target="back">
+                    <a href="" class="btn btn-back">
                         <span lang="en">Go Back</span>
                         <span lang="fi">Takaisin</span>
                     </a>
                 </div>
-
 
             </div>
         </section>
