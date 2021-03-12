@@ -426,7 +426,13 @@ function performConnect(ssid, password) {
                 connectionState = CONNECTION_STATE.CONNECTING;
             },
             error: function (request, status, error) {
-                alert('HTTP error: ' + status + '\n' + 'Status: ' + request.status + '(' + request.statusText + ')\n' + request.responseText);
+                if (ssid) {
+                    $("#wifi-overlay-connecting").hide();
+                } else {
+                    $("#eth-overlay-connecting").hide();
+                }
+                $('#wifi-overlay-connection-failed-description').text('HTTP error: ' + status + ', ' + 'Status: ' + request.status + '(' + request.statusText + ')' + ', ' + request.responseText);
+                $("#wifi-overlay-connection-failed").show();
             }
         }
     );
