@@ -259,20 +259,9 @@ $(document).ready(function () {
         saveConfigAndPerformConnect(ssid, password);
     });
 
-    $("#wifi-overlay-connection-successful-button-ok").click(function () {
-        $("#wifi-overlay-connection-successful").hide();
-        $('#wifi-overlay').fadeOut();
-        change_url_network_connected_wifi();
-    })
-
     $("#wifi-overlay-connection-failed-button-ok").click(function () {
         $("#wifi-overlay-connection-failed").hide();
         $('#wifi-overlay').fadeOut();
-    })
-
-    $("#eth-overlay-connection-successful-button-ok").click(function () {
-        $("#eth-overlay-connection-successful").hide();
-        change_url_network_connected_eth();
     })
 
     $("#button-disconnect-wifi").on("click", function (e) {
@@ -360,7 +349,6 @@ function showWiFiOverlay(ssid, isAuthNeeded) {
     }
 
     $("#wifi-overlay-connecting").hide();
-    $("#wifi-overlay-connection-successful").hide();
     $("#wifi-overlay-connection-failed").hide();
 
     $('#wifi-overlay').fadeIn();
@@ -508,8 +496,8 @@ function checkStatus() {
                             break;
                         case CONNECTION_STATE.CONNECTING:
                             $("#wifi-overlay-connecting").hide();
-                            $("#wifi-overlay-connection-successful").show();
-                            $("#wifi-overlay-connection-failed").hide();
+                            $('#wifi-overlay').fadeOut();
+                            change_url_network_connected_wifi();
                             break;
                         case CONNECTION_STATE.CONNECTED:
                             break;
@@ -529,7 +517,6 @@ function checkStatus() {
                             break;
                         case CONNECTION_STATE.CONNECTING:
                             $("#wifi-overlay-connecting").hide();
-                            $("#wifi-overlay-connection-successful").hide();
                             $("#wifi-overlay-connection-failed").show();
                             break;
                         case CONNECTION_STATE.CONNECTED:
@@ -553,7 +540,7 @@ function checkStatus() {
                         break;
                     case CONNECTION_STATE.CONNECTING:
                         $("#eth-overlay-connecting").hide();
-                        $("#eth-overlay-connection-successful").show();
+                        change_url_network_connected_eth();
                         break;
                     case CONNECTION_STATE.CONNECTED:
                         break;
@@ -578,7 +565,7 @@ function checkStatus() {
                         break;
                     case CONNECTION_STATE.CONNECTING:
                         $("#eth-overlay-connecting").hide();
-                        $("#eth-overlay-connection-successful").show();
+                        change_url_network_connected_eth();
                         break;
                     case CONNECTION_STATE.CONNECTED:
                         break;
