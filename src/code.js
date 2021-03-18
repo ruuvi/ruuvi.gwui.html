@@ -309,9 +309,9 @@ $(document).ready(function () {
             data: {'timestamp': Date.now()}
         });
         startCheckStatusInterval();
-        window.history.replaceState(null, "", "#wifi");
+        window.history.replaceState(null, "", "#connection_type");
         window.history.back();
-        window.history.replaceState(null, "", "#wifi");
+        window.history.replaceState(null, "", "#connection_type");
         window.history.back();
         change_url('connection_type');
     });
