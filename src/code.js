@@ -278,7 +278,7 @@ $(document).ready(function () {
         $('#wifi-overlay').fadeOut();
     })
 
-    $("#button-disconnect-wifi").on("click", function (e) {
+    $("#button-disconnect-network").on("click", function (e) {
         e.preventDefault();
         $("#connect-connected-wrap").addClass('blur');
         $("#diag-disconnect").slideDown("fast", function () {
