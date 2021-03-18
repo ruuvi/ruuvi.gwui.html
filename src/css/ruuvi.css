@@ -297,7 +297,7 @@ hr {
   font-weight: normal;
 }
 
-.btn-wifi {
+.btn-network {
   background-color: #50AA9D;
   width: 100%;
   padding-top: 10px;
@@ -342,7 +342,7 @@ hr {
     width: 300px;
 }
 
-#button-disconnect-wifi {
+#button-disconnect-network {
   width: 100%;
   text-align: center;
 }
