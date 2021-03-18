@@ -80,12 +80,16 @@ function change_url_network_connected_wifi(url) {
     $("#connected-eth").hide()
     $("#connected-wifi").show()
     change_url('network-connected');
+    stopCheckStatusInterval();
+    stopRefreshAPInterval();
 }
 
 function change_url_network_connected_eth(url) {
     $("#connected-wifi").hide()
     $("#connected-eth").show()
     change_url('network-connected');
+    stopCheckStatusInterval();
+    stopRefreshAPInterval();
 }
 
 function on_custom_connection_type_changed() {
