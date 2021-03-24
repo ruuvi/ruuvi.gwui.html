@@ -59,7 +59,7 @@ function save_config() {
     data.http_user = $("#http_user").val();
     data.http_pass = $("#http_pass").val();
 
-    data.use_filtering = !!$("input[name='filtering']:checked").val();
+    data.use_filtering = ($("input[name='filtering']:checked").val() === "1");
 
     //data.coordinates = $("#coordinates").val();  // Removed from v1
 
