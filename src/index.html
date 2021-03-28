@@ -361,7 +361,7 @@
 
                 <h1>
                     <span lang="en">Which devices to scan</span>
-                    <span lang="fi">Kuunneltavat laitteet</span>
+                    <span lang="fi">Valitse skannattavat laitteet</span>
                 </h1>
 
                 <div class="ingress">
@@ -374,18 +374,73 @@
                 <div id="conf-scan" class="conf-settings">
                     <label class="control control-radio">
                         <span lang="en">Ruuvi sensors only</span>
-                        <span lang="fi">Vain Ruuvi-anturit</span>
+                        <span lang="fi">Vain Ruuvi anturit</span>
                         <input type="radio" name="filtering" value="1" checked="checked"
                                placeholder="Scan only Ruuvitags">
                         <span class="control_indicator"></span>
                     </label>
 
+                    <div id="page-settings_scan-section-ruuvi_sensors_only-scanning_options" class="page-settings_scan-section-scanning_options" hidden>
+                        <p>
+                            <input id="use_experimental_long_range_sensors" type="checkbox">
+                            <label for="use_experimental_long_range_sensors">
+                                <span lang="en">Include experimental BLE 5.0 long range sensors</span>
+                                <span lang="fi">Skannaa myös kokeellisia BLE 5.0 pitkän kantomatkan antureita</span>
+                            </label>
+                        </p>
+                    </div>
+
                     <label class="control control-radio">
                         <span lang="en">All nearby Bluetooth beacons <small>(for advanced users)</small></span>
-                        <span lang="fi">Kaikki lähellä olevat Bluetooth-anturit <small>(tehokäyttäjille)</small></span>
+                        <span lang="fi">Kaikki lähistön Bluetooth-majakat <small>(edistyneille käyttäjille)</small></span>
                         <input type="radio" name="filtering" value="0" placeholder="Scan all beacons">
                         <span class="control_indicator"></span>
                     </label>
+
+                    <div id="page-settings_scan-section-all_nearby_beacons-scanning_options" class="page-settings_scan-section-scanning_options" hidden>
+                        <p>
+                            <input id="use_coded_phy" type="checkbox">
+                            <label for="use_coded_phy">
+                                <span lang="en">Use coded PHY</span>
+                                <span lang="fi">Skannaa virheenkorjattuja lähetyksiä</span>
+                            </label>
+                        </p>
+                        <p>
+                            <input id="use_1mbit_phy" type="checkbox">
+                            <label for="use_1mbit_phy">
+                                <span lang="en">Use 1 MBit PHY</span>
+                                <span lang="fi">Skannaa 1 MBit lähetyksiä</span>
+                            </label>
+                        </p>
+                        <p>
+                            <input id="use_extended_payload" type="checkbox">
+                            <label for="use_extended_payload">
+                                <span lang="en">Use extended payload</span>
+                                <span lang="fi">Skannaa pidennettyjä lähetyksiä</span>
+                            </label>
+                        </p>
+                        <p>
+                            <input id="use_channel_37" type="checkbox">
+                            <label for="use_channel_37">
+                                <span lang="en">Use channel 37</span>
+                                <span lang="fi">Skannaa kanavaa 37</span>
+                            </label>
+                        </p>
+                        <p>
+                            <input id="use_channel_38" type="checkbox">
+                            <label for="use_channel_38">
+                                <span lang="en">Use channel 38</span>
+                                <span lang="fi">Skannaa kanavaa 38</span>
+                            </label>
+                        </p>
+                        <p>
+                            <input id="use_channel_39" type="checkbox">
+                            <label for="use_channel_39">
+                                <span lang="en">Use channel 39</span>
+                                <span lang="fi">Skannaa kanavaa 39</span>
+                            </label>
+                        </p>
+                    </div>
                 </div>
 
                 <div class="button-container">

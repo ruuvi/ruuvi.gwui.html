@@ -108,6 +108,27 @@ function on_custom_connection_type_changed() {
     }
 }
 
+function on_settings_scan_filtering_changed() {
+    if ($('#use_coded_phy')[0].checked) {
+        $('#use_experimental_long_range_sensors').prop('checked', true);
+    } else {
+        $('#use_experimental_long_range_sensors').prop('checked', false);
+    }
+    if (!($("input[name='filtering']:checked").val() === "1")) {
+        $('#page-settings_scan-section-ruuvi_sensors_only-scanning_options').slideUp();
+        $('#page-settings_scan-section-all_nearby_beacons-scanning_options').slideDown();
+    } else {
+        $('#page-settings_scan-section-all_nearby_beacons-scanning_options').slideUp();
+        $('#page-settings_scan-section-ruuvi_sensors_only-scanning_options').slideDown();
+        // set default values
+        $("#use_1mbit_phy")[0].checked = true;
+        $("#use_extended_payload")[0].checked = true;
+        $("#use_channel_37")[0].checked = true;
+        $("#use_channel_38")[0].checked = true;
+        $("#use_channel_39")[0].checked = true;
+    }
+}
+
 $(document).ready(function () {
     // Set initial hash to help back button navigation
     window.location.hash = 'welcome';
@@ -168,6 +189,30 @@ $(document).ready(function () {
             else if (lang === 'fi')
                 $('input#pwd').attr('placeholder', "Salasana");
         })
+    });
+
+    $('#settings_scan').bind('onShow', function () {
+        on_settings_scan_filtering_changed();
+    });
+
+    $("input[name='filtering']").change(function (e) {
+        on_settings_scan_filtering_changed();
+    });
+
+    $('#use_experimental_long_range_sensors').change(function (e) {
+        if ($('#use_experimental_long_range_sensors')[0].checked) {
+            $('#use_coded_phy').prop('checked', true);
+        } else {
+            $('#use_coded_phy').prop('checked', false);
+        }
+    });
+
+    $('#use_coded_phy').change(function (e) {
+        if ($('#use_coded_phy')[0].checked) {
+            $('#use_experimental_long_range_sensors').prop('checked', true);
+        } else {
+            $('#use_experimental_long_range_sensors').prop('checked', false);
+        }
     });
 
     $('#cable_settings').bind('onShow', function () {

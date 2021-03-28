@@ -63,6 +63,13 @@ function save_config() {
 
     //data.coordinates = $("#coordinates").val();  // Removed from v1
 
+    data.use_coded_phy = $("#use_coded_phy")[0].checked;
+    data.use_1mbit_phy = $("#use_1mbit_phy")[0].checked;
+    data.use_extended_payload = $("#use_extended_payload")[0].checked;
+    data.use_channel_37 = $("#use_channel_37")[0].checked;
+    data.use_channel_38 = $("#use_channel_38")[0].checked;
+    data.use_channel_39 = $("#use_channel_39")[0].checked;
+
     console.log(data);
 
     $.ajax({
@@ -282,16 +289,23 @@ function get_config() {
                         gw_mac = key_value;
                         break;
                     case "use_coded_phy":
+                        $("#use_coded_phy")[0].checked = key_value;
+                        $("#use_experimental_long_range_sensors")[0].checked = key_value;
                         break;
                     case "use_1mbit_phy":
+                        $("#use_1mbit_phy")[0].checked = key_value;
                         break;
                     case "use_extended_payload":
+                        $("#use_extended_payload")[0].checked = key_value;
                         break;
                     case "use_channel_37":
+                        $("#use_channel_37")[0].checked = key_value;
                         break;
                     case "use_channel_38":
+                        $("#use_channel_38")[0].checked = key_value;
                         break;
                     case "use_channel_39":
+                        $("#use_channel_39")[0].checked = key_value;
                         break;
                     default:
                         alert('get_config: unhandled key: ' + key);
