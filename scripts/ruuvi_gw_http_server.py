@@ -45,10 +45,16 @@ g_ruuvi_dict = {
     'use_http': False,
     'http_url': 'https://network.ruuvi.com/record',
     'http_user': '',
+    'gw_mac': g_gw_mac,
     'use_filtering': True,
-    'coordinates':  "",
     'company_id': "0x0499",
-    'gw_mac': g_gw_mac
+    'coordinates':  "",
+    'use_coded_phy': False,
+    'use_1mbit_phy': True,
+    'use_extended_payload': True,
+    'use_channel_37': True,
+    'use_channel_38': True,
+    'use_channel_39': True,
 }
 
 
