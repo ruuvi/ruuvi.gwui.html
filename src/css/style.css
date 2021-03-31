@@ -47,13 +47,6 @@
 #wifi-overlay-button-connect {
     float: right;
 }
-#button-disconnect-network-yes {
-    display: inline-block;
-    margin-left: 20px;
-}
-#button-disconnect-network-no {
-    display: inline-block;
-}
 .ctr {
     margin: 0 auto;
 }
