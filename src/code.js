@@ -327,44 +327,6 @@ $(document).ready(function () {
         $('#wifi-overlay').fadeOut();
     })
 
-    $("#button-disconnect-network").on("click", function (e) {
-        e.preventDefault();
-        $("#connect-connected-wrap").addClass('blur');
-        $("#diag-disconnect").slideDown("fast", function () {
-        });
-    });
-
-    $("#button-disconnect-network-no").on("click", function (e) {
-        e.preventDefault();
-        $("#diag-disconnect").slideUp("fast", function () {
-        });
-        $("#connect-connected-wrap").removeClass('blur');
-    });
-
-    $("#button-disconnect-network-yes").on("click", function (e) {
-        e.preventDefault();
-        stopCheckStatusInterval();
-        selectedSSID = "";
-
-        $("#diag-disconnect").slideUp("fast", function () {
-        });
-        $("#connect-connected-wrap").removeClass('blur');
-
-        $.ajax({
-            url: '/connect.json',
-            dataType: 'json',
-            method: 'DELETE',
-            cache: false,
-            data: {'timestamp': Date.now()}
-        });
-        startCheckStatusInterval();
-        window.history.replaceState(null, "", "#connection_type");
-        window.history.back();
-        window.history.replaceState(null, "", "#connection_type");
-        window.history.back();
-        change_url('connection_type');
-    });
-
     //first time the page loads: attempt get the connection status and start the wifi scan
     refreshAP();
     startCheckStatusInterval();

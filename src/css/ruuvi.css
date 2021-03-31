@@ -337,16 +337,6 @@ hr {
   float:left;
 }
 
-#network-connected-buttons {
-    position:absolute;
-    width: 300px;
-}
-
-#button-disconnect-network {
-  width: 100%;
-  text-align: center;
-}
-
 #connect-details {
   width: 100%;
   text-align: left;
