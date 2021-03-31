@@ -129,6 +129,13 @@ $(document).ready(function () {
     // Set initial hash to help back button navigation
     window.location.hash = 'welcome';
 
+    window.onpopstate = function(event) {
+        if (document.location.hash === "#network-connected") {
+            // Prevent the user from leaving this page by pressing the Back button
+            window.history.pushState(null, "", "#network-connected");
+        }
+    };
+
     $('.btn-back').click(function (e) {
         e.preventDefault();
         window.history.back();
