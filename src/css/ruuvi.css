@@ -40,6 +40,7 @@ body {
 }
 .ingress p {
   margin: 0 0 15px;
+  text-align: justify;
 }
 
 .ingress-welcome {
@@ -310,6 +311,7 @@ hr {
   border: 1px solid #50AA9D;
   border-radius: 3px;
   cursor: pointer;
+  text-align: center;
 }
 
 #wifi-overlay-button-connect:disabled {
