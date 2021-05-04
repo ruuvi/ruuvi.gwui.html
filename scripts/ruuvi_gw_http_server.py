@@ -566,7 +566,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         resp += fd.read()
                 else:
                     is_success = True
-                    resp_content = f'{{"success": {"true" if is_success else "false"}}}'
+                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}"}}'
                     resp += f'Content-type: application/json\r\n'.encode('ascii')
                     resp += f'Content-Length: {len(resp_content)}\r\n'.encode('ascii')
                     resp += f'\r\n'.encode('ascii')
@@ -606,7 +606,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         resp += fd.read()
                 else:
                     is_success = True
-                    resp_content = f'{{"success": {"true" if is_success else "false"}}}'
+                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}"}}'
                     resp += f'Content-type: application/json\r\n'.encode('ascii')
                     resp += f'Content-Length: {len(resp_content)}\r\n'.encode('ascii')
                     resp += f'\r\n'.encode('ascii')
@@ -631,7 +631,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         resp += fd.read()
                 else:
                     is_success = True
-                    resp_content = f'{{"success": {"true" if is_success else "false"}}}'
+                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}"}}'
                     resp += f'Content-type: application/json\r\n'.encode('ascii')
                     resp += f'Content-Length: {len(resp_content)}\r\n'.encode('ascii')
                     resp += f'\r\n'.encode('ascii')
