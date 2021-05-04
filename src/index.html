@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <script src="jquery-3.5.1.js"></script>
+    <script src="crypto-js-4.0.0/core.js"></script>
+    <script src="crypto-js-4.0.0/md5.js"></script>
+    <script src="crypto-js-4.0.0/sha256.js"></script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/ruuvi.css">
     <link rel="stylesheet" href="assets/css/effects.css">
@@ -450,6 +453,74 @@
                     </a>
 
                     <a href="" id="page-settings_scan-button-continue" class="btn">
+                        <span lang="en">Continue</span>
+                        <span lang="fi">Jatka</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- WEB AUTHENTICATION -->
+        <section id="settings_lan_auth_type" class="section hidden">
+            <div class="container">
+                <h1>
+                    <span lang="en">Authentication (when accessing from LAN)</span>
+                    <span lang="fi">Todennus (käytettäessä lähiverkosta)</span>
+                </h1>
+
+                <div class="ingress">
+                    <p lang="en">You can restrict access to the Gateway from the local network (WiFi or Ethernet).</p>
+                    <p lang="fi">Voit rajoittaa pääsyä yhdyskäytävälle paikallisverkosta (WiFi tai Ethernet).</p>
+                </div>
+
+                <div class="control-group">
+                    <label class="control control-radio">
+                        <span lang="en">Ruuvi authentication (based on MD5+SHA256)</span>
+                        <span lang="fi">Ruuvi-todennus (perustuu MD5 + SHA256: een)</span>
+                        <input id="lan_auth_type_ruuvi" name="lan_auth_type" value="lan_auth_ruuvi" type="radio"/>
+                        <span class="control_indicator"></span>
+                    </label>
+
+                    <label class="control control-radio">
+                        <span lang="en">Digest authentication</span>
+                        <span lang="fi">Digest-todennus</span>
+                        <input id="lan_auth_type_digest" name="lan_auth_type" value="lan_auth_digest" type="radio"/>
+                        <span class="control_indicator"></span>
+                    </label>
+
+                    <label class="control control-radio">
+                        <span lang="en">Basic authentication</span>
+                        <span lang="fi">Perustodennus</span>
+                        <input id="lan_auth_type_basic" name="lan_auth_type" value="lan_auth_basic" type="radio"/>
+                        <span class="control_indicator"></span>
+                    </label>
+
+                    <label class="control control-radio">
+                        <span lang="en">Allow access without password protection</span>
+                        <span lang="fi">Salli käyttö ilman salasanasuojausta</span>
+                        <input id="lan_auth_type_none" name="lan_auth_type" value="lan_auth_none" type="radio" checked="checked"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                </div>
+
+                <div id="conf-lan_auth-login-password" class="hidden conf-settings-item">
+                    <p>
+                        <label for="lan_auth-user">Login:</label>
+                        <input id="lan_auth-user" type="text" placeholder="" value="">
+                    </p>
+                    <p>
+                        <label for="lan_auth-pass">Password:</label>
+                        <input id="lan_auth-pass" type="password" placeholder="" value="">
+                    </p>
+                </div>
+
+                <div class="button-container">
+                    <a href="" id="page-lan_auth_type-button-back" class="btn btn-back">
+                        <span lang="en">Go Back</span>
+                        <span lang="fi">Takaisin</span>
+                    </a>
+                    <a href="" id="page-lan_auth_type-button-continue" class="btn">
                         <span lang="en">Continue</span>
                         <span lang="fi">Jatka</span>
                     </a>

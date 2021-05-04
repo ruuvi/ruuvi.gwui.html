@@ -1,5 +1,13 @@
 let mqtt_pass_changed = false;
 let gw_mac = "";
+let g_flag_lan_auth_pass_changed = false;
+
+const LAN_AUTH_TYPE = Object.freeze({
+    'RUUVI': 'lan_auth_ruuvi',
+    'DIGEST': 'lan_auth_digest',
+    'BASIC': 'lan_auth_basic',
+    'NONE': 'lan_auth_none'
+});
 
 function get_mqtt_topic_prefix() {
     let mqtt_topic = "";
@@ -58,6 +66,27 @@ function save_config() {
     data.http_url = $("#http_url").val();
     data.http_user = $("#http_user").val();
     data.http_pass = $("#http_pass").val();
+
+    if (g_flag_lan_auth_pass_changed) {
+        data.lan_auth_type = $("input[name='lan_auth_type']:checked").val();
+        let lan_auth_user = $("#lan_auth-user").val();
+        let lan_auth_pass = $("#lan_auth-pass").val();
+        let realm = 'RuuviGateway' + gw_mac.substr(12, 2) + gw_mac.substr(15, 2);
+        if (data.lan_auth_type === 'lan_auth_ruuvi') {
+            data.lan_auth_user = lan_auth_user;
+            data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString();
+        } else if (data.lan_auth_type === 'lan_auth_digest') {
+            data.lan_auth_user = lan_auth_user;
+            data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString();
+        } else if (data.lan_auth_type === 'lan_auth_basic') {
+            data.lan_auth_user = lan_auth_user;
+            data.lan_auth_pass = btoa(lan_auth_user + ':' + lan_auth_pass);
+        } else {
+            data.lan_auth_type = 'lan_auth_none';
+            data.lan_auth_user = null;
+            data.lan_auth_pass = null;
+        }
+    }
 
     data.use_filtering = ($("input[name='filtering']:checked").val() === "1");
 
@@ -271,8 +300,34 @@ function get_config() {
                     case "mqtt_user":
                         $("#mqtt_user").val(key_value);
                         break;
-                    case "mqtt_prefix": {
+                    case "mqtt_prefix":
                         mqtt_prefix = key_value;
+                        break;
+                    case "lan_auth_type":
+                        if (key_value === LAN_AUTH_TYPE.RUUVI) {
+                            $("#lan_auth_type_ruuvi")[0].checked = true;
+                        } else if (key_value === LAN_AUTH_TYPE.DIGEST) {
+                            $("#lan_auth_type_digest")[0].checked = true;
+                        } else if (key_value === LAN_AUTH_TYPE.BASIC) {
+                            $("#lan_auth_type_basic")[0].checked = true;
+                        } else {
+                            $("#lan_auth_type_none")[0].checked = true;
+                        }
+                        break;
+                    case "lan_auth_user": {
+                        let lan_auth_user = $("#lan_auth-user");
+                        let lan_auth_pass = $("#lan_auth-pass");
+                        if (key_value) {
+                            lan_auth_user.val(key_value);
+                            lan_auth_pass.val('');
+                            lan_auth_pass.attr('placeholder', '********');
+                            g_flag_lan_auth_pass_changed = false;
+                        } else {
+                            lan_auth_user.val('');
+                            lan_auth_pass.val('');
+                            lan_auth_pass.removeAttr('placeholder');
+                            g_flag_lan_auth_pass_changed = true;
+                        }
                         break;
                     }
                     case "coordinates":
