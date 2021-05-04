@@ -286,6 +286,12 @@ hr {
   color: white;
   cursor: pointer;
 }
+
+.btn.disable-click {
+  pointer-events:none;
+  background-color: #94A8A5;
+}
+
 @media (max-width: 766px) {
   .btn {
     font-weight: bold;

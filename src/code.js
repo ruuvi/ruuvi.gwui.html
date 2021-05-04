@@ -104,6 +104,35 @@ function on_custom_connection_type_changed() {
     }
 }
 
+function on_lan_auth_type_changed() {
+    let lan_auth_type = $("input[name='lan_auth_type']:checked").val();
+    if (lan_auth_type === undefined) {
+        $(`input:radio[name='lan_auth_type'][value='lan_auth_none']`).prop('checked', true);
+        lan_auth_type = $("input[name='lan_auth_type']:checked").val();
+    }
+    if (lan_auth_type === 'lan_auth_none') {
+        $('#conf-lan_auth-login-password').slideUp();
+    } else {
+        $('#conf-lan_auth-login-password').slideDown();
+    }
+    on_lan_auth_user_pass_changed();
+}
+
+function on_lan_auth_user_pass_changed() {
+    let lan_auth_type = $("input[name='lan_auth_type']:checked").val();
+    let flag_need_to_disable = false;
+    if (lan_auth_type !== 'lan_auth_none') {
+        if ($("#lan_auth-user").val() === "" || ($("#lan_auth-pass").val() === "" && g_flag_lan_auth_pass_changed)) {
+            flag_need_to_disable = true;
+        }
+    }
+    if (flag_need_to_disable) {
+        $("#page-lan_auth_type-button-continue").addClass("disable-click");
+    } else {
+        $("#page-lan_auth_type-button-continue").removeClass("disable-click");
+    }
+}
+
 function on_settings_scan_filtering_changed() {
     if ($('#use_coded_phy')[0].checked) {
         $('#use_experimental_long_range_sensors').prop('checked', true);
@@ -129,12 +158,32 @@ $(document).ready(function () {
     // Set initial hash to help back button navigation
     window.location.hash = 'welcome';
 
-    window.onpopstate = function(event) {
+    window.onpopstate = function (event) {
         if (document.location.hash === "#network-connected") {
             // Prevent the user from leaving this page by pressing the Back button
             window.history.pushState(null, "", "#network-connected");
         }
     };
+
+    $(document).keyup(function (e) {
+        // Use jquery's constants rather than an unintuitive magic number.
+        // $.ui.keyCode.DELETE is also available. <- See how constants are better than '46'?
+        if (e.keyCode === 8 || e.keyCode === 46) {
+
+            // Filters out events coming from any of the following tags so Backspace
+            // will work when typing text, but not take the page back otherwise.
+            let rx = /INPUT|SELECT|TEXTAREA/i;
+            if (rx.test(e.target.tagName)) {
+                if (e.target.id === 'lan_auth-user' || e.target.id === 'lan_auth-pass') {
+                    g_flag_lan_auth_pass_changed = true;
+                    $("#lan_auth-pass").removeAttr('placeholder');
+                    on_lan_auth_user_pass_changed();
+                }
+            }
+
+            // Add your code here.
+        }
+    });
 
     $('.btn-back').click(function (e) {
         e.preventDefault();
@@ -146,11 +195,11 @@ $(document).ready(function () {
         change_url('settings');
     });
 
-    $('#page-settings-button-continue').click(function(e) {
+    $('#page-settings-button-continue').click(function (e) {
         e.preventDefault();
         let connection_type = $("input[name='connection_type']:checked").val();
         if (connection_type === 'ruuvi')
-            change_url('connection_type');
+            change_url('settings_lan_auth_type');
         else
             change_url('settings_custom');
     });
@@ -161,6 +210,23 @@ $(document).ready(function () {
     });
 
     $('#page-settings_scan-button-continue').click(function (e) {
+        e.preventDefault();
+        change_url('settings_lan_auth_type');
+    });
+
+    $('#lan_auth-user').on("keyup change", function (e) {
+        g_flag_lan_auth_pass_changed = true;
+        $("#lan_auth-pass").removeAttr('placeholder');
+        on_lan_auth_user_pass_changed();
+    });
+
+    $('#lan_auth-pass').on("keyup change", function (e) {
+        g_flag_lan_auth_pass_changed = true;
+        $("#lan_auth-pass").removeAttr('placeholder');
+        on_lan_auth_user_pass_changed();
+    });
+
+    $('#page-lan_auth_type-button-continue').click(function (e) {
         e.preventDefault();
         change_url('connection_type');
     });
@@ -276,6 +342,16 @@ $(document).ready(function () {
         } else {
             $('#mqtt_examples').slideUp();
         }
+    });
+
+    $('#settings_lan_auth_type').bind('onShow', function () {
+        on_lan_auth_type_changed();
+    });
+
+    $("input[name='lan_auth_type']").change(function (e) {
+        g_flag_lan_auth_pass_changed = true;
+        $("#lan_auth-pass").removeAttr('placeholder');
+        on_lan_auth_type_changed();
     });
 
     $('#wifi-overlay-show-password').click(function (e) {
@@ -606,8 +682,7 @@ function checkStatus() {
                         break;
                 }
                 connectionState = CONNECTION_STATE.CONNECTED
-            }
-            else if (data["urc"] === URC_CODE.DISCONNECTED) {
+            } else if (data["urc"] === URC_CODE.DISCONNECTED) {
                 //that's a manual disconnect
                 // TODO: implement
                 // if($("#wifi-status").is(":visible"))
