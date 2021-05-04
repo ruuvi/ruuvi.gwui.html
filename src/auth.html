@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="jquery-3.5.1.js"></script>
+    <script src="crypto-js-4.0.0/core.js"></script>
+    <script src="crypto-js-4.0.0/md5.js"></script>
+    <script src="crypto-js-4.0.0/sha256.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ruuvi.css">
+    <link rel="stylesheet" href="assets/css/effects.css">
+    <title>Required authorization</title>
+    <style>
+        h1 {
+            font-size: large;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: small;
+        }
+
+        div.auth-err-message {
+            color: red;
+            font-size: small;
+        }
+
+        div.gateway_name {
+            color: blue;
+            font-size: large;
+            text-align: center;
+        }
+    </style>
+    <script>
+        let g_realm = null;
+        let g_challenge = null;
+        let g_session_cookie = null;
+        let g_session_id = null;
+
+        $(document).ready(function () {
+            checkAuth();
+            $(".lang_select").change(function () {
+                const lang = $(this).val();
+                $("p[lang], span[lang]").each(function () {
+                    if ($(this).attr("lang") === lang)
+                        $(this).fadeIn();
+                    else
+                        $(this).hide();
+                    if (lang === 'en')
+                        $('input#pwd').attr('placeholder', "Password");
+                    else if (lang === 'fi')
+                        $('input#pwd').attr('placeholder', "Salasana");
+                })
+            });
+
+            $('#lan_auth-button-login').click(function (e) {
+                e.preventDefault();
+                performLogIn($("#lan_auth-user").val(), $("#lan_auth-pass").val());
+            });
+
+            function _parseToken(auth_str, prefix, suffix) {
+                let idx1 = auth_str.indexOf(prefix);
+                if (idx1 === -1) {
+                    return null;
+                }
+                idx1 += prefix.length;
+                let idx2 = auth_str.indexOf(suffix, idx1);
+                if (idx2 === -1) {
+                    return null;
+                }
+                return auth_str.substr(idx1, idx2 - idx1);
+            }
+
+            function _handleHeaderWwwAuth(auth_str) {
+                // x-ruuvi-interactive realm="RuuviGatewayEEFF" challenge="03601dc11c92170713b68d4bfe430899b61c3df9c2559a9b7bce70ab451d9ade" session_cookie="RUUVISESSION" session_id="CXOHVRWYOIPHMKMV"
+                if (!auth_str) {
+                    return;
+                }
+                if (!auth_str.startsWith('x-ruuvi-interactive ')) {
+                    return;
+                }
+                let realm = _parseToken(auth_str, 'realm="', '"');
+                if (!realm) {
+                    return;
+                }
+                let challenge = _parseToken(auth_str, 'challenge="', '"');
+                if (!challenge) {
+                    return;
+                }
+                let session_cookie = _parseToken(auth_str, 'session_cookie="', '"');
+                if (!session_cookie) {
+                    return;
+                }
+                let session_id = _parseToken(auth_str, 'session_id="', '"');
+                if (!session_id) {
+                    return;
+                }
+                g_realm = realm;
+                g_challenge = challenge;
+                g_session_cookie = session_cookie;
+                g_session_id = session_id;
+            }
+
+            function checkAuth() {
+                $.ajax({
+                        url: '/auth',
+                        accept: "application/json, text/plain, */*",
+                        method: 'GET',
+                        dataType: 'json',
+                        cache: false,
+                        headers: null,
+                        success: function (data, text) {
+                            $('#lan_auth-user_login').hide();
+                            $('#auth-no').hide();
+                            $('#auth-yes').show();
+                            $('#gateway_name').text(data.gateway_name)
+                        },
+                        error: function (request, status, error) {
+                            if (request.status === 401) {
+                                $('#auth-yes').hide();
+                                $('#auth-no').show();
+                                $('#lan_auth-user_login').show();
+                                _handleHeaderWwwAuth(request.getResponseHeader('WWW-Authenticate'));
+                                $('#gateway_name').text(request.responseJSON.gateway_name)
+                            } else {
+                                $('#auth-yes').hide();
+                                $('#auth-no').hide();
+                                $('#lan_auth-user_login').hide();
+                            }
+                        }
+                    }
+                );
+            }
+
+            function performLogIn(user, password) {
+                $('#auth-err-message').hide();
+                let encrypted_password = CryptoJS.MD5(user + ':' + g_realm + ':' + password).toString();
+                let password_sha256 = CryptoJS.SHA256(g_challenge + ':' + encrypted_password).toString();
+                $.ajax({
+                        url: '/auth',
+                        contentType: "application/json; charset=utf-8",
+                        dataType: 'json',
+                        method: 'POST',
+                        cache: false,
+                        headers: null,
+                        data: JSON.stringify({
+                            "login": user,
+                            "password": password_sha256
+                        }),
+                        success: function (data, text) {
+                            $('#lan_auth-user_login').hide();
+                            $('#auth-no').hide();
+                            $('#auth-yes').show();
+                            $('#gateway_name').text(data.gateway_name)
+                        },
+                        error: function (request, status, error) {
+                            if (request.status === 401) {
+                                $('#auth-yes').hide();
+                                $('#auth-no').show();
+                                $('#lan_auth-user_login').show();
+                                _handleHeaderWwwAuth(request.getResponseHeader('WWW-Authenticate'));
+                                $('#auth-err-message').show();
+                                $('#gateway_name').text(request.responseJSON.gateway_name)
+                            } else {
+                                $('#auth-yes').hide();
+                                $('#auth-no').hide();
+                                $('#lan_auth-user_login').hide();
+                            }
+                        }
+                    }
+                );
+            }
+        });
+    </script>
+</head>
+
+<body>
+<header class="top-header">
+    <div class="logo-wrap">
+        <img src="assets/images/ruuvi_logo_nega.svg" alt="Ruuvi" class="logo"><span class="tag">GATEWAY</span>
+    </div>
+</header>
+
+<section class="section page-content">
+    <div class="container">
+        <h1>
+            <div id="auth-no" class="hidden">
+                <span lang="en">Ruuvi Web Interface Login</span>
+                <span lang="fi">Ruuvi-verkkoliittymän sisäänkirjautuminen</span>
+            </div>
+            <div id="auth-yes" class="hidden">
+                <span lang="en">Authorization successful.</span>
+                <span lang="fi">Valtuutus onnistui.</span>
+            </div>
+        </h1>
+
+        <h2>
+            <div id="gateway_name" class="gateway_name"></div>
+        </h2>
+
+        <h3>
+            <span lang="en">Select your language</span>
+            <span lang="fi">Valitse kieli</span>
+        </h3>
+        <label class="control control-radio">
+            English
+            <input class="lang_select" name="lang_select" type="radio" checked="checked" value="en"/>
+            <span class="control_indicator"></span>
+        </label>
+        <label class="control control-radio">
+            Suomi
+            <input class="lang_select" name="lang_select" type="radio" value="fi"/>
+            <span class="control_indicator"></span>
+        </label>
+
+        <div class="conf-settings-item hidden" id="lan_auth-user_login">
+            <table>
+                <tr>
+                    <td>
+                        <label for="lan_auth-user">
+                            <span lang="en">User:</span>
+                            <span lang="fi">Käyttäjänimi:</span>
+                        </label>
+                    </td>
+                    <td>
+                        <input id="lan_auth-user" type="text" placeholder="" value=""/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="lan_auth-pass">
+                            <span lang="en">Password:</span>
+                            <span lang="fi">Salasana:</span>
+                        </label>
+                    </td>
+                    <td>
+                        <input id="lan_auth-pass" type="password" placeholder="" value=""/>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div id="auth-err-message" class="auth-err-message hidden">
+                            <span lang="en">Incorrect username or password</span>
+                            <span lang="fi">Väärä käyttäjätunnus tai salasana</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <a href="" id="lan_auth-button-login" class="btn">
+                <span lang="en">LOG IN</span>
+                <span lang="fi">KIRJAUDU SISÄÄN</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+</body>
+
+</html>
