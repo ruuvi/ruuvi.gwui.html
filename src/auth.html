@@ -113,14 +113,22 @@
                             $('#lan_auth-user_login').hide();
                             $('#auth-no').hide();
                             $('#auth-yes').show();
+                            $('#auth-forbidden').hide();
                             $('#gateway_name').text(data.gateway_name)
                         },
                         error: function (request, status, error) {
                             if (request.status === 401) {
                                 $('#auth-yes').hide();
                                 $('#auth-no').show();
+                                $('#auth-forbidden').hide();
                                 $('#lan_auth-user_login').show();
                                 _handleHeaderWwwAuth(request.getResponseHeader('WWW-Authenticate'));
+                                $('#gateway_name').text(request.responseJSON.gateway_name)
+                            } else if (request.status === 403) {
+                                $('#auth-yes').hide();
+                                $('#auth-no').hide();
+                                $('#auth-forbidden').show();
+                                $('#lan_auth-user_login').hide();
                                 $('#gateway_name').text(request.responseJSON.gateway_name)
                             } else {
                                 $('#auth-yes').hide();
@@ -191,6 +199,10 @@
             <div id="auth-yes" class="hidden">
                 <span lang="en">Authorization successful.</span>
                 <span lang="fi">Sisäänkirjautuminen onnistui.</span>
+            </div>
+            <div id="auth-forbidden" class="hidden">
+                <span lang="en">Access denied.</span>
+                <span lang="fi">Pääsy evätty.</span>
             </div>
         </h1>
 

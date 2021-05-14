@@ -3,10 +3,11 @@ let gw_mac = "";
 let g_flag_lan_auth_pass_changed = false;
 
 const LAN_AUTH_TYPE = Object.freeze({
+    'DENY': 'lan_auth_deny',
     'RUUVI': 'lan_auth_ruuvi',
     'DIGEST': 'lan_auth_digest',
     'BASIC': 'lan_auth_basic',
-    'NONE': 'lan_auth_none'
+    'ALLOW': 'lan_auth_allow'
 });
 
 function get_mqtt_topic_prefix() {
@@ -67,22 +68,33 @@ function save_config() {
     data.http_user = $("#http_user").val();
     data.http_pass = $("#http_pass").val();
 
+    let x1 = "";
+    let x2 = "";
+
     if (g_flag_lan_auth_pass_changed) {
         data.lan_auth_type = $("input[name='lan_auth_type']:checked").val();
         let lan_auth_user = $("#lan_auth-user").val();
         let lan_auth_pass = $("#lan_auth-pass").val();
         let realm = 'RuuviGateway' + gw_mac.substr(12, 2) + gw_mac.substr(15, 2);
-        if (data.lan_auth_type === 'lan_auth_ruuvi') {
+        if (data.lan_auth_type === 'lan_auth_deny') {
+            data.lan_auth_user = null;
+            data.lan_auth_pass = null;
+        } else if (data.lan_auth_type === 'lan_auth_ruuvi') {
             data.lan_auth_user = lan_auth_user;
             data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString();
         } else if (data.lan_auth_type === 'lan_auth_digest') {
             data.lan_auth_user = lan_auth_user;
-            data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString();
+            let raw_str = lan_auth_user + ':' + realm + ':' + lan_auth_pass;
+            let auth_path_md5 = CryptoJS.MD5(raw_str);
+            data.lan_auth_pass = auth_path_md5.toString();
+            // data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString();
+            x1 = data.lan_auth_pass;
+            x2 = x1;
         } else if (data.lan_auth_type === 'lan_auth_basic') {
             data.lan_auth_user = lan_auth_user;
             data.lan_auth_pass = btoa(lan_auth_user + ':' + lan_auth_pass);
         } else {
-            data.lan_auth_type = 'lan_auth_none';
+            data.lan_auth_type = 'lan_auth_allow';
             data.lan_auth_user = null;
             data.lan_auth_pass = null;
         }
@@ -304,14 +316,16 @@ function get_config() {
                         mqtt_prefix = key_value;
                         break;
                     case "lan_auth_type":
-                        if (key_value === LAN_AUTH_TYPE.RUUVI) {
+                        if (key_value === LAN_AUTH_TYPE.DENY) {
+                            $("#lan_auth_type_deny")[0].checked = true;
+                        } else if (key_value === LAN_AUTH_TYPE.RUUVI) {
                             $("#lan_auth_type_ruuvi")[0].checked = true;
                         } else if (key_value === LAN_AUTH_TYPE.DIGEST) {
                             $("#lan_auth_type_digest")[0].checked = true;
                         } else if (key_value === LAN_AUTH_TYPE.BASIC) {
                             $("#lan_auth_type_basic")[0].checked = true;
                         } else {
-                            $("#lan_auth_type_none")[0].checked = true;
+                            $("#lan_auth_type_allow")[0].checked = true;
                         }
                         break;
                     case "lan_auth_user": {

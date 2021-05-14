@@ -24,10 +24,11 @@ from enum import Enum
 from typing import Optional, Dict
 
 
+LAN_AUTH_TYPE_DENY = 'lan_auth_deny'
 LAN_AUTH_TYPE_RUUVI = 'lan_auth_ruuvi'
 LAN_AUTH_TYPE_DIGEST = 'lan_auth_digest'
 LAN_AUTH_TYPE_BASIC = 'lan_auth_basic'
-LAN_AUTH_TYPE_NONE = 'lan_auth_none'
+LAN_AUTH_TYPE_ALLOW = 'lan_auth_allow'
 
 SIMULATION_MODE_NO_CONNECTION = 0
 SIMULATION_MODE_ETH_CONNECTED = 1
@@ -64,7 +65,7 @@ g_ruuvi_dict = {
     'use_http': False,
     'http_url': 'https://network.ruuvi.com/record',
     'http_user': '',
-    'lan_auth_type': LAN_AUTH_TYPE_RUUVI,
+    'lan_auth_type': LAN_AUTH_TYPE_DENY,
     'lan_auth_user': '',
     'lan_auth_pass': hashlib.md5(f'{"username"}:{RUUVI_AUTH_REALM}:{"password"}'.encode('utf-8')).hexdigest(),
     'gw_mac': g_gw_mac,
@@ -484,7 +485,32 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         if self.path == '/auth' or self.path.startswith('/auth?') or self.path == '/auth.html':
             flag_content_html = True if self.path == '/auth.html' else False
 
-            if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI:
+            if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DENY:
+                resp = b''
+                resp += f'HTTP/1.1 403 Forbidden\r\n'.encode('ascii')
+                resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+
+                cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+                resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+                resp += f'Pragma: no-cache\r\n'.encode('ascii')
+                if flag_content_html:
+                    file_path = 'auth.html'
+                    content_type = self._get_content_type(file_path)
+                    file_size = os.path.getsize(file_path)
+                    resp += f'Content-type: {content_type}\r\n'.encode('ascii')
+                    resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
+                    resp += f'\r\n'.encode('ascii')
+                    with open(file_path, 'rb') as fd:
+                        resp += fd.read()
+                else:
+                    resp_content = f'{{"success": {"false"}, "gateway_name": "{RUUVI_AUTH_REALM}"}}'
+                    resp += f'Content-type: application/json\r\n'.encode('ascii')
+                    resp += f'Content-Length: {len(resp_content)}\r\n'.encode('ascii')
+                    resp += f'\r\n'.encode('ascii')
+                    resp += resp_content.encode('ascii')
+                self.wfile.write(resp)
+            elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI:
                 cookie_str = self._get_value_from_headers('Cookie: ')
                 session_id = None
                 if cookie_str is not None:
@@ -612,7 +638,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     resp += f'\r\n'.encode('ascii')
                     resp += resp_content.encode('ascii')
                 self.wfile.write(resp)
-            elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_NONE:
+            elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_ALLOW:
                 resp = b''
                 resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
                 resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')

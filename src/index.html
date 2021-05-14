@@ -476,6 +476,13 @@
 
                 <div class="control-group">
                     <label class="control control-radio">
+                        <span lang="en">Deny access from the local network</span>
+                        <span lang="fi">Estä pääsy paikallisverkosta</span>
+                        <input id="lan_auth_type_deny" name="lan_auth_type" value="lan_auth_deny" type="radio"/>
+                        <span class="control_indicator"></span>
+                    </label>
+
+                    <label class="control control-radio">
                         <span lang="en">Ruuvi authentication (based on MD5+SHA256)</span>
                         <span lang="fi">Ruuvi-kirjautuminen (perustuu MD5 + SHA256:een)</span>
                         <input id="lan_auth_type_ruuvi" name="lan_auth_type" value="lan_auth_ruuvi" type="radio"/>
@@ -499,7 +506,7 @@
                     <label class="control control-radio">
                         <span lang="en">Allow access without password protection</span>
                         <span lang="fi">Salli käyttö ilman salasanasuojausta</span>
-                        <input id="lan_auth_type_none" name="lan_auth_type" value="lan_auth_none" type="radio" checked="checked"/>
+                        <input id="lan_auth_type_allow" name="lan_auth_type" value="lan_auth_allow" type="radio" checked="checked"/>
                         <span class="control_indicator"></span>
                     </label>
                 </div>

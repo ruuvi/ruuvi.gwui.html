@@ -107,10 +107,10 @@ function on_custom_connection_type_changed() {
 function on_lan_auth_type_changed() {
     let lan_auth_type = $("input[name='lan_auth_type']:checked").val();
     if (lan_auth_type === undefined) {
-        $(`input:radio[name='lan_auth_type'][value='lan_auth_none']`).prop('checked', true);
+        $(`input:radio[name='lan_auth_type'][value='lan_auth_deny']`).prop('checked', true);
         lan_auth_type = $("input[name='lan_auth_type']:checked").val();
     }
-    if (lan_auth_type === 'lan_auth_none') {
+    if (lan_auth_type === 'lan_auth_allow' || lan_auth_type === 'lan_auth_deny') {
         $('#conf-lan_auth-login-password').slideUp();
     } else {
         $('#conf-lan_auth-login-password').slideDown();
@@ -121,7 +121,7 @@ function on_lan_auth_type_changed() {
 function on_lan_auth_user_pass_changed() {
     let lan_auth_type = $("input[name='lan_auth_type']:checked").val();
     let flag_need_to_disable = false;
-    if (lan_auth_type !== 'lan_auth_none') {
+    if (lan_auth_type !== 'lan_auth_allow' && lan_auth_type !== 'lan_auth_deny') {
         if ($("#lan_auth-user").val() === "" || ($("#lan_auth-pass").val() === "" && g_flag_lan_auth_pass_changed)) {
             flag_need_to_disable = true;
         }
