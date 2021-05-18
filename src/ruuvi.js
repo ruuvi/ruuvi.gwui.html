@@ -60,6 +60,10 @@ function save_config() {
     }
     data.mqtt_port = mqtt_port;
     data.mqtt_prefix = get_mqtt_topic_prefix();
+    data.mqtt_client_id = $("#mqtt_client_id").val();
+    if (!data.mqtt_client_id) {
+        data.mqtt_client_id = gw_mac;
+    }
     data.mqtt_user = $("#mqtt_user").val();
     data.mqtt_pass = $("#mqtt_pass").val();
 
@@ -67,9 +71,6 @@ function save_config() {
     data.http_url = $("#http_url").val();
     data.http_user = $("#http_user").val();
     data.http_pass = $("#http_pass").val();
-
-    let x1 = "";
-    let x2 = "";
 
     if (g_flag_lan_auth_pass_changed) {
         data.lan_auth_type = $("input[name='lan_auth_type']:checked").val();
@@ -87,9 +88,6 @@ function save_config() {
             let raw_str = lan_auth_user + ':' + realm + ':' + lan_auth_pass;
             let auth_path_md5 = CryptoJS.MD5(raw_str);
             data.lan_auth_pass = auth_path_md5.toString();
-            // data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString();
-            x1 = data.lan_auth_pass;
-            x2 = x1;
         } else if (data.lan_auth_type === 'lan_auth_basic') {
             data.lan_auth_user = lan_auth_user;
             data.lan_auth_pass = btoa(lan_auth_user + ':' + lan_auth_pass);
@@ -258,6 +256,7 @@ function get_config() {
             let use_mqtt = false;
             let http_url = "";
             let mqtt_prefix = "";
+            let mqtt_client_id = "";
             const keys = Object.keys(data);
             for (let idx in keys) {
                 let key = keys[idx];
@@ -314,6 +313,9 @@ function get_config() {
                         break;
                     case "mqtt_prefix":
                         mqtt_prefix = key_value;
+                        break;
+                    case "mqtt_client_id":
+                        mqtt_client_id = key_value;
                         break;
                     case "lan_auth_type":
                         if (key_value === LAN_AUTH_TYPE.DENY) {
@@ -432,6 +434,10 @@ function get_config() {
                     $('#use_mqtt_prefix_custom').prop('checked', false);
                 }
             }
+            if (!mqtt_client_id) {
+                mqtt_client_id = gw_mac;
+            }
+            $("#mqtt_client_id").val(mqtt_client_id);
             on_edit_mqtt_settings();
         }
     });

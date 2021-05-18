@@ -253,10 +253,14 @@ $(document).ready(function () {
                 $(this).fadeIn();
             else
                 $(this).hide();
-            if (lang === 'en')
+            if (lang === 'en') {
                 $('input#pwd').attr('placeholder', "Password");
-            else if (lang === 'fi')
+                $('input#mqtt_client_id').attr('placeholder', "MAC-address is used if empty");
+            }
+            else if (lang === 'fi') {
                 $('input#pwd').attr('placeholder', "Salasana");
+                $('input#mqtt_client_id').attr('placeholder', "MAC-osoitetta käytetään, jos se on tyhjä");
+            }
         })
     });
 
