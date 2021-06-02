@@ -343,7 +343,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 g_password = None
                 g_timestamp = time.time()
                 resp_content = f'{{}}'
-                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
                 resp += f'Content-type: application/json\r\n'.encode('ascii')
                 resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
                 resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -351,21 +351,21 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += f'\r\n'.encode('ascii')
                 resp += resp_content.encode('ascii')
             elif ssid is None or password is None:
-                resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+                resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
                 resp += f'Content-Length: 0\r\n'.encode('ascii')
             else:
                 print(f'Try to connect to SSID:{ssid} with password:{password}')
                 if ssid == 'dlink-noauth-err-400':
-                    resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+                    resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
                     resp += f'Content-Length: 0\r\n'.encode('ascii')
                 elif ssid == 'dlink-noauth-err-503':
-                    resp += f'HTTP/1.0 503 Service Unavailable\r\n'.encode('ascii')
+                    resp += f'HTTP/1.1 503 Service Unavailable\r\n'.encode('ascii')
                     resp += f'Content-Length: 0\r\n'.encode('ascii')
                 else:
                     g_ssid = ssid
                     g_password = password
                     g_timestamp = time.time()
-                    resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+                    resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
                     resp += f'Content-type: application/json\r\n'.encode('ascii')
                     resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
                     resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -390,17 +390,16 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 #     g_password = None
                 #     g_timestamp = time.time()
             resp = b''
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
             resp += f'Content-Length: 0\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
             self.wfile.write(resp)
-            pass
         else:
             resp = b''
-            resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+            resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
             resp += f'Content-Length: {0}\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
             self.wfile.write(resp)
@@ -431,7 +430,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp_content = f'{{}}'
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
             resp = b''
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
@@ -444,7 +443,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             g_simulation_mode = SIMULATION_MODE_USER_DISCONNECT
 
             resp = b''
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -453,7 +452,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(resp)
         else:
             resp = b''
-            resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+            resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
             resp += f'Content-Length: {0}\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
             self.wfile.write(resp)
@@ -667,7 +666,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 raise RuntimeError("Unsupported Auth")
         elif self.path.endswith('.json'):
             resp = b''
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -745,7 +744,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(resp)
             else:
                 resp = b''
-                resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
+                resp += f'HTTP/1.1 404 Not Found\r\n'.encode('ascii')
                 resp += f'Content-Length: {0}\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
                 self.wfile.write(resp)
@@ -759,7 +758,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 content_type = self._get_content_type(file_path)
                 file_size = os.path.getsize(file_path)
                 resp = b''
-                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
                 resp += f'Content-type: {content_type}\r\n'.encode('ascii')
                 resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
@@ -768,7 +767,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(resp)
             else:
                 resp = b''
-                resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
+                resp += f'HTTP/1.1 404 Not Found\r\n'.encode('ascii')
                 resp += f'Content-Length: {0}\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
                 self.wfile.write(resp)
