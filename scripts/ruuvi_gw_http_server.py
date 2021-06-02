@@ -667,7 +667,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         elif self.path.endswith('.json'):
             resp = b''
             resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
-            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
@@ -681,7 +681,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             content = json.dumps(ruuvi_dict)
             if self.path == '/ruuvi.json':
                 print(f'Resp: {content}')
-                resp += content.encode('ascii')
+                resp += content.encode('utf-8')
                 self.wfile.write(resp)
             elif self.path == '/ap.json':
                 if not g_use_alt_wifi_list:
@@ -707,7 +707,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 {"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0}
 ] '''
                 print(f'Resp: {content}')
-                resp += content.encode('ascii')
+                resp += content.encode('utf-8')
                 self.wfile.write(resp)
             elif self.path == '/status.json':
                 if g_ssid is None:
@@ -740,7 +740,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 else:
                     content = ''
                 print(f'Resp: {content}')
-                resp += content.encode('ascii')
+                resp += content.encode('utf-8')
                 self.wfile.write(resp)
             else:
                 resp = b''
