@@ -37,6 +37,11 @@ SIMULATION_MODE_WIFI_FAILED_ATTEMPT = 3
 SIMULATION_MODE_USER_DISCONNECT = 4
 SIMULATION_MODE_LOST_CONNECTION = 5
 
+STATUS_JSON_URC_CONNECTED = 0
+STATUS_JSON_URC_WIFI_FAILED_ATTEMPT = 1
+STATUS_JSON_URC_USER_DISCONNECT = 2
+STATUS_JSON_URC_LOST_CONNECTION = 3
+
 COOKIE_RUUVISESSION = 'RUUVISESSION'
 COOKIE_RUUVILOGIN = 'RUUVILOGIN'
 
@@ -489,6 +494,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         tosend = f'{len(chunk):x}\r\n{chunk}\r\n'
         self.wfile.write(tosend.encode('ascii'))
 
+    @staticmethod
+    def _generate_status_json(urc, ssid, ip='0', netmask='0', gw='0'):
+        return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc}}}'
+
     def do_GET(self):
         global g_ruuvi_dict
         global g_login_session
@@ -737,18 +746,18 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         ip = g_ruuvi_dict['eth_static_ip']
                         netmask = g_ruuvi_dict['eth_netmask']
                         gw = g_ruuvi_dict['eth_gw']
-                    content = f'{{{ssid_key_with_val},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":0}}'
+                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED, ssid_key_with_val, ip, netmask, gw)
                 elif g_simulation_mode == SIMULATION_MODE_WIFI_CONNECTED:
                     ip = '192.168.1.119'
                     netmask = '255.255.255.0'
                     gw = '192.168.1.1'
-                    content = f'{{{ssid_key_with_val},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":0}}'
+                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED, ssid_key_with_val, ip, netmask, gw)
                 elif g_simulation_mode == SIMULATION_MODE_WIFI_FAILED_ATTEMPT:
-                    content = f'{{{ssid_key_with_val},"ip":"0","netmask":"0","gw":"0","urc":1}}'
+                    content = self._generate_status_json(STATUS_JSON_URC_WIFI_FAILED_ATTEMPT, ssid_key_with_val)
                 elif g_simulation_mode == SIMULATION_MODE_USER_DISCONNECT:
-                    content = f'{{{ssid_key_with_val},"ip":"0","netmask":"0","gw":"0","urc":2}}'
+                    content = self._generate_status_json(STATUS_JSON_URC_USER_DISCONNECT, ssid_key_with_val)
                 elif g_simulation_mode == SIMULATION_MODE_LOST_CONNECTION:
-                    content = f'{{{ssid_key_with_val},"ip":"0","netmask":"0","gw":"0","urc":3}}'
+                    content = self._generate_status_json(STATUS_JSON_URC_LOST_CONNECTION, ssid_key_with_val)
                 else:
                     content = ''
                 print(f'Resp: {content}')
