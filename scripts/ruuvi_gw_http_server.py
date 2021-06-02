@@ -477,6 +477,16 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             content_type = 'application/octet-stream'
         return content_type
 
+    def _chunk_generator(self):
+        # generate some chunks
+        for i in range(10):
+            time.sleep(.1)
+            yield f"this is chunk: {i}\r\n"
+
+    def _write_chunk(self, chunk):
+        tosend = f'{len(chunk):x}\r\n{chunk}\r\n'
+        self.wfile.write(tosend.encode('ascii'))
+
     def do_GET(self):
         global g_ruuvi_dict
         global g_login_session
@@ -766,11 +776,33 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     resp += fd.read()
                 self.wfile.write(resp)
             else:
-                resp = b''
-                resp += f'HTTP/1.1 404 Not Found\r\n'.encode('ascii')
-                resp += f'Content-Length: {0}\r\n'.encode('ascii')
-                resp += f'\r\n'.encode('ascii')
-                self.wfile.write(resp)
+                if file_path == 'test_chunked.txt':
+                    resp = b''
+                    resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                    resp += f'Content-type: text/plain; charset=utf-8\r\n'.encode('ascii')
+                    resp += f'Transfer-Encoding: chunked\r\n'.encode('ascii')
+                    resp += f'\r\n'.encode('ascii')
+                    self.wfile.write(resp)
+                    for chunk in self._chunk_generator():
+                        self._write_chunk(chunk)
+                    # send the chunked trailer
+                    self.wfile.write('0\r\n\r\n'.encode('ascii'))
+                elif file_path == 'test_nonchunked.txt':
+                    resp = b''
+                    resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                    resp += f'Content-type: text/plain; charset=utf-8\r\n'.encode('ascii')
+                    one_chunk = f"this is chunk: {0}\r\n"
+                    resp += f'Content-Length: {len(one_chunk) * 10}\r\n'.encode('ascii')
+                    resp += f'\r\n'.encode('ascii')
+                    self.wfile.write(resp)
+                    for chunk in self._chunk_generator():
+                        self.wfile.write(chunk.encode('ascii'))
+                else:
+                    resp = b''
+                    resp += f'HTTP/1.1 404 Not Found\r\n'.encode('ascii')
+                    resp += f'Content-Length: {0}\r\n'.encode('ascii')
+                    resp += f'\r\n'.encode('ascii')
+                    self.wfile.write(resp)
         pass
 
 
