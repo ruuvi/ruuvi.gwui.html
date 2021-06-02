@@ -50,6 +50,8 @@ g_gw_mac = "AA:BB:CC:DD:EE:FF"
 RUUVI_AUTH_REALM = 'RuuviGateway' + g_gw_mac[-5:-3] + g_gw_mac[-2:]
 
 g_ruuvi_dict = {
+    'fw_ver': 'v1.3.3-dirty',
+    'nrf52_fw_ver': 'v0.7.1',
     'use_eth': False,
     'eth_dhcp': True,
     'eth_static_ip': "",
