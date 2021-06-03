@@ -707,6 +707,141 @@
             </div>
         </section>
 
+        <section id="firmware_updating" class="section hidden">
+            <div class="container">
+                <h1>
+                    <span lang="en">Firmware updating</span>
+                    <span lang="fi">Laiteohjelmiston päivitys</span>
+                </h1>
+
+                <div class="conf-settings-item conf-settings-firmware_updating">
+                    <table>
+                        <colgroup>
+                            <col span="1" style="width: 60%;">
+                            <col span="1" style="width: 40%;">
+                        </colgroup>
+                        <tbody>
+                            <tr class="brdb">
+                                <td>Current firmware version:</td>
+                                <td>
+                                    <div id="firmware_updating-version-current"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Latest available firmware version:</td>
+                                <td>
+                                    <div id="firmware_updating-version-latest"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Status:</td>
+                                <td>
+                                    <div id="firmware_updating-status-ok-already_latest" class="hidden gr">
+                                        <span lang="en">You already have the latest release installed</span>
+                                        <span lang="fi">Sinulla on jo uusin versio asennettuna</span>
+                                    </div>
+                                    <div id="firmware_updating-status-ok-update_available" class="hidden bl">
+                                        <span lang="en">The installed version does not match the latest release</span>
+                                        <span lang="fi">Asennettu versio ei vastaa uusinta versiota</span>
+                                    </div>
+                                    <div id="firmware_updating-status-error" class="hidden rd">
+                                        <span lang="en">Unable to get the latest firmware version</span>
+                                        <span lang="fi">Uusinta laiteohjelmistoversiota ei saada</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <button class="btn btn-ok" id="firmware_updating-button-upgrade" type="button">
+                                        <span lang="en">Upgrade now</span>
+                                        <span lang="fi">Päivitä nyt</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="button-container">
+                    <a href="" id="page-firmware_updating-button-back" class="btn btn-back">
+                        <span lang="en">Go Back</span>
+                        <span lang="fi">Takaisin</span>
+                    </a>
+                    <a href="" id="page-firmware_updating-button-continue" class="btn">
+                        <span lang="en">Continue</span>
+                        <span lang="fi">Jatka</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="firmware_updating_progress" class="section hidden">
+            <div class="container">
+                <h1>
+                    <span lang="en">Firmware updating</span>
+                    <span lang="fi">Laiteohjelmiston päivitys</span>
+                </h1>
+
+                <div class="conf-settings-item conf-settings-firmware_updating">
+                    <table>
+                        <colgroup>
+                            <col span="1" style="width: 60%;">
+                            <col span="1" style="width: 40%;">
+                        </colgroup>
+                        <tbody>
+                        <tr class="brdb">
+                            <td>1. Downloading the main firmware</td>
+                            <td>
+                                <progress id="firmware_updating_progress-stage1" max="100" value="0"></progress>
+                            </td>
+                        </tr>
+                        <tr class="brdb">
+                            <td>2. Downloading UI</td>
+                            <td>
+                                <progress id="firmware_updating_progress-stage2" max="100" value="0"></progress>
+                            </td>
+                        </tr>
+                        <tr class="brdb">
+                            <td>3. Downloading nRF52 firmware</td>
+                            <td>
+                                <progress id="firmware_updating_progress-stage3" max="100" value="0"></progress>
+                            </td>
+                        </tr>
+                        <tr class="brdb">
+                            <td>4. Flashing nRF52 firmware</td>
+                            <td>
+                                <progress id="firmware_updating_progress-stage4" max="100" value="0"></progress>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <div id="firmware_updating_progress-status-completed_successfully" class="hidden gr">
+                            <span lang="en">Completed successfully</span>
+                            <span lang="fi">Suoritettu onnistuneesti</span>
+                        </div>
+                        <div id="firmware_updating_progress-status-completed_unsuccessfully" class="hidden rd">
+                            <span lang="en">Completed unsuccessfully: </span>
+                            <span lang="fi">Suoritettu epäonnistuneesti: </span>
+                            <div id="firmware_updating_progress-status-completed_unsuccessfully-message"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <a href="" id="page-firmware_updating_progress-button-back" class="btn btn-back disabled">
+                        <span lang="en">Go Back</span>
+                        <span lang="fi">Takaisin</span>
+                    </a>
+                    <a href="" id="page-firmware_updating_progress-button-continue" class="btn disabled">
+                        <span lang="en">Continue</span>
+                        <span lang="fi">Jatka</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <section id="network-connected" class="section hidden">
             <div id="connect-connected-wrap" class="container">
                 <h1>
@@ -895,6 +1030,32 @@
             </div>
             <div class="connect-buttons">
                 <button class="btn btn-cancel" type="button" id="eth-overlay-connecting-button-cancel">
+                    <span lang="en">Cancel</span>
+                    <span lang="fi">Peruuta</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- CHECKING FOR THE LATEST AVAILABLE VERSION -->
+        <div class="overlay hidden" id="checking-latest-available-version">
+            <h2>
+                <span lang="en">Checking for the latest available version...</span>
+                <span lang="fi">Tarkistetaan uusinta saatavilla olevaa versiota...</span>
+            </h2>
+            <div class="spinner">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                     style="margin: auto; display: block;" width="88px" height="88px" viewBox="0 0 100 100"
+                     preserveAspectRatio="xMidYMid">
+                    <path d="M8 50A42 42 0 0 0 92 50A42 48.5 0 0 1 8 50" fill="#59bcb1" stroke="none"
+                          transform="rotate(107.349 50 53.25)">
+                        <animateTransform attributeName="transform" type="rotate" dur="0.8620689655172413s"
+                                          repeatCount="indefinite" keyTimes="0;1"
+                                          values="0 50 53.25;360 50 53.25"></animateTransform>
+                    </path>
+                </svg>
+            </div>
+            <div class="connect-buttons">
+                <button class="btn btn-cancel" type="button" id="checking-latest-available-version-button-cancel">
                     <span lang="en">Cancel</span>
                     <span lang="fi">Peruuta</span>
                 </button>

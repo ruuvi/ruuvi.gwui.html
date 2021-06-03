@@ -34,7 +34,16 @@
     cursor: pointer;
 }
 .brdb {
-    border-bottom: 1px solid #888;
+    border-bottom: 20px solid #888;
+}
+
+h1 {
+    text-align: center;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
 }
 
 .gr {
@@ -42,6 +51,9 @@
 }
 .rd {
     color: red;
+}
+.bl {
+    color: blue;
 }
 
 #wifi-overlay-button-connect {
