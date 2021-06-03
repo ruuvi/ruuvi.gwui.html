@@ -117,7 +117,15 @@ function save_config() {
         contentType: 'application/json',
         method: 'POST',
         cache: false,
-        data: JSON.stringify(data)
+        data: JSON.stringify(data),
+        success: function (data, text) {
+            let tmp = data;
+        },
+        error: function (request, status, error) {
+            let request_status = request.status;
+            let statusText = request.statusText;
+            let responseText = request.responseText;
+        }
     });
 }
 
@@ -262,6 +270,11 @@ function get_config() {
                 let key = keys[idx];
                 let key_value = data[key];
                 switch (key) {
+                    case "fw_ver":
+                        $("#firmware_updating-version-current").text(key_value);
+                        break;
+                    case "nrf52_fw_ver":
+                        break;
                     case "use_eth":
                         use_eth = key_value
                         break;
