@@ -46,6 +46,9 @@ COOKIE_RUUVISESSION = 'RUUVISESSION'
 COOKIE_RUUVILOGIN = 'RUUVILOGIN'
 
 g_simulation_mode = SIMULATION_MODE_NO_CONNECTION
+g_firmware_updating_stage = 0
+g_firmware_updating_percentage = 0
+g_firmware_updating_url = None
 g_ssid = None
 g_password = None
 g_timestamp = None
@@ -411,6 +414,27 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'\r\n'.encode('ascii')
             resp += content_encoded
             self.wfile.write(resp)
+        elif self.path == '/fw_update.json':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode('ascii')
+            new_dict = json.loads(post_data)
+            global g_firmware_updating_url
+            global g_firmware_updating_stage
+            global g_firmware_updating_percentage
+            g_firmware_updating_url = new_dict['url']
+            g_firmware_updating_stage = 1
+            g_firmware_updating_percentage = 0
+            content = '{}'
+            content_encoded = content.encode('utf-8')
+            resp = b''
+            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            resp += content_encoded
+            self.wfile.write(resp)
         else:
             resp = b''
             resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
@@ -506,8 +530,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(tosend.encode('ascii'))
 
     @staticmethod
-    def _generate_status_json(urc, ssid, ip='0', netmask='0', gw='0'):
-        return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc}}}'
+    def _generate_status_json(urc, ssid, ip='0', netmask='0', gw='0', fw_updating_stage=0, percentage=0):
+        if fw_updating_stage == 0:
+            return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc}}}'
+        else:
+            return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}}}}}'
 
     def do_GET(self):
         global g_ruuvi_dict
@@ -753,21 +780,31 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     ssid_key_with_val = f'"ssid":"{g_ssid}"'
                 if g_simulation_mode == SIMULATION_MODE_NO_CONNECTION:
                     content = '{}'
-                elif g_simulation_mode == SIMULATION_MODE_ETH_CONNECTED:
-                    if g_ruuvi_dict['eth_dhcp']:
-                        ip = '192.168.100.119'
-                        netmask = '255.255.255.0'
-                        gw = '192.168.100.1'
+                elif g_simulation_mode == SIMULATION_MODE_ETH_CONNECTED or g_simulation_mode == SIMULATION_MODE_WIFI_CONNECTED:
+                    if g_simulation_mode == SIMULATION_MODE_ETH_CONNECTED:
+                        if g_ruuvi_dict['eth_dhcp']:
+                            ip = '192.168.100.119'
+                            netmask = '255.255.255.0'
+                            gw = '192.168.100.1'
+                        else:
+                            ip = g_ruuvi_dict['eth_static_ip']
+                            netmask = g_ruuvi_dict['eth_netmask']
+                            gw = g_ruuvi_dict['eth_gw']
                     else:
-                        ip = g_ruuvi_dict['eth_static_ip']
-                        netmask = g_ruuvi_dict['eth_netmask']
-                        gw = g_ruuvi_dict['eth_gw']
-                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED, ssid_key_with_val, ip, netmask, gw)
-                elif g_simulation_mode == SIMULATION_MODE_WIFI_CONNECTED:
-                    ip = '192.168.1.119'
-                    netmask = '255.255.255.0'
-                    gw = '192.168.1.1'
-                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED, ssid_key_with_val, ip, netmask, gw)
+                        ip = '192.168.1.119'
+                        netmask = '255.255.255.0'
+                        gw = '192.168.1.1'
+
+                    global g_firmware_updating_stage
+                    global g_firmware_updating_percentage
+
+                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED, ssid_key_with_val, ip, netmask,
+                                                         gw, g_firmware_updating_stage, g_firmware_updating_percentage)
+                    if 0 < g_firmware_updating_stage < 5:
+                        g_firmware_updating_percentage += 10
+                        if g_firmware_updating_percentage >= 100:
+                            g_firmware_updating_percentage = 0
+                            g_firmware_updating_stage += 1
                 elif g_simulation_mode == SIMULATION_MODE_WIFI_FAILED_ATTEMPT:
                     content = self._generate_status_json(STATUS_JSON_URC_WIFI_FAILED_ATTEMPT, ssid_key_with_val)
                 elif g_simulation_mode == SIMULATION_MODE_USER_DISCONNECT:
@@ -991,6 +1028,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
   "body": "* Adds Ruuvi Network support\\r\\n* Adds support for SWD update of connected nRF52\\r\\n* GW hotspot UI fixes\\r\\n* Scan configuration\\r\\n* Reliability improvements\\r\\n\\r\\nTo update Gateway A2, you need to only flash these binaries to the gateway according to instructions on README page. RED led will be blinking quickly while nRF52 onboard is reprogrammed, this takes a few minutes. If GREEN led does not start blinking, disconnect and reconnect USB power.\\r\\n\\r\\nTo update Gateway A1, you need to flash the nRF52 separately with 0.7.1 binary available [here](https://github.com/ruuvi/ruuvi.gateway_nrf.c/releases/download/0.7.1/ruuvigw_nrf_armgcc_ruuvigw_release_0.7.1_full.hex).\\r\\n\\r\\nNote: Trace to R15 has to be cut to use this release. \\r\\n![image](https://user-images.githubusercontent.com/2360368/113686295-c7d5b400-96cf-11eb-91ff-c075ed93adbb.png)\\r\\n![image](https://user-images.githubusercontent.com/2360368/113686356-d7ed9380-96cf-11eb-91f2-b11c9b89b954.png)\\r\\n"
 }
  '''
+                time.sleep(10.0)
                 print(f'Resp: {content}')
                 resp += content.encode('utf-8')
                 self.wfile.write(resp)
