@@ -120,10 +120,13 @@ function on_show_firmware_updating() {
 
         let current_version = $("#firmware_updating-version-current").text();
         let latest_version = $("#firmware_updating-version-latest").text();
+        $("#firmware_updating-status-error").addClass('hidden');
         if (current_version === latest_version) {
             $("#firmware_updating-status-ok-already_latest").removeClass("hidden");
+            $("#firmware_updating-status-ok-update_available").addClass('hidden');
         } else {
             $("#firmware_updating-status-ok-update_available").removeClass("hidden");
+            $("#firmware_updating-status-ok-already_latest").addClass("hidden");
             $("#firmware_updating-button-upgrade").removeClass("disable-click");
         }
     }).fail(function ($xhr) {
@@ -132,7 +135,14 @@ function on_show_firmware_updating() {
         $("#page-firmware_updating-button-continue").removeClass("disable-click");
         let data = $xhr.responseJSON;
         $("#firmware_updating-status-error").removeClass('hidden');
+        $("#firmware_updating-status-ok-already_latest").addClass('hidden');
+        $("#firmware_updating-status-ok-update_available").addClass('hidden');
     });
+}
+
+function on_show_firmware_updating_progress() {
+    $("#page-firmware_updating_progress-button-back").addClass("disable-click");
+    $("#page-firmware_updating_progress-button-continue").addClass("disable-click");
 }
 
 function on_custom_connection_type_changed() {
@@ -293,6 +303,12 @@ $(document).ready(function () {
     });
 
     $('#page-firmware_updating-button-continue').click(function (e) {
+        e.preventDefault();
+        flagNeedToCheckFirmwareUpdates = false;
+        change_url_network_connected();
+    });
+
+    $('page-firmware_updating_progress-button-continue').click(function (e) {
         e.preventDefault();
         flagNeedToCheckFirmwareUpdates = false;
         change_url_network_connected();
@@ -491,6 +507,10 @@ $(document).ready(function () {
 
     $('#firmware_updating').bind('onShow', function () {
         on_show_firmware_updating();
+    });
+
+    $('#firmware_updating_progress').bind('onShow', function () {
+        on_show_firmware_updating_progress();
     });
 
     $("#checking-latest-available-version-button-cancel").click(function () {
@@ -719,10 +739,14 @@ function checkStatus() {
                         progressbar_stage3.val(100);
                         progressbar_stage4.val(100);
                         $("#firmware_updating_progress-status-completed_successfully").removeClass("hidden");
+                        $("#page-firmware_updating_progress-button-back").removeClass("disable-click");
+                        $("#page-firmware_updating_progress-button-continue").removeClass("disable-click");
                         break;
                     case 6: // completed unsuccessfully
                         $("#firmware_updating_progress-status-completed_unsuccessfully").removeClass("hidden");
                         $('#firmware_updating_progress-status-completed_unsuccessfully-message').text(data_extra['message']);
+                        $("#page-firmware_updating_progress-button-back").removeClass("disable-click");
+                        $("#page-firmware_updating_progress-button-continue").removeClass("disable-click");
                         break;
                 }
                 return;
