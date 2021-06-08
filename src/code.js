@@ -12,13 +12,12 @@ if (!String.prototype.format) {
 }
 
 
-var apList = null;
+let apList = null;
 let selectedSSID = "";
-var refreshAPInterval = null;
-var checkStatusInterval = null;
+let refreshAPInterval = null;
+let checkStatusInterval = null;
 let flagNeedToCheckFirmwareUpdates = false;
 let firmwareUpdatingBaseURL = 'https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/';
-let firmwareUpdatingURL = '';
 
 const CONNECTION_STATE = {
     NOT_CONNECTED: "NOT_CONNECTED",
@@ -111,17 +110,18 @@ function on_show_firmware_updating() {
     $("#page-firmware_updating-button-continue").addClass("disable-click");
 
     $.getJSON("/github_latest_release.json", function (data) {
-        $("#firmware_updating-version-latest").text(data.tag_name);
-        firmwareUpdatingURL = firmwareUpdatingBaseURL + data.tag_name;
+        let latest_release_version = data.tag_name;
+        $("#firmware_updating-version-latest").text(latest_release_version);
+        let firmware_updating_url = firmwareUpdatingBaseURL + latest_release_version;
+        $("#firmware_updating-url").val(firmware_updating_url);
 
         $("#checking-latest-available-version").hide();
         $("#page-firmware_updating-button-back").removeClass("disable-click");
         $("#page-firmware_updating-button-continue").removeClass("disable-click");
 
         let current_version = $("#firmware_updating-version-current").text();
-        let latest_version = $("#firmware_updating-version-latest").text();
         $("#firmware_updating-status-error").addClass('hidden');
-        if (current_version === latest_version) {
+        if (current_version === latest_release_version) {
             $("#firmware_updating-status-ok-already_latest").removeClass("hidden");
             $("#firmware_updating-status-ok-update_available").addClass('hidden');
         } else {
@@ -142,7 +142,7 @@ function on_show_firmware_updating() {
 
 function on_show_firmware_updating_progress() {
     $("#page-firmware_updating_progress-button-back").addClass("disable-click");
-    $("#page-firmware_updating_progress-button-continue").addClass("disable-click");
+    $("#page-firmware_updating_progress-button-refresh").addClass("disable-click");
 }
 
 function on_custom_connection_type_changed() {
@@ -308,21 +308,21 @@ $(document).ready(function () {
         change_url_network_connected();
     });
 
-    $('page-firmware_updating_progress-button-continue').click(function (e) {
+    $('page-firmware_updating_progress-button-refresh').click(function (e) {
         e.preventDefault();
-        flagNeedToCheckFirmwareUpdates = false;
-        change_url_network_connected();
+        location.reload();
     });
 
     $('#firmware_updating-button-upgrade').click(function (e) {
         e.preventDefault();
+        let firmware_updating_url = $("#firmware_updating-url").val();
         $.ajax({
                 method: 'POST',
                 url: '/fw_update.json',
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",
                 cache: false,
-                data: JSON.stringify({'url': firmwareUpdatingURL}),
+                data: JSON.stringify({'url': firmware_updating_url}),
                 success: function (data, text) {
                     change_url_firmware_updating_progress();
                     flagNeedToCheckFirmwareUpdates = false;
@@ -507,6 +507,14 @@ $(document).ready(function () {
 
     $('#firmware_updating').bind('onShow', function () {
         on_show_firmware_updating();
+    });
+
+    $('#firmware_updating-set-url-manually').change(function (e) {
+        if ($('#firmware_updating-set-url-manually')[0].checked) {
+            $('#firmware_updating-url-manual').slideDown();
+        } else {
+            $('#firmware_updating-url-manual').slideUp();
+        }
     });
 
     $('#firmware_updating_progress').bind('onShow', function () {
@@ -739,14 +747,12 @@ function checkStatus() {
                         progressbar_stage3.val(100);
                         progressbar_stage4.val(100);
                         $("#firmware_updating_progress-status-completed_successfully").removeClass("hidden");
-                        $("#page-firmware_updating_progress-button-back").removeClass("disable-click");
-                        $("#page-firmware_updating_progress-button-continue").removeClass("disable-click");
+                        $("#page-firmware_updating_progress-button-refresh").removeClass("disable-click");
                         break;
                     case 6: // completed unsuccessfully
                         $("#firmware_updating_progress-status-completed_unsuccessfully").removeClass("hidden");
                         $('#firmware_updating_progress-status-completed_unsuccessfully-message').text(data_extra['message']);
                         $("#page-firmware_updating_progress-button-back").removeClass("disable-click");
-                        $("#page-firmware_updating_progress-button-continue").removeClass("disable-click");
                         break;
                 }
                 return;
@@ -804,16 +810,12 @@ function checkStatus() {
                 $("#ip").text(data["ip"]);
                 $("#netmask").text(data["netmask"]);
                 $("#gw").text(data["gw"]);
-                if (!$('#network-connected').is(':visible')) {
-                    on_network_connected_wifi();
-                    change_url_network_connected();
-                }
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
                         break;
                     case CONNECTION_STATE.CONNECTING:
                         $("#eth-overlay-connecting").hide();
-                        on_network_connected_eth();
+                        on_network_connected_wifi();
                         change_url_network_connected();
                         break;
                     case CONNECTION_STATE.CONNECTED:
@@ -830,11 +832,6 @@ function checkStatus() {
                 $("#ip").text(data["ip"]);
                 $("#netmask").text(data["netmask"]);
                 $("#gw").text(data["gw"]);
-
-                if (!$('#network-connected').is(':visible')) {
-                    on_network_connected_eth();
-                    change_url_network_connected();
-                }
 
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:

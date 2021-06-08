@@ -456,6 +456,10 @@ input[type=text], input[type=password] {
   }
 }
 
+#firmware_updating-url {
+  width: 100%;
+}
+
 .control {
   display: block;
   position: relative;
