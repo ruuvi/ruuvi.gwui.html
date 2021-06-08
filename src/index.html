@@ -722,17 +722,42 @@
                         </colgroup>
                         <tbody>
                             <tr class="brdb">
-                                <td>Current firmware version:</td>
+                                <td>
+                                    <span lang="en">Current firmware version:</span>
+                                    <span lang="fi">Nykyinen laiteohjelmistoversio:</span>
+                                </td>
                                 <td>
                                     <div id="firmware_updating-version-current"></div>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Latest available firmware version:</td>
+                                <td>
+                                    <span lang="en">Latest available firmware version:</span>
+                                    <span lang="fi">Uusin saatavilla oleva laiteohjelmistoversio:</span>
+                                </td>
                                 <td>
                                     <div id="firmware_updating-version-latest"></div>
                                 </td>
                             </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="control-group control-sep">
+                                        <input id="firmware_updating-set-url-manually" type="checkbox">
+                                        <span lang="en">Specify the URL with the firmware update manually</span>
+                                        <span lang="fi">Määritä URL-osoite laiteohjelmistopäivityksellä manuaalisesti</span>
+                                        <span class="control_indicator"></span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="firmware_updating-url-manual" class="hidden">
+                                <td colspan="2">
+                                    <label for="firmware_updating-url">
+                                        URL:
+                                    </label>
+                                    <input id="firmware_updating-url" type="text" value="">
+                                </td>
+                            </tr>
+
                             <tr>
                                 <td>Status:</td>
                                 <td>
@@ -818,8 +843,8 @@
                     </table>
                     <div>
                         <div id="firmware_updating_progress-status-completed_successfully" class="hidden gr">
-                            <span lang="en">Completed successfully</span>
-                            <span lang="fi">Suoritettu onnistuneesti</span>
+                            <span lang="en">Completed successfully. The Gateway will be restarted in a few seconds.</span>
+                            <span lang="fi">Suoritettu onnistuneesti. Yhdyskäytävä käynnistetään uudelleen muutamassa sekunnissa.</span>
                         </div>
                         <div id="firmware_updating_progress-status-completed_unsuccessfully" class="hidden rd">
                             <span lang="en">Completed unsuccessfully: </span>
@@ -834,9 +859,9 @@
                         <span lang="en">Go Back</span>
                         <span lang="fi">Takaisin</span>
                     </a>
-                    <a href="" id="page-firmware_updating_progress-button-continue" class="btn disabled">
-                        <span lang="en">Continue</span>
-                        <span lang="fi">Jatka</span>
+                    <a href="" id="page-firmware_updating_progress-button-refresh" class="btn disabled">
+                        <span lang="en">Refresh</span>
+                        <span lang="fi">Virkistää</span>
                     </a>
                 </div>
             </div>
