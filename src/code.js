@@ -18,6 +18,7 @@ let refreshAPInterval = null;
 let checkStatusInterval = null;
 let flagNeedToCheckFirmwareUpdates = false;
 let firmwareUpdatingBaseURL = 'https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/';
+let flagLatestFirmwareVersionSupported = false;
 
 const CONNECTION_STATE = {
     NOT_CONNECTED: "NOT_CONNECTED",
@@ -109,8 +110,22 @@ function on_show_firmware_updating() {
     $("#page-firmware_updating-button-back").addClass("disable-click");
     $("#page-firmware_updating-button-continue").addClass("disable-click");
 
+    $("#firmware_updating-status-ok-already_latest").addClass('hidden');
+    $("#firmware_updating-status-ok-latest_not_supported").addClass('hidden');
+    $("#firmware_updating-status-ok-update_available").addClass('hidden');
+    $("#firmware_updating-status-error").addClass('hidden');
+
     $.getJSON("/github_latest_release.json", function (data) {
         let latest_release_version = data.tag_name;
+        let m = latest_release_version.match(/v(\d+)\.(\d+)\.(\d+)/);
+        flagLatestFirmwareVersionSupported = false;
+        if (m) {
+            let latest_release_version_bin = (parseInt(m[1]) << 16) + (parseInt(m[2]) << 8) + parseInt(m[3]);
+            if (latest_release_version_bin >= 0x00010304) {
+                flagLatestFirmwareVersionSupported = true;
+            }
+        }
+
         $("#firmware_updating-version-latest").text(latest_release_version);
         let firmware_updating_url = firmwareUpdatingBaseURL + latest_release_version;
         $("#firmware_updating-url").val(firmware_updating_url);
@@ -121,13 +136,16 @@ function on_show_firmware_updating() {
 
         let current_version = $("#firmware_updating-version-current").text();
         $("#firmware_updating-status-error").addClass('hidden');
-        if (current_version === latest_release_version) {
-            $("#firmware_updating-status-ok-already_latest").removeClass("hidden");
-            $("#firmware_updating-status-ok-update_available").addClass('hidden');
+
+        if (!flagLatestFirmwareVersionSupported) {
+            $("#firmware_updating-status-ok-latest_not_supported").removeClass("hidden");
         } else {
-            $("#firmware_updating-status-ok-update_available").removeClass("hidden");
-            $("#firmware_updating-status-ok-already_latest").addClass("hidden");
-            $("#firmware_updating-button-upgrade").removeClass("disable-click");
+            if (current_version === latest_release_version) {
+                $("#firmware_updating-status-ok-already_latest").removeClass("hidden");
+            } else {
+                $("#firmware_updating-status-ok-update_available").removeClass("hidden");
+                $("#firmware_updating-button-upgrade").removeClass("disable-click");
+            }
         }
     }).fail(function ($xhr) {
         $("#checking-latest-available-version").hide();
@@ -512,8 +530,12 @@ $(document).ready(function () {
     $('#firmware_updating-set-url-manually').change(function (e) {
         if ($('#firmware_updating-set-url-manually')[0].checked) {
             $('#firmware_updating-url-manual').slideDown();
+            $("#firmware_updating-button-upgrade").removeClass("disable-click");
         } else {
             $('#firmware_updating-url-manual').slideUp();
+            if (!flagLatestFirmwareVersionSupported) {
+                $("#firmware_updating-button-upgrade").addClass("disable-click");
+            }
         }
     });
 
