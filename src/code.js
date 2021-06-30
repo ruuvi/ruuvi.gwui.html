@@ -834,7 +834,6 @@ function checkStatus() {
                 $("#gw").text(data["gw"]);
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
-                        break;
                     case CONNECTION_STATE.CONNECTING:
                         $("#eth-overlay-connecting").hide();
                         on_network_connected_wifi();
@@ -857,7 +856,6 @@ function checkStatus() {
 
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
-                        break;
                     case CONNECTION_STATE.CONNECTING:
                         $("#eth-overlay-connecting").hide();
                         on_network_connected_eth();
