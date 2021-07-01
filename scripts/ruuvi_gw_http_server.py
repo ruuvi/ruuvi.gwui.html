@@ -536,203 +536,259 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         else:
             return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}}}}}'
 
+    def _check_auth(self):
+        global g_ruuvi_dict
+        global g_login_session
+        if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DENY:
+            return False
+        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI:
+            cookie_str = self._get_value_from_headers('Cookie: ')
+            session_id = None
+            if cookie_str is not None:
+                cookies_dict = self._parse_cookies(cookie_str)
+                if COOKIE_RUUVISESSION in cookies_dict:
+                    cookie_ruuvi_session = cookies_dict[COOKIE_RUUVISESSION]
+                    if cookie_ruuvi_session in g_authorized_sessions:
+                        session_id = cookie_ruuvi_session
+            if session_id is not None:
+                return True
+            return False
+        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_BASIC:
+            authorization_str = self._get_value_from_headers('Authorization: ')
+            if authorization_str is None:
+                return False
+            auth_prefix = 'Basic '
+            if not authorization_str.startswith(auth_prefix):
+                return False
+            auth_token = authorization_str[len(auth_prefix):]
+            try:
+                user_password_str = base64.b64decode(auth_token).decode('utf-8')
+            except binascii.Error:
+                return False
+            if not user_password_str.startswith(f"{g_ruuvi_dict['lan_auth_user']}:"):
+                return False
+            if auth_token != g_ruuvi_dict['lan_auth_pass']:
+                return False
+            return True
+        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DIGEST:
+            authorization_str = self._get_value_from_headers('Authorization: ')
+            if authorization_str is None:
+                return False
+            digest_auth = DigestAuth()
+            if not digest_auth.parse_authorization_str(authorization_str):
+                return False
+            if digest_auth.username != g_ruuvi_dict['lan_auth_user']:
+                return False
+            if not digest_auth.check_password(g_ruuvi_dict['lan_auth_pass']):
+                return False
+            return True
+        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_ALLOW:
+            return True
+        else:
+            raise RuntimeError("Unsupported Auth")
+
+    def _do_get_auth(self):
+        global g_ruuvi_dict
+        global g_login_session
+        flag_content_html = True if self.path == '/auth.html' else False
+
+        if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DENY:
+            resp = b''
+            resp += f'HTTP/1.1 403 Forbidden\r\n'.encode('ascii')
+            resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+
+            cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+            resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            if flag_content_html:
+                file_path = 'auth.html'
+                content_type = self._get_content_type(file_path)
+                file_size = os.path.getsize(file_path)
+                resp += f'Content-type: {content_type}\r\n'.encode('ascii')
+                resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                with open(file_path, 'rb') as fd:
+                    resp += fd.read()
+            else:
+                lan_auth_type = g_ruuvi_dict['lan_auth_type']
+                resp_content = f'{{"success": {"false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
+                resp_content_encoded = resp_content.encode('utf-8')
+                resp += f'Content-type: application/json\r\n'.encode('ascii')
+                resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                resp += resp_content_encoded
+            self.wfile.write(resp)
+        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI:
+            cookie_str = self._get_value_from_headers('Cookie: ')
+            session_id = None
+            if cookie_str is not None:
+                cookies_dict = self._parse_cookies(cookie_str)
+                if COOKIE_RUUVISESSION in cookies_dict:
+                    cookie_ruuvi_session = cookies_dict[COOKIE_RUUVISESSION]
+                    if cookie_ruuvi_session in g_authorized_sessions:
+                        session_id = cookie_ruuvi_session
+            if session_id is not None:
+                resp = b''
+                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+            else:
+                g_login_session = LoginSession()
+                resp = b''
+                resp += f'HTTP/1.1 401 Unauthorized\r\n'.encode('ascii')
+                resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+                resp += g_login_session.generate_auth_header_fields().encode('ascii')
+
+            cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+            resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            if flag_content_html:
+                file_path = 'auth.html'
+                content_type = self._get_content_type(file_path)
+                file_size = os.path.getsize(file_path)
+                resp += f'Content-type: {content_type}\r\n'.encode('ascii')
+                resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                with open(file_path, 'rb') as fd:
+                    resp += fd.read()
+            else:
+                is_success = True if session_id is not None else False
+                lan_auth_type = g_ruuvi_dict['lan_auth_type']
+                resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
+                resp_content_encoded = resp_content.encode('utf-8')
+                resp += f'Content-type: application/json\r\n'.encode('ascii')
+                resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                resp += resp_content_encoded
+            self.wfile.write(resp)
+        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_BASIC:
+            authorization_str = self._get_value_from_headers('Authorization: ')
+            if authorization_str is None:
+                self._on_post_resp_401()
+                return
+            auth_prefix = 'Basic '
+            if not authorization_str.startswith(auth_prefix):
+                self._on_post_resp_401()
+                return
+            auth_token = authorization_str[len(auth_prefix):]
+            try:
+                user_password_str = base64.b64decode(auth_token).decode('utf-8')
+            except binascii.Error:
+                self._on_post_resp_401()
+                return
+            if not user_password_str.startswith(f"{g_ruuvi_dict['lan_auth_user']}:"):
+                self._on_post_resp_401()
+                return
+            if auth_token != g_ruuvi_dict['lan_auth_pass']:
+                self._on_post_resp_401()
+                return
+
+            resp = b''
+            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+            cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+            resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            if flag_content_html:
+                file_path = 'auth.html'
+                content_type = self._get_content_type(file_path)
+                file_size = os.path.getsize(file_path)
+                resp += f'Content-type: {content_type}\r\n'.encode('ascii')
+                resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                with open(file_path, 'rb') as fd:
+                    resp += fd.read()
+            else:
+                is_success = True
+                lan_auth_type = g_ruuvi_dict['lan_auth_type']
+                resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
+                resp_content_encoded = resp_content.encode('utf-8')
+                resp += f'Content-type: application/json\r\n'.encode('ascii')
+                resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                resp += resp_content_encoded
+            self.wfile.write(resp)
+        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DIGEST:
+            authorization_str = self._get_value_from_headers('Authorization: ')
+            if authorization_str is None:
+                self._on_post_resp_401()
+                return
+            digest_auth = DigestAuth()
+            if not digest_auth.parse_authorization_str(authorization_str):
+                self._on_post_resp_401()
+                return
+            if digest_auth.username != g_ruuvi_dict['lan_auth_user']:
+                self._on_post_resp_401()
+                return
+            if not digest_auth.check_password(g_ruuvi_dict['lan_auth_pass']):
+                self._on_post_resp_401()
+                return
+
+            resp = b''
+            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+            cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+            resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            if flag_content_html:
+                file_path = 'auth.html'
+                content_type = self._get_content_type(file_path)
+                file_size = os.path.getsize(file_path)
+                resp += f'Content-type: {content_type}\r\n'.encode('ascii')
+                resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                with open(file_path, 'rb') as fd:
+                    resp += fd.read()
+            else:
+                is_success = True
+                lan_auth_type = g_ruuvi_dict['lan_auth_type']
+                resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
+                resp_content_encoded = resp_content.encode('utf-8')
+                resp += f'Content-type: application/json\r\n'.encode('ascii')
+                resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                resp += resp_content_encoded
+            self.wfile.write(resp)
+        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_ALLOW:
+            resp = b''
+            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+            cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+            resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            if flag_content_html:
+                file_path = 'auth.html'
+                content_type = self._get_content_type(file_path)
+                file_size = os.path.getsize(file_path)
+                resp += f'Content-type: {content_type}\r\n'.encode('ascii')
+                resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                with open(file_path, 'rb') as fd:
+                    resp += fd.read()
+            else:
+                is_success = True
+                lan_auth_type = g_ruuvi_dict['lan_auth_type']
+                resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
+                resp_content_encoded = resp_content.encode('utf-8')
+                resp += f'Content-type: application/json\r\n'.encode('ascii')
+                resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                resp += resp_content_encoded
+            self.wfile.write(resp)
+        else:
+            raise RuntimeError("Unsupported Auth")
+
     def do_GET(self):
         global g_ruuvi_dict
         global g_login_session
         print('GET %s' % self.path)
         if self.path == '/auth' or self.path.startswith('/auth?') or self.path == '/auth.html':
-            flag_content_html = True if self.path == '/auth.html' else False
-
-            if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DENY:
-                resp = b''
-                resp += f'HTTP/1.1 403 Forbidden\r\n'.encode('ascii')
-                resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
-
-                cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
-                resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
-                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-                resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                if flag_content_html:
-                    file_path = 'auth.html'
-                    content_type = self._get_content_type(file_path)
-                    file_size = os.path.getsize(file_path)
-                    resp += f'Content-type: {content_type}\r\n'.encode('ascii')
-                    resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    with open(file_path, 'rb') as fd:
-                        resp += fd.read()
-                else:
-                    lan_auth_type = g_ruuvi_dict['lan_auth_type']
-                    resp_content = f'{{"success": {"false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
-                    resp_content_encoded = resp_content.encode('utf-8')
-                    resp += f'Content-type: application/json\r\n'.encode('ascii')
-                    resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    resp += resp_content_encoded
-                self.wfile.write(resp)
-            elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI:
-                cookie_str = self._get_value_from_headers('Cookie: ')
-                session_id = None
-                if cookie_str is not None:
-                    cookies_dict = self._parse_cookies(cookie_str)
-                    if COOKIE_RUUVISESSION in cookies_dict:
-                        cookie_ruuvi_session = cookies_dict[COOKIE_RUUVISESSION]
-                        if cookie_ruuvi_session in g_authorized_sessions:
-                            session_id = cookie_ruuvi_session
-                if session_id is not None:
-                    resp = b''
-                    resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
-                    resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
-                else:
-                    g_login_session = LoginSession()
-                    resp = b''
-                    resp += f'HTTP/1.1 401 Unauthorized\r\n'.encode('ascii')
-                    resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
-                    resp += g_login_session.generate_auth_header_fields().encode('ascii')
-
-                cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
-                resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
-                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-                resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                if flag_content_html:
-                    file_path = 'auth.html'
-                    content_type = self._get_content_type(file_path)
-                    file_size = os.path.getsize(file_path)
-                    resp += f'Content-type: {content_type}\r\n'.encode('ascii')
-                    resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    with open(file_path, 'rb') as fd:
-                        resp += fd.read()
-                else:
-                    is_success = True if session_id is not None else False
-                    lan_auth_type = g_ruuvi_dict['lan_auth_type']
-                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
-                    resp_content_encoded = resp_content.encode('utf-8')
-                    resp += f'Content-type: application/json\r\n'.encode('ascii')
-                    resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    resp += resp_content_encoded
-                self.wfile.write(resp)
-            elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_BASIC:
-                authorization_str = self._get_value_from_headers('Authorization: ')
-                if authorization_str is None:
-                    self._on_post_resp_401()
-                    return
-                auth_prefix = 'Basic '
-                if not authorization_str.startswith(auth_prefix):
-                    self._on_post_resp_401()
-                    return
-                auth_token = authorization_str[len(auth_prefix):]
-                flag_authorized = False
-                try:
-                    user_password_str = base64.b64decode(auth_token).decode('utf-8')
-                except binascii.Error:
-                    self._on_post_resp_401()
-                    return
-                if not user_password_str.startswith(f"{g_ruuvi_dict['lan_auth_user']}:"):
-                    self._on_post_resp_401()
-                    return
-                if auth_token != g_ruuvi_dict['lan_auth_pass']:
-                    self._on_post_resp_401()
-                    return
-
-                resp = b''
-                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
-                resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
-                cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
-                resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
-                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-                resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                if flag_content_html:
-                    file_path = 'auth.html'
-                    content_type = self._get_content_type(file_path)
-                    file_size = os.path.getsize(file_path)
-                    resp += f'Content-type: {content_type}\r\n'.encode('ascii')
-                    resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    with open(file_path, 'rb') as fd:
-                        resp += fd.read()
-                else:
-                    is_success = True
-                    lan_auth_type = g_ruuvi_dict['lan_auth_type']
-                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
-                    resp_content_encoded = resp_content.encode('utf-8')
-                    resp += f'Content-type: application/json\r\n'.encode('ascii')
-                    resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    resp += resp_content_encoded
-                self.wfile.write(resp)
-            elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DIGEST:
-                authorization_str = self._get_value_from_headers('Authorization: ')
-                if authorization_str is None:
-                    self._on_post_resp_401()
-                    return
-                digest_auth = DigestAuth()
-                if not digest_auth.parse_authorization_str(authorization_str):
-                    self._on_post_resp_401()
-                    return
-                if digest_auth.username != g_ruuvi_dict['lan_auth_user']:
-                    self._on_post_resp_401()
-                    return
-                if not digest_auth.check_password(g_ruuvi_dict['lan_auth_pass']):
-                    self._on_post_resp_401()
-                    return
-
-                resp = b''
-                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
-                resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
-                cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
-                resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
-                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-                resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                if flag_content_html:
-                    file_path = 'auth.html'
-                    content_type = self._get_content_type(file_path)
-                    file_size = os.path.getsize(file_path)
-                    resp += f'Content-type: {content_type}\r\n'.encode('ascii')
-                    resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    with open(file_path, 'rb') as fd:
-                        resp += fd.read()
-                else:
-                    is_success = True
-                    lan_auth_type = g_ruuvi_dict['lan_auth_type']
-                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
-                    resp_content_encoded = resp_content.encode('utf-8')
-                    resp += f'Content-type: application/json\r\n'.encode('ascii')
-                    resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    resp += resp_content_encoded
-                self.wfile.write(resp)
-            elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_ALLOW:
-                resp = b''
-                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
-                resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
-                cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
-                resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
-                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-                resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                if flag_content_html:
-                    file_path = 'auth.html'
-                    content_type = self._get_content_type(file_path)
-                    file_size = os.path.getsize(file_path)
-                    resp += f'Content-type: {content_type}\r\n'.encode('ascii')
-                    resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    with open(file_path, 'rb') as fd:
-                        resp += fd.read()
-                else:
-                    is_success = True
-                    lan_auth_type = g_ruuvi_dict['lan_auth_type']
-                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
-                    resp_content_encoded = resp_content.encode('utf-8')
-                    resp += f'Content-type: application/json\r\n'.encode('ascii')
-                    resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    resp += resp_content_encoded
-                self.wfile.write(resp)
-            else:
-                raise RuntimeError("Unsupported Auth")
+            self._do_get_auth()
+            return
         elif self.path.endswith('.json'):
             resp = b''
             resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
@@ -740,15 +796,15 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
-            ruuvi_dict = copy.deepcopy(g_ruuvi_dict)
-            if 'http_pass' in ruuvi_dict:
-                del ruuvi_dict['http_pass']
-            if 'mqtt_pass' in ruuvi_dict:
-                del ruuvi_dict['mqtt_pass']
-            if 'lan_auth_pass' in ruuvi_dict:
-                del ruuvi_dict['lan_auth_pass']
-            content = json.dumps(ruuvi_dict)
             if self.path == '/ruuvi.json':
+                ruuvi_dict = copy.deepcopy(g_ruuvi_dict)
+                if 'http_pass' in ruuvi_dict:
+                    del ruuvi_dict['http_pass']
+                if 'mqtt_pass' in ruuvi_dict:
+                    del ruuvi_dict['mqtt_pass']
+                if 'lan_auth_pass' in ruuvi_dict:
+                    del ruuvi_dict['lan_auth_pass']
+                content = json.dumps(ruuvi_dict)
                 print(f'Resp: {content}')
                 resp += content.encode('utf-8')
                 self.wfile.write(resp)
