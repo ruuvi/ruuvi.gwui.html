@@ -64,6 +64,11 @@
                 performLogIn($("#lan_auth-user").val(), $("#lan_auth-pass").val());
             });
 
+            $('#lan_auth-button-home').click(function (e) {
+                e.preventDefault();
+                window.location.replace("/");
+            });
+
             function _parseToken(auth_str, prefix, suffix) {
                 let idx1 = auth_str.indexOf(prefix);
                 if (idx1 === -1) {
@@ -131,6 +136,7 @@
                         headers: null,
                         success: function (data, text) {
                             $('#lan_auth-user_login').hide();
+                            $('#lan_auth-home').show();
                             $('#auth-no').hide();
                             $('#auth-yes').show();
                             $('#auth-forbidden').hide();
@@ -180,6 +186,7 @@
                         }),
                         success: function (data, text, request) {
                             $('#lan_auth-user_login').hide();
+                            $('#lan_auth-home').show();
                             $('#auth-no').hide();
                             $('#auth-yes').show();
                             $('#gateway_name').text(data.gateway_name)
@@ -326,6 +333,12 @@
             <a href="" id="lan_auth-button-login" class="btn">
                 <span lang="en">LOG IN</span>
                 <span lang="fi">KIRJAUDU SISÄÄN</span>
+            </a>
+        </div>
+        <div class="conf-settings-item hidden" id="lan_auth-home">
+            <a href="" id="lan_auth-button-home" class="btn">
+                <span lang="en">Go to home page</span>
+                <span lang="fi">Mene kotisivulle</span>
             </a>
         </div>
     </div>
