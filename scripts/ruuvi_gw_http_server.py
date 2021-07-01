@@ -562,7 +562,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     with open(file_path, 'rb') as fd:
                         resp += fd.read()
                 else:
-                    resp_content = f'{{"success": {"false"}, "gateway_name": "{RUUVI_AUTH_REALM}"}}'
+                    lan_auth_type = g_ruuvi_dict['lan_auth_type']
+                    resp_content = f'{{"success": {"false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
                     resp_content_encoded = resp_content.encode('utf-8')
                     resp += f'Content-type: application/json\r\n'.encode('ascii')
                     resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -604,7 +605,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         resp += fd.read()
                 else:
                     is_success = True if session_id is not None else False
-                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}"}}'
+                    lan_auth_type = g_ruuvi_dict['lan_auth_type']
+                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
                     resp_content_encoded = resp_content.encode('utf-8')
                     resp += f'Content-type: application/json\r\n'.encode('ascii')
                     resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -652,7 +654,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         resp += fd.read()
                 else:
                     is_success = True
-                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}"}}'
+                    lan_auth_type = g_ruuvi_dict['lan_auth_type']
+                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
                     resp_content_encoded = resp_content.encode('utf-8')
                     resp += f'Content-type: application/json\r\n'.encode('ascii')
                     resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -693,7 +696,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         resp += fd.read()
                 else:
                     is_success = True
-                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}"}}'
+                    lan_auth_type = g_ruuvi_dict['lan_auth_type']
+                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
                     resp_content_encoded = resp_content.encode('utf-8')
                     resp += f'Content-type: application/json\r\n'.encode('ascii')
                     resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -719,7 +723,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         resp += fd.read()
                 else:
                     is_success = True
-                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}"}}'
+                    lan_auth_type = g_ruuvi_dict['lan_auth_type']
+                    resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
                     resp_content_encoded = resp_content.encode('utf-8')
                     resp += f'Content-type: application/json\r\n'.encode('ascii')
                     resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
