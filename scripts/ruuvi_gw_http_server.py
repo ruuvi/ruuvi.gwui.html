@@ -23,7 +23,6 @@ import base64
 from enum import Enum
 from typing import Optional, Dict
 
-
 LAN_AUTH_TYPE_DENY = 'lan_auth_deny'
 LAN_AUTH_TYPE_RUUVI = 'lan_auth_ruuvi'
 LAN_AUTH_TYPE_DIGEST = 'lan_auth_digest'
@@ -81,7 +80,7 @@ g_ruuvi_dict = {
     'gw_mac': g_gw_mac,
     'use_filtering': True,
     'company_id': "0x0499",
-    'coordinates':  "",
+    'coordinates': "",
     'use_coded_phy': False,
     'use_1mbit_phy': True,
     'use_extended_payload': True,
@@ -182,7 +181,8 @@ class DigestAuth(object):
 
     def check_password(self, encrypted_password):
         ha2 = hashlib.md5(f'GET:{self.uri}'.encode('utf-8')).hexdigest()
-        response = hashlib.md5(f'{encrypted_password}:{self.nonce}:{self.nc}:{self.cnonce}:{self.qop}:{ha2}'.encode('utf-8')).hexdigest()
+        response = hashlib.md5(
+            f'{encrypted_password}:{self.nonce}:{self.nc}:{self.cnonce}:{self.qop}:{ha2}'.encode('utf-8')).hexdigest()
         return response == self.response
 
 
@@ -270,7 +270,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             nonce = hashlib.sha256(nonce_random.encode('ascii')).hexdigest()
             opaque = hashlib.sha256(RUUVI_AUTH_REALM.encode('ascii')).hexdigest()
 
-            resp += f'WWW-Authenticate: Digest realm="{RUUVI_AUTH_REALM}" qop="auth" nonce="{nonce}" opaque="{opaque}"\r\n'.encode('ascii')
+            resp += f'WWW-Authenticate: Digest realm="{RUUVI_AUTH_REALM}" qop="auth" nonce="{nonce}" opaque="{opaque}"\r\n'.encode(
+                'ascii')
             resp += f'\r\n'.encode('ascii')
             self.wfile.write(resp)
         else:
@@ -1102,7 +1103,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             pass
         elif self.path == '/metrics':
             if not self._check_auth():
-                if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI or g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DENY:
+                lan_auth_type = g_ruuvi_dict['lan_auth_type']
+                if lan_auth_type == LAN_AUTH_TYPE_RUUVI or lan_auth_type == LAN_AUTH_TYPE_DENY:
                     resp = b''
                     resp += f'HTTP/1.1 302 Found\r\n'.encode('ascii')
                     resp += f'Location: {"/auth.html"}\r\n'.encode('ascii')
