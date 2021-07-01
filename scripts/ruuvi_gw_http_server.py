@@ -378,14 +378,14 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     g_ssid = ssid
                     g_password = password
                     g_timestamp = time.time()
+                    resp_content = f'{{}}'
+                    resp_content_encoded = resp_content.encode('utf-8')
                     resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
                     resp += f'Content-type: application/json\r\n'.encode('ascii')
                     resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
                     resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    resp_content = f'{{}}'
-                    resp_content_encoded = resp_content.encode('utf-8')
                     resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
+                    resp += f'\r\n'.encode('ascii')
                     resp += resp_content_encoded
             print(f'Response: {resp}')
             self.wfile.write(resp)
