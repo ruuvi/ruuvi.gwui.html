@@ -25,6 +25,12 @@
             font-size: small;
         }
 
+        div.lan_auth_type {
+            color: black;
+            font-size: medium;
+            text-align: center;
+        }
+
         div.gateway_name {
             color: blue;
             font-size: large;
@@ -101,6 +107,20 @@
                 g_session_id = session_id;
             }
 
+            function updateLanAuthType(lan_auth_type) {
+                if (lan_auth_type === "lan_auth_deny") {
+                    $('#lan_auth_type-deny').show();
+                } else if (lan_auth_type === "lan_auth_ruuvi") {
+                    $('#lan_auth_type-ruuvi').show();
+                } else if (lan_auth_type === "lan_auth_digest") {
+                    $('#lan_auth_type-digest').show();
+                } else if (lan_auth_type === "lan_auth_basic") {
+                    $('#lan_auth_type-basic').show();
+                } else if (lan_auth_type === "lan_auth_allow") {
+                    $('#lan_auth_type-allow').show();
+                }
+            }
+
             function checkAuth() {
                 $.ajax({
                         url: '/auth',
@@ -115,6 +135,7 @@
                             $('#auth-yes').show();
                             $('#auth-forbidden').hide();
                             $('#gateway_name').text(data.gateway_name)
+                            updateLanAuthType(data.lan_auth_type);
                         },
                         error: function (request, status, error) {
                             if (request.status === 401) {
@@ -124,12 +145,14 @@
                                 $('#lan_auth-user_login').show();
                                 _handleHeaderWwwAuth(request.getResponseHeader('WWW-Authenticate'));
                                 $('#gateway_name').text(request.responseJSON.gateway_name)
+                                updateLanAuthType(request.responseJSON.lan_auth_type);
                             } else if (request.status === 403) {
                                 $('#auth-yes').hide();
                                 $('#auth-no').hide();
                                 $('#auth-forbidden').show();
                                 $('#lan_auth-user_login').hide();
                                 $('#gateway_name').text(request.responseJSON.gateway_name)
+                                updateLanAuthType(request.responseJSON.lan_auth_type);
                             } else {
                                 $('#auth-yes').hide();
                                 $('#auth-no').hide();
@@ -160,6 +183,7 @@
                             $('#auth-no').hide();
                             $('#auth-yes').show();
                             $('#gateway_name').text(data.gateway_name)
+                            updateLanAuthType(data.lan_auth_type);
                         },
                         error: function (request, status, error) {
                             if (request.status === 401) {
@@ -169,6 +193,7 @@
                                 _handleHeaderWwwAuth(request.getResponseHeader('WWW-Authenticate'));
                                 $('#auth-err-message').show();
                                 $('#gateway_name').text(request.responseJSON.gateway_name)
+                                updateLanAuthType(request.responseJSON.lan_auth_type);
                             } else {
                                 $('#auth-yes').hide();
                                 $('#auth-no').hide();
@@ -205,6 +230,41 @@
                 <span lang="fi">Pääsy evätty.</span>
             </div>
         </h1>
+
+        <h2>
+            <table>
+                <tr>
+                    <td>
+                        <div id="lan_auth_type" class="lan_auth_type">
+                            <span lang="en">LAN authentication type: </span>
+                            <span lang="fi">LAN-todennustyyppi: </span>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="lan_auth_type-deny" class="lan_auth_type hidden">
+                            <span lang="en">Access denied</span>
+                            <span lang="fi">Pääsy evätty</span>
+                        </div>
+                        <div id="lan_auth_type-ruuvi" class="lan_auth_type hidden">
+                            <span lang="en">Ruuvi authentication (based on MD5+SHA256)</span>
+                            <span lang="fi">Ruuvi-kirjautuminen (perustuu MD5 + SHA256:een)</span>
+                        </div>
+                        <div id="lan_auth_type-digest" class="lan_auth_type hidden">
+                            <span lang="en">Digest authentication</span>
+                            <span lang="fi">Salattu kirjautuminen</span>
+                        </div>
+                        <div id="lan_auth_type-basic" class="lan_auth_type hidden">
+                            <span lang="en">Basic authentication</span>
+                            <span lang="fi">Salaamaton kirjautuminen</span>
+                        </div>
+                        <div id="lan_auth_type-allow" class="lan_auth_type hidden">
+                            <span lang="en">Access allowed</span>
+                            <span lang="fi">Pääsy sallittu</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </h2>
 
         <h2>
             <div id="gateway_name" class="gateway_name"></div>
