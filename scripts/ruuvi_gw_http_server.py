@@ -43,6 +43,7 @@ STATUS_JSON_URC_LOST_CONNECTION = 3
 
 COOKIE_RUUVISESSION = 'RUUVISESSION'
 COOKIE_RUUVILOGIN = 'RUUVILOGIN'
+COOKIE_RUUVI_PREV_URL = 'RUUVI_PREV_URL'
 
 g_simulation_mode = SIMULATION_MODE_NO_CONNECTION
 g_firmware_updating_stage = 0
@@ -298,6 +299,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 return
             cookie_ruuvi_session = cookies_dict[COOKIE_RUUVISESSION]
 
+            prev_url = None
+            if COOKIE_RUUVI_PREV_URL in cookies_dict:
+                prev_url = cookies_dict[COOKIE_RUUVI_PREV_URL]
+
             session = None
             if g_login_session is not None:
                 if g_login_session.session_id == cookie_ruuvi_session:
@@ -340,6 +345,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+            if prev_url is not None and prev_url != "":
+                resp += f'Ruuvi-prev-url: {prev_url}\r\n'.encode('ascii')
+                resp += f'Set-Cookie: {COOKIE_RUUVI_PREV_URL}=; Max-Age=-1; Expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n'.encode(
+                    'ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
@@ -1109,6 +1118,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     resp += f'HTTP/1.1 302 Found\r\n'.encode('ascii')
                     resp += f'Location: {"/auth.html"}\r\n'.encode('ascii')
                     resp += f'Server: {"Ruuvi Gateway"}\r\n'.encode('ascii')
+                    resp += f'Set-Cookie: {COOKIE_RUUVI_PREV_URL}={self.path}\r\n'.encode('ascii')
                     resp += f'\r\n'.encode('ascii')
                     self.wfile.write(resp)
                     return
