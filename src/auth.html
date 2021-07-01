@@ -178,12 +178,16 @@
                             "login": user,
                             "password": password_sha256
                         }),
-                        success: function (data, text) {
+                        success: function (data, text, request) {
                             $('#lan_auth-user_login').hide();
                             $('#auth-no').hide();
                             $('#auth-yes').show();
                             $('#gateway_name').text(data.gateway_name)
                             updateLanAuthType(data.lan_auth_type);
+                            prev_url = request.getResponseHeader('Ruuvi-prev-url');
+                            if (prev_url) {
+                                window.location.replace(prev_url);
+                            }
                         },
                         error: function (request, status, error) {
                             if (request.status === 401) {
