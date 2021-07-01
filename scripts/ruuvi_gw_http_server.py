@@ -1100,6 +1100,56 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += f'\r\n'.encode('ascii')
                 self.wfile.write(resp)
             pass
+        elif self.path == '/metrics':
+            if not self._check_auth():
+                if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI or g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DENY:
+                    resp = b''
+                    resp += f'HTTP/1.1 302 Found\r\n'.encode('ascii')
+                    resp += f'Location: {"/auth.html"}\r\n'.encode('ascii')
+                    resp += f'Server: {"Ruuvi Gateway"}\r\n'.encode('ascii')
+                    resp += f'\r\n'.encode('ascii')
+                    self.wfile.write(resp)
+                    return
+                else:
+                    self._do_get_auth()
+                    return
+            content = '''ruuvigw_received_advertisements 18940
+ruuvigw_uptime_us 12721524523
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_EXEC"} 197596
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_32BIT"} 200392
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_8BIT"} 132212
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_DMA"} 132212
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID2"} 0
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID3"} 0
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID4"} 0
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID5"} 0
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID6"} 0
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID7"} 0
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_SPIRAM"} 0
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_INTERNAL"} 200392
+ruuvigw_heap_free_bytes{capability="MALLOC_CAP_DEFAULT"} 132212
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_EXEC"} 93756
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_32BIT"} 93756
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_8BIT"} 93756
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DMA"} 93756
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID2"} 0
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID3"} 0
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID4"} 0
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID5"} 0
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID6"} 0
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID7"} 0
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_SPIRAM"} 0
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_INTERNAL"} 93756
+ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DEFAULT"} 93756
+            '''
+            content_encoded = content.encode('utf-8')
+            resp = b''
+            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: text/plain; charset=utf-8; version=0.0.4\r\n'.encode('ascii')
+            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            resp += content_encoded
+            self.wfile.write(resp)
         else:
             if self.path == '/':
                 file_path = 'index.html'
