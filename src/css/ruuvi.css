@@ -304,20 +304,9 @@ hr {
   font-weight: normal;
 }
 
-.btn-network {
-  background-color: #50AA9D;
-  width: 100%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  display: inline-block;
-  color: white;
-  text-decoration: none;
-  text-transform: uppercase;
-  /*margin-left: 15px;*/
-  border: 1px solid #50AA9D;
-  border-radius: 3px;
-  cursor: pointer;
-  text-align: center;
+.center {
+  display: flex;
+  justify-content: center;
 }
 
 #wifi-overlay-button-connect:disabled {
