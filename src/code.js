@@ -326,9 +326,14 @@ $(document).ready(function () {
         change_url_network_connected();
     });
 
-    $('page-firmware_updating_progress-button-refresh').click(function (e) {
+    $('#page-firmware_updating_progress-button-refresh').click(function (e) {
         e.preventDefault();
         location.reload();
+    });
+
+    $('#page-network-connected-button-check_updates').click(function (e) {
+        e.preventDefault();
+        change_url('firmware_updating');
     });
 
     $('#firmware_updating-button-upgrade').click(function (e) {
