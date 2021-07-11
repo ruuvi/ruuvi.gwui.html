@@ -19,6 +19,7 @@ let checkStatusInterval = null;
 let flagNeedToCheckFirmwareUpdates = false;
 let firmwareUpdatingBaseURL = 'https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/';
 let flagLatestFirmwareVersionSupported = false;
+let counterStatusJsonTimeout = 0;
 
 const CONNECTION_STATE = {
     NOT_CONNECTED: "NOT_CONNECTED",
@@ -884,11 +885,21 @@ function checkStatus() {
     $.ajax({
         dataType: "json",
         url: "/status.json",
+        timeout: 3000,
         success: function (data, text) {
+            counterStatusJsonTimeout = 0;
             onGetStatusJson(data);
         },
         error: function (request, status, error) {
             console.log("ajax: checkStatus: error, status=" + status + ", error=" + error);
+            if (status === "timeout") {
+                counterStatusJsonTimeout += 1;
+                if (counterStatusJsonTimeout >= 4) {
+                    $('#overlay-no_gateway_connection').fadeIn();
+                    stopRefreshAPInterval();
+                    stopCheckStatusInterval();
+                }
+            }
         }
     });
 }

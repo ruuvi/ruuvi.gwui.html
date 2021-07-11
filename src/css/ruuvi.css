@@ -533,3 +533,11 @@ input[type=text], input[type=password] {
   display: block;
   position: absolute;
 }
+
+#overlay-no_gateway_connection {
+  letter-spacing: 0.5px;
+  margin-bottom: 25px;
+  font-size: 20px;
+  margin-top: 0;
+  color: Red;
+}
