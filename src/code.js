@@ -881,10 +881,14 @@ function onGetStatusJson(data) {
 }
 
 function checkStatus() {
-    $.getJSON("/status.json", function (data) {
-        onGetStatusJson(data);
-    })
-        .fail(function () {
-            //don't do anything, the server might be down while esp32 recalibrates radio
-        });
+    $.ajax({
+        dataType: "json",
+        url: "/status.json",
+        success: function (data, text) {
+            onGetStatusJson(data);
+        },
+        error: function (request, status, error) {
+            console.log("ajax: checkStatus: error, status=" + status + ", error=" + error);
+        }
+    });
 }
