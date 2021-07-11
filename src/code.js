@@ -261,6 +261,17 @@ $(document).ready(function () {
         }
     });
 
+    window.addEventListener('online', function (event) {
+        console.log('Became online: ' + window.navigator.onLine);
+    }, false);
+
+    window.addEventListener('offline', function (event) {
+        console.log('Became offline: ' + window.navigator.onLine);
+        $("#overlay-no_gateway_connection").show();
+        stopRefreshAPInterval();
+        stopCheckStatusInterval();
+    }, false);
+
     $('.btn-back').click(function (e) {
         e.preventDefault();
         window.history.back();
