@@ -733,113 +733,71 @@ function refreshAPHTML(data) {
     initWifiList();
 }
 
-
-function checkStatus() {
-    $.getJSON("/status.json", function (data) {
-        if (data.hasOwnProperty('extra')) {
-            let data_extra = data['extra'];
-            let fw_updating_stage = data_extra['fw_updating'];
-            let fw_updating_percentage = data_extra['percentage'];
-            if (fw_updating_stage > 0) {
-                if (!$('#firmware_updating_progress').is(':visible')) {
-                    change_url_firmware_updating_progress();
-                }
-                let progressbar_stage1 = $('#firmware_updating_progress-stage1');
-                let progressbar_stage2 = $('#firmware_updating_progress-stage2');
-                let progressbar_stage3 = $('#firmware_updating_progress-stage3');
-                let progressbar_stage4 = $('#firmware_updating_progress-stage4');
-                switch (fw_updating_stage) {
-                    case 1:
-                        progressbar_stage1.val(fw_updating_percentage);
-                        break;
-                    case 2:
-                        progressbar_stage2.val(fw_updating_percentage);
-                        progressbar_stage1.val(100);
-                        break;
-                    case 3:
-                        progressbar_stage3.val(fw_updating_percentage);
-                        progressbar_stage1.val(100);
-                        progressbar_stage2.val(100);
-                        break;
-                    case 4:
-                        progressbar_stage4.val(fw_updating_percentage);
-                        progressbar_stage1.val(100);
-                        progressbar_stage2.val(100);
-                        progressbar_stage3.val(100);
-                        break;
-                    case 5: // completed successfully
-                        progressbar_stage1.val(100);
-                        progressbar_stage2.val(100);
-                        progressbar_stage3.val(100);
-                        progressbar_stage4.val(100);
-                        $("#firmware_updating_progress-status-completed_successfully").removeClass("hidden");
-                        $("#page-firmware_updating_progress-button-refresh").removeClass("disable-click");
-                        break;
-                    case 6: // completed unsuccessfully
-                        $("#firmware_updating_progress-status-completed_unsuccessfully").removeClass("hidden");
-                        $('#firmware_updating_progress-status-completed_unsuccessfully-message').text(data_extra['message']);
-                        $("#page-firmware_updating_progress-button-back").removeClass("disable-click");
-                        break;
-                }
-                return;
+function onGetStatusJson(data) {
+    if (data.hasOwnProperty('extra')) {
+        let data_extra = data['extra'];
+        let fw_updating_stage = data_extra['fw_updating'];
+        let fw_updating_percentage = data_extra['percentage'];
+        if (fw_updating_stage > 0) {
+            if (!$('#firmware_updating_progress').is(':visible')) {
+                change_url_firmware_updating_progress();
             }
+            let progressbar_stage1 = $('#firmware_updating_progress-stage1');
+            let progressbar_stage2 = $('#firmware_updating_progress-stage2');
+            let progressbar_stage3 = $('#firmware_updating_progress-stage3');
+            let progressbar_stage4 = $('#firmware_updating_progress-stage4');
+            switch (fw_updating_stage) {
+                case 1:
+                    progressbar_stage1.val(fw_updating_percentage);
+                    break;
+                case 2:
+                    progressbar_stage2.val(fw_updating_percentage);
+                    progressbar_stage1.val(100);
+                    break;
+                case 3:
+                    progressbar_stage3.val(fw_updating_percentage);
+                    progressbar_stage1.val(100);
+                    progressbar_stage2.val(100);
+                    break;
+                case 4:
+                    progressbar_stage4.val(fw_updating_percentage);
+                    progressbar_stage1.val(100);
+                    progressbar_stage2.val(100);
+                    progressbar_stage3.val(100);
+                    break;
+                case 5: // completed successfully
+                    progressbar_stage1.val(100);
+                    progressbar_stage2.val(100);
+                    progressbar_stage3.val(100);
+                    progressbar_stage4.val(100);
+                    $("#firmware_updating_progress-status-completed_successfully").removeClass("hidden");
+                    $("#page-firmware_updating_progress-button-refresh").removeClass("disable-click");
+                    break;
+                case 6: // completed unsuccessfully
+                    $("#firmware_updating_progress-status-completed_unsuccessfully").removeClass("hidden");
+                    $('#firmware_updating_progress-status-completed_unsuccessfully-message').text(data_extra['message']);
+                    $("#page-firmware_updating_progress-button-back").removeClass("disable-click");
+                    break;
+            }
+            return;
         }
-        if (data.hasOwnProperty('ssid') && !!data['ssid'] && data['ssid'] !== "") {
-            let fw_updating_stage = data['fw_updating'];
-            let fw_updating_percentage = data['percentage'];
-            if (data["ssid"] === selectedSSID) {
-                //that's a connection attempt
-                if (data["urc"] === URC_CODE.CONNECTED) {
-                    $("#ip").text(data["ip"]);
-                    $("#netmask").text(data["netmask"]);
-                    $("#gw").text(data["gw"]);
-
-                    switch (connectionState) {
-                        case CONNECTION_STATE.NOT_CONNECTED:
-                            break;
-                        case CONNECTION_STATE.CONNECTING:
-                            $("#wifi-overlay-connecting").hide();
-                            $('#wifi-overlay').fadeOut();
-                            on_network_connected_wifi();
-                            change_url_network_connected();
-                            break;
-                        case CONNECTION_STATE.CONNECTED:
-                            break;
-                        case CONNECTION_STATE.FAILED:
-                            break;
-                    }
-                    connectionState = CONNECTION_STATE.CONNECTED
-                } else if (data["urc"] === URC_CODE.FAILED) {
-                    //failed attempt
-                    $("#connect-details h1").text('');
-                    $("#ip").text('0.0.0.0');
-                    $("#netmask").text('0.0.0.0');
-                    $("#gw").text('0.0.0.0');
-
-                    switch (connectionState) {
-                        case CONNECTION_STATE.NOT_CONNECTED:
-                            break;
-                        case CONNECTION_STATE.CONNECTING:
-                            $("#wifi-overlay-connecting").hide();
-                            $("#wifi-overlay-connection-failed").show();
-                            break;
-                        case CONNECTION_STATE.CONNECTED:
-                            break;
-                        case CONNECTION_STATE.FAILED:
-                            break;
-                    }
-                    connectionState = CONNECTION_STATE.FAILED
-                }
-            } else if (data.hasOwnProperty('urc') && data['urc'] === URC_CODE.CONNECTED) {
-                //ESP32 is already connected to a wifi without having the user do anything
-                $(".wifi-network-name").text(data["ssid"]);
+    }
+    if (data.hasOwnProperty('ssid') && !!data['ssid'] && data['ssid'] !== "") {
+        let fw_updating_stage = data['fw_updating'];
+        let fw_updating_percentage = data['percentage'];
+        if (data["ssid"] === selectedSSID) {
+            //that's a connection attempt
+            if (data["urc"] === URC_CODE.CONNECTED) {
                 $("#ip").text(data["ip"]);
                 $("#netmask").text(data["netmask"]);
                 $("#gw").text(data["gw"]);
+
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
+                        break;
                     case CONNECTION_STATE.CONNECTING:
-                        $("#eth-overlay-connecting").hide();
+                        $("#wifi-overlay-connecting").hide();
+                        $('#wifi-overlay').fadeOut();
                         on_network_connected_wifi();
                         change_url_network_connected();
                         break;
@@ -848,42 +806,85 @@ function checkStatus() {
                     case CONNECTION_STATE.FAILED:
                         break;
                 }
-                connectionState = CONNECTION_STATE.CONNECTED;
-            }
-        } else if (data.hasOwnProperty('urc')) {
-            if (data["urc"] === URC_CODE.CONNECTED) {
-                // connected to Ethernet
-                $(".wifi-network-name").text("");
-                $("#ip").text(data["ip"]);
-                $("#netmask").text(data["netmask"]);
-                $("#gw").text(data["gw"]);
+                connectionState = CONNECTION_STATE.CONNECTED
+            } else if (data["urc"] === URC_CODE.FAILED) {
+                //failed attempt
+                $("#connect-details h1").text('');
+                $("#ip").text('0.0.0.0');
+                $("#netmask").text('0.0.0.0');
+                $("#gw").text('0.0.0.0');
 
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
+                        break;
                     case CONNECTION_STATE.CONNECTING:
-                        $("#eth-overlay-connecting").hide();
-                        on_network_connected_eth();
-                        change_url_network_connected();
+                        $("#wifi-overlay-connecting").hide();
+                        $("#wifi-overlay-connection-failed").show();
                         break;
                     case CONNECTION_STATE.CONNECTED:
                         break;
                     case CONNECTION_STATE.FAILED:
                         break;
                 }
-                connectionState = CONNECTION_STATE.CONNECTED
-            } else if (data["urc"] === URC_CODE.DISCONNECTED) {
-                //that's a manual disconnect
-                // TODO: implement
-                // if($("#wifi-status").is(":visible"))
-                // {
-                // 	$("#wifi-status").slideUp( "fast", function() {});
-                // }
+                connectionState = CONNECTION_STATE.FAILED
             }
+        } else if (data.hasOwnProperty('urc') && data['urc'] === URC_CODE.CONNECTED) {
+            //ESP32 is already connected to a wifi without having the user do anything
+            $(".wifi-network-name").text(data["ssid"]);
+            $("#ip").text(data["ip"]);
+            $("#netmask").text(data["netmask"]);
+            $("#gw").text(data["gw"]);
+            switch (connectionState) {
+                case CONNECTION_STATE.NOT_CONNECTED:
+                case CONNECTION_STATE.CONNECTING:
+                    $("#eth-overlay-connecting").hide();
+                    on_network_connected_wifi();
+                    change_url_network_connected();
+                    break;
+                case CONNECTION_STATE.CONNECTED:
+                    break;
+                case CONNECTION_STATE.FAILED:
+                    break;
+            }
+            connectionState = CONNECTION_STATE.CONNECTED;
         }
+    } else if (data.hasOwnProperty('urc')) {
+        if (data["urc"] === URC_CODE.CONNECTED) {
+            // connected to Ethernet
+            $(".wifi-network-name").text("");
+            $("#ip").text(data["ip"]);
+            $("#netmask").text(data["netmask"]);
+            $("#gw").text(data["gw"]);
+
+            switch (connectionState) {
+                case CONNECTION_STATE.NOT_CONNECTED:
+                case CONNECTION_STATE.CONNECTING:
+                    $("#eth-overlay-connecting").hide();
+                    on_network_connected_eth();
+                    change_url_network_connected();
+                    break;
+                case CONNECTION_STATE.CONNECTED:
+                    break;
+                case CONNECTION_STATE.FAILED:
+                    break;
+            }
+            connectionState = CONNECTION_STATE.CONNECTED
+        } else if (data["urc"] === URC_CODE.DISCONNECTED) {
+            //that's a manual disconnect
+            // TODO: implement
+            // if($("#wifi-status").is(":visible"))
+            // {
+            // 	$("#wifi-status").slideUp( "fast", function() {});
+            // }
+        }
+    }
+}
+
+function checkStatus() {
+    $.getJSON("/status.json", function (data) {
+        onGetStatusJson(data);
     })
         .fail(function () {
             //don't do anything, the server might be down while esp32 recalibrates radio
         });
-
-
 }
