@@ -228,7 +228,8 @@
                                         </label>
                                     </td>
                                     <td>
-                                        <input id="mqtt_client_id" type="text" placeholder="MAC-address is used if empty" value="">
+                                        <input id="mqtt_client_id" type="text"
+                                               placeholder="MAC-address is used if empty" value="">
                                     </td>
                                 </tr>
                                 <tr>
@@ -394,7 +395,8 @@
                         <span class="control_indicator"></span>
                     </label>
 
-                    <div id="page-settings_scan-section-ruuvi_sensors_only-scanning_options" class="page-settings_scan-section-scanning_options" hidden>
+                    <div id="page-settings_scan-section-ruuvi_sensors_only-scanning_options"
+                         class="page-settings_scan-section-scanning_options" hidden>
                         <p>
                             <input id="use_experimental_long_range_sensors" type="checkbox">
                             <label for="use_experimental_long_range_sensors">
@@ -411,7 +413,8 @@
                         <span class="control_indicator"></span>
                     </label>
 
-                    <div id="page-settings_scan-section-all_nearby_beacons-scanning_options" class="page-settings_scan-section-scanning_options" hidden>
+                    <div id="page-settings_scan-section-all_nearby_beacons-scanning_options"
+                         class="page-settings_scan-section-scanning_options" hidden>
                         <p>
                             <input id="use_coded_phy" type="checkbox">
                             <label for="use_coded_phy">
@@ -517,7 +520,8 @@
                     <label class="control control-radio">
                         <span lang="en">Allow access without password protection</span>
                         <span lang="fi">Salli käyttö ilman salasanasuojausta</span>
-                        <input id="lan_auth_type_allow" name="lan_auth_type" value="lan_auth_allow" type="radio" checked="checked"/>
+                        <input id="lan_auth_type_allow" name="lan_auth_type" value="lan_auth_allow" type="radio"
+                               checked="checked"/>
                         <span class="control_indicator"></span>
                     </label>
                 </div>
@@ -721,73 +725,73 @@
                             <col span="1" style="width: 40%;">
                         </colgroup>
                         <tbody>
-                            <tr class="brdb">
-                                <td>
-                                    <span lang="en">Current firmware version:</span>
-                                    <span lang="fi">Nykyinen laiteohjelmistoversio:</span>
-                                </td>
-                                <td>
-                                    <div id="firmware_updating-version-current"></div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <span lang="en">Latest available firmware version:</span>
-                                    <span lang="fi">Uusin saatavilla oleva laiteohjelmistoversio:</span>
-                                </td>
-                                <td>
-                                    <div id="firmware_updating-version-latest"></div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <div class="control-group control-sep">
-                                        <input id="firmware_updating-set-url-manually" type="checkbox">
-                                        <span lang="en">Specify the URL with the firmware update manually</span>
-                                        <span lang="fi">Määritä URL-osoite laiteohjelmistopäivityksellä manuaalisesti</span>
-                                        <span class="control_indicator"></span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr id="firmware_updating-url-manual" class="hidden">
-                                <td colspan="2">
-                                    <label for="firmware_updating-url">
-                                        URL:
-                                    </label>
-                                    <input id="firmware_updating-url" type="text" value="">
-                                </td>
-                            </tr>
+                        <tr class="brdb">
+                            <td>
+                                <span lang="en">Current firmware version:</span>
+                                <span lang="fi">Nykyinen laiteohjelmistoversio:</span>
+                            </td>
+                            <td>
+                                <div id="firmware_updating-version-current"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span lang="en">Latest available firmware version:</span>
+                                <span lang="fi">Uusin saatavilla oleva laiteohjelmistoversio:</span>
+                            </td>
+                            <td>
+                                <div id="firmware_updating-version-latest"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="control-group control-sep">
+                                    <input id="firmware_updating-set-url-manually" type="checkbox">
+                                    <span lang="en">Specify the URL with the firmware update manually</span>
+                                    <span lang="fi">Määritä URL-osoite laiteohjelmistopäivityksellä manuaalisesti</span>
+                                    <span class="control_indicator"></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr id="firmware_updating-url-manual" class="hidden">
+                            <td colspan="2">
+                                <label for="firmware_updating-url">
+                                    URL:
+                                </label>
+                                <input id="firmware_updating-url" type="text" value="">
+                            </td>
+                        </tr>
 
-                            <tr>
-                                <td>Status:</td>
-                                <td>
-                                    <div id="firmware_updating-status-ok-already_latest" class="hidden gr">
-                                        <span lang="en">You already have the latest release installed</span>
-                                        <span lang="fi">Sinulla on jo uusin versio asennettuna</span>
-                                    </div>
-                                    <div id="firmware_updating-status-ok-latest_not_supported" class="hidden bl">
-                                        <span lang="en">The latest version is not supported. Try manual updating.</span>
-                                        <span lang="fi">Uusinta versiota ei tueta. Kokeile päivitystä manuaalisesti.</span>
-                                    </div>
-                                    <div id="firmware_updating-status-ok-update_available" class="hidden bl">
-                                        <span lang="en">There are firmware updates</span>
-                                        <span lang="fi">Ohjelmistopäivitys on asennettavissa</span>
-                                    </div>
-                                    <div id="firmware_updating-status-error" class="hidden rd">
-                                        <span lang="en">Unable to get the latest firmware version</span>
-                                        <span lang="fi">Uusinta laiteohjelmistoversiota ei saada</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>
-                                    <button class="btn btn-ok" id="firmware_updating-button-upgrade" type="button">
-                                        <span lang="en">Upgrade now</span>
-                                        <span lang="fi">Päivitä nyt</span>
-                                    </button>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>Status:</td>
+                            <td>
+                                <div id="firmware_updating-status-ok-already_latest" class="hidden gr">
+                                    <span lang="en">You already have the latest release installed</span>
+                                    <span lang="fi">Sinulla on jo uusin versio asennettuna</span>
+                                </div>
+                                <div id="firmware_updating-status-ok-latest_not_supported" class="hidden bl">
+                                    <span lang="en">The latest version is not supported. Try manual updating.</span>
+                                    <span lang="fi">Uusinta versiota ei tueta. Kokeile päivitystä manuaalisesti.</span>
+                                </div>
+                                <div id="firmware_updating-status-ok-update_available" class="hidden bl">
+                                    <span lang="en">There are firmware updates</span>
+                                    <span lang="fi">Ohjelmistopäivitys on asennettavissa</span>
+                                </div>
+                                <div id="firmware_updating-status-error" class="hidden rd">
+                                    <span lang="en">Unable to get the latest firmware version</span>
+                                    <span lang="fi">Uusinta laiteohjelmistoversiota ei saada</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <button class="btn btn-ok" id="firmware_updating-button-upgrade" type="button">
+                                    <span lang="en">Upgrade now</span>
+                                    <span lang="fi">Päivitä nyt</span>
+                                </button>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -906,7 +910,8 @@
                 <div class="ingress">
                     <p lang="en">If you want to reset settings and configure the Gateway from scratch,
                         disconnect the Ethernet cable from the Gateway,
-                        press and hold the button on the top of the Gateway's USB-power connector for at least five seconds,
+                        press and hold the button on the top of the Gateway's USB-power connector for at least five
+                        seconds,
                         then connect to the WiFi access point.</p>
                     <p lang="fi">Jos haluat nollata asetukset ja uudelleenkonfiguroida Gatewayn,
                         irroita Ethernet-kaapeli Gatewaystä, paina ja pidä pohjassa Gatewayn USB-virtaliittimen
@@ -914,15 +919,15 @@
                 </div>
 
                 <p>
-                    <div id="connected-wifi">
-                        <span lang="en">Connected to Wi-Fi: </span>
-                        <span lang="fi">Yhdistetty WLAN-verkkoon: </span>
-                        "<span class="wifi-network-name"></span>".
-                    </div>
-                    <div id="connected-eth" class="hidden">
-                        <span lang="en">Connected to Ethernet</span>
-                        <span lang="fi">Yhdistetty Ethernetiin</span>
-                    </div>
+                <div id="connected-wifi">
+                    <span lang="en">Connected to Wi-Fi: </span>
+                    <span lang="fi">Yhdistetty WLAN-verkkoon: </span>
+                    "<span class="wifi-network-name"></span>".
+                </div>
+                <div id="connected-eth" class="hidden">
+                    <span lang="en">Connected to Ethernet</span>
+                    <span lang="fi">Yhdistetty Ethernetiin</span>
+                </div>
                 </p>
 
                 <div id="connect-details">
