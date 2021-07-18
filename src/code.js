@@ -14,8 +14,12 @@ if (!String.prototype.format) {
 
 let apList = null;
 let selectedSSID = "";
-let refreshAPInterval = null;
-let checkStatusInterval = null;
+let g_refreshAPActive = false;
+let g_refreshAPTimer = null;
+let g_refreshAPInProgress = false;
+let g_checkStatusActive = false;
+let g_checkStatusTimer = null;
+let g_checkStatusInProgress = false;
 let flagNeedToCheckFirmwareUpdates = false;
 let firmwareUpdatingBaseURL = 'https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/';
 let flagLatestFirmwareVersionSupported = false;
@@ -37,29 +41,43 @@ const URC_CODE = {
 
 let connectionState = CONNECTION_STATE.NOT_CONNECTED;
 
-
-function stopCheckStatusInterval() {
-    if (checkStatusInterval != null) {
-        clearInterval(checkStatusInterval);
-        checkStatusInterval = null;
+function startCheckStatus(timeout = 0) {
+    if (g_checkStatusTimer !== null) {
+        console.log('Warning: startCheckStatus is called while the previous timer is not stopped');
+        stopCheckStatus();
     }
+    g_checkStatusActive = true;
+    g_checkStatusTimer = setTimeout(checkStatus, timeout);
 }
 
-function stopRefreshAPInterval() {
-    if (refreshAPInterval != null) {
-        clearInterval(refreshAPInterval);
-        refreshAPInterval = null;
+function stopCheckStatus() {
+    if (g_checkStatusTimer != null) {
+        clearTimeout(g_checkStatusTimer);
+        g_checkStatusTimer = null;
     }
+    g_checkStatusActive = false;
 }
 
-function startCheckStatusInterval() {
-    checkStatusInterval = setInterval(checkStatus, 950);
+function startRefreshAP(timeout = 0) {
+    if (g_refreshAPTimer !== null) {
+        console.log('Warning: startRefreshAP is called while the previous timer is not stopped');
+        stopRefreshAP();
+    }
+    if (!g_refreshAPActive) {
+        console.log("Start refreshing Wi-Fi APs");
+    }
+    g_refreshAPActive = true;
+    g_refreshAPTimer = setTimeout(refreshAP, timeout);
 }
 
-function startRefreshAPInterval() {
-    refreshAPInterval = setInterval(refreshAP, 2800);
+function stopRefreshAP() {
+    console.log("Stop refreshing Wi-Fi APs");
+    if (g_refreshAPTimer != null) {
+        clearTimeout(g_refreshAPTimer);
+        g_refreshAPTimer = null;
+    }
+    g_refreshAPActive = false;
 }
-
 
 // The popstate event is fired each time when the current history entry changes.
 window.addEventListener('popstate', function (event) {
@@ -262,19 +280,23 @@ $(document).ready(function () {
     });
 
     window.addEventListener('online', function (event) {
-        console.log('Became online: ' + window.navigator.onLine);
+        console.log('Became online, is_online=' + window.navigator.onLine);
     }, false);
 
     window.addEventListener('offline', function (event) {
-        console.log('Became offline: ' + window.navigator.onLine);
-        $("#overlay-no_gateway_connection").show();
-        stopRefreshAPInterval();
-        stopCheckStatusInterval();
+        console.log('Became offline, is_online=' + window.navigator.onLine);
     }, false);
 
     $('.btn-back').click(function (e) {
         e.preventDefault();
+        console.log("on click: .btn-back");
         window.history.back();
+    });
+
+    $('#wifi_list-button-back').click(function (e) {
+        e.preventDefault();
+        console.log("on click: #wifi_list-button-back");
+        stopRefreshAP();
     });
 
     $('#page-welcome-button-get-started').click(function (e) {
@@ -412,6 +434,16 @@ $(document).ready(function () {
         }
     });
 
+    $('#connection_type').bind('onShow', function () {
+        console.log("onShow: #connection_type");
+        stopRefreshAP();
+    });
+
+    $('#wifi_list').bind('onShow', function () {
+        console.log("onShow: #wifi_list");
+        startRefreshAP();
+    });
+
     $('#cable_settings').bind('onShow', function () {
         if (!$('#eth_dhcp')[0].checked) {
             $('#page-cable_settings-section-manual_settings').slideDown();
@@ -427,8 +459,9 @@ $(document).ready(function () {
     });
 
     $('#network-connected').bind('onShow', function () {
-        stopCheckStatusInterval();
-        stopRefreshAPInterval();
+        console.log("onShow: #network-connected");
+        stopCheckStatus();
+        stopRefreshAP();
     });
 
     $("input[name='custom_connection']").change(function (e) {
@@ -498,6 +531,7 @@ $(document).ready(function () {
     $("#wifi-overlay-button-cancel").click(function () {
         selectedSSID = "";
         $('#wifi-overlay').fadeOut();
+        startRefreshAP();
     });
 
     $("#wifi-overlay-connecting-button-cancel").click(function () {
@@ -510,7 +544,7 @@ $(document).ready(function () {
             cache: false,
             data: {'timestamp': Date.now()}
         });
-        startCheckStatusInterval();
+        startCheckStatus();
         change_url('connection_type');
     });
 
@@ -524,7 +558,7 @@ $(document).ready(function () {
             cache: false,
             data: {'timestamp': Date.now()}
         });
-        startCheckStatusInterval();
+        startCheckStatus();
         change_url('connection_type');
     });
 
@@ -537,9 +571,12 @@ $(document).ready(function () {
     $("#wifi-overlay-connection-failed-button-ok").click(function () {
         $("#wifi-overlay-connection-failed").hide();
         $('#wifi-overlay').fadeOut();
+        startRefreshAP();
     })
 
     $('#firmware_updating').bind('onShow', function () {
+        console.log("onShow: #firmware_updating");
+        stopRefreshAP();
         on_show_firmware_updating();
     });
 
@@ -565,11 +602,8 @@ $(document).ready(function () {
         $("#page-firmware_updating-button-continue").removeClass("disable-click");
     });
 
-    //first time the page loads: attempt get the connection status and start the wifi scan
-    refreshAP();
-    startCheckStatusInterval();
-    startRefreshAPInterval();
-
+    // first time the page loads: attempt get the connection status
+    startCheckStatus();
 });
 
 function checkSSIDAndPassword() {
@@ -588,6 +622,9 @@ function checkSSIDAndPassword() {
  * @param isAuthNeeded - true if a password is required
  */
 function showWiFiOverlay(ssid, isAuthNeeded) {
+    console.log("showWiFiOverlay");
+    stopRefreshAP();
+
     let inputSSID = $('#manual_ssid');
     let inputPassword = $('#pwd');
     inputSSID.val(ssid);
@@ -643,14 +680,6 @@ function initWifiList() {
 }
 
 function performConnect(ssid, password) {
-    //stop the status refresh. This prevents a race condition where a status
-    //request would be refreshed with wrong ip info from a previous connection
-    //and the request would automatically shows as successful.
-    stopCheckStatusInterval();
-
-    //stop refreshing wifi list
-    stopRefreshAPInterval();
-
     selectedSSID = ssid;
     $(".wifi-network-name").text(ssid);
 
@@ -676,6 +705,8 @@ function performConnect(ssid, password) {
             data: JSON.stringify({'timestamp': Date.now()}),
             success: function (data, text) {
                 connectionState = CONNECTION_STATE.CONNECTING;
+                //now we can re-set the intervals regardless of result
+                startCheckStatus();
             },
             error: function (request, status, error) {
                 if (ssid) {
@@ -685,16 +716,28 @@ function performConnect(ssid, password) {
                 }
                 $('#wifi-overlay-connection-failed-description').text('HTTP error: ' + status + ', ' + 'Status: ' + request.status + '(' + request.statusText + ')' + ', ' + request.responseText);
                 $("#wifi-overlay-connection-failed").show();
+                //now we can re-set the intervals regardless of result
+                startCheckStatus();
             }
         }
     );
-
-    //now we can re-set the intervals regardless of result
-    startCheckStatusInterval();
-    startRefreshAPInterval();
 }
 
 function saveConfigAndPerformConnect(ssid, password) {
+    //stop the status refresh. This prevents a race condition where a status
+    //request would be refreshed with wrong ip info from a previous connection
+    //and the request would automatically shows as successful.
+    stopCheckStatus();
+
+    //stop refreshing wifi list
+    stopRefreshAP();
+
+    if (g_checkStatusInProgress || g_refreshAPInProgress) {
+        // postpone sending the ajax requests until "GET /status.json" and "GET /ap.json" are completed
+        setTimeout(saveConfigAndPerformConnect, 500, ssid, password);
+        return;
+    }
+
     flagNeedToCheckFirmwareUpdates = true;
     save_config();
     performConnect(ssid, password);
@@ -712,21 +755,63 @@ function rssiToIcon(rssi) {
     }
 }
 
-
 // Load wifi list
 function refreshAP() {
-    $.getJSON("ap.json", function (data) {
-        if (data.length > 0) {
-            //sort by signal strength
-            data.sort(function (a, b) {
-                var x = a["rssi"];
-                var y = b["rssi"];
-                return ((x < y) ? 1 : ((x > y) ? -1 : 0));
-            });
+    g_refreshAPTimer = null;
 
-            apList = data;
+    if (g_checkStatusInProgress) {
+        console.log("refreshAP: checkStatus is active, postpone refreshAP");
+        startRefreshAP(500);
+        return;
+    }
 
-            refreshAPHTML(apList);
+    let timestamp1 = new Date();
+
+    let prevCheckStatusActive = g_checkStatusActive;
+    stopCheckStatus();
+
+    g_refreshAPInProgress = true;
+    $.ajax({
+        dataType: "json",
+        url: "/ap.json",
+        timeout: 10000,
+        success: function (data, text) {
+            g_refreshAPInProgress = false;
+            $('#overlay-no_wifi').fadeOut();
+            if (data.length > 0) {
+                //sort by signal strength
+                data.sort(function (a, b) {
+                    var x = a["rssi"];
+                    var y = b["rssi"];
+                    return ((x < y) ? 1 : ((x > y) ? -1 : 0));
+                });
+
+                apList = data;
+
+                refreshAPHTML(apList);
+            }
+            if (prevCheckStatusActive) {
+                startCheckStatus();
+            }
+            if (g_refreshAPActive) {
+                startRefreshAP(2000);
+            }
+        },
+        error: function (request, status, error) {
+            g_refreshAPInProgress = false;
+            let timestamp2 = new Date();
+            console.log("ajax: refreshAP: error, status=" + status + ", error=" + error);
+            if (prevCheckStatusActive) {
+                startCheckStatus();
+            }
+            if (g_refreshAPActive) {
+                let delta_ms = timestamp2 - timestamp1;
+                if (delta_ms < 2000) {
+                    startRefreshAP(2000 - delta_ms);
+                } else {
+                    startRefreshAP();
+                }
+            }
         }
     });
 }
@@ -784,6 +869,7 @@ function onGetStatusJson(data) {
                     progressbar_stage4.val(100);
                     $("#firmware_updating_progress-status-completed_successfully").removeClass("hidden");
                     $("#page-firmware_updating_progress-button-refresh").removeClass("disable-click");
+                    stopCheckStatus();
                     break;
                 case 6: // completed unsuccessfully
                     $("#firmware_updating_progress-status-completed_unsuccessfully").removeClass("hidden");
@@ -893,22 +979,54 @@ function onGetStatusJson(data) {
 }
 
 function checkStatus() {
+    g_checkStatusTimer = null;
+
+    if (g_refreshAPInProgress) {
+        console.log("checkStatus: refreshAP is active, postpone checkStatus");
+        startCheckStatus(500);
+        return;
+    }
+
+    let timestamp1 = new Date();
+    if (counterStatusJsonTimeout !== 0) {
+        console.log('GET status.json: cnt=' + counterStatusJsonTimeout + ', time: ' + timestamp1.toISOString());
+    }
+
+    g_checkStatusInProgress = true;
     $.ajax({
         dataType: "json",
         url: "/status.json",
         timeout: 3000,
         success: function (data, text) {
+            g_checkStatusInProgress = false;
             counterStatusJsonTimeout = 0;
             onGetStatusJson(data);
+            if (g_checkStatusActive) {
+                startCheckStatus(1000);
+            }
         },
         error: function (request, status, error) {
-            console.log("ajax: checkStatus: error, status=" + status + ", error=" + error);
-            if (status === "timeout") {
-                counterStatusJsonTimeout += 1;
-                if (counterStatusJsonTimeout >= 4) {
-                    $('#overlay-no_gateway_connection').fadeIn();
-                    stopRefreshAPInterval();
-                    stopCheckStatusInterval();
+            g_checkStatusInProgress = false;
+            let timestamp2 = new Date();
+            console.log("ajax: checkStatus: error, time: " + timestamp2.toISOString() +
+                "status=" + status +
+                ", error=" + error +
+                ", cnt=" + counterStatusJsonTimeout +
+                ", delta=" + (timestamp2 - timestamp1));
+
+            counterStatusJsonTimeout += 1;
+            if (counterStatusJsonTimeout >= 4) {
+                $('#overlay-no_gateway_connection').fadeIn();
+                stopRefreshAP();
+                stopCheckStatus();
+            } else {
+                if (g_checkStatusActive) {
+                    let delta_ms = timestamp2 - timestamp1;
+                    if (delta_ms < 1000) {
+                        startCheckStatus(1000 - delta_ms);
+                    } else {
+                        startCheckStatus();
+                    }
                 }
             }
         }
