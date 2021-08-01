@@ -90,6 +90,217 @@ g_ruuvi_dict = {
     'use_channel_39': True,
 }
 
+g_content_github_latest_release = '''{
+  "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/40983653",
+  "assets_url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/40983653/assets",
+  "upload_url": "https://uploads.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/40983653/assets{?name,label}",
+  "html_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/tag/v1.3.2",
+  "id": 40983653,
+  "author": {
+    "login": "ojousima",
+    "id": 2360368,
+    "node_id": "MDQ6VXNlcjIzNjAzNjg=",
+    "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/ojousima",
+    "html_url": "https://github.com/ojousima",
+    "followers_url": "https://api.github.com/users/ojousima/followers",
+    "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
+    "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
+    "organizations_url": "https://api.github.com/users/ojousima/orgs",
+    "repos_url": "https://api.github.com/users/ojousima/repos",
+    "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/ojousima/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "node_id": "MDc6UmVsZWFzZTQwOTgzNjUz",
+  "tag_name": "v1.3.2",
+  "target_commitish": "master",
+  "name": "GW A2 beta tester release",
+  "draft": false,
+  "prerelease": false,
+  "created_at": "2021-04-05T10:19:27Z",
+  "published_at": "2021-04-06T09:02:28Z",
+  "assets": [
+    {
+      "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/assets/34512683",
+      "id": 34512683,
+      "node_id": "MDEyOlJlbGVhc2VBc3NldDM0NTEyNjgz",
+      "name": "bootloader.bin",
+      "label": null,
+      "uploader": {
+        "login": "ojousima",
+        "id": 2360368,
+        "node_id": "MDQ6VXNlcjIzNjAzNjg=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/ojousima",
+        "html_url": "https://github.com/ojousima",
+        "followers_url": "https://api.github.com/users/ojousima/followers",
+        "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
+        "organizations_url": "https://api.github.com/users/ojousima/orgs",
+        "repos_url": "https://api.github.com/users/ojousima/repos",
+        "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/ojousima/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "content_type": "application/macbinary",
+      "state": "uploaded",
+      "size": 25408,
+      "download_count": 19,
+      "created_at": "2021-04-06T09:03:42Z",
+      "updated_at": "2021-04-06T09:03:43Z",
+      "browser_download_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.3.2/bootloader.bin"
+    },
+    {
+      "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/assets/34512672",
+      "id": 34512672,
+      "node_id": "MDEyOlJlbGVhc2VBc3NldDM0NTEyNjcy",
+      "name": "fatfs_gwui.bin",
+      "label": null,
+      "uploader": {
+        "login": "ojousima",
+        "id": 2360368,
+        "node_id": "MDQ6VXNlcjIzNjAzNjg=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/ojousima",
+        "html_url": "https://github.com/ojousima",
+        "followers_url": "https://api.github.com/users/ojousima/followers",
+        "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
+        "organizations_url": "https://api.github.com/users/ojousima/orgs",
+        "repos_url": "https://api.github.com/users/ojousima/repos",
+        "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/ojousima/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "content_type": "application/macbinary",
+      "state": "uploaded",
+      "size": 393216,
+      "download_count": 18,
+      "created_at": "2021-04-06T09:03:35Z",
+      "updated_at": "2021-04-06T09:03:39Z",
+      "browser_download_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.3.2/fatfs_gwui.bin"
+    },
+    {
+      "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/assets/34512676",
+      "id": 34512676,
+      "node_id": "MDEyOlJlbGVhc2VBc3NldDM0NTEyNjc2",
+      "name": "fatfs_nrf52.bin",
+      "label": null,
+      "uploader": {
+        "login": "ojousima",
+        "id": 2360368,
+        "node_id": "MDQ6VXNlcjIzNjAzNjg=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/ojousima",
+        "html_url": "https://github.com/ojousima",
+        "followers_url": "https://api.github.com/users/ojousima/followers",
+        "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
+        "organizations_url": "https://api.github.com/users/ojousima/orgs",
+        "repos_url": "https://api.github.com/users/ojousima/repos",
+        "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/ojousima/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "content_type": "application/macbinary",
+      "state": "uploaded",
+      "size": 262144,
+      "download_count": 18,
+      "created_at": "2021-04-06T09:03:39Z",
+      "updated_at": "2021-04-06T09:03:40Z",
+      "browser_download_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.3.2/fatfs_nrf52.bin"
+    },
+    {
+      "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/assets/34512674",
+      "id": 34512674,
+      "node_id": "MDEyOlJlbGVhc2VBc3NldDM0NTEyNjc0",
+      "name": "partition-table.bin",
+      "label": null,
+      "uploader": {
+        "login": "ojousima",
+        "id": 2360368,
+        "node_id": "MDQ6VXNlcjIzNjAzNjg=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/ojousima",
+        "html_url": "https://github.com/ojousima",
+        "followers_url": "https://api.github.com/users/ojousima/followers",
+        "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
+        "organizations_url": "https://api.github.com/users/ojousima/orgs",
+        "repos_url": "https://api.github.com/users/ojousima/repos",
+        "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/ojousima/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "content_type": "application/macbinary",
+      "state": "uploaded",
+      "size": 3072,
+      "download_count": 17,
+      "created_at": "2021-04-06T09:03:37Z",
+      "updated_at": "2021-04-06T09:03:38Z",
+      "browser_download_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.3.2/partition-table.bin"
+    },
+    {
+      "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/assets/34512679",
+      "id": 34512679,
+      "node_id": "MDEyOlJlbGVhc2VBc3NldDM0NTEyNjc5",
+      "name": "ruuvi_gateway_esp.bin",
+      "label": null,
+      "uploader": {
+        "login": "ojousima",
+        "id": 2360368,
+        "node_id": "MDQ6VXNlcjIzNjAzNjg=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/ojousima",
+        "html_url": "https://github.com/ojousima",
+        "followers_url": "https://api.github.com/users/ojousima/followers",
+        "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
+        "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
+        "organizations_url": "https://api.github.com/users/ojousima/orgs",
+        "repos_url": "https://api.github.com/users/ojousima/repos",
+        "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/ojousima/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "content_type": "application/macbinary",
+      "state": "uploaded",
+      "size": 1057856,
+      "download_count": 18,
+      "created_at": "2021-04-06T09:03:40Z",
+      "updated_at": "2021-04-06T09:03:43Z",
+      "browser_download_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.3.2/ruuvi_gateway_esp.bin"
+    }
+  ],
+  "tarball_url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/tarball/v1.3.2",
+  "zipball_url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/zipball/v1.3.2",
+  "body": "* Adds Ruuvi Network support\\r\\n* Adds support for SWD update of connected nRF52\\r\\n* GW hotspot UI fixes\\r\\n* Scan configuration\\r\\n* Reliability improvements\\r\\n\\r\\nTo update Gateway A2, you need to only flash these binaries to the gateway according to instructions on README page. RED led will be blinking quickly while nRF52 onboard is reprogrammed, this takes a few minutes. If GREEN led does not start blinking, disconnect and reconnect USB power.\\r\\n\\r\\nTo update Gateway A1, you need to flash the nRF52 separately with 0.7.1 binary available [here](https://github.com/ruuvi/ruuvi.gateway_nrf.c/releases/download/0.7.1/ruuvigw_nrf_armgcc_ruuvigw_release_0.7.1_full.hex).\\r\\n\\r\\nNote: Trace to R15 has to be cut to use this release. \\r\\n![image](https://user-images.githubusercontent.com/2360368/113686295-c7d5b400-96cf-11eb-91ff-c075ed93adbb.png)\\r\\n![image](https://user-images.githubusercontent.com/2360368/113686356-d7ed9380-96cf-11eb-91f2-b11c9b89b954.png)\\r\\n"
+}
+ '''
 
 class LoginSession(object):
     def __init__(self):
@@ -887,219 +1098,59 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 print(f'Resp: {content}')
                 resp += content.encode('utf-8')
                 self.wfile.write(resp)
+
             elif self.path == '/github_latest_release.json':
-                content = '''{
-  "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/40983653",
-  "assets_url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/40983653/assets",
-  "upload_url": "https://uploads.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/40983653/assets{?name,label}",
-  "html_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/tag/v1.3.2",
-  "id": 40983653,
-  "author": {
-    "login": "ojousima",
-    "id": 2360368,
-    "node_id": "MDQ6VXNlcjIzNjAzNjg=",
-    "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
-    "gravatar_id": "",
-    "url": "https://api.github.com/users/ojousima",
-    "html_url": "https://github.com/ojousima",
-    "followers_url": "https://api.github.com/users/ojousima/followers",
-    "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
-    "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
-    "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
-    "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
-    "organizations_url": "https://api.github.com/users/ojousima/orgs",
-    "repos_url": "https://api.github.com/users/ojousima/repos",
-    "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
-    "received_events_url": "https://api.github.com/users/ojousima/received_events",
-    "type": "User",
-    "site_admin": false
-  },
-  "node_id": "MDc6UmVsZWFzZTQwOTgzNjUz",
-  "tag_name": "v1.3.2",
-  "target_commitish": "master",
-  "name": "GW A2 beta tester release",
-  "draft": false,
-  "prerelease": false,
-  "created_at": "2021-04-05T10:19:27Z",
-  "published_at": "2021-04-06T09:02:28Z",
-  "assets": [
-    {
-      "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/assets/34512683",
-      "id": 34512683,
-      "node_id": "MDEyOlJlbGVhc2VBc3NldDM0NTEyNjgz",
-      "name": "bootloader.bin",
-      "label": null,
-      "uploader": {
-        "login": "ojousima",
-        "id": 2360368,
-        "node_id": "MDQ6VXNlcjIzNjAzNjg=",
-        "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
-        "gravatar_id": "",
-        "url": "https://api.github.com/users/ojousima",
-        "html_url": "https://github.com/ojousima",
-        "followers_url": "https://api.github.com/users/ojousima/followers",
-        "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
-        "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
-        "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
-        "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
-        "organizations_url": "https://api.github.com/users/ojousima/orgs",
-        "repos_url": "https://api.github.com/users/ojousima/repos",
-        "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
-        "received_events_url": "https://api.github.com/users/ojousima/received_events",
-        "type": "User",
-        "site_admin": false
-      },
-      "content_type": "application/macbinary",
-      "state": "uploaded",
-      "size": 25408,
-      "download_count": 19,
-      "created_at": "2021-04-06T09:03:42Z",
-      "updated_at": "2021-04-06T09:03:43Z",
-      "browser_download_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.3.2/bootloader.bin"
-    },
-    {
-      "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/assets/34512672",
-      "id": 34512672,
-      "node_id": "MDEyOlJlbGVhc2VBc3NldDM0NTEyNjcy",
-      "name": "fatfs_gwui.bin",
-      "label": null,
-      "uploader": {
-        "login": "ojousima",
-        "id": 2360368,
-        "node_id": "MDQ6VXNlcjIzNjAzNjg=",
-        "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
-        "gravatar_id": "",
-        "url": "https://api.github.com/users/ojousima",
-        "html_url": "https://github.com/ojousima",
-        "followers_url": "https://api.github.com/users/ojousima/followers",
-        "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
-        "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
-        "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
-        "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
-        "organizations_url": "https://api.github.com/users/ojousima/orgs",
-        "repos_url": "https://api.github.com/users/ojousima/repos",
-        "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
-        "received_events_url": "https://api.github.com/users/ojousima/received_events",
-        "type": "User",
-        "site_admin": false
-      },
-      "content_type": "application/macbinary",
-      "state": "uploaded",
-      "size": 393216,
-      "download_count": 18,
-      "created_at": "2021-04-06T09:03:35Z",
-      "updated_at": "2021-04-06T09:03:39Z",
-      "browser_download_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.3.2/fatfs_gwui.bin"
-    },
-    {
-      "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/assets/34512676",
-      "id": 34512676,
-      "node_id": "MDEyOlJlbGVhc2VBc3NldDM0NTEyNjc2",
-      "name": "fatfs_nrf52.bin",
-      "label": null,
-      "uploader": {
-        "login": "ojousima",
-        "id": 2360368,
-        "node_id": "MDQ6VXNlcjIzNjAzNjg=",
-        "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
-        "gravatar_id": "",
-        "url": "https://api.github.com/users/ojousima",
-        "html_url": "https://github.com/ojousima",
-        "followers_url": "https://api.github.com/users/ojousima/followers",
-        "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
-        "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
-        "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
-        "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
-        "organizations_url": "https://api.github.com/users/ojousima/orgs",
-        "repos_url": "https://api.github.com/users/ojousima/repos",
-        "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
-        "received_events_url": "https://api.github.com/users/ojousima/received_events",
-        "type": "User",
-        "site_admin": false
-      },
-      "content_type": "application/macbinary",
-      "state": "uploaded",
-      "size": 262144,
-      "download_count": 18,
-      "created_at": "2021-04-06T09:03:39Z",
-      "updated_at": "2021-04-06T09:03:40Z",
-      "browser_download_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.3.2/fatfs_nrf52.bin"
-    },
-    {
-      "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/assets/34512674",
-      "id": 34512674,
-      "node_id": "MDEyOlJlbGVhc2VBc3NldDM0NTEyNjc0",
-      "name": "partition-table.bin",
-      "label": null,
-      "uploader": {
-        "login": "ojousima",
-        "id": 2360368,
-        "node_id": "MDQ6VXNlcjIzNjAzNjg=",
-        "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
-        "gravatar_id": "",
-        "url": "https://api.github.com/users/ojousima",
-        "html_url": "https://github.com/ojousima",
-        "followers_url": "https://api.github.com/users/ojousima/followers",
-        "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
-        "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
-        "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
-        "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
-        "organizations_url": "https://api.github.com/users/ojousima/orgs",
-        "repos_url": "https://api.github.com/users/ojousima/repos",
-        "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
-        "received_events_url": "https://api.github.com/users/ojousima/received_events",
-        "type": "User",
-        "site_admin": false
-      },
-      "content_type": "application/macbinary",
-      "state": "uploaded",
-      "size": 3072,
-      "download_count": 17,
-      "created_at": "2021-04-06T09:03:37Z",
-      "updated_at": "2021-04-06T09:03:38Z",
-      "browser_download_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.3.2/partition-table.bin"
-    },
-    {
-      "url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/releases/assets/34512679",
-      "id": 34512679,
-      "node_id": "MDEyOlJlbGVhc2VBc3NldDM0NTEyNjc5",
-      "name": "ruuvi_gateway_esp.bin",
-      "label": null,
-      "uploader": {
-        "login": "ojousima",
-        "id": 2360368,
-        "node_id": "MDQ6VXNlcjIzNjAzNjg=",
-        "avatar_url": "https://avatars.githubusercontent.com/u/2360368?v=4",
-        "gravatar_id": "",
-        "url": "https://api.github.com/users/ojousima",
-        "html_url": "https://github.com/ojousima",
-        "followers_url": "https://api.github.com/users/ojousima/followers",
-        "following_url": "https://api.github.com/users/ojousima/following{/other_user}",
-        "gists_url": "https://api.github.com/users/ojousima/gists{/gist_id}",
-        "starred_url": "https://api.github.com/users/ojousima/starred{/owner}{/repo}",
-        "subscriptions_url": "https://api.github.com/users/ojousima/subscriptions",
-        "organizations_url": "https://api.github.com/users/ojousima/orgs",
-        "repos_url": "https://api.github.com/users/ojousima/repos",
-        "events_url": "https://api.github.com/users/ojousima/events{/privacy}",
-        "received_events_url": "https://api.github.com/users/ojousima/received_events",
-        "type": "User",
-        "site_admin": false
-      },
-      "content_type": "application/macbinary",
-      "state": "uploaded",
-      "size": 1057856,
-      "download_count": 18,
-      "created_at": "2021-04-06T09:03:40Z",
-      "updated_at": "2021-04-06T09:03:43Z",
-      "browser_download_url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.3.2/ruuvi_gateway_esp.bin"
-    }
-  ],
-  "tarball_url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/tarball/v1.3.2",
-  "zipball_url": "https://api.github.com/repos/ruuvi/ruuvi.gateway_esp.c/zipball/v1.3.2",
-  "body": "* Adds Ruuvi Network support\\r\\n* Adds support for SWD update of connected nRF52\\r\\n* GW hotspot UI fixes\\r\\n* Scan configuration\\r\\n* Reliability improvements\\r\\n\\r\\nTo update Gateway A2, you need to only flash these binaries to the gateway according to instructions on README page. RED led will be blinking quickly while nRF52 onboard is reprogrammed, this takes a few minutes. If GREEN led does not start blinking, disconnect and reconnect USB power.\\r\\n\\r\\nTo update Gateway A1, you need to flash the nRF52 separately with 0.7.1 binary available [here](https://github.com/ruuvi/ruuvi.gateway_nrf.c/releases/download/0.7.1/ruuvigw_nrf_armgcc_ruuvigw_release_0.7.1_full.hex).\\r\\n\\r\\nNote: Trace to R15 has to be cut to use this release. \\r\\n![image](https://user-images.githubusercontent.com/2360368/113686295-c7d5b400-96cf-11eb-91ff-c075ed93adbb.png)\\r\\n![image](https://user-images.githubusercontent.com/2360368/113686356-d7ed9380-96cf-11eb-91f2-b11c9b89b954.png)\\r\\n"
-}
- '''
+                content = g_content_github_latest_release
                 time.sleep(10.0)
+                resp = b''
+                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
+                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+                resp += f'Pragma: no-cache\r\n'.encode('ascii')
+                resp += f'Content-Length: {len(content)}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+
+                print(f'Resp: {content}')
+                resp += content.encode('utf-8')
+                self.wfile.write(resp)
+            elif self.path == '/github_latest_release_without_len.json':
+                content = g_content_github_latest_release
+                time.sleep(10.0)
+                resp = b''
+                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
+                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+                resp += f'Pragma: no-cache\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+
+                print(f'Resp: {content}')
+                resp += content.encode('utf-8')
+                self.wfile.write(resp)
+            elif self.path == '/github_latest_release_chunked.json':
+                chunk1 = g_content_github_latest_release[:10]
+                chunk2 = g_content_github_latest_release[10:5000]
+                chunk3 = g_content_github_latest_release[5000:]
+                content = ''
+                content += f'{len(chunk1):x}\r\n'
+                content += chunk1
+                content += '\r\n'
+                content += f'{len(chunk2):x}\r\n'
+                content += chunk2
+                content += '\r\n'
+                content += f'{len(chunk3):x}\r\n'
+                content += chunk3
+                content += '\r\n'
+                content += f'0\r\n\r\n'
+
+                time.sleep(10.0)
+                resp = b''
+                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
+                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+                resp += f'Pragma: no-cache\r\n'.encode('ascii')
+                resp += f'Transfer-Encoding: chunked\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+
                 print(f'Resp: {content}')
                 resp += content.encode('utf-8')
                 self.wfile.write(resp)
