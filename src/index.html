@@ -714,6 +714,257 @@
             </div>
         </section>
 
+        <section id="firmware_auto_updating" class="section hidden">
+            <div class="container">
+                <h1>
+                    <span lang="en">Set an automatic update schedule</span>
+                    <span lang="fi">Määritä automaattisen päivityksen aikataulu</span>
+                </h1>
+
+                <div>
+                    <span lang="en">Please set up a convenient schedule for automatic firmware updates.
+                        During the update, your Ruuvi Gateway will download the latest firmware and then automatically reboot.
+                        <BR>
+                        You may notice a 1-5 minutes downtime during the installation of the update.
+                    </span>
+                    <span lang="fi">Aseta sopiva aikataulu automaattisille laiteohjelmistopäivityksille.
+                         Päivityksen aikana Ruuvi Gateway lataa uusimman laiteohjelmiston ja käynnistyy sitten uudelleen.
+                        <BR>
+                         Päivityksen asennuksen aikana saatat huomata 1–5 minuutin seisonta-ajan.
+                    </span>
+                </div>
+
+                <div class="conf-settings-item">
+                    <h4>
+                        <span lang="en">Select the desired auto update cycle</span>
+                        <span lang="fi">Valitse haluamasi automaattinen päivitysjakso</span>
+                    </h4>
+                    <div id="conf-auto_update_cycle" class="conf-settings">
+                        <table>
+                            <tr>
+                                <td>
+                                    <label class="control control-radio">
+                                        <span lang="en">Regular (get updates in two weeks after release)</span>
+                                        <span lang="fi">Säännöllinen (hanki päivitykset kahden viikon sisällä julkaisun jälkeen)</span>
+                                        <input id="auto_update_cycle-regular" value="auto_update_cycle-regular"
+                                               type="radio"
+                                               name="auto_update_cycle" class="conf-checkbox" checked>
+                                        <span class="control_indicator"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="control control-radio">
+                                        <span lang="en">Beta tester (get updates as soon as they're released)</span>
+                                        <span lang="fi">Beta-testaaja (hanki päivitykset heti, kun ne julkaistaan)</span>
+                                        <input id="auto_update_cycle-beta" value="auto_update_cycle-beta" type="radio"
+                                               name="auto_update_cycle" class="conf-checkbox">
+                                        <span class="control_indicator"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="control control-radio">
+                                        <span lang="en">Manual updates only</span>
+                                        <span lang="fi">Vain manuaaliset päivitykset</span>
+                                        <input id="auto_update_cycle-manual" value="auto_update_cycle-manual"
+                                               type="radio"
+                                               name="auto_update_cycle" class="conf-checkbox">
+                                        <span class="control_indicator"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="conf-auto_update_schedule">
+                    <div class="conf-settings-item">
+                        <h4>
+                            <span lang="en">Select days</span>
+                            <span lang="fi">Valitse päivät</span>
+                        </h4>
+                        <div class="center_flex_wrap">
+                            <label id="conf-auto_update_schedule-button-monday-label" class="btn-weekday">
+                                <span lang="en">Monday</span>
+                                <span lang="fi">Maanantai</span>
+                                <input id="conf-auto_update_schedule-button-monday" type="checkbox"
+                                       class="checkbox-weekday" checked>
+                            </label>
+
+                            <label id="conf-auto_update_schedule-button-tuesday-label" class="btn-weekday">
+                                <span lang="en">Tuesday</span>
+                                <span lang="fi">Tiistai</span>
+                                <input id="conf-auto_update_schedule-button-tuesday" type="checkbox"
+                                       class="checkbox-weekday" checked>
+                            </label>
+
+                            <label id="conf-auto_update_schedule-button-wednesday-label" class="btn-weekday">
+                                <span lang="en">Wednesday</span>
+                                <span lang="fi">Keskiviikko</span>
+                                <input id="conf-auto_update_schedule-button-wednesday" type="checkbox"
+                                       class="checkbox-weekday" checked>
+                            </label>
+
+                            <label id="conf-auto_update_schedule-button-thursday-label" class="btn-weekday">
+                                <span lang="en">Thursday</span>
+                                <span lang="fi">Torstai</span>
+                                <input id="conf-auto_update_schedule-button-thursday" type="checkbox"
+                                       class="checkbox-weekday" checked>
+                            </label>
+
+                            <label id="conf-auto_update_schedule-button-friday-label" class="btn-weekday">
+                                <span lang="en">Friday</span>
+                                <span lang="fi">Perjantai</span>
+                                <input id="conf-auto_update_schedule-button-friday" type="checkbox"
+                                       class="checkbox-weekday" checked>
+                            </label>
+
+                            <label id="conf-auto_update_schedule-button-saturday-label" class="btn-weekday">
+                                <span lang="en">Saturday</span>
+                                <span lang="fi">Lauantai</span>
+                                <input id="conf-auto_update_schedule-button-saturday" type="checkbox"
+                                       class="checkbox-weekday" checked>
+                            </label>
+
+                            <label id="conf-auto_update_schedule-button-sunday-label" class="btn-weekday">
+                                <span lang="en">Sunday</span>
+                                <span lang="fi">Sunnuntai</span>
+                                <input id="conf-auto_update_schedule-button-sunday" type="checkbox"
+                                       class="checkbox-weekday" checked>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="conf-settings-item">
+                        <h4>
+                            <span lang="en">Select time schedule</span>
+                            <span lang="fi">Valitse aikataulu</span>
+                        </h4>
+                        <table>
+                            <tr>
+                                <td>
+                                    <fieldset>
+                                        <legend>
+                                            <span lang="en">From:</span>
+                                            <span lang="fi">Lähettäjä:</span>
+                                        </legend>
+                                        <select id="conf-auto_update_schedule-period_from">
+                                            <option value="0" selected>00:00</option>
+                                            <option value="1">01:00</option>
+                                            <option value="2">02:00</option>
+                                            <option value="3">03:00</option>
+                                            <option value="4">04:00</option>
+                                            <option value="5">05:00</option>
+                                            <option value="6">06:00</option>
+                                            <option value="7">07:00</option>
+                                            <option value="8">08:00</option>
+                                            <option value="9">09:00</option>
+                                            <option value="10">10:00</option>
+                                            <option value="11">11:00</option>
+                                            <option value="12">12:00</option>
+                                            <option value="13">13:00</option>
+                                            <option value="14">14:00</option>
+                                            <option value="15">15:00</option>
+                                            <option value="16">16:00</option>
+                                            <option value="17">17:00</option>
+                                            <option value="18">18:00</option>
+                                            <option value="19">19:00</option>
+                                            <option value="20">20:00</option>
+                                            <option value="21">21:00</option>
+                                            <option value="22">22:00</option>
+                                            <option value="23">23:00</option>
+                                        </select>
+                                    </fieldset>
+                                </td>
+                                <td>
+                                    <fieldset>
+                                        <legend>
+                                            <span lang="en">To:</span>
+                                            <span lang="fi">Vastaanottaja:</span>
+                                        </legend>
+                                        <select id="conf-auto_update_schedule-period_to">
+                                            <option value="1">01:00</option>
+                                            <option value="2">02:00</option>
+                                            <option value="3">03:00</option>
+                                            <option value="4">04:00</option>
+                                            <option value="5">05:00</option>
+                                            <option value="6">06:00</option>
+                                            <option value="7">07:00</option>
+                                            <option value="8">08:00</option>
+                                            <option value="9">09:00</option>
+                                            <option value="10">10:00</option>
+                                            <option value="11">11:00</option>
+                                            <option value="12">12:00</option>
+                                            <option value="13">13:00</option>
+                                            <option value="14">14:00</option>
+                                            <option value="15">15:00</option>
+                                            <option value="16">16:00</option>
+                                            <option value="17">17:00</option>
+                                            <option value="18">18:00</option>
+                                            <option value="19">19:00</option>
+                                            <option value="20">20:00</option>
+                                            <option value="21">21:00</option>
+                                            <option value="22">22:00</option>
+                                            <option value="23">23:00</option>
+                                            <option value="24" selected>24:00</option>
+                                        </select>
+                                    </fieldset>
+                                </td>
+                            </tr>
+                        </table>
+                        <div>
+                            <label for="conf-auto_update_schedule-tz">
+                                <span lang="en">Select timezone:</span>
+                                <span lang="fi">Valitse aikavyöhyke:</span>
+                            </label>
+                            <select id="conf-auto_update_schedule-tz">
+                                <option value="-12">UTC-12</option>
+                                <option value="-11">UTC-11</option>
+                                <option value="-10">UTC-10</option>
+                                <option value="-9">UTC-9</option>
+                                <option value="-8">UTC-8</option>
+                                <option value="-7">UTC-7</option>
+                                <option value="-6">UTC-6</option>
+                                <option value="-5">UTC-5</option>
+                                <option value="-4">UTC-4</option>
+                                <option value="-3">UTC-3</option>
+                                <option value="-2">UTC-2</option>
+                                <option value="-1">UTC-1</option>
+                                <option value="0">UTC</option>
+                                <option value="1">UTC+1</option>
+                                <option value="2">UTC+2</option>
+                                <option value="3" selected>UTC+3</option>
+                                <option value="4">UTC+4</option>
+                                <option value="5">UTC+5</option>
+                                <option value="6">UTC+6</option>
+                                <option value="7">UTC+7</option>
+                                <option value="8">UTC+8</option>
+                                <option value="9">UTC+9</option>
+                                <option value="10">UTC+10</option>
+                                <option value="11">UTC+11</option>
+                                <option value="12">UTC+12</option>
+                                <option value="13">UTC+13</option>
+                                <option value="14">UTC+14</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <a href="" id="page-firmware_auto_updating-button-back" class="btn btn-back">
+                        <span lang="en">Go Back</span>
+                        <span lang="fi">Takaisin</span>
+                    </a>
+                    <a href="" id="page-firmware_auto_updating-button-continue" class="btn">
+                        <span lang="en">Continue</span>
+                        <span lang="fi">Jatka</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <section id="firmware_updating" class="section hidden">
             <div class="container">
                 <h1>
@@ -721,7 +972,7 @@
                     <span lang="fi">Laiteohjelmiston päivitys</span>
                 </h1>
 
-                <div class="conf-settings-item conf-settings-firmware_updating">
+                <div class="conf-settings-item">
                     <table>
                         <colgroup>
                             <col span="1" style="width: 60%;">
@@ -819,7 +1070,7 @@
                     <span lang="fi">Laiteohjelmiston päivitys</span>
                 </h1>
 
-                <div class="conf-settings-item conf-settings-firmware_updating">
+                <div class="conf-settings-item">
                     <table>
                         <colgroup>
                             <col span="1" style="width: 60%;">
