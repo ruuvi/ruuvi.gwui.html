@@ -10,6 +10,12 @@ const LAN_AUTH_TYPE = Object.freeze({
     'ALLOW': 'lan_auth_allow'
 });
 
+const AUTO_UPDATE_CYCLE_TYPE = Object.freeze({
+    'REGULAR': 'regular',
+    'BETA_TESTER': 'beta',
+    'MANUAL': 'manual',
+});
+
 function get_mqtt_topic_prefix() {
     let mqtt_topic = "";
     if ($('#use_mqtt_prefix_ruuvi').prop('checked')) {
@@ -33,8 +39,8 @@ function get_mqtt_topic_prefix() {
 function save_config() {
     console.log("save_config");
     let custom_conn = $("input[name='custom_connection']:checked").val();
-
     let network_type = $("input[name='network_type']:checked").val();
+    let auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
 
     console.log(custom_conn);
 
@@ -42,8 +48,7 @@ function save_config() {
     data.use_eth = !(network_type === 'wifi');
     if (data.use_eth) {
         data.eth_dhcp = $("#eth_dhcp")[0].checked;
-        if (!data.eth_dhcp)
-        {
+        if (!data.eth_dhcp) {
             data.eth_static_ip = $("#eth_static_ip").val()
             data.eth_netmask = $("#eth_netmask").val()
             data.eth_gw = $("#eth_gw").val()
@@ -108,6 +113,42 @@ function save_config() {
     data.use_channel_37 = $("#use_channel_37")[0].checked;
     data.use_channel_38 = $("#use_channel_38")[0].checked;
     data.use_channel_39 = $("#use_channel_39")[0].checked;
+
+    if (auto_update_cycle === "auto_update_cycle-regular") {
+        data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.REGULAR;
+    } else if (auto_update_cycle === "auto_update_cycle-beta") {
+        data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.BETA_TESTER;
+    } else if (auto_update_cycle === "auto_update_cycle-manual") {
+        data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.MANUAL;
+    } else {
+        console.log("Unknown auto_update_cycle: " + auto_update_cycle);
+        data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.REGULAR;
+    }
+    data.auto_update_weekdays_bitmask = 0;
+    if ($('#conf-auto_update_schedule-button-sunday').is(":checked")) {
+        data.auto_update_weekdays_bitmask |= 0x01;
+    }
+    if ($('#conf-auto_update_schedule-button-monday').is(":checked")) {
+        data.auto_update_weekdays_bitmask |= 0x02;
+    }
+    if ($('#conf-auto_update_schedule-button-tuesday').is(":checked")) {
+        data.auto_update_weekdays_bitmask |= 0x04;
+    }
+    if ($('#conf-auto_update_schedule-button-wednesday').is(":checked")) {
+        data.auto_update_weekdays_bitmask |= 0x08;
+    }
+    if ($('#conf-auto_update_schedule-button-thursday').is(":checked")) {
+        data.auto_update_weekdays_bitmask |= 0x10;
+    }
+    if ($('#conf-auto_update_schedule-button-friday').is(":checked")) {
+        data.auto_update_weekdays_bitmask |= 0x20;
+    }
+    if ($('#conf-auto_update_schedule-button-saturday').is(":checked")) {
+        data.auto_update_weekdays_bitmask |= 0x40;
+    }
+    data.auto_update_interval_from = parseInt($("#conf-auto_update_schedule-period_from").val());
+    data.auto_update_interval_to = parseInt($("#conf-auto_update_schedule-period_to").val());
+    data.auto_update_tz_offset_hours = parseInt($("#conf-auto_update_schedule-tz").val());
 
     console.log(data);
 
@@ -357,6 +398,41 @@ function get_config() {
                             lan_auth_pass.removeAttr('placeholder');
                             g_flag_lan_auth_pass_changed = true;
                         }
+                        break;
+                    }
+                    case "auto_update_cycle": {
+                        if (key_value === AUTO_UPDATE_CYCLE_TYPE.REGULAR) {
+                            $("#auto_update_cycle-regular")[0].checked = true;
+                        } else if (key_value === AUTO_UPDATE_CYCLE_TYPE.BETA_TESTER) {
+                            $("#auto_update_cycle-beta")[0].checked = true;
+                        } else if (key_value === AUTO_UPDATE_CYCLE_TYPE.MANUAL) {
+                            $("#auto_update_cycle-manual")[0].checked = true;
+                        } else {
+                            $("#auto_update_cycle-regular")[0].checked = true;
+                        }
+                        break;
+                    }
+                    case "auto_update_weekdays_bitmask": {
+                        let weekdays_bitmask = parseInt(key_value);
+                        $("#conf-auto_update_schedule-button-sunday").prop('checked', (weekdays_bitmask & 0x01) !== 0).change();
+                        $("#conf-auto_update_schedule-button-monday").prop('checked', (weekdays_bitmask & 0x02) !== 0).change();
+                        $("#conf-auto_update_schedule-button-tuesday").prop('checked', (weekdays_bitmask & 0x04) !== 0).change();
+                        $("#conf-auto_update_schedule-button-wednesday").prop('checked', (weekdays_bitmask & 0x08) !== 0).change();
+                        $("#conf-auto_update_schedule-button-thursday").prop('checked', (weekdays_bitmask & 0x10) !== 0).change();
+                        $("#conf-auto_update_schedule-button-friday").prop('checked', (weekdays_bitmask & 0x20) !== 0).change();
+                        $("#conf-auto_update_schedule-button-saturday").prop('checked', (weekdays_bitmask & 0x40) !== 0).change();
+                        break;
+                    }
+                    case "auto_update_interval_from": {
+                        $('#conf-auto_update_schedule-period_from option[value=' + key_value + ']').prop('selected', true);
+                        break;
+                    }
+                    case "auto_update_interval_to": {
+                        $('#conf-auto_update_schedule-period_to option[value=' + key_value + ']').prop('selected', true);
+                        break;
+                    }
+                    case "auto_update_tz_offset_hours": {
+                        $('#conf-auto_update_schedule-tz option[value=' + key_value + ']').prop('selected', true);
                         break;
                     }
                     case "coordinates":

@@ -29,6 +29,10 @@ LAN_AUTH_TYPE_DIGEST = 'lan_auth_digest'
 LAN_AUTH_TYPE_BASIC = 'lan_auth_basic'
 LAN_AUTH_TYPE_ALLOW = 'lan_auth_allow'
 
+AUTO_UPDATE_CYCLE_TYPE_REGULAR = 'regular'
+AUTO_UPDATE_CYCLE_TYPE_BETA_TESTER = 'beta'
+AUTO_UPDATE_CYCLE_TYPE_MANUAL = 'manual'
+
 SIMULATION_MODE_NO_CONNECTION = 0
 SIMULATION_MODE_ETH_CONNECTED = 1
 SIMULATION_MODE_WIFI_CONNECTED = 2
@@ -78,6 +82,11 @@ g_ruuvi_dict = {
     'lan_auth_type': LAN_AUTH_TYPE_DENY,
     'lan_auth_user': '',
     'lan_auth_pass': hashlib.md5(f'{"username"}:{RUUVI_AUTH_REALM}:{"password"}'.encode('utf-8')).hexdigest(),
+    'auto_update_cycle': AUTO_UPDATE_CYCLE_TYPE_REGULAR,
+    'auto_update_weekdays_bitmask': 0x40,
+    'auto_update_interval_from': 20,
+    'auto_update_interval_to': 23,
+    'auto_update_tz': 3,
     'gw_mac': g_gw_mac,
     'use_filtering': True,
     'company_id': "0x0499",

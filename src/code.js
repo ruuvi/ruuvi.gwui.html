@@ -337,6 +337,11 @@ $(document).ready(function () {
 
     $('#page-lan_auth_type-button-continue').click(function (e) {
         e.preventDefault();
+        change_url('firmware_auto_updating');
+    });
+
+    $('#page-firmware_auto_updating-button-continue').click(function (e) {
+        e.preventDefault();
         change_url('connection_type');
     });
 
@@ -503,6 +508,100 @@ $(document).ready(function () {
         } else {
             $('#mqtt_examples').slideUp();
         }
+    });
+
+    function on_auto_update_cycle_changed() {
+        let auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
+        if (auto_update_cycle === undefined) {
+            $(`input:radio[name='auto_update_cycle'][value='auto_update_cycle-regular']`).prop('checked', true);
+            auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
+        }
+        if (auto_update_cycle === 'auto_update_cycle-regular') {
+            $('#conf-auto_update_schedule').slideDown();
+        } else if (auto_update_cycle === 'auto_update_cycle-beta') {
+            $('#conf-auto_update_schedule').slideDown();
+        } else if (auto_update_cycle === 'auto_update_cycle-manual') {
+            $('#conf-auto_update_schedule').slideUp();
+        }
+    }
+
+    function on_edit_automatic_update_settings() {
+        let auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
+        if (auto_update_cycle === 'auto_update_cycle-manual') {
+            $("#page-firmware_auto_updating-button-continue").removeClass("disable-click");
+        } else {
+            let flag_button_continue_enabled = true;
+            let auto_update_weekdays_bitmask = 0;
+            if ($('#conf-auto_update_schedule-button-monday').is(":checked")) {
+                auto_update_weekdays_bitmask |= 0x01;
+            }
+            if ($('#conf-auto_update_schedule-button-tuesday').is(":checked")) {
+                auto_update_weekdays_bitmask |= 0x02;
+            }
+            if ($('#conf-auto_update_schedule-button-wednesday').is(":checked")) {
+                auto_update_weekdays_bitmask |= 0x04;
+            }
+            if ($('#conf-auto_update_schedule-button-thursday').is(":checked")) {
+                auto_update_weekdays_bitmask |= 0x08;
+            }
+            if ($('#conf-auto_update_schedule-button-friday').is(":checked")) {
+                auto_update_weekdays_bitmask |= 0x10;
+            }
+            if ($('#conf-auto_update_schedule-button-saturday').is(":checked")) {
+                auto_update_weekdays_bitmask |= 0x20;
+            }
+            if ($('#conf-auto_update_schedule-button-sunday').is(":checked")) {
+                auto_update_weekdays_bitmask |= 0x40;
+            }
+
+            if (auto_update_weekdays_bitmask === 0) {
+                flag_button_continue_enabled = false;
+            }
+
+            if (flag_button_continue_enabled) {
+                $("#page-firmware_auto_updating-button-continue").removeClass("disable-click");
+            } else {
+                $("#page-firmware_auto_updating-button-continue").addClass("disable-click");
+            }
+        }
+    }
+
+    $('#firmware_auto_updating').bind('onShow', function () {
+        on_auto_update_cycle_changed();
+        on_edit_automatic_update_settings();
+    });
+
+    $("input[name='auto_update_cycle']").change(function (e) {
+        on_auto_update_cycle_changed();
+        on_edit_automatic_update_settings();
+    });
+
+    $('.checkbox-weekday').change(function () {
+        if (this.checked) {
+            $(this).parent().removeClass('btn-weekday-disabled');
+        } else {
+            $(this).parent().addClass('btn-weekday-disabled');
+        }
+        on_edit_automatic_update_settings();
+    });
+
+    $('#conf-auto_update_schedule-period_from').change(function () {
+        let auto_update_interval_from = parseInt($("#conf-auto_update_schedule-period_from").val());
+        let auto_update_interval_to = parseInt($("#conf-auto_update_schedule-period_to").val());
+        if (auto_update_interval_from >= auto_update_interval_to) {
+            $("#conf-auto_update_schedule-period_to").val(auto_update_interval_from + 1);
+        }
+    });
+
+    $('#conf-auto_update_schedule-period_to').change(function () {
+        let auto_update_interval_from = parseInt($("#conf-auto_update_schedule-period_from").val());
+        let auto_update_interval_to = parseInt($("#conf-auto_update_schedule-period_to").val());
+        if (auto_update_interval_from >= auto_update_interval_to) {
+            $("#conf-auto_update_schedule-period_from").val(auto_update_interval_to - 1);
+        }
+    });
+
+    $('#conf-auto_update_schedule-tz').change(function () {
     });
 
     $('#settings_lan_auth_type').bind('onShow', function () {
