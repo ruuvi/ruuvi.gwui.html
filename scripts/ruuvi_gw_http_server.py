@@ -50,9 +50,9 @@ COOKIE_RUUVILOGIN = 'RUUVILOGIN'
 COOKIE_RUUVI_PREV_URL = 'RUUVI_PREV_URL'
 
 g_simulation_mode = SIMULATION_MODE_NO_CONNECTION
-g_firmware_updating_stage = 0
-g_firmware_updating_percentage = 0
-g_firmware_updating_url = None
+g_software_update_stage = 0
+g_software_update_percentage = 0
+g_software_update_url = None
 g_ssid = None
 g_password = None
 g_timestamp = None
@@ -86,7 +86,7 @@ g_ruuvi_dict = {
     'auto_update_weekdays_bitmask': 0x40,
     'auto_update_interval_from': 20,
     'auto_update_interval_to': 23,
-    'auto_update_tz': 3,
+    'auto_update_tz_offset_hours': 3,
     'gw_mac': g_gw_mac,
     'use_filtering': True,
     'company_id': "0x0499",
@@ -648,12 +648,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length).decode('ascii')
             new_dict = json.loads(post_data)
-            global g_firmware_updating_url
-            global g_firmware_updating_stage
-            global g_firmware_updating_percentage
-            g_firmware_updating_url = new_dict['url']
-            g_firmware_updating_stage = 1
-            g_firmware_updating_percentage = 0
+            global g_software_update_url
+            global g_software_update_stage
+            global g_software_update_percentage
+            g_software_update_url = new_dict['url']
+            g_software_update_stage = 1
+            g_software_update_percentage = 0
             content = '{}'
             content_encoded = content.encode('utf-8')
             resp = b''
@@ -1086,16 +1086,16 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         netmask = '255.255.255.0'
                         gw = '192.168.1.1'
 
-                    global g_firmware_updating_stage
-                    global g_firmware_updating_percentage
+                    global g_software_update_stage
+                    global g_software_update_percentage
 
                     content = self._generate_status_json(STATUS_JSON_URC_CONNECTED, ssid_key_with_val, ip, netmask,
-                                                         gw, g_firmware_updating_stage, g_firmware_updating_percentage)
-                    if 0 < g_firmware_updating_stage < 5:
-                        g_firmware_updating_percentage += 10
-                        if g_firmware_updating_percentage >= 100:
-                            g_firmware_updating_percentage = 0
-                            g_firmware_updating_stage += 1
+                                                         gw, g_software_update_stage, g_software_update_percentage)
+                    if 0 < g_software_update_stage < 5:
+                        g_software_update_percentage += 10
+                        if g_software_update_percentage >= 100:
+                            g_software_update_percentage = 0
+                            g_software_update_stage += 1
                 elif g_simulation_mode == SIMULATION_MODE_WIFI_FAILED_ATTEMPT:
                     content = self._generate_status_json(STATUS_JSON_URC_WIFI_FAILED_ATTEMPT, ssid_key_with_val)
                 elif g_simulation_mode == SIMULATION_MODE_USER_DISCONNECT:

@@ -31,12 +31,26 @@ function get_mqtt_topic_prefix() {
         if (mqtt_topic.length > 0) {
             mqtt_topic += '/';
         }
-        mqtt_topic += $("#mqtt_prefix_custom").val();
+        mqtt_topic += $("#mqtt_prefix").val();
     }
     return mqtt_topic;
 }
 
 function save_config() {
+    //stop the status refresh. This prevents a race condition where a status
+    //request would be refreshed with wrong ip info from a previous connection
+    //and the request would automatically shows as successful.
+    stopCheckStatus();
+
+    //stop refreshing wifi list
+    stopRefreshAP();
+
+    if (g_checkStatusInProgress || g_refreshAPInProgress) {
+        // postpone sending the ajax requests until "GET /status.json" and "GET /ap.json" are completed
+        setTimeout(save_config, 500);
+        return;
+    }
+
     console.log("save_config");
     let custom_conn = $("input[name='custom_connection']:checked").val();
     let network_type = $("input[name='network_type']:checked").val();
@@ -64,7 +78,7 @@ function save_config() {
         mqtt_port = 0;
     }
     data.mqtt_port = mqtt_port;
-    data.mqtt_prefix = get_mqtt_topic_prefix();
+    data.mqtt_prefix = $("#mqtt_prefix").val();
     data.mqtt_client_id = $("#mqtt_client_id").val();
     if (!data.mqtt_client_id) {
         data.mqtt_client_id = gw_mac;
@@ -179,26 +193,25 @@ function on_edit_mqtt_settings() {
         mqtt_topic = get_mqtt_topic_prefix();
         mqtt_topic += '/';
     }
-    mqtt_topic += '<TAG_MAC>';
-    $("#mqtt_prefix").text(mqtt_topic);
+    mqtt_topic += '<SENSOR_MAC_ADDRESS>';
 
     let mqtt_use_prefix_ruuvi = $('#use_mqtt_prefix_ruuvi').prop('checked');
     let mqtt_use_prefix_gw_mac = $('#use_mqtt_prefix_gw_mac').prop('checked');
     let mqtt_use_prefix_custom = $('#use_mqtt_prefix_custom').prop('checked');
 
-    if (mqtt_use_prefix_custom) {
-        $('#mqtt_prefix_custom_tr').slideDown("fast", function () {
-        });
-    } else {
-        $('#mqtt_prefix_custom_tr').slideUp("fast", function () {
-        });
-    }
-
     let mqtt_host = $('#mqtt_server').val();
     let mqtt_port = $('#mqtt_port').val();
     let mqtt_user = $('#mqtt_user').val();
     let mqtt_pass = $('#mqtt_pass').val();
-    let mqtt_prefix_custom = $("#mqtt_prefix_custom").val();
+    if (mqtt_use_prefix_custom) {
+        mqtt_topic = $("#mqtt_prefix").val();
+        $("#mqtt_prefix").prop("disabled", false);
+    } else {
+        $("#mqtt_prefix").val(mqtt_topic);
+        $("#mqtt_prefix").prop("disabled", true);
+    }
+
+    let mqtt_prefix = $("#mqtt_prefix").val();
 
     let mosquitto_sub_cmd = `mosquitto_sub -h ${mqtt_host} -p ${mqtt_port}`;
     if (mqtt_user) {
@@ -222,7 +235,7 @@ function on_edit_mqtt_settings() {
             if (mqtt_example1) {
                 mqtt_example1 += '/';
             }
-            mqtt_example1 += mqtt_prefix_custom;
+            mqtt_example1 += mqtt_prefix;
         }
         mqtt_example1 += '/gw_status';
         mqtt_example1 = `"${mqtt_example1}"`;
@@ -279,7 +292,7 @@ function on_edit_mqtt_settings() {
             if (mqtt_example4) {
                 mqtt_example4 += '/';
             }
-            mqtt_example4 += `${mqtt_prefix_custom}`;
+            mqtt_example4 += `${mqtt_prefix}`;
         }
         mqtt_example4 += '/#';
         mqtt_example4 = `"${mqtt_example4}"`;
@@ -312,7 +325,7 @@ function get_config() {
                 let key_value = data[key];
                 switch (key) {
                     case "fw_ver":
-                        $("#firmware_updating-version-current").text(key_value);
+                        $("#software_update-version-current").text(key_value);
                         break;
                     case "nrf52_fw_ver":
                         break;
@@ -450,7 +463,6 @@ function get_config() {
                         break;
                     case "use_coded_phy":
                         $("#use_coded_phy")[0].checked = key_value;
-                        $("#use_experimental_long_range_sensors")[0].checked = key_value;
                         break;
                     case "use_1mbit_phy":
                         $("#use_1mbit_phy")[0].checked = key_value;
@@ -516,7 +528,7 @@ function get_config() {
                     $('#use_mqtt_prefix_gw_mac').prop('checked', false);
                 }
                 mqtt_topic = mqtt_topic.substr(start_idx);
-                $("#mqtt_prefix_custom").val(mqtt_topic);
+                $("#mqtt_prefix").val(mqtt_topic);
                 if (mqtt_topic.length > 0) {
                     $('#use_mqtt_prefix_custom').prop('checked', true);
                 } else {
