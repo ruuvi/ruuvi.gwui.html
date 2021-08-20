@@ -26,41 +26,17 @@
     display: none;
 }
 
-body {
-    font-family: "Muli", sans-serif;
-    background: white;
-    margin: 0;
-    font-size: 16px;
-}
+/*body {*/
+/*    font-family: "Muli", sans-serif;*/
+/*    background: white;*/
+/*    margin: 0;*/
+/*    font-size: 16px;*/
+/*}*/
 
 @media (max-width: 766px) {
     body {
         font-size: 14px;
     }
-}
-
-.ingress {
-    line-height: 1.5;
-}
-
-.ingress p {
-    margin: 0 0 15px;
-    text-align: justify;
-}
-
-.ingress-welcome {
-    margin: 20px 0;
-}
-
-h1, h2, h3 {
-    font-family: "Montserrat", sans-serif;
-}
-
-h1 {
-    font-size: 20px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    margin-bottom: 25px;
 }
 
 @media (max-width: 766px) {
@@ -69,41 +45,12 @@ h1 {
     }
 }
 
-h2 {
-    font-size: 16px;
-    margin-bottom: 25px;
-    margin-top: 0;
-    letter-spacing: 0.5px;
-}
-
-h4 {
-    font-size: 16px;
-    margin-top: 0;
-    margin-bottom: 0;
-    letter-spacing: 0.5px;
-}
-
 a {
     color: #50AA9D;
 }
 
 a.grey {
     color: #777;
-}
-
-header {
-    text-align: center;
-    padding: 30px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#416e8d+0,6591b1+100 */
-    background: #416e8d;
-    /* Old browsers */
-    /* FF3.6-15 */
-    /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(135deg, #3e79a0 0%, #6591b1 100%);
-    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3e79a0", endColorstr="#6591b1", GradientType=1);
-    /* IE6-9 fallback on horizontal gradient */
 }
 
 @media (max-width: 766px) {
@@ -117,58 +64,11 @@ header img {
     margin-left: -10px;
 }
 
-select {
-    font-size: 20px;
-}
-
-.logo-wrap {
-    position: relative;
-    max-width: 160px;
-    min-height: 30px;
-    margin: 0 auto;
-}
-
-@media (max-width: 766px) {
-    .logo-wrap {
-        max-width: 140px;
-    }
-}
-
-.tag {
-    position: absolute;
-    right: -55px;
-    background: #457493;
-    color: white;
-    text-transform: uppercase;
-    font-size: 10px;
-    padding: 2px 5px;
-}
-
-.small {
-    font-size: 11px;
-    color: #666;
-}
-
-.small-ingress {
-    font-size: 12px;
-    line-height: 1.3;
-}
-
-.ingress {
-    padding-bottom: 15px;
-}
-
-.container {
-    padding: 35px 35px;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-@media (max-width: 766px) {
-    .container {
-        padding: 25px 30px 25px 25px;
-    }
-}
+/*.container {*/
+/*    padding: 35px 35px;*/
+/*    max-width: 600px;*/
+/*    margin: 0 auto;*/
+/*}*/
 
 .hidden {
     display: none;
@@ -181,14 +81,6 @@ table {
 ul {
     padding: 0;
     margin: 0;
-}
-
-#wifi_list, #cable-details {
-    padding-bottom: 20px;
-}
-
-ul.wifi-list {
-    margin: 20px 0 15px 0px;
 }
 
 ul li {
@@ -276,11 +168,6 @@ hr {
     display: none;
 }
 
-.button-container {
-    text-align: right;
-    margin-top: 30px;
-}
-
 .connect-buttons {
     position: absolute;
     bottom: 25px;
@@ -298,54 +185,6 @@ hr {
     }
 }
 
-.btn {
-    background-color: #50AA9D;
-    padding: 8px 20px;
-    display: inline-block;
-    color: white;
-    text-decoration: none;
-    text-transform: uppercase;
-    margin-left: 15px;
-    border: 1px solid #50AA9D;
-    border-radius: 3px;
-    cursor: pointer;
-}
-
-.btn-weekday {
-    background-color: #3494D4;
-    padding: 8px 6px 8px 20px;
-    border-radius: 14px;
-    display: inline-block;
-    color: white;
-    text-decoration: none;
-    text-transform: uppercase;
-    margin: 5px 8px 8px 8px;
-    border: 1px solid #50AA9D;
-    cursor: pointer;
-}
-
-.btn-weekday-disabled {
-    background-color: #a4bdc4;
-    padding: 8px 6px 8px 20px;
-    border-radius: 14px;
-    display: inline-block;
-    color: #808080;
-    text-decoration: none;
-    text-transform: uppercase;
-    margin: 5px 8px 8px 8px;
-    border: 1px solid #50AA9D;
-    cursor: pointer;
-}
-
-.checkbox-weekday {
-    appearance: none;
-}
-
-.btn.disable-click {
-    pointer-events: none;
-    background-color: #94A8A5;
-}
-
 @media (max-width: 766px) {
     .btn {
         font-weight: bold;
@@ -353,20 +192,8 @@ hr {
     }
 }
 
-.btn.btn-back {
-    background: transparent;
-    color: #50AA9D;
-    font-weight: normal;
-}
-
 .center {
     display: flex;
-    justify-content: center;
-}
-
-.center_flex_wrap {
-    display: flex;
-    flex-wrap: wrap;
     justify-content: center;
 }
 
@@ -398,10 +225,6 @@ hr {
 #connect-details {
     width: 100%;
     text-align: left;
-}
-
-.page-settings_scan-section-scanning_options {
-    margin-left: 30px;
 }
 
 .connect-details-col1 {
@@ -490,112 +313,6 @@ hr {
 
 .settings-section:hover {
     background: #efefef;
-}
-
-input[type=text], input[type=password] {
-    padding: 7px 10px;
-    color: black;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    letter-spacing: 0.5px;
-    width: 250px;
-    max-width: 100%;
-    margin-bottom: 10px;
-}
-
-@media (max-width: 766px) {
-    input[type=text], input[type=password] {
-        max-width: 85%;
-    }
-}
-
-#firmware_updating-url {
-    width: 100%;
-}
-
-.control {
-    display: block;
-    position: relative;
-    padding-left: 32px;
-    padding-top: 3px;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-.control input {
-    position: absolute;
-    z-index: -1;
-    opacity: 0;
-}
-
-.control-sep {
-    margin-bottom: 20px;
-}
-
-.control_indicator {
-    position: absolute;
-    top: 4px;
-    left: 0;
-    height: 18px;
-    width: 18px;
-    background: white;
-    border: 1px solid #50AA9D;
-}
-
-.control-radio .control_indicator {
-    border-radius: 50%;
-}
-
-.control input:checked ~ .control_indicator {
-    background: white;
-    border: none;
-    width: 18px;
-    height: 18px;
-    border: 1px solid #50AA9D;
-}
-
-.control-radio input:checked ~ .control_indicator {
-    border-radius: 50%;
-}
-
-.control input:disabled ~ .control_indicator {
-    background: #50AA9D;
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-.control_indicator:after {
-    box-sizing: unset;
-    content: "";
-    position: absolute;
-    display: none;
-}
-
-.control input:checked ~ .control_indicator:after {
-    display: block;
-}
-
-.control-checkbox .control_indicator:after, .control-radio .control_indicator:after {
-    left: 3px;
-    top: 3px;
-    width: 12px;
-    height: 12px;
-    border: none;
-    background: #50AA9D;
-}
-
-.control-radio .control_indicator:after {
-    border-radius: 50%;
-}
-
-.control-checkbox input:disabled ~ .control_indicator:after, .control-radio input:disabled ~ .control_indicator:after {
-    border-color: #7b7b7b;
-}
-
-.control-checkbox .control_indicator::before, .control-radio .control_indicator::before {
-    content: "";
-    display: block;
-    position: absolute;
 }
 
 #overlay-no_gateway_connection {
