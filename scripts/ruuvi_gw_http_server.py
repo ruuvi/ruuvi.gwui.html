@@ -54,15 +54,18 @@ g_software_update_stage = 0
 g_software_update_percentage = 0
 g_software_update_url = None
 g_ssid = None
+g_saved_ssid = None
 g_password = None
 g_timestamp = None
 g_use_alt_wifi_list = False
+g_auto_toggle_wifi_list = True
+g_auto_toggle_cnt = 0
 g_gw_mac = "AA:BB:CC:DD:EE:FF"
 
 RUUVI_AUTH_REALM = 'RuuviGateway' + g_gw_mac[-5:-3] + g_gw_mac[-2:]
 
 g_ruuvi_dict = {
-    'fw_ver': 'v1.3.3-dirty',
+    'fw_ver': 'v1.6.0-dirty',
     'nrf52_fw_ver': 'v0.7.1',
     'use_eth': False,
     'eth_dhcp': True,
@@ -126,7 +129,7 @@ g_content_github_latest_release = '''{
     "site_admin": false
   },
   "node_id": "MDc6UmVsZWFzZTQwOTgzNjUz",
-  "tag_name": "v1.3.2",
+  "tag_name": "v1.7.0",
   "target_commitish": "master",
   "name": "GW A2 beta tester release",
   "draft": false,
@@ -504,6 +507,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_timestamp
         global g_ruuvi_dict
         global g_login_session
+        global g_simulation_mode
         print('POST %s' % self.path)
         if self.path == '/auth':
             if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI:
@@ -593,7 +597,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
                 resp += resp_content_encoded
-            elif ssid is None or password is None:
+            elif ssid is None:
                 resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
                 resp += f'Content-Length: 0\r\n'.encode('ascii')
             else:
@@ -608,6 +612,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     g_ssid = ssid
                     g_password = password
                     g_timestamp = time.time()
+                    g_simulation_mode = SIMULATION_MODE_NO_CONNECTION
                     resp_content = f'{{}}'
                     resp_content_encoded = resp_content.encode('utf-8')
                     resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
@@ -675,6 +680,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
     def do_DELETE(self):
         global g_ssid
+        global g_saved_ssid
         global g_password
         global g_timestamp
         global g_simulation_mode
@@ -710,6 +716,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         elif self.path == '/connect.json':
             g_timestamp = None
             g_simulation_mode = SIMULATION_MODE_USER_DISCONNECT
+            g_saved_ssid = None
 
             content = '{}'
             content_encoded = content.encode('utf-8')
@@ -1015,6 +1022,9 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         global g_ruuvi_dict
         global g_login_session
+        global g_auto_toggle_wifi_list
+        global g_auto_toggle_cnt
+        global g_use_alt_wifi_list
         print('GET %s' % self.path)
         if self.path == '/auth' or self.path.startswith('/auth?') or self.path == '/auth.html':
             self._do_get_auth()
@@ -1039,6 +1049,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += content.encode('utf-8')
                 self.wfile.write(resp)
             elif self.path == '/ap.json':
+                if g_auto_toggle_wifi_list:
+                    g_auto_toggle_cnt += 1
+                    if g_auto_toggle_cnt >= 4:
+                        g_auto_toggle_cnt = 0
+                        g_use_alt_wifi_list = not g_use_alt_wifi_list
                 if not g_use_alt_wifi_list:
                     content = '''[
 {"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
@@ -1055,11 +1070,15 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 ] '''
                 else:
                     content = '''[
-{"ssid":"Pantum2","chan":11,"rssi":-55,"auth":4},
-{"ssid":"a0308","chan":1,"rssi":-56,"auth":3},
+{"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
 {"ssid":"dlink-noauth","chan":11,"rssi":-82,"auth":0},
 {"ssid":"dlink-noauth-err-400","chan":7,"rssi":-85,"auth":0},
-{"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0}
+{"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0},
+{"ssid":"SINGTEL-5171","chan":9,"rssi":-88,"auth":4},
+{"ssid":"1126-1","chan":11,"rssi":-89,"auth":4},
+{"ssid":"The Shah 5GHz-2","chan":1,"rssi":-90,"auth":3},
+{"ssid":"SINGTEL-1D28 (2G)","chan":11,"rssi":-91,"auth":3},
+{"ssid":"dlink-74F0","chan":1,"rssi":-93,"auth":4}
 ] '''
                 print(f'Resp: {content}')
                 resp += content.encode('utf-8')
@@ -1299,6 +1318,7 @@ class SimpleHttpServer(object):
 def handle_wifi_connect():
     global g_simulation_mode
     global g_ssid
+    global g_saved_ssid
     global g_password
     global g_timestamp
     while True:
@@ -1310,13 +1330,18 @@ def handle_wifi_connect():
                 elif g_ssid == 'dlink-noauth':
                     print(f'Set simulation mode: WIFI_CONNECTED')
                     g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
+                elif (g_password is None or g_password == 'null') and g_ssid == g_saved_ssid:
+                    print(f'Set simulation mode: WIFI_CONNECTED')
+                    g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
                 elif g_password == '12345678':
                     print(f'Set simulation mode: WIFI_CONNECTED')
                     g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
+                    g_saved_ssid = g_ssid
                 if (g_simulation_mode != SIMULATION_MODE_WIFI_CONNECTED) and (
                         g_simulation_mode != SIMULATION_MODE_ETH_CONNECTED):
                     print(f'Set simulation mode: WIFI_FAILED_ATTEMPT')
                     g_simulation_mode = SIMULATION_MODE_WIFI_FAILED_ATTEMPT
+                    g_saved_ssid = None
                 g_timestamp = None
         time.sleep(0.5)
     pass
