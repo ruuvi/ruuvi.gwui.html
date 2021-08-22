@@ -14,6 +14,8 @@ if (!String.prototype.format) {
 
 let apList = null;
 let selectedSSID = "";
+let connectedSSID = "";
+let flagUseSavedWiFiPassword = false;
 let g_refreshAPActive = false;
 let g_refreshAPTimer = null;
 let g_refreshAPInProgress = false;
@@ -102,35 +104,59 @@ function change_url(url) {
     window.location.hash = url;
 }
 
-function on_network_connected_wifi(url) {
-    flagNetworkConnected = true;
+function on_network_connected_wifi() {
     $("#connected-eth").hide()
     $("#connected-wifi").show()
 }
 
-function on_network_connected_eth(url) {
+function on_network_connected_eth() {
     $("#connected-wifi").hide()
     $("#connected-eth").show()
 }
 
-function change_url_update_schedule() {
+function change_page_to_software_update() {
+    $('#page-ethernet_connection-ask_user').hide();
+    $('#page-ethernet_connection-button-continue').removeClass("disable-click");
+    $('#page-wifi_connection-button-continue').removeClass("disable-click");
+    change_url('page-software_update');
+}
+
+function change_page_to_update_schedule() {
     change_url('page-update_schedule');
 }
 
 function change_url_software_update_progress() {
-    change_url('software_update_progress');
+    change_url('page-software_update_progress');
+}
+
+function change_page_to_finished(flagAdvancedSettings) {
+    let h = "";
+    h += '<ul class="progressbar">';
+    if (flagAdvancedSettings) {
+        for (let i = 0; i < 9; ++i) {
+            h += '<li class="active"></li>';
+        }
+    } else {
+        for (let i = 0; i < 6; ++i) {
+            h += '<li class="active"></li>';
+        }
+    }
+    h += '</ul>';
+    $('section#page-finished div.progressbar-container').html(h);
+    change_url('page-finished');
 }
 
 function on_show_software_update() {
     $("#software_update-button-upgrade").addClass("disable-click");
-    $("#checking-latest-available-version").show();
-    $("#page-software_update-button-back").addClass("disable-click");
-    $("#page-software_update-button-continue").addClass("disable-click");
+    $('.software_update-status').hide();
+    $("#page-software_update-in_progress").show();
 
     $("#software_update-status-ok-already_latest").addClass('hidden');
     $("#software_update-status-ok-latest_not_supported").addClass('hidden');
     $("#software_update-status-ok-update_available").addClass('hidden');
     $("#software_update-status-error").addClass('hidden');
+
+    $("#page-software_update-advanced-button").addClass("disable-click");
 
     $.getJSON("/github_latest_release.json", function (data) {
         let latest_release_version = data.tag_name;
@@ -143,41 +169,35 @@ function on_show_software_update() {
             }
         }
 
-        $("#software_update-version-latest").text(latest_release_version);
+        $('#page-software_update-in_progress').hide();
+        $('#software_update-version-latest').text(latest_release_version);
+        $('#page-software_update-latest_fw_ver').show();
+
         let software_update_url = firmwareUpdatingBaseURL + latest_release_version;
         $("#software_update-url").val(software_update_url);
 
-        $("#checking-latest-available-version").hide();
-        $("#page-software_update-button-back").removeClass("disable-click");
-        $("#page-software_update-button-continue").removeClass("disable-click");
+        $("#page-software_update-advanced-button").removeClass("disable-click");
 
         let current_version = $("#software_update-version-current").text();
-        $("#software_update-status-error").addClass('hidden');
 
+        $('.software_update-status').hide();
         if (!flagLatestFirmwareVersionSupported) {
-            $("#software_update-status-ok-latest_not_supported").removeClass("hidden");
+            $("#software_update-status-ok-latest_not_supported").show();
         } else {
             if (current_version === latest_release_version) {
-                $("#software_update-status-ok-already_latest").removeClass("hidden");
+                $("#software_update-status-ok-already_latest").show();
             } else {
-                $("#software_update-status-ok-update_available").removeClass("hidden");
+                $("#software_update-status-ok-update_available").show();
                 $("#software_update-button-upgrade").removeClass("disable-click");
             }
         }
     }).fail(function ($xhr) {
-        $("#checking-latest-available-version").hide();
-        $("#page-software_update-button-back").removeClass("disable-click");
-        $("#page-software_update-button-continue").removeClass("disable-click");
+        $('#page-software_update-in_progress').hide();
+        $("#page-software_update-advanced-button").removeClass("disable-click");
         let data = $xhr.responseJSON;
-        $("#software_update-status-error").removeClass('hidden');
-        $("#software_update-status-ok-already_latest").addClass('hidden');
-        $("#software_update-status-ok-update_available").addClass('hidden');
+        $('.software_update-status').hide();
+        $("#software_update-status-error").show();
     });
-}
-
-function on_show_software_update_progress() {
-    $("#page-software_update_progress-button-back").addClass("disable-click");
-    $("#page-software_update_progress-button-refresh").addClass("disable-click");
 }
 
 function on_custom_connection_type_changed() {
@@ -248,6 +268,102 @@ function on_settings_scan_filtering_changed() {
     }
 }
 
+function checkWiFiSSIDAndPassword() {
+    let ssid = $('#manual_ssid').val();
+    let pwd = $('#pwd').val();
+    let selected_wifi_radio_button = $('input[name="wifi-name"]:checked');
+    if (!selected_wifi_radio_button || !selected_wifi_radio_button[0]) {
+        return false;
+    }
+    if (!ssid) {
+        return false;
+    }
+    if (selected_wifi_radio_button[0].id === "page-wifi_connection-radio-connect_manually") {
+        if (pwd.length >= 8) {
+            return true;
+        }
+    } else {
+        if (flagUseSavedWiFiPassword) {
+            return true;
+        }
+        if (selected_wifi_radio_button.hasClass('no_auth')) {
+            return true;
+        } else {
+            if (pwd.length >= 8) {
+                return true;
+            }
+        }
+    }
+}
+
+function checkAndUpdatePageWiFiListButtonNext() {
+    if (flagWaitingNetworkConnection) {
+        return;
+    }
+    if (checkWiFiSSIDAndPassword()) {
+        $('#page-wifi_connection-button-continue').removeClass("disable-click");
+    } else {
+        $('#page-wifi_connection-button-continue').addClass("disable-click");
+    }
+}
+
+function on_auto_update_cycle_changed() {
+    let auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
+    if (auto_update_cycle === undefined) {
+        $(`input:radio[name='auto_update_cycle'][value='auto_update_cycle-regular']`).prop('checked', true);
+        auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
+    }
+    if (auto_update_cycle === 'auto_update_cycle-regular') {
+        $('#conf-auto_update_schedule').slideDown();
+    } else if (auto_update_cycle === 'auto_update_cycle-beta') {
+        $('#conf-auto_update_schedule').slideDown();
+    } else if (auto_update_cycle === 'auto_update_cycle-manual') {
+        $('#conf-auto_update_schedule').slideUp();
+    }
+}
+
+function on_edit_automatic_update_settings() {
+    let auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
+    if (auto_update_cycle === 'auto_update_cycle-manual') {
+        $("#page-update_schedule-button-continue").removeClass("disable-click");
+    } else {
+        let flag_button_continue_enabled = true;
+        let auto_update_weekdays_bitmask = 0;
+        if ($('#conf-auto_update_schedule-button-monday').is(":checked")) {
+            auto_update_weekdays_bitmask |= 0x01;
+        }
+        if ($('#conf-auto_update_schedule-button-tuesday').is(":checked")) {
+            auto_update_weekdays_bitmask |= 0x02;
+        }
+        if ($('#conf-auto_update_schedule-button-wednesday').is(":checked")) {
+            auto_update_weekdays_bitmask |= 0x04;
+        }
+        if ($('#conf-auto_update_schedule-button-thursday').is(":checked")) {
+            auto_update_weekdays_bitmask |= 0x08;
+        }
+        if ($('#conf-auto_update_schedule-button-friday').is(":checked")) {
+            auto_update_weekdays_bitmask |= 0x10;
+        }
+        if ($('#conf-auto_update_schedule-button-saturday').is(":checked")) {
+            auto_update_weekdays_bitmask |= 0x20;
+        }
+        if ($('#conf-auto_update_schedule-button-sunday').is(":checked")) {
+            auto_update_weekdays_bitmask |= 0x40;
+        }
+
+        if (auto_update_weekdays_bitmask === 0) {
+            flag_button_continue_enabled = false;
+        }
+
+        if (flag_button_continue_enabled) {
+            $("#page-update_schedule-button-continue").removeClass("disable-click");
+        } else {
+            $("#page-update_schedule-button-continue").addClass("disable-click");
+        }
+    }
+}
+
+
 $(document).ready(function () {
     // Set initial hash to help back button navigation
     window.location.hash = 'page-welcome';
@@ -287,149 +403,140 @@ $(document).ready(function () {
         console.log('Became offline, is_online=' + window.navigator.onLine);
     }, false);
 
-    $('.btn-dropdown').click(function (e) {
-        let id = $(this).attr('id');
-        let base_id = id.substring(0, id.lastIndexOf('-'));
-        let dropdown_id = '#' + base_id + '-dropdown';
-        if ($(this).children('div.btn-dropdown-arrow-down').is(":hidden")) {
-            $(this).children('div.btn-dropdown-arrow-up').hide();
-            $(this).children('div.btn-dropdown-arrow-down').show();
-            $(dropdown_id).fadeOut();
-        } else {
-            $(this).children('div.btn-dropdown-arrow-down').hide();
-            $(this).children('div.btn-dropdown-arrow-up').show();
-            $(dropdown_id).fadeIn();
-        }
-    });
 
-    $('#page-cloud_options-advanced-button').click(function (e) {
-        let id = $(this).attr('id');
-        let base_id = id.substring(0, id.lastIndexOf('-'));
-        let arrow_up_id = '#' + base_id + '-button div.btn-dropdown-arrow-up';
-        if ($(arrow_up_id).is(":hidden")) {
-            $("#use_ruuvi")[0].checked = true;
-        }
-    });
-
-    $('.btn-back').click(function (e) {
-        e.preventDefault();
-        console.log("on click: .btn-back");
-        window.history.back();
+    // ==== page-welcome ===============================================================================================
+    $('section#page-welcome').bind('onShow', function () {
+        let progressbar = $('#progressbar');
+        progressbar.css('top', $('section#page-welcome div.progressbar-container').position().top);
+        progressbar.show();
     });
 
     $('#page-welcome-button-get-started').click(function (e) {
         e.preventDefault();
-        change_url('page-connection_type');
+        change_url('page-network_type');
     });
 
-    $('#page-cloud_options-button-continue').click(function (e) {
-        e.preventDefault();
-        let connection_type = $("input[name='connection_type']:checked").val();
-        if (connection_type === 'ruuvi') {
-            save_config();
-            change_url('page-finished');
+    // ==== page-network_type ==========================================================================================
+    $('section#page-network_type').bind('onShow', function () {
+        networkDisconnect();
+        $('section#page-network_type input[type=radio][name=network_type]').trigger('change');
+    });
+
+    $('section#page-network_type input[type=radio][name=network_type]').change(function () {
+        let network_type = $("input[name='network_type']:checked").val();
+        if (network_type === 'wifi') {
+            startRefreshAP();
         } else {
-            change_url('page-custom_server');
+            stopRefreshAP();
         }
     });
 
-    $('#page-custom_server-button-continue').click(function (e) {
-        e.preventDefault();
-        change_url('page-scanning');
-    });
-
-    $('#page-scanning-button-continue').click(function (e) {
-        e.preventDefault();
-        change_url('page-settings_lan_auth');
-    });
-
-    $('#lan_auth-user').on("keyup change", function (e) {
-        g_flag_lan_auth_pass_changed = true;
-        $("#lan_auth-pass").removeAttr('placeholder');
-        on_lan_auth_user_pass_changed();
-    });
-
-    $('#lan_auth-pass').on("keyup change", function (e) {
-        g_flag_lan_auth_pass_changed = true;
-        $("#lan_auth-pass").removeAttr('placeholder');
-        on_lan_auth_user_pass_changed();
-    });
-
-    $('#page-lan_auth_type-button-continue').click(function (e) {
-        e.preventDefault();
-        save_config();
-        change_url('page-finished');
-    });
-
-    $('#page-update_schedule-button-continue').click(function (e) {
-        e.preventDefault();
-        change_url('page-cloud_options');
-    });
-
-    $('#page-connection_type-button-continue').click(function (e) {
+    $('section#page-network_type #page-network_type-button-continue').click(function (e) {
         e.preventDefault();
         let network_type = $("input[name='network_type']:checked").val();
         if (network_type === 'wifi')
-            change_url('page-wifi_list');
+            change_url('page-wifi_connection');
         else
-            change_url('cable_settings');
+            change_url('page-ethernet_connection');
     });
 
-    $('#page-wifi_list-button-back').click(function (e) {
-        e.preventDefault();
-        console.log("on click: #page-wifi_list-button-back");
-        stopRefreshAP();
-        selectedSSID = "";
-        $.ajax({
-            url: '/connect.json',
-            dataType: 'json',
-            method: 'DELETE',
-            cache: false,
-            data: {'timestamp': Date.now()}
-        });
-        startCheckStatus();
+    // ==== page-ethernet_connection ===================================================================================
+    $('section#page-ethernet_connection').bind('onShow', function () {
+        if (!$('#eth_dhcp')[0].checked) {
+            $('#page-ethernet_connection-section-manual_settings').slideDown();
+        }
     });
 
-    $('#page-wifi_list-button-continue').click(function (e) {
+    $('section#page-ethernet_connection #eth_dhcp').change(function (e) {
+        if ($('#eth_dhcp')[0].checked) {
+            $('#page-ethernet_connection-section-manual_settings').slideUp();
+        } else {
+            $('#page-ethernet_connection-section-manual_settings').slideDown();
+        }
+    });
+
+    $('section#page-ethernet_connection #page-ethernet_connection-button-continue').click(function (e) {
         e.preventDefault();
+        $('#page-ethernet_connection-ask_user').show();
+        $('#page-ethernet_connection-button-continue').addClass("disable-click");
+        networkConnect(null, null);
+    });
+
+    $('section#page-ethernet_connection #page-ethernet_connection-button-back').click(function (e) {
+        e.preventDefault();
+        networkDisconnect();
+    });
+
+    // ==== page-wifi_connection =======================================================================================
+    $('section#page-wifi_connection').bind('onShow', function () {
+        checkAndUpdatePageWiFiListButtonNext();
+        flagUseSavedWiFiPassword = true;
+        startRefreshAP();
+    });
+
+    $('section#page-wifi_connection input#manual_ssid').on('keyup click', function () {
+        $('#wifi-connection-failed').hide();
+        checkAndUpdatePageWiFiListButtonNext();
+    });
+
+    $('section#page-wifi_connection input#pwd').on('keyup click', function () {
+        $('#wifi-connection-failed').hide();
+        checkAndUpdatePageWiFiListButtonNext();
+    });
+
+    $('section#page-wifi_connection input#wifi-show-password').click(function (e) {
+        let pwd = $('#pwd');
+        if (flagUseSavedWiFiPassword) {
+            flagUseSavedWiFiPassword = false;
+            pwd.val("");
+        }
+        if (pwd.prop("type") === "password") {
+            pwd.prop("type", "text");
+        } else {
+            pwd.prop("type", "password");
+        }
+    });
+
+    $('section#page-wifi_connection input#page-wifi_connection-radio-connect_manually').change(function (e) {
+        $('.wifi_password').css('height', 0);
+        $('#input_ssid_block').show();
+        $('#input_password_block').show();
+        let div_page_wifi_list_ssid_password = $('#page-wifi_connection-ssid_password');
+        let div_ssid_password_wrap = $('#page-wifi_connection-ssid_password-wrap');
+        let wifi_password_position = div_ssid_password_wrap.position();
+        div_ssid_password_wrap.css('height', div_page_wifi_list_ssid_password.height());
+        div_page_wifi_list_ssid_password.css('top', wifi_password_position.top);
+        div_page_wifi_list_ssid_password.show();
+        $('#manual_ssid').val("");
+        $('#pwd').val("");
+    });
+
+    $('section#page-wifi_connection #page-wifi_connection-button-continue').click(function (e) {
+        e.preventDefault();
+        $('#wifi-connection-failed').hide();
         let ssid = $('#manual_ssid').val();
         let isAuthNeeded = selected_wifi_auth_required(ssid);
-        let password = isAuthNeeded ? $('#pwd').val() : null;
-        $('#page-wifi_list-button-continue').addClass('disable-click');
-        performConnect(ssid, password);
+
+        let password = (flagUseSavedWiFiPassword || !isAuthNeeded) ? null : $('#pwd').val();
+        $('#page-wifi_connection-button-continue').addClass('disable-click');
+        $("#wifi-connection-failed").hide();
+        networkConnect(ssid, password);
     });
 
-    $('#page-cable_settings-button-back').click(function (e) {
+    $('#page-wifi_connection-button-back').click(function (e) {
         e.preventDefault();
-        selectedSSID = "";
-        $.ajax({
-            url: '/connect.json',
-            dataType: 'json',
-            method: 'DELETE',
-            cache: false,
-            data: {'timestamp': Date.now()}
-        });
-        startCheckStatus();
+        networkDisconnect();
+        $('section#page-network_type input[type=radio][name=network_type]').trigger('change');
     });
 
-    $('#page-cable_settings-button-continue').click(function (e) {
-        e.preventDefault();
-        $('#page-cable_settings-ask_user').show();
-        $('#page-cable_settings-button-continue').addClass("disable-click");
-        performConnect(null, null);
+    // ==== page-software_update =======================================================================================
+    $('section#page-software_update').bind('onShow', function () {
+        $('#page-software_update-latest_fw_ver').hide();
+        stopRefreshAP();
+        on_show_software_update();
     });
 
-    $('#page-software_update-button-continue').click(function (e) {
-        e.preventDefault();
-        change_url_update_schedule();
-    });
-
-    $('#page-software_update_progress-button-refresh').click(function (e) {
-        e.preventDefault();
-        location.reload();
-    });
-
-    $('#software_update-button-upgrade').click(function (e) {
+    $('section#page-software_update #software_update-button-upgrade').click(function (e) {
         e.preventDefault();
         let software_update_url = $("#software_update-url").val();
         $.ajax({
@@ -449,70 +556,133 @@ $(document).ready(function () {
         );
     });
 
-    // Language switcher
-    $(".lang_select").change(function () {
-        const lang = $(this).val();
-        $("p[lang], span[lang]").each(function () {
-            if ($(this).attr("lang") === lang)
-                $(this).fadeIn();
-            else
-                $(this).hide();
-            if (lang === 'en') {
-                $('input#pwd').attr('placeholder', "Password");
-                $('input#mqtt_client_id').attr('placeholder', "MAC-address is used if empty");
-            } else if (lang === 'fi') {
-                $('input#pwd').attr('placeholder', "Salasana");
-                $('input#mqtt_client_id').attr('placeholder', "MAC-osoitetta käytetään, jos se on tyhjä");
+    $('section#page-software_update #software_update-set-url-manually').change(function (e) {
+        if ($('#software_update-set-url-manually')[0].checked) {
+            $('#software_update-url').show();
+            $("#software_update-button-upgrade").removeClass("disable-click");
+            $("#page-software_update-button-continue").addClass("disable-click");
+        } else {
+            $('#software_update-url').hide();
+            $("#page-software_update-button-continue").removeClass("disable-click");
+            if (!flagLatestFirmwareVersionSupported) {
+                $("#software_update-button-upgrade").addClass("disable-click");
             }
-        })
+        }
     });
 
-    $('#page-scanning').bind('onShow', function () {
-        on_settings_scan_filtering_changed();
+    $('section#page-software_update #page-software_update-button-continue').click(function (e) {
+        e.preventDefault();
+        change_page_to_update_schedule();
     });
 
-    $("input[name='filtering']").change(function (e) {
-        on_settings_scan_filtering_changed();
-    });
-
-    $('#page-connection_type').bind('onShow', function () {
-        console.log("onShow: #page-connection_type");
-        stopRefreshAP();
-    });
-
-    $('#page-wifi_list').bind('onShow', function () {
-        console.log("onShow: #page-wifi_list");
-        $('#page-wifi_list-button-continue').removeClass("disable-click");
+    $('section#page-software_update #page-software_update-button-back').click(function (e) {
+        e.preventDefault();
         startRefreshAP();
     });
 
-    $('#cable_settings').bind('onShow', function () {
-        $('#page-cable_settings-ask_user').hide();
-        $('#page-cable_settings-button-continue').removeClass("disable-click");
-        if (!$('#eth_dhcp')[0].checked) {
-            $('#page-cable_settings-section-manual_settings').slideDown();
-        }
+    // ==== page-software_update_progress ==============================================================================
+
+    $('section#page-software_update_progress').bind('onShow', function () {
     });
 
-    $('#eth_dhcp').change(function (e) {
-        if ($('#eth_dhcp')[0].checked) {
-            $('#page-cable_settings-section-manual_settings').slideUp();
+    // ==== page-update_schedule =======================================================================================
+    $('section#page-update_schedule').bind('onShow', function () {
+        on_auto_update_cycle_changed();
+        on_edit_automatic_update_settings();
+    });
+
+    $("section#page-update_schedule input[name='auto_update_cycle']").change(function (e) {
+        on_auto_update_cycle_changed();
+        on_edit_automatic_update_settings();
+    });
+
+    $('section#page-update_schedule .checkbox-weekday').change(function () {
+        if (this.checked) {
+            $(this).parent().removeClass('btn-weekday-disabled');
         } else {
-            $('#page-cable_settings-section-manual_settings').slideDown();
+            $(this).parent().addClass('btn-weekday-disabled');
+        }
+        on_edit_automatic_update_settings();
+    });
+
+    $('#conf-auto_update_schedule-period_from').change(function () {
+        let auto_update_interval_from = parseInt($("#conf-auto_update_schedule-period_from").val());
+        let auto_update_interval_to = parseInt($("#conf-auto_update_schedule-period_to").val());
+        if (auto_update_interval_from >= auto_update_interval_to) {
+            $("#conf-auto_update_schedule-period_to").val(auto_update_interval_from + 1);
         }
     });
 
-    $('#page-finished').bind('onShow', function () {
-        console.log("onShow: #page-finished");
-        stopCheckStatus();
-        stopRefreshAP();
+    $('#conf-auto_update_schedule-period_to').change(function () {
+        let auto_update_interval_from = parseInt($("#conf-auto_update_schedule-period_from").val());
+        let auto_update_interval_to = parseInt($("#conf-auto_update_schedule-period_to").val());
+        if (auto_update_interval_from >= auto_update_interval_to) {
+            $("#conf-auto_update_schedule-period_from").val(auto_update_interval_to - 1);
+        }
     });
 
-    $("input[name='custom_connection']").change(function (e) {
+    $('#conf-auto_update_schedule-tz').change(function () {
+    });
+
+    $('section#page-update_schedule #page-update_schedule-button-continue').click(function (e) {
+        e.preventDefault();
+        change_url('page-cloud_options');
+    });
+
+    // ==== page-cloud_options =========================================================================================
+    $('section#page-cloud_options').bind('onShow', function () {
+        $('section#page-cloud_options input[type=radio][name=connection_type]').trigger('change');
+    });
+
+    $('section#page-cloud_options input[type=radio][name=connection_type]').change(function () {
+        let connection_type = $("input[name='connection_type']:checked").val();
+        let h = "";
+        h += '<ul class="progressbar">';
+        if (connection_type === 'ruuvi') {
+            for (let i = 0; i < 5; ++i) {
+                h += '<li class="active"></li>';
+            }
+            h += '<li></li>';
+        } else {
+            for (let i = 0; i < 5; ++i) {
+                h += '<li class="active"></li>';
+            }
+            for (let i = 5; i < 9; ++i) {
+                h += '<li></li>';
+            }
+        }
+        h += '</ul>';
+        h += '\n';
+        $('section#page-cloud_options div.progressbar-container').html(h);
+    });
+
+    $('section#page-cloud_options #page-cloud_options-advanced-button').click(function (e) {
+        let id = $(this).attr('id');
+        let base_id = id.substring(0, id.lastIndexOf('-'));
+        let arrow_up_id = '#' + base_id + '-button div.btn-dropdown-arrow-up';
+        if ($(arrow_up_id).is(":hidden")) {
+            $("#use_ruuvi")[0].checked = true;
+        }
+    });
+
+    $('section#page-cloud_options #page-cloud_options-button-continue').click(function (e) {
+        e.preventDefault();
+        let connection_type = $("input[name='connection_type']:checked").val();
+        if (connection_type === 'ruuvi') {
+            save_config();
+            change_page_to_finished(false);
+        } else {
+            change_url('page-custom_server');
+        }
+    });
+
+
+    // ==== page-custom_server =========================================================================================
+    $('section#page-custom_server').bind('onShow', function () {
         on_custom_connection_type_changed();
     });
 
-    $('#page-custom_server').bind('onShow', function () {
+    $("section#page-custom_server input[name='custom_connection']").change(function (e) {
         on_custom_connection_type_changed();
     });
 
@@ -549,191 +719,106 @@ $(document).ready(function () {
         }
     });
 
-    function on_auto_update_cycle_changed() {
-        let auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
-        if (auto_update_cycle === undefined) {
-            $(`input:radio[name='auto_update_cycle'][value='auto_update_cycle-regular']`).prop('checked', true);
-            auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
-        }
-        if (auto_update_cycle === 'auto_update_cycle-regular') {
-            $('#conf-auto_update_schedule').slideDown();
-        } else if (auto_update_cycle === 'auto_update_cycle-beta') {
-            $('#conf-auto_update_schedule').slideDown();
-        } else if (auto_update_cycle === 'auto_update_cycle-manual') {
-            $('#conf-auto_update_schedule').slideUp();
-        }
-    }
 
-    function on_edit_automatic_update_settings() {
-        let auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
-        if (auto_update_cycle === 'auto_update_cycle-manual') {
-            $("#page-update_schedule-button-continue").removeClass("disable-click");
-        } else {
-            let flag_button_continue_enabled = true;
-            let auto_update_weekdays_bitmask = 0;
-            if ($('#conf-auto_update_schedule-button-monday').is(":checked")) {
-                auto_update_weekdays_bitmask |= 0x01;
-            }
-            if ($('#conf-auto_update_schedule-button-tuesday').is(":checked")) {
-                auto_update_weekdays_bitmask |= 0x02;
-            }
-            if ($('#conf-auto_update_schedule-button-wednesday').is(":checked")) {
-                auto_update_weekdays_bitmask |= 0x04;
-            }
-            if ($('#conf-auto_update_schedule-button-thursday').is(":checked")) {
-                auto_update_weekdays_bitmask |= 0x08;
-            }
-            if ($('#conf-auto_update_schedule-button-friday').is(":checked")) {
-                auto_update_weekdays_bitmask |= 0x10;
-            }
-            if ($('#conf-auto_update_schedule-button-saturday').is(":checked")) {
-                auto_update_weekdays_bitmask |= 0x20;
-            }
-            if ($('#conf-auto_update_schedule-button-sunday').is(":checked")) {
-                auto_update_weekdays_bitmask |= 0x40;
-            }
-
-            if (auto_update_weekdays_bitmask === 0) {
-                flag_button_continue_enabled = false;
-            }
-
-            if (flag_button_continue_enabled) {
-                $("#page-update_schedule-button-continue").removeClass("disable-click");
-            } else {
-                $("#page-update_schedule-button-continue").addClass("disable-click");
-            }
-        }
-    }
-
-    $('#update_schedule').bind('onShow', function () {
-        on_auto_update_cycle_changed();
-        on_edit_automatic_update_settings();
+    $('section#page-custom_server #page-custom_server-button-continue').click(function (e) {
+        e.preventDefault();
+        change_url('page-scanning');
     });
 
-    $("input[name='auto_update_cycle']").change(function (e) {
-        on_auto_update_cycle_changed();
-        on_edit_automatic_update_settings();
+    // ==== page-scanning ==============================================================================================
+    $('section#page-scanning').bind('onShow', function () {
+        on_settings_scan_filtering_changed();
     });
 
-    $('.checkbox-weekday').change(function () {
-        if (this.checked) {
-            $(this).parent().removeClass('btn-weekday-disabled');
-        } else {
-            $(this).parent().addClass('btn-weekday-disabled');
-        }
-        on_edit_automatic_update_settings();
+    $("section#page-scanning input[name='filtering']").change(function (e) {
+        on_settings_scan_filtering_changed();
     });
 
-    $('#conf-auto_update_schedule-period_from').change(function () {
-        let auto_update_interval_from = parseInt($("#conf-auto_update_schedule-period_from").val());
-        let auto_update_interval_to = parseInt($("#conf-auto_update_schedule-period_to").val());
-        if (auto_update_interval_from >= auto_update_interval_to) {
-            $("#conf-auto_update_schedule-period_to").val(auto_update_interval_from + 1);
-        }
+    $('section#page-scanning #page-scanning-button-continue').click(function (e) {
+        e.preventDefault();
+        change_url('page-settings_lan_auth');
     });
 
-    $('#conf-auto_update_schedule-period_to').change(function () {
-        let auto_update_interval_from = parseInt($("#conf-auto_update_schedule-period_from").val());
-        let auto_update_interval_to = parseInt($("#conf-auto_update_schedule-period_to").val());
-        if (auto_update_interval_from >= auto_update_interval_to) {
-            $("#conf-auto_update_schedule-period_from").val(auto_update_interval_to - 1);
-        }
-    });
-
-    $('#conf-auto_update_schedule-tz').change(function () {
-    });
-
-    $('#page-settings_lan_auth').bind('onShow', function () {
+    // ==== page-settings_lan_auth =====================================================================================
+    $('section#page-settings_lan_auth').bind('onShow', function () {
         on_lan_auth_type_changed();
     });
 
-    $("input[name='lan_auth_type']").change(function (e) {
+    $('section#page-settings_lan_auth #lan_auth-user').on("keyup change", function (e) {
+        g_flag_lan_auth_pass_changed = true;
+        $("#lan_auth-pass").removeAttr('placeholder');
+        on_lan_auth_user_pass_changed();
+    });
+
+    $('section#page-settings_lan_auth #lan_auth-pass').on("keyup change", function (e) {
+        g_flag_lan_auth_pass_changed = true;
+        $("#lan_auth-pass").removeAttr('placeholder');
+        on_lan_auth_user_pass_changed();
+    });
+
+    $("section#page-settings_lan_auth input[name='lan_auth_type']").change(function (e) {
         g_flag_lan_auth_pass_changed = true;
         $("#lan_auth-pass").removeAttr('placeholder');
         on_lan_auth_type_changed();
     });
 
-    $('#wifi-overlay-show-password').click(function (e) {
-        if ($('#pwd').prop("type") === "password") {
-            $("#pwd").prop("type", "text");
+    $('section#page-settings_lan_auth #page-lan_auth_type-button-continue').click(function (e) {
+        e.preventDefault();
+        save_config();
+        change_page_to_finished(true);
+    });
+
+    // ==== page-finished ==============================================================================================
+
+    $('#page-finished').bind('onShow', function () {
+        console.log("onShow: #page-finished");
+        stopCheckStatus();
+    });
+
+    // =================================================================================================================
+
+    $('.btn-dropdown').click(function (e) {
+        let id = $(this).attr('id');
+        let base_id = id.substring(0, id.lastIndexOf('-'));
+        let dropdown_id = '#' + base_id + '-dropdown';
+        if ($(this).children('div.btn-dropdown-arrow-down').is(":hidden")) {
+            $(this).children('div.btn-dropdown-arrow-up').hide();
+            $(this).children('div.btn-dropdown-arrow-down').show();
+            $(dropdown_id).fadeOut();
         } else {
-            $("#pwd").prop("type", "password");
+            $(this).children('div.btn-dropdown-arrow-down').hide();
+            $(this).children('div.btn-dropdown-arrow-up').show();
+            $(dropdown_id).fadeIn();
         }
     });
 
-    $('#page-wifi_list-radio-connect_manually').change(function (e) {
-        $('.wifi_password').css('height', 0);
-        $('#input_ssid_block').show();
-        $('#input_password_block').show();
-        let div_page_wifi_list_ssid_password = $('#page-wifi_list-ssid_password');
-        let div_ssid_password_wrap = $('#page-wifi_list-ssid_password-wrap');
-        let wifi_password_position = div_ssid_password_wrap.position();
-        div_ssid_password_wrap.css('height', div_page_wifi_list_ssid_password.height());
-        div_page_wifi_list_ssid_password.css('top', wifi_password_position.top);
-        div_page_wifi_list_ssid_password.show();
-        $('#manual_ssid').val("");
-        $('#pwd').val("");
+    $('.btn-back').click(function (e) {
+        e.preventDefault();
+        console.log("on click: .btn-back");
+        window.history.back();
     });
 
-    $("#wifi-overlay-button-cancel").click(function () {
-        selectedSSID = "";
-        $('#wifi-overlay').fadeOut();
-        startRefreshAP();
-    });
-
-    $("#wifi-overlay-button-connect").click(function () {
-        let ssid = $('#manual_ssid').val();
-        let password = $("#pwd").val();
-        performConnect(ssid, password);
-    });
-
-    $("#wifi-overlay-connection-failed-button-ok").click(function () {
-        $("#wifi-overlay-connection-failed").hide();
-        $('#wifi-overlay').fadeOut();
-        startRefreshAP();
-    })
-
-    $('#software_update').bind('onShow', function () {
-        console.log("onShow: #software_update");
-        stopRefreshAP();
-        on_show_software_update();
-    });
-
-    $('#software_update-set-url-manually').change(function (e) {
-        if ($('#software_update-set-url-manually')[0].checked) {
-            $('#software_update-url-manual').slideDown();
-            $("#software_update-button-upgrade").removeClass("disable-click");
-        } else {
-            $('#software_update-url-manual').slideUp();
-            if (!flagLatestFirmwareVersionSupported) {
-                $("#software_update-button-upgrade").addClass("disable-click");
+    // Language switcher
+    $(".lang_select").change(function () {
+        const lang = $(this).val();
+        $("p[lang], span[lang]").each(function () {
+            if ($(this).attr("lang") === lang)
+                $(this).fadeIn();
+            else
+                $(this).hide();
+            if (lang === 'en') {
+                $('input#pwd').attr('placeholder', "Password");
+                $('input#mqtt_client_id').attr('placeholder', "MAC-address is used if empty");
+            } else if (lang === 'fi') {
+                $('input#pwd').attr('placeholder', "Salasana");
+                $('input#mqtt_client_id').attr('placeholder', "MAC-osoitetta käytetään, jos se on tyhjä");
             }
-        }
-    });
-
-    $('#software_update_progress').bind('onShow', function () {
-        on_show_software_update_progress();
-    });
-
-    $("#checking-latest-available-version-button-cancel").click(function () {
-        $('#checking-latest-available-version').hide();
-        $("#page-software_update-button-back").removeClass("disable-click");
-        $("#page-software_update-button-continue").removeClass("disable-click");
+        })
     });
 
     // first time the page loads: attempt get the connection status
     startCheckStatus();
 });
-
-function checkSSIDAndPassword() {
-    let ssid = $('#manual_ssid').val();
-    let password = $("#pwd").val();
-    if (ssid === '' || password.length < 8) {
-        $('#wifi-overlay-button-connect').attr('disabled', 'disabled');
-    } else {
-        $('#wifi-overlay-button-connect').removeAttr('disabled');
-    }
-}
 
 // Check if need for auth screen
 function selected_wifi_auth_required(ssid) {
@@ -746,54 +831,9 @@ function selected_wifi_auth_required(ssid) {
     return true;
 }
 
-// Init function needed as click events are lost everytime list is updated
-function initWifiList() {
-    $("#page-wifi_list-list_of_ssid label input").change(function() {
-        let ssid = $(this).val();
-        let isAuthNeeded = selected_wifi_auth_required(ssid);
-
-        $('#manual_ssid').val(ssid);
-        $('#pwd').val("");
-
-        $('#input_ssid_block').hide();
-        if (isAuthNeeded) {
-            $('#input_password_block').show();
-        } else {
-            $('#input_password_block').hide();
-        }
-
-        let div_page_wifi_list_ssid_password = $('#page-wifi_list-ssid_password');
-        let div_wifi_password = $(this).parent().parent().children(".wifi_password");
-
-        $('.wifi_password').css('height', 0);
-        $('#page-wifi_list-ssid_password-wrap').css('height', 0);
-        div_wifi_password.css('height', div_page_wifi_list_ssid_password.height());
-        let wifi_password_position = div_wifi_password.position();
-        div_page_wifi_list_ssid_password.css('top', wifi_password_position.top);
-        div_page_wifi_list_ssid_password.show();
-    });
-    // $(".wifi_select").change(function () {
-    //     console.log('on change: .wifi_select');
-    // });
-
-    // $('.wifi-list a').click(function (e) {
-    //     e.preventDefault();
-    //     let ssid = $(this).text();
-    //     let isAuthNeeded = selected_wifi_auth_required(ssid);
-    //     $(".wifi-network-name").text(ssid);
-    //     showWiFiOverlay(ssid, isAuthNeeded);
-    //     if (!isAuthNeeded) {
-    //         saveConfigAndPerformConnect(ssid, null);
-    //     }
-    // });
-}
-
-function performConnect(ssid, password) {
+function networkConnect(ssid, password) {
     selectedSSID = ssid;
     $(".wifi-network-name").text(ssid);
-
-    $('#manual_ssid').onkeyup = null;
-    $('#pwd').onkeyup = null;
 
     let req_connect_header = null;
     if (ssid) {
@@ -801,6 +841,7 @@ function performConnect(ssid, password) {
     }
 
     flagWaitingNetworkConnection = true;
+    stopCheckStatus();
     $.ajax({
             method: 'POST',
             url: '/connect.json',
@@ -815,13 +856,31 @@ function performConnect(ssid, password) {
                 startCheckStatus();
             },
             error: function (request, status, error) {
-                $('#wifi-overlay-connection-failed-description').text('HTTP error: ' + status + ', ' + 'Status: ' + request.status + '(' + request.statusText + ')' + ', ' + request.responseText);
-                $("#wifi-overlay-connection-failed").show();
+                $("#wifi-connection-failed").show();
                 //now we can re-set the intervals regardless of result
                 startCheckStatus();
             }
         }
     );
+}
+
+function networkDisconnect() {
+    stopRefreshAP();
+    stopCheckStatus();
+    selectedSSID = "";
+    $.ajax({
+        url: '/connect.json',
+        dataType: 'json',
+        method: 'DELETE',
+        cache: false,
+        data: {'timestamp': Date.now()},
+        success: function (data, text) {
+            startCheckStatus();
+        },
+        error: function (request, status, error) {
+            startCheckStatus();
+        }
+    });
 }
 
 function rssiToIcon(rssi) {
@@ -896,16 +955,54 @@ function refreshAP() {
     });
 }
 
-// Refresh wifi selection list
+function updatePositionOfWiFiPasswordInput(div_wifi_password) {
+    let div_page_wifi_list_ssid_password = $('#page-wifi_connection-ssid_password');
+
+    $('.wifi_password').css('height', 0);
+    $('#page-wifi_connection-ssid_password-wrap').css('height', 0);
+
+    div_wifi_password.css('height', div_page_wifi_list_ssid_password.height());
+    let wifi_password_position = div_wifi_password.position();
+    div_page_wifi_list_ssid_password.css('top', wifi_password_position.top);
+    div_page_wifi_list_ssid_password.show();
+}
+
+function onChangeWiFiName() {
+    let selected_wifi = $("input[name='wifi-name']:checked");
+    let ssid = selected_wifi.val();
+
+    let isAuthNeeded = selected_wifi_auth_required(ssid);
+
+    $('#manual_ssid').val(ssid);
+    $('#pwd').val("");
+
+    $('#input_ssid_block').hide();
+    if (isAuthNeeded) {
+        $('#input_password_block').show();
+    } else {
+        $('#input_password_block').hide();
+    }
+
+    flagUseSavedWiFiPassword = false;
+
+    updatePositionOfWiFiPasswordInput(selected_wifi.parent().parent().children(".wifi_password"));
+}
+
 function refreshAPHTML(data) {
     let is_manual_wifi = false;
     let selected_wifi_radio_button = $('input[name="wifi-name"]:checked');
     let selected_wifi_ssid = selected_wifi_radio_button.val();
-    if (selected_wifi_radio_button[0] && selected_wifi_radio_button[0].id) {
+    if (selected_wifi_radio_button[0] && (selected_wifi_radio_button[0].id === "page-wifi_connection-radio-connect_manually")) {
         is_manual_wifi = true;
+        selected_wifi_ssid = null;
+    }
+    if (!is_manual_wifi && !selected_wifi_ssid) {
+        if (connectedSSID) {
+            selected_wifi_ssid = connectedSSID;
+        }
     }
 
-    let div_page_wifi_list_ssid_password = $('#page-wifi_list-ssid_password');
+    let div_page_wifi_list_ssid_password = $('#page-wifi_connection-ssid_password');
     if (selected_wifi_ssid) {
         let isAuthNeeded = selected_wifi_auth_required(selected_wifi_ssid);
         $('#input_ssid_block').hide();
@@ -928,25 +1025,48 @@ function refreshAPHTML(data) {
         h += '        <div style="margin-left: auto;" class="{0}"></div>'.format(e.auth === 0 ? '' : 'pw');
         h += '        <div class="{0}"></div>'.format(rssiToIcon(e.rssi));
         h += '    </div>';
-        h += '    <input value="{0}" name="wifi-name" type="radio">'.format(e.ssid);
+        h += '    <input value="{0}" name="wifi-name" type="radio" class="{1}">'.format(
+            e.ssid,
+            (e.auth === 0) ? 'no_auth' : '');
         h += '    <span class="control_indicator"></span>';
         h += '</label>';
-        if (selected_wifi_ssid && selected_wifi_ssid === e.ssid) {
-            h += '<div style="height: {0}px" class="wifi_password"></div>'.format(div_page_wifi_list_ssid_password.height());
-        } else {
-            h += '<div class="wifi_password"></div>';
-        }
+        h += '<div class="wifi_password"></div>';
         h += '<div class="border"></div>';
         h += '</div>';
         h += "\n";
     });
 
-    $("#page-wifi_list-list_of_ssid").html(h);
+    $("#page-wifi_connection-list_of_ssid").html(h);
 
-    initWifiList();
-    if (!is_manual_wifi) {
-        $('input[name="wifi-name"][value="' + selected_wifi_ssid + '"]').prop('checked', true);
+    $("div#page-wifi_connection-list_of_ssid label input[name='wifi-name']").change(onChangeWiFiName);
+
+    if (!is_manual_wifi && selected_wifi_ssid) {
+        let input_id = $('input[name="wifi-name"][value="' + selected_wifi_ssid + '"]');
+        if (input_id.length !== 0) {
+            input_id.prop('checked', true);
+            updatePositionOfWiFiPasswordInput(input_id.parent().parent().children(".wifi_password"));
+            if (flagUseSavedWiFiPassword) {
+                let input_pwd = $('input#pwd');
+                input_pwd.val("qqqqqqqq");
+                input_pwd.focus(function () {
+                    if (flagUseSavedWiFiPassword) {
+                        flagUseSavedWiFiPassword = false;
+                        $('input#pwd').val("");
+                    }
+                });
+            }
+            $('#manual_ssid').val(selected_wifi_ssid);
+        } else {
+            flagUseSavedWiFiPassword = false;
+            $('#input_password_block').hide();
+        }
+    } else {
+        flagUseSavedWiFiPassword = false;
     }
+    if (is_manual_wifi) {
+        updatePositionOfWiFiPasswordInput($('#page-wifi_connection-ssid_password-wrap'));
+    }
+    checkAndUpdatePageWiFiListButtonNext();
 }
 
 function onGetStatusJson(data) {
@@ -955,7 +1075,7 @@ function onGetStatusJson(data) {
         let fw_updating_stage = data_extra['fw_updating'];
         let fw_updating_percentage = data_extra['percentage'];
         if (fw_updating_stage > 0) {
-            if (!$('#software_update_progress').is(':visible')) {
+            if (!$('#page-software_update_progress').is(':visible')) {
                 change_url_software_update_progress();
             }
             let progressbar_stage1 = $('#software_update_progress-stage1');
@@ -987,21 +1107,18 @@ function onGetStatusJson(data) {
                     progressbar_stage3.val(100);
                     progressbar_stage4.val(100);
                     $("#software_update_progress-status-completed_successfully").removeClass("hidden");
-                    $("#page-software_update_progress-button-refresh").removeClass("disable-click");
                     stopCheckStatus();
                     break;
                 case 6: // completed unsuccessfully
                     $("#software_update_progress-status-completed_unsuccessfully").removeClass("hidden");
                     $('#software_update_progress-status-completed_unsuccessfully-message').text(data_extra['message']);
-                    $("#page-software_update_progress-button-back").removeClass("disable-click");
                     break;
             }
             return;
         }
     }
     if (data.hasOwnProperty('ssid') && !!data['ssid'] && data['ssid'] !== "") {
-        let fw_updating_stage = data['fw_updating'];
-        let fw_updating_percentage = data['percentage'];
+        connectedSSID = data["ssid"];
         if (data["ssid"] === selectedSSID) {
             //that's a connection attempt
             if (data["urc"] === URC_CODE.CONNECTED) {
@@ -1013,13 +1130,13 @@ function onGetStatusJson(data) {
                     case CONNECTION_STATE.NOT_CONNECTED:
                         break;
                     case CONNECTION_STATE.CONNECTING:
-                        if (!flagNetworkConnected)
-                        {
+                        if (!flagNetworkConnected) {
                             flagNetworkConnected = true;
                             on_network_connected_wifi();
                         }
                         if (flagWaitingNetworkConnection) {
-                            change_url_update_schedule();
+                            flagWaitingNetworkConnection = false;
+                            change_page_to_software_update();
                         }
                         break;
                     case CONNECTION_STATE.CONNECTED:
@@ -1039,7 +1156,8 @@ function onGetStatusJson(data) {
                     case CONNECTION_STATE.NOT_CONNECTED:
                         break;
                     case CONNECTION_STATE.CONNECTING:
-                        $("#wifi-overlay-connection-failed").show();
+                        flagWaitingNetworkConnection = false;
+                        $("#wifi-connection-failed").show();
                         break;
                     case CONNECTION_STATE.CONNECTED:
                         break;
@@ -1057,13 +1175,13 @@ function onGetStatusJson(data) {
             switch (connectionState) {
                 case CONNECTION_STATE.NOT_CONNECTED:
                 case CONNECTION_STATE.CONNECTING:
-                    if (!flagNetworkConnected)
-                    {
+                    if (!flagNetworkConnected) {
                         flagNetworkConnected = true;
                         on_network_connected_wifi();
                     }
                     if (flagWaitingNetworkConnection) {
-                        change_url_update_schedule();
+                        flagWaitingNetworkConnection = false;
+                        change_page_to_software_update();
                     }
                     break;
                 case CONNECTION_STATE.CONNECTED:
@@ -1073,39 +1191,42 @@ function onGetStatusJson(data) {
             }
             connectionState = CONNECTION_STATE.CONNECTED;
         }
-    } else if (data.hasOwnProperty('urc')) {
-        if (data["urc"] === URC_CODE.CONNECTED) {
-            // connected to Ethernet
-            $(".wifi-network-name").text("");
-            $("#ip").text(data["ip"]);
-            $("#netmask").text(data["netmask"]);
-            $("#gw").text(data["gw"]);
+    } else {
+        connectedSSID = "";
+        if (data.hasOwnProperty('urc')) {
+            if (data["urc"] === URC_CODE.CONNECTED) {
+                // connected to Ethernet
+                $(".wifi-network-name").text("");
+                $("#ip").text(data["ip"]);
+                $("#netmask").text(data["netmask"]);
+                $("#gw").text(data["gw"]);
 
-            switch (connectionState) {
-                case CONNECTION_STATE.NOT_CONNECTED:
-                case CONNECTION_STATE.CONNECTING:
-                    if (!flagNetworkConnected)
-                    {
-                        flagNetworkConnected = true;
-                        on_network_connected_eth();
-                    }
-                    if (flagWaitingNetworkConnection) {
-                        change_url_update_schedule();
-                    }
-                    break;
-                case CONNECTION_STATE.CONNECTED:
-                    break;
-                case CONNECTION_STATE.FAILED:
-                    break;
+                switch (connectionState) {
+                    case CONNECTION_STATE.NOT_CONNECTED:
+                    case CONNECTION_STATE.CONNECTING:
+                        if (!flagNetworkConnected) {
+                            flagNetworkConnected = true;
+                            on_network_connected_eth();
+                        }
+                        if (flagWaitingNetworkConnection) {
+                            flagWaitingNetworkConnection = false;
+                            change_page_to_software_update();
+                        }
+                        break;
+                    case CONNECTION_STATE.CONNECTED:
+                        break;
+                    case CONNECTION_STATE.FAILED:
+                        break;
+                }
+                connectionState = CONNECTION_STATE.CONNECTED
+            } else if (data["urc"] === URC_CODE.DISCONNECTED) {
+                //that's a manual disconnect
+                // TODO: implement
+                // if($("#wifi-status").is(":visible"))
+                // {
+                // 	$("#wifi-status").slideUp( "fast", function() {});
+                // }
             }
-            connectionState = CONNECTION_STATE.CONNECTED
-        } else if (data["urc"] === URC_CODE.DISCONNECTED) {
-            //that's a manual disconnect
-            // TODO: implement
-            // if($("#wifi-status").is(":visible"))
-            // {
-            // 	$("#wifi-status").slideUp( "fast", function() {});
-            // }
         }
     }
 }

@@ -36,13 +36,16 @@
                 <span lang="fi">Ohjattu määritystoiminto</span>
             </h1>
 
-            <ul class="progressbar">
-                <li class="active"></li>
-                <li class=""></li>
-                <li></li>
-                <li></li>
-                <li></li>
-            </ul>
+            <div class="progressbar-container">
+                <ul class="progressbar">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
 
             <div class="ingress">
                 <p lang="en">Setting up your Ruuvi Gateway is easy. You just need to follow a few simple steps and
@@ -78,12 +81,23 @@
         </section>
 
 
-        <!-- CONNECTION TYPE -->
-        <section id="page-connection_type" class="hidden">
+        <!-- NETWORK TYPE -->
+        <section id="page-network_type" class="hidden">
             <h1>
                 <span lang="en">Internet connection</span>
                 <span lang="fi">Internet-yhteys</span>
             </h1>
+
+            <div class="progressbar-container">
+                <ul class="progressbar">
+                    <li class="active"></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
 
             <div class="ingress">
                 <p lang="en">The Gateway needs an internet connection.
@@ -114,11 +128,11 @@
             </div>
 
             <div class="button-container">
-                <a href="" id="page-connection_type-button-back" class="btn-back">
+                <a href="" id="page-network_type-button-back" class="btn-back">
                     <span lang="en">Back</span>
                     <span lang="fi">Takaisin</span>
                 </a>
-                <a href="" id="page-connection_type-button-continue" class="btn">
+                <a href="" id="page-network_type-button-continue" class="btn">
                     <span lang="en">NEXT</span>
                     <span lang="fi">SEURAAVA</span>
                 </a>
@@ -127,12 +141,98 @@
         </section>
 
 
-        <!-- WIFI LIST -->
-        <section id="page-wifi_list" class="hidden">
+        <!-- ETHERNET CONFIGURATION -->
+        <section id="page-ethernet_connection" class="hidden">
+            <h1>
+                <span lang="en">Ethernet settings</span>
+                <span lang="fi">Ethernet-asetukset</span>
+            </h1>
+
+            <div class="progressbar-container">
+                <ul class="progressbar">
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+
+            <div class="control-group">
+                <label class="control control-checkbox">
+                    <span lang="en">Use DHCP</span>
+                    <span lang="fi">Käytä DHCP-palvelinta</span>
+                    <input id="eth_dhcp" type="checkbox">
+                    <span class="control_indicator"></span>
+                </label>
+            </div>
+
+            <div>&nbsp;</div>
+
+            <div id="page-ethernet_connection-section-manual_settings" class="indent hidden">
+                <label class="bold">
+                    <span lang="en">Static IP</span>
+                    <span lang="fi">Kiinteä IP-osoite</span>
+                    <input id="eth_static_ip" type="text" placeholder="192.168.1.10" value="">
+                </label>
+                <label class="bold">
+                    <span lang="en">Netmask</span>
+                    <span lang="fi">Verkon peite</span>
+                    <input id="eth_netmask" type="text" placeholder="255.255.255.0" value="">
+                </label>
+                <label class="bold">
+                    <span lang="en">Gateway</span>
+                    <span lang="fi">Yhdyskäytävä</span>
+                    <input id="eth_gw" type="text" placeholder="192.168.1.1" value="">
+                </label>
+                <label class="bold">
+                    <span lang="en">DNS 1 IP:</span>
+                    <span lang="fi">DNS 1 IP-osoite:</span>
+                    <input id="eth_dns1" type="text" placeholder="DNS 1" value="">
+                </label>
+                <label class="bold">
+                    <span lang="en">DNS 2 IP:</span>
+                    <span lang="fi">DNS 2 IP-osoite:</span>
+                    <input id="eth_dns2" type="text" placeholder="DNS 2" value="">
+                </label>
+            </div>
+
+            <div id="page-ethernet_connection-ask_user" class="hidden rd block-centered">
+                <span lang="en">Please connect Ethernet cable to the Ruuvi Gateway</span>
+                <span lang="fi">Liitä Ethernet-kaapeli Ruuvi Gateway</span>
+            </div>
+
+            <div class="button-container">
+                <a href="" id="page-ethernet_connection-button-back" class="btn-back">
+                    <span lang="en">Back</span>
+                    <span lang="fi">Takaisin</span>
+                </a>
+                <a href="" id="page-ethernet_connection-button-continue" class="btn">
+                    <span lang="en">NEXT</span>
+                    <span lang="fi">SEURAAVA</span>
+                </a>
+            </div>
+        </section>
+
+
+        <!-- WIFI CONFIGURATION -->
+        <section id="page-wifi_connection" class="hidden">
             <h1>
                 <span lang="en">Wi-Fi Network</span>
                 <span lang="fi">WLAN-verkko</span>
             </h1>
+
+            <div class="progressbar-container">
+                <ul class="progressbar">
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
 
             <div class="ingress">
                 <p lang="en">Nearby Wi-Fi hotspots are listed below.
@@ -141,10 +241,10 @@
                     Valitse se, johon haluat Ruuvi Gatewayn muodostavan yhteyden.</p>
             </div>
 
-            <div id="page-wifi_list-list_of_ssid" class="wifi-list"></div>
+            <div id="page-wifi_connection-list_of_ssid" class="wifi-list"></div>
 
             <div class="border"></div>
-            <div id="page-wifi_list-advanced-button" class="btn-dropdown">
+            <div id="page-wifi_connection-advanced-button" class="btn-dropdown">
                 <h2>
                     <span lang="en">Advanced</span>
                     <span lang="fi">Lisäasetukset</span>
@@ -154,7 +254,7 @@
             </div>
             <div class="border"></div>
 
-            <div id="page-wifi_list-advanced-dropdown" class="hidden">
+            <div id="page-wifi_connection-advanced-dropdown" class="hidden">
                 <div class="">
                     <span lang="en">If your network is hidden, you can connect manually.</span>
                     <span lang="fi">Jos verkko on piilotettu, voit muodostaa yhteyden manuaalisesti.</span>
@@ -165,16 +265,16 @@
                 <label class="control control-radio">
                     <span lang="en">Connect manually</span>
                     <span lang="fi">Yhdistä manuaalisesti</span>
-                    <input id="page-wifi_list-radio-connect_manually" value="" name="wifi-name" type="radio">
+                    <input id="page-wifi_connection-radio-connect_manually" value="" name="wifi-name" type="radio">
                     <span class="control_indicator"></span>
                 </label>
 
-                <div id="page-wifi_list-ssid_password-wrap"></div>
+                <div id="page-wifi_connection-ssid_password-wrap"></div>
             </div>
 
-            <div style="position: absolute" id="page-wifi_list-ssid_password" class="indent hidden">
-                <div class="border-hidden"></div>
+            <div style="position: absolute" id="page-wifi_connection-ssid_password" class="indent hidden">
                 <div id="input_ssid_block">
+                    <div class="border-hidden"></div>
                     <div>
                         <label for="manual_ssid" class="bold-font">SSID</label>
                     </div>
@@ -193,18 +293,24 @@
                     <label class="control control-checkbox">
                         <span lang="en">Show password</span>
                         <span lang="fi">Näytä salasana</span>
-                        <input type="checkbox" id="wifi-overlay-show-password">
+                        <input type="checkbox" id="wifi-show-password">
                         <span class="control_indicator"></span>
                     </label>
+                    <div style="height: 20px">
+                        <div id="wifi-connection-failed" class="rd hidden">
+                            <span lang="en">Failed to connect</span>
+                            <span lang="fi">Ei voida yhdistää</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="button-container">
-                <a href="" id="page-wifi_list-button-back" class="btn-back">
+                <a href="" id="page-wifi_connection-button-back" class="btn-back">
                     <span lang="en">Back</span>
                     <span lang="fi">Takaisin</span>
                 </a>
-                <a href="" id="page-wifi_list-button-continue" class="btn">
+                <a href="" id="page-wifi_connection-button-continue" class="btn">
                     <span lang="en">NEXT</span>
                     <span lang="fi">SEURAAVA</span>
                 </a>
@@ -219,6 +325,17 @@
                 <span lang="fi">Ohjelmistopäivitys</span>
             </h1>
 
+            <div class="progressbar-container">
+                <ul class="progressbar">
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+
             <div class="block-centered">
                 <div>
                     <span lang="en">Current firmware version &nbsp;</span>
@@ -226,28 +343,36 @@
                 </div>
                 <div id="software_update-version-current"></div>
             </div>
-            <div class="block-centered">
-                <div>
-                    <span lang="en">Latest available firmware version &nbsp;</span>
-                    <span lang="fi">Uusin saatavilla oleva laiteohjelmistoversio &nbsp;</span>
+            <div id="page-software_update-latest_fw_ver" class="hidden">
+                <div class="block-centered">
+                    <div>
+                        <span lang="en">Latest available firmware version &nbsp;</span>
+                        <span lang="fi">Uusin saatavilla oleva laiteohjelmistoversio &nbsp;</span>
+                    </div>
+                    <div id="software_update-version-latest"></div>
                 </div>
-                <div id="software_update-version-latest"></div>
             </div>
+            <div id="page-software_update-in_progress" class="block-centered bl hidden">
+                <span lang="en">Checking for the latest available version...</span>
+                <span lang="fi">Tarkistetaan uusinta saatavilla olevaa versiota...</span>
+            </div>
+
             <div>&nbsp;</div>
+
             <div class="block-centered">
-                <div id="software_update-status-ok-already_latest" class="gr">
+                <div id="software_update-status-ok-already_latest" class="software_update-status gr hidden">
                     <span lang="en">You already have the latest release installed</span>
                     <span lang="fi">Sinulla on jo uusin versio asennettuna</span>
                 </div>
-                <div id="software_update-status-ok-latest_not_supported" class="hidden bl">
+                <div id="software_update-status-ok-latest_not_supported" class="software_update-status bl hidden">
                     <span lang="en">The latest version is not supported. Try manual updating.</span>
                     <span lang="fi">Uusinta versiota ei tueta. Kokeile päivitystä manuaalisesti.</span>
                 </div>
-                <div id="software_update-status-ok-update_available" class="hidden bl">
+                <div id="software_update-status-ok-update_available" class="software_update-status bl hidden">
                     <span lang="en">There are firmware updates</span>
                     <span lang="fi">Ohjelmistopäivitys on asennettavissa</span>
                 </div>
-                <div id="software_update-status-error" class="hidden rd">
+                <div id="software_update-status-error" class="software_update-status rd hidden">
                     <span lang="en">Unable to get the latest firmware version</span>
                     <span lang="fi">Uusinta laiteohjelmistoversiota ei saada</span>
                 </div>
@@ -276,15 +401,17 @@
             <div class="border"></div>
 
             <div id="page-software_update-advanced-dropdown" class="hidden">
-                <label for="software_update-url">
-                    <div class="control-group">
+                <div class="control-group">
+                    <label>
                         <input id="software_update-set-url-manually" type="checkbox">
-                        <span lang="en">Specify a URL from where updates should be requested.</span>
-                        <span lang="fi">Määritä URL -osoite, josta päivityksiä pyydetään.</span>
-                        <span class="control_indicator"></span>
-                    </div>
+                    </label>
+                    <span lang="en">Specify a URL from where updates should be requested.</span>
+                    <span lang="fi">Määritä URL -osoite, josta päivityksiä pyydetään.</span>
+                    <span class="control_indicator"></span>
+                </div>
+                <label for="software_update-url">
+                    <input id="software_update-url" type="text" value="" class="hidden">
                 </label>
-                <input id="software_update-url" type="text" value="">
             </div>
 
             <div class="button-container">
@@ -301,11 +428,22 @@
 
 
         <!-- SOFTWARE UPDATING -->
-        <section id="software_update_progress" class="hidden">
+        <section id="page-software_update_progress" class="hidden">
             <h1>
                 <span lang="en">Software Update</span>
                 <span lang="fi">Ohjelmistopäivitys</span>
             </h1>
+
+            <div class="progressbar-container">
+                <ul class="progressbar">
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                </ul>
+            </div>
 
             <div class="block-centered">
                 <span lang="en">Please wait. Do not power off the Gateway.</span>
@@ -385,11 +523,23 @@
         </section>
 
 
+        <!-- UPDATE SCHEDULE -->
         <section id="page-update_schedule" class="hidden">
             <h1>
                 <span lang="en">Set an automatic update schedule</span>
                 <span lang="fi">Määritä automaattisen päivityksen aikataulu</span>
             </h1>
+
+            <div class="progressbar-container">
+                <ul class="progressbar">
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
 
             <div class="ingress">
                 <p lang="en">
@@ -655,6 +805,9 @@
                 <span lang="fi">Pilvivaihtoehdot</span>
             </h1>
 
+            <div class="progressbar-container">
+            </div>
+
             <div class="ingress">
                 <p lang="en">Almost done!</p>
                 <p lang="en">The last step is to set Ruuvi Gateway to route nearby sensors’ data securely to the
@@ -720,6 +873,21 @@
                 <span lang="en">Custom Server</span>
                 <span lang="fi">Mukautettu palvelin</span>
             </h1>
+
+            <div class="progressbar-container">
+                <ul class="progressbar">
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+
             <div class="ingress">
                 <p lang="en">Use your own or a third party server.</p>
                 <p lang="fi">Käytä omaa tai kolmannen osapuolen palvelinta.</p>
@@ -823,50 +991,39 @@
                             <li>
                                 <p lang="en">Subscribe to service messages from this gateway:</p>
                                 <p lang="fi">Tilaa palveluviestit tästä yhdyskäytävästä:</p>
-                                <p>
                                 <div id="mqtt_example1">mosquitto_sub -h test.mosquitto.org -p 1883 -t
                                     "ruuvi/AA:BB:CC:DD:EE:FF/gw_status" -v
                                 </div>
-                                </p>
                             </li>
                             <li>
                                 <p lang="en">Subscribe to service messages from any gateway:</p>
                                 <p lang="fi">Tilaa palveluviestit mistä tahansa yhdyskäytävästä:</p>
-                                <p>
                                 <div id="mqtt_example2">mosquitto_sub -h test.mosquitto.org -p 1883 -t
                                     "ruuvi/#/gw_status" -v
                                 </div>
-                                </p>
                             </li>
                             <li>
                                 <p lang="en">Subscribe to messages from the bluetooth tag with MAC:</p>
                                 <p lang="fi">Tilaa viestit tämän MAC-osoitteen sisältävästä
                                     Bluetooth-anturista:</p>
-                                <p>
                                 <div id="mqtt_example3">mosquitto_sub -h test.mosquitto.org -p 1883 -t "ruuvi/#/&lt;TAG_MAC&gt;/#"
                                     -v
                                 </div>
-                                </p>
                             </li>
                             <li>
                                 <p lang="en">Subscribe to messages from any bluetooth tags connected to this
                                     Gateway:</p>
                                 <p lang="fi">Tilaa viestit kaikista tähän yhdyskäytävään liitetyistä
                                     Bluetooth-antureista:</p>
-                                <p>
                                 <div id="mqtt_example4">mosquitto_sub -h test.mosquitto.org -p 1883 -t
                                     "ruuvi/AA:BB:CC:DD:EE:FF/#/#" -v
                                 </div>
-                                </p>
                             </li>
                             <li>
                                 <p lang="en">Subscribe to all messages:</p>
                                 <p lang="fi">Tilaa kaikki viestit:</p>
-                                <p>
-                                <div id="mqtt_example5">mosquitto_sub -h test.mosquitto.org -p 1883 -t "ruuvi/#"
-                                    -v
+                                <div id="mqtt_example5">mosquitto_sub -h test.mosquitto.org -p 1883 -t "ruuvi/#" -v
                                 </div>
-                                </p>
                             </li>
                         </ol>
                     </div>
@@ -892,6 +1049,20 @@
                 <span lang="en">Scanning</span>
                 <span lang="fi">Skannaus</span>
             </h1>
+
+            <div class="progressbar-container">
+                <ul class="progressbar">
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
 
             <div class="ingress">
                 <p lang="en">Ruuvi Gateway continuously listens Bluetooth beacon messages.
@@ -928,7 +1099,8 @@
                     <span class="control_indicator"></span>
                 </label>
                 <div style="opacity: 50%;" class="indent">
-                    <small>If you enable also long range reseption the Gateway will continuously switch between the modes (50/50%)</small>
+                    <small>If you enable also long range reseption the Gateway will continuously switch between the
+                        modes (50/50%)</small>
                 </div>
 
                 <div>&nbsp;</div>
@@ -998,6 +1170,20 @@
                 <span lang="en">Access Settings</span>
                 <span lang="fi">Avaa Asetukset</span>
             </h1>
+
+            <div class="progressbar-container">
+                <ul class="progressbar">
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li></li>
+                </ul>
+            </div>
 
             <div class="ingress">
                 <p lang="en">By default, after this setup wizard is completed, Ruuvi Gateway will be no longer
@@ -1075,74 +1261,14 @@
         </section>
 
 
-        <section id="cable_settings" class="hidden">
-            <h1>
-                <span lang="en">Ethernet settings</span>
-                <span lang="fi">Ethernet-asetukset</span>
-            </h1>
-
-            <div class="control-group">
-                <label class="control control-checkbox">
-                    <span lang="en">Use DHCP</span>
-                    <span lang="fi">Käytä DHCP-palvelinta</span>
-                    <input id="eth_dhcp" type="checkbox">
-                    <span class="control_indicator"></span>
-                </label>
-            </div>
-
-            <div>&nbsp;</div>
-
-            <div id="page-cable_settings-section-manual_settings" class="indent hidden">
-                <label class="bold">
-                    <span lang="en">Static IP</span>
-                    <span lang="fi">Kiinteä IP-osoite</span>
-                    <input id="eth_static_ip" type="text" placeholder="192.168.1.10" value="">
-                </label>
-                <label class="bold">
-                    <span lang="en">Netmask</span>
-                    <span lang="fi">Verkon peite</span>
-                    <input id="eth_netmask" type="text" placeholder="255.255.255.0" value="">
-                </label>
-                <label class="bold">
-                    <span lang="en">Gateway</span>
-                    <span lang="fi">Yhdyskäytävä</span>
-                    <input id="eth_gw" type="text" placeholder="192.168.1.1" value="">
-                </label>
-                <label class="bold">
-                    <span lang="en">DNS 1 IP:</span>
-                    <span lang="fi">DNS 1 IP-osoite:</span>
-                    <input id="eth_dns1" type="text" placeholder="DNS 1" value="">
-                </label>
-                <label class="bold">
-                    <span lang="en">DNS 2 IP:</span>
-                    <span lang="fi">DNS 2 IP-osoite:</span>
-                    <input id="eth_dns2" type="text" placeholder="DNS 2" value="">
-                </label>
-            </div>
-
-            <div id="page-cable_settings-ask_user" class="hidden rd block-centered">
-                <span lang="en">Please connect Ethernet cable to the Ruuvi Gateway</span>
-                <span lang="fi">Liitä Ethernet-kaapeli Ruuvi Gateway</span>
-            </div>
-
-            <div class="button-container">
-                <a href="" id="page-cable_settings-button-back" class="btn-back">
-                    <span lang="en">Back</span>
-                    <span lang="fi">Takaisin</span>
-                </a>
-                <a href="" id="page-cable_settings-button-continue" class="btn">
-                    <span lang="en">NEXT</span>
-                    <span lang="fi">SEURAAVA</span>
-                </a>
-            </div>
-        </section>
-
-
         <section id="page-finished" class="hidden">
             <h1>
                 <span lang="en">Finished!</span>
                 <span lang="fi">Valmis!</span>
             </h1>
+
+            <div class="progressbar-container">
+            </div>
 
             <div class="block-centered bold-font">
                 <span lang="en">Ruuvi Gateway is now functioning.</span>
@@ -1215,53 +1341,16 @@
             </div>
         </section>
 
-        <div class="overlay hidden" id="wifi-overlay-connection-failed">
-            <h2>
-                <span lang="en">Failed to connected to "<span class="wifi-network-name"></span>"</span>
-                <span lang="fi">WLAN-yhteyden muodostaminen epäonnistui "<span
-                        class="wifi-network-name"></span>"</span>
-            </h2>
-            <p id="wifi-overlay-connection-failed-description">
-            </p>
-            <button class="btn btn-ok" id="wifi-overlay-connection-failed-button-ok" type="button">
-                <span lang="en">OK</span>
-                <span lang="fi">OK</span>
-            </button>
-        </div>
-
-        <!-- CHECKING FOR THE LATEST AVAILABLE VERSION -->
-        <div class="overlay hidden" id="checking-latest-available-version">
-            <h2>
-                <span lang="en">Checking for the latest available version...</span>
-                <span lang="fi">Tarkistetaan uusinta saatavilla olevaa versiota...</span>
-            </h2>
-            <div class="spinner">
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                     style="margin: auto; display: block;" width="88px" height="88px" viewBox="0 0 100 100"
-                     preserveAspectRatio="xMidYMid">
-                    <path d="M8 50A42 42 0 0 0 92 50A42 48.5 0 0 1 8 50" fill="#59bcb1" stroke="none"
-                          transform="rotate(107.349 50 53.25)">
-                        <animateTransform attributeName="transform" type="rotate" dur="0.8620689655172413s"
-                                          repeatCount="indefinite" keyTimes="0;1"
-                                          values="0 50 53.25;360 50 53.25"></animateTransform>
-                    </path>
-                </svg>
-            </div>
-            <div class="connect-buttons">
-                <button class="btn btn-cancel" type="button" id="checking-latest-available-version-button-cancel">
-                    <span lang="en">Cancel</span>
-                    <span lang="fi">Peruuta</span>
-                </button>
-            </div>
-        </div>
 
         <div class="hidden overlay-container" id="overlay-no_gateway_connection">
             <div class="overlay">
-                <span lang="en">The connection to the Ruuvi-gateway is lost.
+                <span lang="en">
+                    The connection to the Ruuvi-gateway is lost.
                     <br/>
                     <br/>
                     Please reconnect to the WiFi access point on the Ruuvi-gateway.</span>
-                <span lang="fi">Yhteys Ruuvi-yhdyskäytävästä menetetään.
+                <span lang="fi">
+                    Yhteys Ruuvi-yhdyskäytävästä menetetään.
                     <br/>
                     <br/>
                     Muodosta yhteys uudelleen Ruuvi-yhdyskäytävästä WiFi-tukiasemaan.</span>
