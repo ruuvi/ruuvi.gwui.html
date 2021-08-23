@@ -47,7 +47,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
 
     if (g_checkStatusInProgress || g_refreshAPInProgress) {
         // postpone sending the ajax requests until "GET /status.json" and "GET /ap.json" are completed
-        setTimeout(save_config, 500);
+        setTimeout(save_config_internal, 500, flag_save_network_cfg, cb_on_success, cb_on_error);
         return;
     }
 
