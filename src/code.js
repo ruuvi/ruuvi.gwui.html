@@ -581,6 +581,7 @@ $(document).ready(function () {
 
     $('section#page-software_update #page-software_update-button-back').click(function (e) {
         e.preventDefault();
+        networkDisconnect();
         startRefreshAP();
     });
 
