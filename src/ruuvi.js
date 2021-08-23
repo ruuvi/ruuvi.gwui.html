@@ -36,7 +36,7 @@ function get_mqtt_topic_prefix() {
     return mqtt_topic;
 }
 
-function save_config() {
+function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error) {
     //stop the status refresh. This prevents a race condition where a status
     //request would be refreshed with wrong ip info from a previous connection
     //and the request would automatically shows as successful.
@@ -59,110 +59,111 @@ function save_config() {
     console.log(custom_conn);
 
     let data = {};
-    data.use_eth = !(network_type === 'wifi');
-    if (data.use_eth) {
-        data.eth_dhcp = $("#eth_dhcp")[0].checked;
-        if (!data.eth_dhcp) {
-            data.eth_static_ip = $("#eth_static_ip").val()
-            data.eth_netmask = $("#eth_netmask").val()
-            data.eth_gw = $("#eth_gw").val()
-            data.eth_dns1 = $("#eth_dns1").val()
-            data.eth_dns2 = $("#eth_dns2").val()
+
+    if (flag_save_network_cfg) {
+        data.use_eth = !(network_type === 'wifi');
+        if (data.use_eth) {
+            data.eth_dhcp = $("#eth_dhcp")[0].checked;
+            if (!data.eth_dhcp) {
+                data.eth_static_ip = $("#eth_static_ip").val()
+                data.eth_netmask = $("#eth_netmask").val()
+                data.eth_gw = $("#eth_gw").val()
+                data.eth_dns1 = $("#eth_dns1").val()
+                data.eth_dns2 = $("#eth_dns2").val()
+            }
         }
-    }
-
-    data.use_mqtt = (custom_conn === 'use_mqtt');
-    data.mqtt_server = $("#mqtt_server").val();
-    let mqtt_port = parseInt($("#mqtt_port").val())
-    if (Number.isNaN(mqtt_port)) {
-        mqtt_port = 0;
-    }
-    data.mqtt_port = mqtt_port;
-    data.mqtt_prefix = $("#mqtt_prefix").val();
-    data.mqtt_client_id = $("#mqtt_client_id").val();
-    if (!data.mqtt_client_id) {
-        data.mqtt_client_id = gw_mac;
-    }
-    data.mqtt_user = $("#mqtt_user").val();
-    data.mqtt_pass = $("#mqtt_pass").val();
-
-    data.use_http = (custom_conn === 'use_http');
-    data.http_url = $("#http_url").val();
-    data.http_user = $("#http_user").val();
-    data.http_pass = $("#http_pass").val();
-
-    if (g_flag_lan_auth_pass_changed) {
-        data.lan_auth_type = $("input[name='lan_auth_type']:checked").val();
-        let lan_auth_user = $("#lan_auth-user").val();
-        let lan_auth_pass = $("#lan_auth-pass").val();
-        let realm = 'RuuviGateway' + gw_mac.substr(12, 2) + gw_mac.substr(15, 2);
-        if (data.lan_auth_type === 'lan_auth_deny') {
-            data.lan_auth_user = null;
-            data.lan_auth_pass = null;
-        } else if (data.lan_auth_type === 'lan_auth_ruuvi') {
-            data.lan_auth_user = lan_auth_user;
-            data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString();
-        } else if (data.lan_auth_type === 'lan_auth_digest') {
-            data.lan_auth_user = lan_auth_user;
-            let raw_str = lan_auth_user + ':' + realm + ':' + lan_auth_pass;
-            let auth_path_md5 = CryptoJS.MD5(raw_str);
-            data.lan_auth_pass = auth_path_md5.toString();
-        } else if (data.lan_auth_type === 'lan_auth_basic') {
-            data.lan_auth_user = lan_auth_user;
-            data.lan_auth_pass = btoa(lan_auth_user + ':' + lan_auth_pass);
-        } else {
-            data.lan_auth_type = 'lan_auth_allow';
-            data.lan_auth_user = null;
-            data.lan_auth_pass = null;
-        }
-    }
-
-    data.use_filtering = ($("input[name='filtering']:checked").val() === "1");
-
-    //data.coordinates = $("#coordinates").val();  // Removed from v1
-
-    data.use_coded_phy = $("#use_coded_phy")[0].checked;
-    data.use_1mbit_phy = $("#use_1mbit_phy")[0].checked;
-    data.use_extended_payload = $("#use_extended_payload")[0].checked;
-    data.use_channel_37 = $("#use_channel_37")[0].checked;
-    data.use_channel_38 = $("#use_channel_38")[0].checked;
-    data.use_channel_39 = $("#use_channel_39")[0].checked;
-
-    if (auto_update_cycle === "auto_update_cycle-regular") {
-        data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.REGULAR;
-    } else if (auto_update_cycle === "auto_update_cycle-beta") {
-        data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.BETA_TESTER;
-    } else if (auto_update_cycle === "auto_update_cycle-manual") {
-        data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.MANUAL;
     } else {
-        console.log("Unknown auto_update_cycle: " + auto_update_cycle);
-        data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.REGULAR;
+        data.use_mqtt = (custom_conn === 'use_mqtt');
+        data.mqtt_server = $("#mqtt_server").val();
+        let mqtt_port = parseInt($("#mqtt_port").val())
+        if (Number.isNaN(mqtt_port)) {
+            mqtt_port = 0;
+        }
+        data.mqtt_port = mqtt_port;
+        data.mqtt_prefix = $("#mqtt_prefix").val();
+        data.mqtt_client_id = $("#mqtt_client_id").val();
+        if (!data.mqtt_client_id) {
+            data.mqtt_client_id = gw_mac;
+        }
+        data.mqtt_user = $("#mqtt_user").val();
+        data.mqtt_pass = $("#mqtt_pass").val();
+
+        data.use_http = (custom_conn === 'use_http');
+        data.http_url = $("#http_url").val();
+        data.http_user = $("#http_user").val();
+        data.http_pass = $("#http_pass").val();
+
+        if (g_flag_lan_auth_pass_changed) {
+            data.lan_auth_type = $("input[name='lan_auth_type']:checked").val();
+            let lan_auth_user = $("#lan_auth-user").val();
+            let lan_auth_pass = $("#lan_auth-pass").val();
+            let realm = 'RuuviGateway' + gw_mac.substr(12, 2) + gw_mac.substr(15, 2);
+            if (data.lan_auth_type === 'lan_auth_deny') {
+                data.lan_auth_user = null;
+                data.lan_auth_pass = null;
+            } else if (data.lan_auth_type === 'lan_auth_ruuvi') {
+                data.lan_auth_user = lan_auth_user;
+                data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString();
+            } else if (data.lan_auth_type === 'lan_auth_digest') {
+                data.lan_auth_user = lan_auth_user;
+                let raw_str = lan_auth_user + ':' + realm + ':' + lan_auth_pass;
+                let auth_path_md5 = CryptoJS.MD5(raw_str);
+                data.lan_auth_pass = auth_path_md5.toString();
+            } else if (data.lan_auth_type === 'lan_auth_basic') {
+                data.lan_auth_user = lan_auth_user;
+                data.lan_auth_pass = btoa(lan_auth_user + ':' + lan_auth_pass);
+            } else {
+                data.lan_auth_type = 'lan_auth_allow';
+                data.lan_auth_user = null;
+                data.lan_auth_pass = null;
+            }
+        }
+
+        data.use_filtering = ($("input[name='filtering']:checked").val() === "1");
+
+        data.use_coded_phy = $("#use_coded_phy")[0].checked;
+        data.use_1mbit_phy = $("#use_1mbit_phy")[0].checked;
+        data.use_extended_payload = $("#use_extended_payload")[0].checked;
+        data.use_channel_37 = $("#use_channel_37")[0].checked;
+        data.use_channel_38 = $("#use_channel_38")[0].checked;
+        data.use_channel_39 = $("#use_channel_39")[0].checked;
+
+        if (auto_update_cycle === "auto_update_cycle-regular") {
+            data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.REGULAR;
+        } else if (auto_update_cycle === "auto_update_cycle-beta") {
+            data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.BETA_TESTER;
+        } else if (auto_update_cycle === "auto_update_cycle-manual") {
+            data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.MANUAL;
+        } else {
+            console.log("Unknown auto_update_cycle: " + auto_update_cycle);
+            data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.REGULAR;
+        }
+        data.auto_update_weekdays_bitmask = 0;
+        if ($('#conf-auto_update_schedule-button-sunday').is(":checked")) {
+            data.auto_update_weekdays_bitmask |= 0x01;
+        }
+        if ($('#conf-auto_update_schedule-button-monday').is(":checked")) {
+            data.auto_update_weekdays_bitmask |= 0x02;
+        }
+        if ($('#conf-auto_update_schedule-button-tuesday').is(":checked")) {
+            data.auto_update_weekdays_bitmask |= 0x04;
+        }
+        if ($('#conf-auto_update_schedule-button-wednesday').is(":checked")) {
+            data.auto_update_weekdays_bitmask |= 0x08;
+        }
+        if ($('#conf-auto_update_schedule-button-thursday').is(":checked")) {
+            data.auto_update_weekdays_bitmask |= 0x10;
+        }
+        if ($('#conf-auto_update_schedule-button-friday').is(":checked")) {
+            data.auto_update_weekdays_bitmask |= 0x20;
+        }
+        if ($('#conf-auto_update_schedule-button-saturday').is(":checked")) {
+            data.auto_update_weekdays_bitmask |= 0x40;
+        }
+        data.auto_update_interval_from = parseInt($("#conf-auto_update_schedule-period_from").val());
+        data.auto_update_interval_to = parseInt($("#conf-auto_update_schedule-period_to").val());
+        data.auto_update_tz_offset_hours = parseInt($("#conf-auto_update_schedule-tz").val());
     }
-    data.auto_update_weekdays_bitmask = 0;
-    if ($('#conf-auto_update_schedule-button-sunday').is(":checked")) {
-        data.auto_update_weekdays_bitmask |= 0x01;
-    }
-    if ($('#conf-auto_update_schedule-button-monday').is(":checked")) {
-        data.auto_update_weekdays_bitmask |= 0x02;
-    }
-    if ($('#conf-auto_update_schedule-button-tuesday').is(":checked")) {
-        data.auto_update_weekdays_bitmask |= 0x04;
-    }
-    if ($('#conf-auto_update_schedule-button-wednesday').is(":checked")) {
-        data.auto_update_weekdays_bitmask |= 0x08;
-    }
-    if ($('#conf-auto_update_schedule-button-thursday').is(":checked")) {
-        data.auto_update_weekdays_bitmask |= 0x10;
-    }
-    if ($('#conf-auto_update_schedule-button-friday').is(":checked")) {
-        data.auto_update_weekdays_bitmask |= 0x20;
-    }
-    if ($('#conf-auto_update_schedule-button-saturday').is(":checked")) {
-        data.auto_update_weekdays_bitmask |= 0x40;
-    }
-    data.auto_update_interval_from = parseInt($("#conf-auto_update_schedule-period_from").val());
-    data.auto_update_interval_to = parseInt($("#conf-auto_update_schedule-period_to").val());
-    data.auto_update_tz_offset_hours = parseInt($("#conf-auto_update_schedule-tz").val());
 
     console.log(data);
 
@@ -175,13 +176,27 @@ function save_config() {
         data: JSON.stringify(data),
         success: function (data, text) {
             let tmp = data;
+            if (cb_on_success) {
+                cb_on_success();
+            }
         },
         error: function (request, status, error) {
             let request_status = request.status;
             let statusText = request.statusText;
             let responseText = request.responseText;
+            if (cb_on_error) {
+                cb_on_error();
+            }
         }
     });
+}
+
+function save_config(cb_on_success, cb_on_error) {
+    save_config_internal(false, cb_on_success, cb_on_error);
+}
+
+function save_network_config(cb_on_success, cb_on_error) {
+    save_config_internal(true, cb_on_success, cb_on_error);
 }
 
 function on_edit_mqtt_settings() {
