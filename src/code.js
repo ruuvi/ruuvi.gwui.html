@@ -842,7 +842,12 @@ function networkConnect(ssid, password) {
 
     let req_connect_header = null;
     if (ssid) {
-        req_connect_header = {'X-Custom-ssid': ssid, 'X-Custom-pwd': password};
+        if (password) {
+            req_connect_header = {'X-Custom-ssid': ssid, 'X-Custom-pwd': password};
+        } else {
+            // reconnect to saved WiFi
+            req_connect_header = {'X-Custom-ssid': ssid};
+        }
     }
 
     flagWaitingNetworkConnection = true;
