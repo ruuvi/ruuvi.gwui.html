@@ -459,7 +459,9 @@ $(document).ready(function () {
         e.preventDefault();
         $('#page-ethernet_connection-ask_user').show();
         $('#page-ethernet_connection-button-continue').addClass("disable-click");
-        networkConnect(null, null);
+        save_network_config(function () {
+            networkConnect(null, null);
+        });
     });
 
     $('section#page-ethernet_connection #page-ethernet_connection-button-back').click(function (e) {
@@ -520,7 +522,9 @@ $(document).ready(function () {
         let password = (flagUseSavedWiFiPassword || !isAuthNeeded) ? null : $('#pwd').val();
         $('#page-wifi_connection-button-continue').addClass('disable-click');
         $("#wifi-connection-failed").hide();
-        networkConnect(ssid, password);
+        save_network_config(function () {
+            networkConnect(ssid, password);
+        });
     });
 
     $('#page-wifi_connection-button-back').click(function (e) {
