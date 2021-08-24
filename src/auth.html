@@ -7,6 +7,8 @@
     <script src="crypto-js-4.0.0/md5.js"></script>
     <script src="crypto-js-4.0.0/sha256.js"></script>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ruuvi.css">
+    <link rel="stylesheet" href="assets/css/effects.css">
     <title>Required authorization</title>
     <style>
         h1 {
@@ -21,6 +23,12 @@
         div.auth-err-message {
             color: red;
             font-size: small;
+        }
+
+        div.lan_auth_type {
+            color: black;
+            font-size: medium;
+            text-align: center;
         }
 
         div.gateway_name {
@@ -208,7 +216,7 @@
 
     <header>
         <span lang="en">Ruuvi Gateway</span>
-        <span lang="fi">Ruuvi Gatewayn</span>
+        <span lang="fi">Ruuvi Gateway</span>
     </header>
 
     <div id="app-wrap">
@@ -226,7 +234,7 @@
                 </div>
                 <div id="auth-forbidden" class="hidden">
                     <span lang="en">Access denied.</span>
-                    <span lang="fi">Pääsy evätty.</span>
+                    <span lang="fi">Käyttö estetty.</span>
                 </div>
             </div>
 
@@ -250,12 +258,12 @@
             <div class="border-hidden"></div>
 
             <div id="lan_auth-user_login" class="hidden indent" style="max-width: 300px">
-                <label class="bold">
+                <label class="bold-font">
                     <span lang="en">Login:</span>
                     <span lang="fi">Kirjaudu sisään:</span>
                     <input id="lan_auth-user" type="text" placeholder="" value="">
                 </label>
-                <label class="bold">
+                <label  class="bold-font">
                     <span lang="en">Password:</span>
                     <span lang="fi">Salasana:</span>
                     <input id="lan_auth-pass" type="password" placeholder="" value="">
@@ -273,13 +281,11 @@
                 </a>
             </div>
 
-            <div id="lan_auth-home" class="hidden">
-                <div class="block-centered">
-                    <a href="" id="lan_auth-button-home" class="btn">
-                        <span lang="en">Go to home page</span>
-                        <span lang="fi">Mene kotisivulle</span>
-                    </a>
-                </div>
+            <div id="lan_auth-home" class="block-centered hidden">
+                <a href="" id="lan_auth-button-home" class="btn">
+                    <span lang="en">Go to home page</span>
+                    <span lang="fi">Siirry aloitussivulle</span>
+                </a>
             </div>
         </section>
     </div>
