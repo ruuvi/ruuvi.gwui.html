@@ -13,6 +13,30 @@
     --color-control: #00d0ba;
 }
 
+@font-face {
+    font-family: "Muli";
+    src: url("../assets/fonts/muli_semibold.woff2");
+    src: url("../assets/fonts/muli_semibold.woff2") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Muli";
+    src: url("../assets/fonts/muli_regular.woff2");
+    src: url("../assets/fonts/muli_regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../assets/fonts/montserrat_extrabold.woff2");
+    src: url("../assets/fonts/montserrat_extrabold.woff2") format("woff2");
+    font-weight: 800;
+    font-style: normal;
+}
+
 #app {
     padding: 10px 35px;
     max-width: 600px;
@@ -94,6 +118,18 @@ h3 {
     font-style: italic;
     font-size: 14px;
     color: var(--color-paragraph);
+}
+
+[lang=fi] {
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+table {
+    width: 100%;
 }
 
 .bold-font {
@@ -542,4 +578,46 @@ table {
     width: 24px;
     height: 24px;
     margin-right: 20px;
+}
+
+.overlay-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.overlay {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+    background-color: white;
+    box-sizing: border-box;
+    border: 1px solid #999;
+    width: 360px;
+    max-width: 90%;
+    padding: 30px 35px;
+    height: 260px;
+    box-shadow: 1px 2px 0 #ccc;
+}
+
+@media (max-width: 766px) {
+    .overlay {
+        width: 90%;
+    }
+}
+
+.overlay h2 {
+    font-size: 15px;
+}
+
+#overlay-no_gateway_connection {
+    letter-spacing: 0.5px;
+    margin-bottom: 25px;
+    font-size: 20px;
+    margin-top: 0;
+    color: Red;
 }
