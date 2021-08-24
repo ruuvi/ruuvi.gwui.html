@@ -137,7 +137,6 @@
                         success: function (data, text) {
                             $('#lan_auth-user_login').hide();
                             $('#lan_auth-home').show();
-                            $('#auth-no').hide();
                             $('#auth-yes').show();
                             $('#auth-forbidden').hide();
                             $('#gateway_name').text(data.gateway_name)
@@ -146,7 +145,6 @@
                         error: function (request, status, error) {
                             if (request.status === 401) {
                                 $('#auth-yes').hide();
-                                $('#auth-no').show();
                                 $('#auth-forbidden').hide();
                                 $('#lan_auth-user_login').show();
                                 _handleHeaderWwwAuth(request.getResponseHeader('WWW-Authenticate'));
@@ -154,14 +152,12 @@
                                 updateLanAuthType(request.responseJSON.lan_auth_type);
                             } else if (request.status === 403) {
                                 $('#auth-yes').hide();
-                                $('#auth-no').hide();
                                 $('#auth-forbidden').show();
                                 $('#lan_auth-user_login').hide();
                                 $('#gateway_name').text(request.responseJSON.gateway_name)
                                 updateLanAuthType(request.responseJSON.lan_auth_type);
                             } else {
                                 $('#auth-yes').hide();
-                                $('#auth-no').hide();
                                 $('#lan_auth-user_login').hide();
                             }
                         }
@@ -187,7 +183,6 @@
                         success: function (data, text, request) {
                             $('#lan_auth-user_login').hide();
                             $('#lan_auth-home').show();
-                            $('#auth-no').hide();
                             $('#auth-yes').show();
                             $('#gateway_name').text(data.gateway_name)
                             updateLanAuthType(data.lan_auth_type);
@@ -199,7 +194,6 @@
                         error: function (request, status, error) {
                             if (request.status === 401) {
                                 $('#auth-yes').hide();
-                                $('#auth-no').show();
                                 $('#lan_auth-user_login').show();
                                 _handleHeaderWwwAuth(request.getResponseHeader('WWW-Authenticate'));
                                 $('#auth-err-message').show();
@@ -207,7 +201,6 @@
                                 updateLanAuthType(request.responseJSON.lan_auth_type);
                             } else {
                                 $('#auth-yes').hide();
-                                $('#auth-no').hide();
                                 $('#lan_auth-user_login').hide();
                             }
                         }
@@ -219,131 +212,92 @@
 </head>
 
 <body>
-<header>
-    <div class="logo-wrap">
-        <img src="assets/images/ruuvi_logo_nega.svg" alt="Ruuvi" class="logo"><span class="tag">GATEWAY</span>
-    </div>
-</header>
+<div id="app">
 
-<section class="">
-    <div class="container">
-        <h1>
-            <div id="auth-no" class="hidden">
-                <span lang="en">Gateway Web Interface Login</span>
-                <span lang="fi">Gatewayn selainliittymän sisäänkirjautuminen</span>
-            </div>
-            <div id="auth-yes" class="hidden">
-                <span lang="en">Authorization successful.</span>
-                <span lang="fi">Sisäänkirjautuminen onnistui.</span>
-            </div>
-            <div id="auth-forbidden" class="hidden">
-                <span lang="en">Access denied.</span>
-                <span lang="fi">Pääsy evätty.</span>
-            </div>
-        </h1>
+    <header>
+        <span lang="en">Ruuvi Gateway</span>
+        <span lang="fi">Ruuvi Gatewayn</span>
+    </header>
 
-        <h2>
-            <table>
-                <tr>
-                    <td>
-                        <div id="lan_auth_type" class="lan_auth_type">
-                            <span lang="en">LAN authentication type: </span>
-                            <span lang="fi">LAN-todennustyyppi: </span>
-                        </div>
-                    </td>
-                    <td>
-                        <div id="lan_auth_type-deny" class="lan_auth_type hidden">
-                            <span lang="en">Access denied</span>
-                            <span lang="fi">Pääsy evätty</span>
-                        </div>
-                        <div id="lan_auth_type-ruuvi" class="lan_auth_type hidden">
-                            <span lang="en">Ruuvi authentication (based on MD5+SHA256)</span>
-                            <span lang="fi">Ruuvi-kirjautuminen (perustuu MD5 + SHA256:een)</span>
-                        </div>
-                        <div id="lan_auth_type-digest" class="lan_auth_type hidden">
-                            <span lang="en">Digest authentication</span>
-                            <span lang="fi">Salattu kirjautuminen</span>
-                        </div>
-                        <div id="lan_auth_type-basic" class="lan_auth_type hidden">
-                            <span lang="en">Basic authentication</span>
-                            <span lang="fi">Salaamaton kirjautuminen</span>
-                        </div>
-                        <div id="lan_auth_type-allow" class="lan_auth_type hidden">
-                            <span lang="en">Access allowed</span>
-                            <span lang="fi">Pääsy sallittu</span>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </h2>
+    <div id="app-wrap">
 
-        <h2>
+        <section>
+            <h1>
+                <span lang="en">Web Interface Login</span>
+                <span lang="fi">Kirjautuminen verkkokäyttöliittymään</span>
+            </h1>
+
+            <div>
+                <div id="auth-yes" class="hidden">
+                    <span lang="en">Authorization successful.</span>
+                    <span lang="fi">Sisäänkirjautuminen onnistui.</span>
+                </div>
+                <div id="auth-forbidden" class="hidden">
+                    <span lang="en">Access denied.</span>
+                    <span lang="fi">Pääsy evätty.</span>
+                </div>
+            </div>
+
             <div id="gateway_name" class="gateway_name"></div>
-        </h2>
 
-        <h3>
-            <span lang="en">Select your language</span>
-            <span lang="fi">Valitse kieli</span>
-        </h3>
-        <label class="control control-radio">
-            English
-            <input class="lang_select" name="lang_select" type="radio" checked="checked" value="en"/>
-            <span class="control_indicator"></span>
-        </label>
-        <label class="control control-radio">
-            Suomi
-            <input class="lang_select" name="lang_select" type="radio" value="fi"/>
-            <span class="control_indicator"></span>
-        </label>
+            <h2>
+                <span lang="en">Select language</span>
+                <span lang="fi">Valitse kieli</span>
+            </h2>
+            <label class="control control-radio">
+                English
+                <input class="lang_select" name="lang_select" type="radio" checked="checked" value="en"/>
+                <span class="control_indicator"></span>
+            </label>
+            <label class="control control-radio">
+                Suomi
+                <input class="lang_select" name="lang_select" type="radio" value="fi"/>
+                <span class="control_indicator"></span>
+            </label>
 
-        <div class="conf-settings-item hidden" id="lan_auth-user_login">
-            <table>
-                <tr>
-                    <td>
-                        <label for="lan_auth-user">
-                            <span lang="en">User:</span>
-                            <span lang="fi">Käyttäjänimi:</span>
-                        </label>
-                    </td>
-                    <td>
-                        <input id="lan_auth-user" type="text" placeholder="" value=""/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="lan_auth-pass">
-                            <span lang="en">Password:</span>
-                            <span lang="fi">Salasana:</span>
-                        </label>
-                    </td>
-                    <td>
-                        <input id="lan_auth-pass" type="password" placeholder="" value=""/>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <div id="auth-err-message" class="auth-err-message hidden">
-                            <span lang="en">Incorrect username or password</span>
-                            <span lang="fi">Väärä käyttäjätunnus tai salasana</span>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-            <a href="" id="lan_auth-button-login" class="btn">
-                <span lang="en">LOG IN</span>
-                <span lang="fi">KIRJAUDU SISÄÄN</span>
-            </a>
-        </div>
-        <div class="conf-settings-item hidden" id="lan_auth-home">
-            <a href="" id="lan_auth-button-home" class="btn">
-                <span lang="en">Go to home page</span>
-                <span lang="fi">Mene kotisivulle</span>
-            </a>
-        </div>
+            <div class="border-hidden"></div>
+
+            <div id="lan_auth-user_login" class="hidden indent" style="max-width: 300px">
+                <label class="bold-font">
+                    <span lang="en">Login:</span>
+                    <span lang="fi">Kirjaudu sisään:</span>
+                    <input id="lan_auth-user" type="text" placeholder="" value="">
+                </label>
+                <label  class="bold-font">
+                    <span lang="en">Password:</span>
+                    <span lang="fi">Salasana:</span>
+                    <input id="lan_auth-pass" type="password" placeholder="" value="">
+                </label>
+                <div style="height: 30px">
+                    <div id="auth-err-message" class="auth-err-message hidden">
+                        <span lang="en">Incorrect username or password</span>
+                        <span lang="fi">Väärä käyttäjätunnus tai salasana</span>
+                    </div>
+                </div>
+                <div class="border-hidden"></div>
+                <a href="" id="lan_auth-button-login" class="btn">
+                    <span lang="en">LOG IN</span>
+                    <span lang="fi">KIRJAUDU SISÄÄN</span>
+                </a>
+            </div>
+
+            <div id="lan_auth-home" class="block-centered hidden">
+                <a href="" id="lan_auth-button-home" class="btn">
+                    <span lang="en">Go to home page</span>
+                    <span lang="fi">Mene kotisivulle</span>
+                </a>
+            </div>
+        </section>
     </div>
-</section>
 
+    <footer>
+        <div id="logo"></div>
+        <div>
+            <span>ruuvi.com</span>
+        </div>
+    </footer>
+
+</div>
 </body>
 
 </html>
