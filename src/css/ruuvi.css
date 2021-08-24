@@ -26,37 +26,6 @@
     display: none;
 }
 
-@media (max-width: 766px) {
-    body {
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 766px) {
-    h1 {
-        font-size: 18px;
-    }
-}
-
-a {
-    color: #50AA9D;
-}
-
-a.grey {
-    color: #777;
-}
-
-@media (max-width: 766px) {
-    header {
-        padding: 20px 0;
-    }
-}
-
-header img {
-    width: 100%;
-    margin-left: -10px;
-}
-
 .hidden {
     display: none;
 }
