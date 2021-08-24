@@ -176,6 +176,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         data: JSON.stringify(data),
         success: function (data, text) {
             let tmp = data;
+            startCheckStatus();
             if (cb_on_success) {
                 cb_on_success();
             }
@@ -184,6 +185,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
             let request_status = request.status;
             let statusText = request.statusText;
             let responseText = request.responseText;
+            startCheckStatus();
             if (cb_on_error) {
                 cb_on_error();
             }
