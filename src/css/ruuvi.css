@@ -26,13 +26,6 @@
     display: none;
 }
 
-/*body {*/
-/*    font-family: "Muli", sans-serif;*/
-/*    background: white;*/
-/*    margin: 0;*/
-/*    font-size: 16px;*/
-/*}*/
-
 @media (max-width: 766px) {
     body {
         font-size: 14px;
@@ -63,12 +56,6 @@ header img {
     width: 100%;
     margin-left: -10px;
 }
-
-/*.container {*/
-/*    padding: 35px 35px;*/
-/*    max-width: 600px;*/
-/*    margin: 0 auto;*/
-/*}*/
 
 .hidden {
     display: none;
@@ -120,136 +107,8 @@ hr {
     margin: 20px 0;
 }
 
-.accord-item {
-    padding-top: 15px;
-    margin-top: 15px;
-    position: relative;
-}
-
-.accord-item-last {
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 15px;
-    margin-bottom: 20px;
-}
-
-.conf-settings {
-    padding-bottom: 10px;
-}
-
-.conf-settings-item {
-    padding: 15px 30px 15px 30px;
-    background: #f9f9f9;
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-
-.conf-settings-item p {
-    padding-bottom: 10px;
-    padding-top: 5px;
-    display: block;
-    margin: 0;
-}
-
-/*.conf-settings-item label {*/
-/*  display: inline-block;*/
-/*  width: 100px;*/
-/*}*/
-
-.accord-item p {
-    margin: 0;
-    padding: 2px 0 5px 33px;
-}
-
-.accord-item p small {
-    color: #555;
-}
-
-.accord-hidden {
-    display: none;
-}
-
-.connect-buttons {
-    position: absolute;
-    bottom: 25px;
-    right: 25px;
-}
-
-.connect-buttons .btn {
-    font-size: 14px;
-    margin-left: 10px;
-}
-
-@media (max-width: 766px) {
-    .connect-buttons .btn {
-        font-size: 12px;
-    }
-}
-
-@media (max-width: 766px) {
-    .btn {
-        font-weight: bold;
-        font-size: 15px;
-    }
-}
-
-.center {
-    display: flex;
-    justify-content: center;
-}
-
-#wifi-overlay-button-connect:disabled {
-    opacity: 0.3;
-}
-
-.btn-cancel {
-    background-color: white;
-    color: #50AA9D;
-}
-
-.btn-link {
-    text-transform: uppercase;
-    font-size: 16px;
-    margin-left: 15px;
-    color: #50AA9D;
-    transition: all 0.5s;
-}
-
-.btn-link:disabled {
-    color: #999;
-}
-
-#button-toggle-network-info {
-    float: left;
-}
-
-#connect-details {
-    width: 100%;
-    text-align: left;
-}
-
-.connect-details-col1 {
-    text-align: left;
-}
-
-.connect-details-col2 {
-    text-align: left;
-}
-
 .selected {
     font-weight: bold;
-}
-
-.advanced-options-selection {
-    margin-top: 20px;
-}
-
-.connection-selection {
-    font-size: 13px;
-    text-align: right;
-}
-
-.sharing-selection {
-    margin: 20px 0;
 }
 
 .overlay-container {
@@ -284,35 +143,6 @@ hr {
 
 .overlay h2 {
     font-size: 15px;
-}
-
-.spinner {
-    position: absolute;
-    top: 50%;
-    right: 50%;
-    transform: translate(50%, -50%);
-}
-
-#server-configurations {
-    margin-top: 20px;
-    border-top: 1px solid #ccc;
-    padding-bottom: 20px;
-    padding-top: 20px;
-}
-
-.settings-container {
-    display: none;
-}
-
-.settings-section {
-    border-top: 1px solid #cdcdcd;
-    padding: 5px 0;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-.settings-section:hover {
-    background: #efefef;
 }
 
 #overlay-no_gateway_connection {
