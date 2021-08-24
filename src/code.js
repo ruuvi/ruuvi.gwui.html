@@ -777,7 +777,6 @@ $(document).ready(function () {
 
     $('#page-finished').bind('onShow', function () {
         console.log("onShow: #page-finished");
-        stopCheckStatus();
     });
 
     // =================================================================================================================
