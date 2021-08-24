@@ -1157,7 +1157,6 @@ function onGetStatusJson(data) {
                 connectionState = CONNECTION_STATE.CONNECTED
             } else if (data["urc"] === URC_CODE.FAILED) {
                 //failed attempt
-                $("#connect-details h1").text('');
                 $("#ip").text('0.0.0.0');
                 $("#netmask").text('0.0.0.0');
                 $("#gw").text('0.0.0.0');
