@@ -97,7 +97,6 @@ function change_url(url) {
     if (window.location.hash === ('#' + url)) {
         return;
     }
-    $('section.section').hide();
     $('#' + url).show('show', function () {
         $(this).trigger('onShow');
     });
@@ -470,9 +469,10 @@ $(document).ready(function () {
 
     // ==== page-wifi_connection =======================================================================================
     $('section#page-wifi_connection').bind('onShow', function () {
+        $('body').addClass('is-loading');
         checkAndUpdatePageWiFiListButtonNext();
         flagUseSavedWiFiPassword = true;
-        $('body').addClass('is-loading');
+        $('#page-wifi_connection-ssid_password').hide();
         startRefreshAP();
     });
 
@@ -530,8 +530,9 @@ $(document).ready(function () {
 
     $('#page-wifi_connection-button-back').click(function (e) {
         e.preventDefault();
+        $('#page-wifi_connection-ssid_password').hide();
+        $("#page-wifi_connection-list_of_ssid").html("");
         networkDisconnect();
-        $('section#page-network_type input[type=radio][name=network_type]').trigger('change');
     });
 
     // ==== page-software_update =======================================================================================
@@ -998,6 +999,9 @@ function onChangeWiFiName() {
 }
 
 function refreshAPHTML(data) {
+    if (document.location.hash !== "#page-wifi_connection") {
+        return;
+    }
     let is_manual_wifi = false;
     let selected_wifi_radio_button = $('input[name="wifi-name"]:checked');
     let selected_wifi_ssid = selected_wifi_radio_button.val();
@@ -1030,9 +1034,11 @@ function refreshAPHTML(data) {
     }
 
     let h = "";
-    h += '<div class="border"></div>';
-    h += "\n";
     data.forEach(function (e, idx, array) {
+        if (idx === 0) {
+            h += '<div class="border"></div>';
+            h += "\n";
+        }
         h += '<div>';
         h += '<label class="control control-radio">';
         h += '    <div style="display: flex">';
