@@ -888,10 +888,13 @@ function networkConnect(ssid, password) {
                 startCheckStatus();
             },
             error: function (request, status, error) {
-                $("#wifi-connection-failed").show();
                 $('body').removeClass('is-loading');
                 //now we can re-set the intervals regardless of result
                 startCheckStatus();
+                if (ssid != null) {
+                    $("#wifi-connection-failed").show();
+                    startRefreshAP();
+                }
             }
         }
     );
@@ -1202,6 +1205,7 @@ function onGetStatusJson(data) {
                         flagWaitingNetworkConnection = false;
                         $("#wifi-connection-failed").show();
                         $('body').removeClass('is-loading');
+                        startRefreshAP();
                         break;
                     case CONNECTION_STATE.CONNECTED:
                         break;
