@@ -57,8 +57,6 @@ g_ssid = None
 g_saved_ssid = None
 g_password = None
 g_timestamp = None
-g_use_alt_wifi_list = False
-g_auto_toggle_wifi_list = True
 g_auto_toggle_cnt = 0
 g_gw_mac = "AA:BB:CC:DD:EE:FF"
 
@@ -1022,9 +1020,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         global g_ruuvi_dict
         global g_login_session
-        global g_auto_toggle_wifi_list
         global g_auto_toggle_cnt
-        global g_use_alt_wifi_list
         print('GET %s' % self.path)
         if self.path == '/auth' or self.path.startswith('/auth?') or self.path == '/auth.html':
             self._do_get_auth()
@@ -1049,12 +1045,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += content.encode('utf-8')
                 self.wfile.write(resp)
             elif self.path == '/ap.json':
-                if g_auto_toggle_wifi_list:
-                    g_auto_toggle_cnt += 1
-                    if g_auto_toggle_cnt >= 4:
-                        g_auto_toggle_cnt = 0
-                        g_use_alt_wifi_list = not g_use_alt_wifi_list
-                if not g_use_alt_wifi_list:
+                if g_auto_toggle_cnt <= 3:
                     content = '''[
 {"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
 {"ssid":"a0308","chan":1,"rssi":-56,"auth":3},
@@ -1068,7 +1059,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 {"ssid":"dlink-F864","chan":1,"rssi":-92,"auth":4},
 {"ssid":"dlink-74F0","chan":1,"rssi":-93,"auth":4}
 ] '''
-                else:
+                elif g_auto_toggle_cnt <= 6:
                     content = '''[
 {"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
 {"ssid":"dlink-noauth","chan":11,"rssi":-82,"auth":0},
@@ -1080,8 +1071,14 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 {"ssid":"SINGTEL-1D28 (2G)","chan":11,"rssi":-91,"auth":3},
 {"ssid":"dlink-74F0","chan":1,"rssi":-93,"auth":4}
 ] '''
+                else:
+                    content = '[]'
+                g_auto_toggle_cnt += 1
+                if g_auto_toggle_cnt >= 9:
+                    g_auto_toggle_cnt = 0
                 print(f'Resp: {content}')
                 resp += content.encode('utf-8')
+                time.sleep(3.0)
                 self.wfile.write(resp)
             elif self.path == '/status.json':
                 if g_ssid is None:
@@ -1360,7 +1357,6 @@ if __name__ == '__main__':
     print('    3 - failed to connect to WiFi')
     print('    4 - disconnected by the user command')
     print('    5 - lost connection')
-    print('    w - toggle the list of WiFi')
 
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../src'))
 
@@ -1391,9 +1387,6 @@ if __name__ == '__main__':
         elif simulation_mode == '5':
             print(f'Set simulation mode: LOST_CONNECTION')
             g_simulation_mode = SIMULATION_MODE_LOST_CONNECTION
-        elif simulation_mode == 'w':
-            print(f'Toggle list of WiFi')
-            g_use_alt_wifi_list = not g_use_alt_wifi_list
         else:
             print(f'Error: incorrect simulation mode: {ch}')
             continue
