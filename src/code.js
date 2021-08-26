@@ -868,6 +868,7 @@ function networkConnect(ssid, password) {
             },
             error: function (request, status, error) {
                 $("#wifi-connection-failed").show();
+                $('body').removeClass('is-loading');
                 //now we can re-set the intervals regardless of result
                 startCheckStatus();
             }
@@ -1179,6 +1180,7 @@ function onGetStatusJson(data) {
                     case CONNECTION_STATE.CONNECTING:
                         flagWaitingNetworkConnection = false;
                         $("#wifi-connection-failed").show();
+                        $('body').removeClass('is-loading');
                         break;
                     case CONNECTION_STATE.CONNECTED:
                         break;
