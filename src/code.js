@@ -457,9 +457,14 @@ $(document).ready(function () {
         $('#page-ethernet_connection-ask_user').show();
         $('body').addClass('is-loading');
         $('#page-ethernet_connection-button-continue').addClass("disable-click");
-        save_network_config(function () {
-            networkConnect(null, null);
-        });
+        save_network_config(
+            function () {
+                networkConnect(null, null);
+            },
+            function () {
+                $('body').removeClass('is-loading');
+                startCheckStatus();
+            });
     });
 
     $('section#page-ethernet_connection #page-ethernet_connection-button-back').click(function (e) {
@@ -530,9 +535,18 @@ $(document).ready(function () {
         $('#page-wifi_connection-button-continue').addClass('disable-click');
         $('body').addClass('is-loading');
         $("#wifi-connection-failed").hide();
-        save_network_config(function () {
-            networkConnect(ssid, password);
-        });
+        save_network_config(
+            function () {
+                networkConnect(ssid, password);
+            },
+            function () {
+                flagWaitingNetworkConnection = false;
+                $("#wifi-connection-failed").show();
+                $('body').removeClass('is-loading');
+                startCheckStatus();
+                startRefreshAP();
+            }
+        );
     });
 
     $('#page-wifi_connection-button-back').click(function (e) {
