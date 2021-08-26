@@ -167,27 +167,27 @@
 			<div>&nbsp;</div>
 
 			<div id="page-ethernet_connection-section-manual_settings" class="indent hidden">
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">Static IP</span>
 					<span lang="fi">Kiinteä IP-osoite</span>
 					<input id="eth_static_ip" type="text" placeholder="192.168.1.10" value="">
 				</label>
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">Netmask</span>
 					<span lang="fi">Verkon peite</span>
 					<input id="eth_netmask" type="text" placeholder="255.255.255.0" value="">
 				</label>
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">Gateway</span>
 					<span lang="fi">Yhdyskäytävä</span>
 					<input id="eth_gw" type="text" placeholder="192.168.1.1" value="">
 				</label>
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">DNS 1 IP:</span>
 					<span lang="fi">Nimipalvelimen 1 IP-osoite</span>
 					<input id="eth_dns1" type="text" placeholder="DNS 1" value="">
 				</label>
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">DNS 2 IP:</span>
 					<span lang="fi">Nimipalvelimen 2 IP-osoite</span>
 					<input id="eth_dns2" type="text" placeholder="DNS 2" value="">
@@ -569,6 +569,7 @@
 					<span class="control_indicator"></span>
 				</label>
 			</div>
+			<div>&nbsp;</div>
 
 			<div class="border"></div>
 			<div id="page-update_schedule-advanced-button" class="btn-dropdown">
@@ -580,6 +581,7 @@
 				<div class="btn-dropdown-arrow-up hidden"></div>
 			</div>
 			<div class="border"></div>
+			<div>&nbsp;</div>
 
 			<div id="page-update_schedule-advanced-dropdown" class="hidden">
 				<label class="control control-radio">
@@ -616,7 +618,7 @@
 						<span lang="fi">Päivä</span>
 					</h3>
 
-					<div class="center_flex_wrap">
+					<div class="left_flex_wrap weekday-btn-group">
 						<label id="conf-auto_update_schedule-button-monday-label" class="btn btn-weekday">
 							<span lang="en">Monday</span>
 							<span lang="fi">Maanantai</span>
@@ -665,7 +667,7 @@
 							<input id="conf-auto_update_schedule-button-sunday" type="checkbox"
 								   class="checkbox-weekday" checked>
 						</label>
-					</div>
+					</div class="left_flex_wrapweekday-btn-group">
 
 					<h3>
 						<span lang="en">Timeslot</span>
@@ -827,6 +829,7 @@
 					<span class="control_indicator"></span>
 				</label>
 			</div>
+			<div>&nbsp;</div>
 
 			<div class="border"></div>
 			<div id="page-cloud_options-advanced-button" class="btn-dropdown">
@@ -838,12 +841,13 @@
 				<div class="btn-dropdown-arrow-up hidden"></div>
 			</div>
 			<div class="border"></div>
+			<div>&nbsp;</div>
 
 			<div id="page-cloud_options-advanced-dropdown" class="hidden">
-				<div class="">
+				<p>
 					<span lang="en">Conﬁgure custom HTTP/MQTT server and adjust scanning settings.</span>
 					<span lang="fi">Määritä mukautettu HTTP/MQTT -palvelin ja mukauta skannausasetuksia.</span>
-				</div>
+				</p>
 
 				<label class="control control-radio">
 					<span lang="en">Custom server</span>
@@ -900,21 +904,22 @@
 			</label>
 			<div>&nbsp;</div>
 			<div id="conf-settings-http" class="indent hidden">
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">Server address</span>
 					<span lang="fi">Palvelimen osoite</span>
 					<input id="http_url" type="text" placeholder="Ruuvi cloud server endpoint" value="">
 				</label>
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">User name (optional)</span>
 					<span lang="fi">Käyttäjänimi (valinnainen)</span>
 					<input id="http_user" type="text" placeholder="" value="">
 				</label>
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">Password (optional)</span>
 					<span lang="fi">Salasana (valinnainen)</span>
 					<input id="http_pass" type="password" placeholder="" value="">
 				</label>
+				<div>&nbsp;</div>
 			</div>
 
 			<label class="control control-radio">
@@ -925,36 +930,36 @@
 			</label>
 			<div>&nbsp;</div>
 			<div id="conf-settings-mqtt" class="indent hidden">
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">Server</span>
 					<span lang="fi">Palvelin</span>
 					<input id="mqtt_server" type="text" value="test.mosquitto.org">
 				</label>
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">Port</span>
 					<span lang="fi">Portti</span>
 					<input id="mqtt_port" type="text" placeholder="" value="1883">
 				</label>
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">User name</span>
 					<span lang="fi">Käyttäjänimi</span>
 					<input id="mqtt_user" type="text" placeholder="User" value="">
 				</label>
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">Password</span>
 					<span lang="fi">Salasana</span>
 					<input id="mqtt_pass" type="password" placeholder="Password" value="">
 				</label>
-				<label class="bold">
+				<label class="font-bold">
 					<span lang="en">Client name</span>
 					<span lang="fi">Asiakastunnus</span>
 					<input id="mqtt_client_id" type="text" placeholder="MAC-address is used if empty" value="">
 				</label>
 
-				<h2>
+				<label class="font-bold">
 					<span lang="en">Topic preﬁx</span>
 					<span lang="fi">Aiheen etuliite</span>
-				</h2>
+				</label>
 				<label class="conf-settings-checkbox control control-checkbox">
 					<span lang="en">Use ‘ruuvi’ on the preﬁx</span>
 					<span lang="fi">Käytä "ruuvi" -etuliitettä</span>
@@ -974,7 +979,7 @@
 					<span class="control_indicator"></span>
 				</label>
 				<label>
-					<input id="mqtt_prefix" type="text" placeholder="Custom MQTT topic prefix" value="">
+					<input id="mqtt_prefix" class="input-primary" type="text" placeholder="Custom MQTT topic prefix" value="">
 				</label>
 
 
@@ -1081,7 +1086,7 @@
 
 			<div class="border"></div>
 			<div id="page-scanning-advanced-button" class="btn-dropdown">
-				<h2>
+				<h2 class="font-bold">
 					<span lang="en">Customise</span>
 					<span lang="fi">Mukauta</span>
 				</h2>
@@ -1091,6 +1096,7 @@
 			<div class="border"></div>
 
 			<div id="page-scanning-advanced-dropdown" class="hidden">
+				<div>&nbsp;</div>
 				<label class="control control-radio">
 					<span lang="en">Ruuvi sensors (experimental long range sensors included)</span>
 					<span lang="fi">Ruuvi -anturit (sekä kokeelliset pitkän kantaman anturit)</span>
@@ -1284,6 +1290,8 @@
 
 			<div>&nbsp;</div>
 			<div class="border"></div>
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
 
 			<h2>
 				<span lang="en">Connected to:</span>
