@@ -513,6 +513,13 @@ $(document).ready(function () {
         $('#pwd').val("");
     });
 
+    $('#page-wifi_connection-advanced-button').click(function (e) {
+        if ($(this).children('div.btn-dropdown-arrow-down').is(":hidden")) {
+            $('section#page-wifi_connection input[type="radio"][name="wifi-name"]').prop('checked', false);
+            $('#page-wifi_connection-ssid_password').hide();
+        }
+    });
+
     $('section#page-wifi_connection #page-wifi_connection-button-continue').click(function (e) {
         e.preventDefault();
         $('#wifi-connection-failed').hide();
