@@ -939,11 +939,10 @@ function refreshAP() {
                     let y = b["rssi"];
                     return ((x < y) ? 1 : ((x > y) ? -1 : 0));
                 });
-
-                apList = data;
-
-                refreshAPHTML(apList);
             }
+            apList = data;
+            refreshAPHTML(apList);
+
             if (prevCheckStatusActive) {
                 startCheckStatus();
             }
@@ -1027,6 +1026,12 @@ function refreshAPHTML(data) {
             $('#input_password_block').hide();
         }
         div_page_wifi_list_ssid_password.show();
+    }
+
+    if (data.length === 0) {
+        $('#page-wifi_connection-no_wifi').show();
+    } else {
+        $('#page-wifi_connection-no_wifi').hide();
     }
 
     let h = "";
