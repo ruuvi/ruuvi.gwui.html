@@ -1,0 +1,51 @@
+// --- max-width
+@mixin max($bp) {
+	@if map-has-key($grid-breakpoints-max, $bp) {
+		@media (max-width: map-get($grid-breakpoints-max, $bp)) {
+			@content;
+		}
+	} @else {
+		@media (max-width: $bp + 'px') {
+			@content;
+		}
+	}
+}
+
+// --- max-height
+@mixin maxh($bp) {
+	@if map-has-key($grid-breakpoints-max, $bp) {
+		@media (max-height: map-get($grid-breakpoints-max, $bp)) {
+			@content;
+		}
+	} @else {
+		@media (max-height: $bp + 'px') {
+			@content;
+		}
+	}
+}
+
+// --- min-width
+@mixin min($bp) {
+	@if map-has-key($grid-breakpoints, $bp) {
+		@media (min-width: map-get($grid-breakpoints, $bp)) {
+			@content;
+		}
+	} @else {
+		@media (min-width: $bp + 'px') {
+			@content;
+		}
+	}
+}
+
+// --- min-height
+@mixin minh($bp) {
+	@if map-has-key($grid-breakpoints, $bp) {
+		@media (min-height: map-get($grid-breakpoints, $bp)) {
+			@content;
+		}
+	} @else {
+		@media (min-height: $bp + 'px') {
+			@content;
+		}
+	}
+}
