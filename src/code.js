@@ -118,6 +118,7 @@ function change_page_to_software_update() {
     $('#page-ethernet_connection-ask_user').hide();
     $('#page-ethernet_connection-button-continue').removeClass("disable-click");
     $('#page-wifi_connection-button-continue').removeClass("disable-click");
+    $('body').removeClass('is-loading');
     change_url('page-software_update');
 }
 
@@ -158,6 +159,7 @@ function on_show_software_update() {
 
     $("#page-software_update-advanced-button").addClass("disable-click");
 
+    $('body').addClass('is-loading');
     $.getJSON("/github_latest_release.json", function (data) {
         let latest_release_version = data.tag_name;
         let m = latest_release_version.match(/v(\d+)\.(\d+)\.(\d+)/);
@@ -191,12 +193,14 @@ function on_show_software_update() {
                 $("#software_update-button-upgrade").removeClass("disable-click");
             }
         }
+        $('body').removeClass('is-loading');
     }).fail(function ($xhr) {
         $('#page-software_update-in_progress').hide();
         $("#page-software_update-advanced-button").removeClass("disable-click");
         let data = $xhr.responseJSON;
         $('.software_update-status').hide();
         $("#software_update-status-error").show();
+        $('body').removeClass('is-loading');
     });
 }
 
@@ -458,6 +462,7 @@ $(document).ready(function () {
     $('section#page-ethernet_connection #page-ethernet_connection-button-continue').click(function (e) {
         e.preventDefault();
         $('#page-ethernet_connection-ask_user').show();
+        $('body').addClass('is-loading');
         $('#page-ethernet_connection-button-continue').addClass("disable-click");
         save_network_config(function () {
             networkConnect(null, null);
@@ -521,6 +526,7 @@ $(document).ready(function () {
 
         let password = (flagUseSavedWiFiPassword || !isAuthNeeded) ? null : $('#pwd').val();
         $('#page-wifi_connection-button-continue').addClass('disable-click');
+        $('body').addClass('is-loading');
         $("#wifi-connection-failed").hide();
         save_network_config(function () {
             networkConnect(ssid, password);
