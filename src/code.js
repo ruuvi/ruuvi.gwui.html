@@ -427,12 +427,6 @@ $(document).ready(function () {
     });
 
     $('section#page-network_type input[type=radio][name=network_type]').change(function () {
-        let network_type = $("input[name='network_type']:checked").val();
-        if (network_type === 'wifi') {
-            startRefreshAP();
-        } else {
-            stopRefreshAP();
-        }
     });
 
     $('section#page-network_type #page-network_type-button-continue').click(function (e) {
@@ -478,6 +472,7 @@ $(document).ready(function () {
     $('section#page-wifi_connection').bind('onShow', function () {
         checkAndUpdatePageWiFiListButtonNext();
         flagUseSavedWiFiPassword = true;
+        $('body').addClass('is-loading');
         startRefreshAP();
     });
 
@@ -1087,6 +1082,7 @@ function refreshAPHTML(data) {
         updatePositionOfWiFiPasswordInput($('#page-wifi_connection-ssid_password-wrap'));
     }
     checkAndUpdatePageWiFiListButtonNext();
+    $('body').removeClass('is-loading');
 }
 
 function onGetStatusJson(data) {
