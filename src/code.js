@@ -455,8 +455,13 @@ $(document).ready(function () {
     $('section#page-ethernet_connection #page-ethernet_connection-button-continue').click(function (e) {
         e.preventDefault();
         $('#page-ethernet_connection-ask_user').show();
-        $('body').addClass('is-loading');
         $('#page-ethernet_connection-button-continue').addClass("disable-click");
+        $('body').addClass('is-loading');
+        setTimeout(function () {
+            $('#page-ethernet_connection-ask_user').hide();
+            $('#page-ethernet_connection-no_cable').show();
+            $('body').removeClass('is-loading');
+        }, 15 * 1000);
         save_network_config(
             function () {
                 networkConnect(null, null);
@@ -469,6 +474,9 @@ $(document).ready(function () {
 
     $('section#page-ethernet_connection #page-ethernet_connection-button-back').click(function (e) {
         e.preventDefault();
+        $('#page-ethernet_connection-ask_user').hide();
+        $('#page-ethernet_connection-no_cable').hide();
+        $('#page-ethernet_connection-button-continue').removeClass("disable-click");
         networkDisconnect();
     });
 
