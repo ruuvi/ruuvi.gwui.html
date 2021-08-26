@@ -535,6 +535,7 @@ $(document).ready(function () {
         $('#page-wifi_connection-button-continue').addClass('disable-click');
         $('body').addClass('is-loading');
         $("#wifi-connection-failed").hide();
+        flagWaitingNetworkConnection = true;
         save_network_config(
             function () {
                 networkConnect(ssid, password);
@@ -872,7 +873,6 @@ function networkConnect(ssid, password) {
         }
     }
 
-    flagWaitingNetworkConnection = true;
     stopCheckStatus();
     $.ajax({
             method: 'POST',
@@ -1024,6 +1024,9 @@ function onChangeWiFiName() {
 }
 
 function refreshAPHTML(data) {
+    if (flagWaitingNetworkConnection) {
+        return;
+    }
     if (document.location.hash !== "#page-wifi_connection") {
         return;
     }
