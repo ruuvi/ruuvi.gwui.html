@@ -1354,6 +1354,7 @@ function checkStatus() {
             counterStatusJsonTimeout += 1;
             if (counterStatusJsonTimeout >= 4) {
                 $('#overlay-no_gateway_connection').fadeIn();
+                $('body').removeClass('is-loading');
                 stopRefreshAP();
                 stopCheckStatus();
             } else {
