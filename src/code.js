@@ -27,6 +27,7 @@ let flagLatestFirmwareVersionSupported = false;
 let counterStatusJsonTimeout = 0;
 let flagWaitingNetworkConnection = false;
 let flagNetworkConnected = false;
+let g_page_ethernet_connection_timer = null;
 
 const CONNECTION_STATE = {
     NOT_CONNECTED: "NOT_CONNECTED",
@@ -448,6 +449,15 @@ $(document).ready(function () {
         }
     });
 
+    $('section#page-ethernet_connection').bind('onHide', function () {
+        $('#page-ethernet_connection-ask_user').hide();
+        $('#page-ethernet_connection-no_cable').hide();
+        if (g_page_ethernet_connection_timer) {
+            clearTimeout(g_page_ethernet_connection_timer);
+            g_page_ethernet_connection_timer = null;
+        }
+    });
+
     $('section#page-ethernet_connection #eth_dhcp').change(function (e) {
         if ($('#eth_dhcp')[0].checked) {
             $('#page-ethernet_connection-section-manual_settings').slideUp();
@@ -462,7 +472,8 @@ $(document).ready(function () {
         $('#page-ethernet_connection-button-continue').addClass("disable-click");
         $('body').addClass('is-loading');
         flagWaitingNetworkConnection = true;
-        setTimeout(function () {
+        g_page_ethernet_connection_timer = setTimeout(function () {
+            g_page_ethernet_connection_timer = null;
             if (document.location.hash === "#page-ethernet_connection") {
                 let body = $('body');
                 if (body.hasClass('is-loading')) {
