@@ -457,10 +457,16 @@ $(document).ready(function () {
         $('#page-ethernet_connection-ask_user').show();
         $('#page-ethernet_connection-button-continue').addClass("disable-click");
         $('body').addClass('is-loading');
+        flagWaitingNetworkConnection = true;
         setTimeout(function () {
-            $('#page-ethernet_connection-ask_user').hide();
-            $('#page-ethernet_connection-no_cable').show();
-            $('body').removeClass('is-loading');
+            if (document.location.hash === "#page-ethernet_connection") {
+                let body = $('body');
+                if (body.hasClass('is-loading')) {
+                    $('#page-ethernet_connection-ask_user').hide();
+                    $('#page-ethernet_connection-no_cable').show();
+                    body.removeClass('is-loading');
+                }
+            }
         }, 15 * 1000);
         save_network_config(
             function () {
