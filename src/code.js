@@ -615,11 +615,15 @@ $(document).ready(function () {
 
     $('section#page-software_update #software_update-set-url-manually').change(function (e) {
         if ($('#software_update-set-url-manually')[0].checked) {
+            $('#page-software_update-version_info').hide();
+            $('#page-software_update-status').hide();
             $('#software_update-url').show();
             $("#software_update-button-upgrade").removeClass("disable-click");
             $("#page-software_update-button-continue").addClass("disable-click");
         } else {
             $('#software_update-url').hide();
+            $('#page-software_update-version_info').show();
+            $('#page-software_update-status').show();
             $("#page-software_update-button-continue").removeClass("disable-click");
             if (!flagLatestFirmwareVersionSupported) {
                 $("#software_update-button-upgrade").addClass("disable-click");
