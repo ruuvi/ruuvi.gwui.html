@@ -97,6 +97,7 @@ function change_url(url) {
     if (window.location.hash === ('#' + url)) {
         return;
     }
+    $(window.location.hash).trigger('onHide');
     $('#' + url).show('show', function () {
         $(this).trigger('onShow');
     });
@@ -412,6 +413,9 @@ $(document).ready(function () {
         let progressbar = $('#progressbar');
         progressbar.css('top', $('section#page-welcome div.progressbar-container').position().top);
         progressbar.show();
+    });
+
+    $('section#page-welcome').bind('onHide', function () {
     });
 
     $('#page-welcome-button-get-started').click(function (e) {
