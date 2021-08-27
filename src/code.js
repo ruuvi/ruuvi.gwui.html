@@ -27,7 +27,6 @@ let flagLatestFirmwareVersionSupported = false;
 let counterStatusJsonTimeout = 0;
 let flagWaitingNetworkConnection = false;
 let flagNetworkConnected = false;
-let g_page_ethernet_connection_timer = null;
 
 const CONNECTION_STATE = {
     NOT_CONNECTED: "NOT_CONNECTED",
@@ -98,7 +97,7 @@ function change_url(url) {
     if (window.location.hash === ('#' + url)) {
         return;
     }
-    $(window.location.hash).trigger('onHide');
+    $('section.section').hide();
     $('#' + url).show('show', function () {
         $(this).trigger('onShow');
     });
@@ -416,9 +415,6 @@ $(document).ready(function () {
         progressbar.show();
     });
 
-    $('section#page-welcome').bind('onHide', function () {
-    });
-
     $('#page-welcome-button-get-started').click(function (e) {
         e.preventDefault();
         change_url('page-network_type');
@@ -431,6 +427,12 @@ $(document).ready(function () {
     });
 
     $('section#page-network_type input[type=radio][name=network_type]').change(function () {
+        let network_type = $("input[name='network_type']:checked").val();
+        if (network_type === 'wifi') {
+            startRefreshAP();
+        } else {
+            stopRefreshAP();
+        }
     });
 
     $('section#page-network_type #page-network_type-button-continue').click(function (e) {
@@ -449,15 +451,6 @@ $(document).ready(function () {
         }
     });
 
-    $('section#page-ethernet_connection').bind('onHide', function () {
-        $('#page-ethernet_connection-ask_user').hide();
-        $('#page-ethernet_connection-no_cable').hide();
-        if (g_page_ethernet_connection_timer) {
-            clearTimeout(g_page_ethernet_connection_timer);
-            g_page_ethernet_connection_timer = null;
-        }
-    });
-
     $('section#page-ethernet_connection #eth_dhcp').change(function (e) {
         if ($('#eth_dhcp')[0].checked) {
             $('#page-ethernet_connection-section-manual_settings').slideUp();
@@ -469,44 +462,22 @@ $(document).ready(function () {
     $('section#page-ethernet_connection #page-ethernet_connection-button-continue').click(function (e) {
         e.preventDefault();
         $('#page-ethernet_connection-ask_user').show();
-        $('#page-ethernet_connection-button-continue').addClass("disable-click");
         $('body').addClass('is-loading');
-        flagWaitingNetworkConnection = true;
-        g_page_ethernet_connection_timer = setTimeout(function () {
-            g_page_ethernet_connection_timer = null;
-            if (document.location.hash === "#page-ethernet_connection") {
-                let body = $('body');
-                if (body.hasClass('is-loading')) {
-                    $('#page-ethernet_connection-ask_user').hide();
-                    $('#page-ethernet_connection-no_cable').show();
-                    body.removeClass('is-loading');
-                }
-            }
-        }, 15 * 1000);
-        save_network_config(
-            function () {
-                networkConnect(null, null);
-            },
-            function () {
-                $('body').removeClass('is-loading');
-                startCheckStatus();
-            });
+        $('#page-ethernet_connection-button-continue').addClass("disable-click");
+        save_network_config(function () {
+            networkConnect(null, null);
+        });
     });
 
     $('section#page-ethernet_connection #page-ethernet_connection-button-back').click(function (e) {
         e.preventDefault();
-        $('#page-ethernet_connection-ask_user').hide();
-        $('#page-ethernet_connection-no_cable').hide();
-        $('#page-ethernet_connection-button-continue').removeClass("disable-click");
         networkDisconnect();
     });
 
     // ==== page-wifi_connection =======================================================================================
     $('section#page-wifi_connection').bind('onShow', function () {
-        $('body').addClass('is-loading');
         checkAndUpdatePageWiFiListButtonNext();
         flagUseSavedWiFiPassword = true;
-        $('#page-wifi_connection-ssid_password').hide();
         startRefreshAP();
     });
 
@@ -547,13 +518,6 @@ $(document).ready(function () {
         $('#pwd').val("");
     });
 
-    $('#page-wifi_connection-advanced-button').click(function (e) {
-        if ($(this).children('div.btn-dropdown-arrow-down').is(":hidden")) {
-            $('section#page-wifi_connection input[type="radio"][name="wifi-name"]').prop('checked', false);
-            $('#page-wifi_connection-ssid_password').hide();
-        }
-    });
-
     $('section#page-wifi_connection #page-wifi_connection-button-continue').click(function (e) {
         e.preventDefault();
         $('#wifi-connection-failed').hide();
@@ -564,26 +528,15 @@ $(document).ready(function () {
         $('#page-wifi_connection-button-continue').addClass('disable-click');
         $('body').addClass('is-loading');
         $("#wifi-connection-failed").hide();
-        flagWaitingNetworkConnection = true;
-        save_network_config(
-            function () {
-                networkConnect(ssid, password);
-            },
-            function () {
-                flagWaitingNetworkConnection = false;
-                $("#wifi-connection-failed").show();
-                $('body').removeClass('is-loading');
-                startCheckStatus();
-                startRefreshAP();
-            }
-        );
+        save_network_config(function () {
+            networkConnect(ssid, password);
+        });
     });
 
     $('#page-wifi_connection-button-back').click(function (e) {
         e.preventDefault();
-        $('#page-wifi_connection-ssid_password').hide();
-        $("#page-wifi_connection-list_of_ssid").html("");
         networkDisconnect();
+        $('section#page-network_type input[type=radio][name=network_type]').trigger('change');
     });
 
     // ==== page-software_update =======================================================================================
@@ -615,15 +568,11 @@ $(document).ready(function () {
 
     $('section#page-software_update #software_update-set-url-manually').change(function (e) {
         if ($('#software_update-set-url-manually')[0].checked) {
-            $('#page-software_update-version_info').hide();
-            $('#page-software_update-status').hide();
             $('#software_update-url').show();
             $("#software_update-button-upgrade").removeClass("disable-click");
             $("#page-software_update-button-continue").addClass("disable-click");
         } else {
             $('#software_update-url').hide();
-            $('#page-software_update-version_info').show();
-            $('#page-software_update-status').show();
             $("#page-software_update-button-continue").removeClass("disable-click");
             if (!flagLatestFirmwareVersionSupported) {
                 $("#software_update-button-upgrade").addClass("disable-click");
@@ -906,6 +855,7 @@ function networkConnect(ssid, password) {
         }
     }
 
+    flagWaitingNetworkConnection = true;
     stopCheckStatus();
     $.ajax({
             method: 'POST',
@@ -921,13 +871,9 @@ function networkConnect(ssid, password) {
                 startCheckStatus();
             },
             error: function (request, status, error) {
-                $('body').removeClass('is-loading');
+                $("#wifi-connection-failed").show();
                 //now we can re-set the intervals regardless of result
                 startCheckStatus();
-                if (ssid != null) {
-                    $("#wifi-connection-failed").show();
-                    startRefreshAP();
-                }
             }
         }
     );
@@ -993,10 +939,11 @@ function refreshAP() {
                     let y = b["rssi"];
                     return ((x < y) ? 1 : ((x > y) ? -1 : 0));
                 });
-            }
-            apList = data;
-            refreshAPHTML(apList);
 
+                apList = data;
+
+                refreshAPHTML(apList);
+            }
             if (prevCheckStatusActive) {
                 startCheckStatus();
             }
@@ -1057,12 +1004,6 @@ function onChangeWiFiName() {
 }
 
 function refreshAPHTML(data) {
-    if (flagWaitingNetworkConnection) {
-        return;
-    }
-    if (document.location.hash !== "#page-wifi_connection") {
-        return;
-    }
     let is_manual_wifi = false;
     let selected_wifi_radio_button = $('input[name="wifi-name"]:checked');
     let selected_wifi_ssid = selected_wifi_radio_button.val();
@@ -1088,18 +1029,10 @@ function refreshAPHTML(data) {
         div_page_wifi_list_ssid_password.show();
     }
 
-    if (data.length === 0) {
-        $('#page-wifi_connection-no_wifi').show();
-    } else {
-        $('#page-wifi_connection-no_wifi').hide();
-    }
-
     let h = "";
+    h += '<div class="border"></div>';
+    h += "\n";
     data.forEach(function (e, idx, array) {
-        if (idx === 0) {
-            h += '<div class="border"></div>';
-            h += "\n";
-        }
         h += '<div>';
         h += '<label class="control control-radio">';
         h += '    <div style="display: flex">';
@@ -1149,7 +1082,6 @@ function refreshAPHTML(data) {
         updatePositionOfWiFiPasswordInput($('#page-wifi_connection-ssid_password-wrap'));
     }
     checkAndUpdatePageWiFiListButtonNext();
-    $('body').removeClass('is-loading');
 }
 
 function onGetStatusJson(data) {
@@ -1240,8 +1172,6 @@ function onGetStatusJson(data) {
                     case CONNECTION_STATE.CONNECTING:
                         flagWaitingNetworkConnection = false;
                         $("#wifi-connection-failed").show();
-                        $('body').removeClass('is-loading');
-                        startRefreshAP();
                         break;
                     case CONNECTION_STATE.CONNECTED:
                         break;
@@ -1354,7 +1284,6 @@ function checkStatus() {
             counterStatusJsonTimeout += 1;
             if (counterStatusJsonTimeout >= 4) {
                 $('#overlay-no_gateway_connection').fadeIn();
-                $('body').removeClass('is-loading');
                 stopRefreshAP();
                 stopCheckStatus();
             } else {
