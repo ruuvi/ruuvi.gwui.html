@@ -107,7 +107,7 @@
 				<span lang="fi">Valitse yhteystyyppi</span>
 			</h2>
 
-			<div class="control-group">
+			<div>
 				<label class="control control-radio">
 					<span lang="en">Ethernet</span>
 					<span lang="fi">Ethernet</span>
@@ -155,7 +155,7 @@
 				</ul>
 			</div>
 
-			<div class="control-group">
+			<div>
 				<label class="control control-checkbox">
 					<span lang="en">Use DHCP</span>
 					<span lang="fi">Käytä DHCP-palvelinta</span>
@@ -419,7 +419,7 @@
 			<div class="border"></div>
 
 			<div id="page-software_update-advanced-dropdown" class="hidden">
-				<div class="control-group">
+				<div>
 					<label class="control control-checkbox">
 						<span lang="en">Specify a URL from where updates should be requested.</span>
 						<span lang="fi">Määritä URL -osoite, josta päivitystiedostot haetaan.</span>
@@ -578,7 +578,7 @@
 				<span lang="fi">Päivitysvaihtoehdot</span>
 			</h2>
 
-			<div class="control-group">
+			<div>
 				<label class="control control-radio">
 					<span lang="en">Auto update (recommended, accept releases after 2 weeks)</span>
 					<span lang="fi">Asenna 2 viikkoa tai sitä vanhemmat ohjelmistoversiot automaattisesti (suositus)</span>
@@ -639,55 +639,76 @@
 						<span lang="fi">Päivä</span>
 					</h3>
 
-					<div class="left_flex_wrap weekday-btn-group">
-						<label id="conf-auto_update_schedule-button-monday-label" class="btn btn-weekday">
-							<span lang="en">Monday</span>
-							<span lang="fi">Maanantai</span>
-							<input id="conf-auto_update_schedule-button-monday" type="checkbox"
-								   class="checkbox-weekday" checked>
-						</label>
+					<div class="weekday-btn-group">
+						<div>
+							<label class="control control-checkbox">
+								<span lang="en">Monday</span>
+								<span lang="fi">Maanantai</span>
+								<input id="conf-auto_update_schedule-button-monday" type="checkbox"
+									   class="checkbox-weekday" checked>
+								<span class="control_indicator"></span>
+							</label>
+						</div>
 
-						<label id="conf-auto_update_schedule-button-tuesday-label" class="btn btn-weekday">
-							<span lang="en">Tuesday</span>
-							<span lang="fi">Tiistai</span>
-							<input id="conf-auto_update_schedule-button-tuesday" type="checkbox"
-								   class="checkbox-weekday" checked>
-						</label>
+						<div>
+							<label class="control control-checkbox">
+								<span lang="en">Tuesday</span>
+								<span lang="fi">Tiistai</span>
+								<input id="conf-auto_update_schedule-button-tuesday" type="checkbox"
+									   class="checkbox-weekday" checked>
+								<span class="control_indicator"></span>
+							</label>
+						</div>
 
-						<label id="conf-auto_update_schedule-button-wednesday-label" class="btn btn-weekday">
-							<span lang="en">Wednesday</span>
-							<span lang="fi">Keskiviikko</span>
-							<input id="conf-auto_update_schedule-button-wednesday" type="checkbox"
-								   class="checkbox-weekday" checked>
-						</label>
+						<div>
+							<label class="control control-checkbox">
+								<span lang="en">Wednesday</span>
+								<span lang="fi">Keskiviikko</span>
+								<input id="conf-auto_update_schedule-button-wednesday" type="checkbox"
+									   class="checkbox-weekday" checked>
+								<span class="control_indicator"></span>
+							</label>
+						</div>
 
-						<label id="conf-auto_update_schedule-button-thursday-label" class="btn btn-weekday">
-							<span lang="en">Thursday</span>
-							<span lang="fi">Torstai</span>
-							<input id="conf-auto_update_schedule-button-thursday" type="checkbox"
-								   class="checkbox-weekday" checked>
-						</label>
+						<div>
+							<label class="control control-checkbox">
+								<span lang="en">Thursday</span>
+								<span lang="fi">Torstai</span>
+								<input id="conf-auto_update_schedule-button-thursday" type="checkbox"
+									   class="checkbox-weekday" checked>
+								<span class="control_indicator"></span>
+							</label>
+						</div>
 
-						<label id="conf-auto_update_schedule-button-friday-label" class="btn btn-weekday">
-							<span lang="en">Friday</span>
-							<span lang="fi">Perjantai</span>
-							<input id="conf-auto_update_schedule-button-friday" type="checkbox"
-								   class="checkbox-weekday" checked>
-						</label>
+						<div>
+							<label class="control control-checkbox">
+								<span lang="en">Friday</span>
+								<span lang="fi">Perjantai</span>
+								<input id="conf-auto_update_schedule-button-friday" type="checkbox"
+									   class="checkbox-weekday" checked>
+								<span class="control_indicator"></span>
+							</label>
+						</div>
 
-						<label id="conf-auto_update_schedule-button-saturday-label" class="btn btn-weekday">
-							<span lang="en">Saturday</span>
-							<span lang="fi">Lauantai</span>
-							<input id="conf-auto_update_schedule-button-saturday" type="checkbox"
-								   class="checkbox-weekday" checked>
-						</label>
+						<div>
+							<label class="control control-checkbox">
+								<span lang="en">Saturday</span>
+								<span lang="fi">Lauantai</span>
+								<input id="conf-auto_update_schedule-button-saturday" type="checkbox"
+									   class="checkbox-weekday" checked>
+								<span class="control_indicator"></span>
+							</label>
+						</div>
 
-						<label id="conf-auto_update_schedule-button-sunday-label" class="btn btn-weekday">
-							<span lang="en">Sunday</span>
-							<span lang="fi">Sunnuntai</span>
-							<input id="conf-auto_update_schedule-button-sunday" type="checkbox"
-								   class="checkbox-weekday" checked>
-						</label>
+						<div>
+							<label class="control control-checkbox">
+								<span lang="en">Sunday</span>
+								<span lang="fi">Sunnuntai</span>
+								<input id="conf-auto_update_schedule-button-sunday" type="checkbox"
+									   class="checkbox-weekday" checked>
+								<span class="control_indicator"></span>
+							</label>
+						</div>
 					</div>
 
 					<h3>

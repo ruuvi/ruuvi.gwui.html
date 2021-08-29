@@ -259,33 +259,6 @@ progress {
 	margin: 0 auto;
 }
 
-.btn-weekday {
-	background-color: transparent;
-	color: var(--color-primary);
-	border: 1px solid var(--color-primary);
-	padding: 13px 29px;
-	margin: 0 10px 10px 0;
-
-	@include max(sm) {
-		min-width: 130px;
-		font-size: 12px;
-		padding: 9px 14px;
-	}
-
-	&-disabled,
-	&:hover,
-	&:focus,
-	&:active {
-		background-color: var(--color-primary);
-		border-color: var(--color-primary);
-		color: white;
-	}
-}
-
-.checkbox-weekday {
-	appearance: none;
-}
-
 .weekday-btn-group {
 	margin-bottom: 30px;
 }
@@ -511,11 +484,6 @@ select {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
-}
-
-.left_flex_wrap {
-	display: flex;
-	flex-wrap: wrap;
 }
 
 .input-custom_server {
