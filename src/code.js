@@ -659,11 +659,6 @@ $(document).ready(function () {
     });
 
     $('section#page-update_schedule .checkbox-weekday').change(function () {
-        if (this.checked) {
-            $(this).parent().removeClass('btn-weekday-disabled');
-        } else {
-            $(this).parent().addClass('btn-weekday-disabled');
-        }
         on_edit_automatic_update_settings();
     });
 
