@@ -1242,3 +1242,14 @@ table {
 #software_update_progress-status-completed_successfully .rd {
   font-size: 18px;
 }
+
+.page-auth #app {
+  min-height: unset;
+}
+.page-auth #app-wrap {
+  padding-bottom: 0;
+}
+
+#gateway_name {
+  margin: 20px 0;
+}
