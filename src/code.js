@@ -143,7 +143,7 @@ function change_page_to_finished(flagAdvancedSettings) {
             h += '<li class="active"></li>';
         }
     } else {
-        for (let i = 0; i < 6; ++i) {
+        for (let i = 0; i < 7; ++i) {
             h += '<li class="active"></li>';
         }
     }
@@ -687,6 +687,34 @@ $(document).ready(function () {
 
     $('section#page-update_schedule #page-update_schedule-button-continue').click(function (e) {
         e.preventDefault();
+        change_url('page-settings_lan_auth');
+    });
+
+    // ==== page-settings_lan_auth =====================================================================================
+    $('section#page-settings_lan_auth').bind('onShow', function () {
+        on_lan_auth_type_changed();
+    });
+
+    $('section#page-settings_lan_auth #lan_auth-user').on("keyup change", function (e) {
+        g_flag_lan_auth_pass_changed = true;
+        $("#lan_auth-pass").removeAttr('placeholder');
+        on_lan_auth_user_pass_changed();
+    });
+
+    $('section#page-settings_lan_auth #lan_auth-pass').on("keyup change", function (e) {
+        g_flag_lan_auth_pass_changed = true;
+        $("#lan_auth-pass").removeAttr('placeholder');
+        on_lan_auth_user_pass_changed();
+    });
+
+    $("section#page-settings_lan_auth input[name='lan_auth_type']").change(function (e) {
+        g_flag_lan_auth_pass_changed = true;
+        $("#lan_auth-pass").removeAttr('placeholder');
+        on_lan_auth_type_changed();
+    });
+
+    $('section#page-settings_lan_auth #page-lan_auth_type-button-continue').click(function (e) {
+        e.preventDefault();
         change_url('page-cloud_options');
     });
 
@@ -700,15 +728,15 @@ $(document).ready(function () {
         let h = "";
         h += '<ul class="progressbar">';
         if (connection_type === 'ruuvi') {
-            for (let i = 0; i < 5; ++i) {
+            for (let i = 0; i < 6; ++i) {
                 h += '<li class="active"></li>';
             }
             h += '<li></li>';
         } else {
-            for (let i = 0; i < 5; ++i) {
+            for (let i = 0; i < 6; ++i) {
                 h += '<li class="active"></li>';
             }
-            for (let i = 5; i < 9; ++i) {
+            for (let i = 6; i < 9; ++i) {
                 h += '<li></li>';
             }
         }
@@ -796,34 +824,6 @@ $(document).ready(function () {
     });
 
     $('section#page-scanning #page-scanning-button-continue').click(function (e) {
-        e.preventDefault();
-        change_url('page-settings_lan_auth');
-    });
-
-    // ==== page-settings_lan_auth =====================================================================================
-    $('section#page-settings_lan_auth').bind('onShow', function () {
-        on_lan_auth_type_changed();
-    });
-
-    $('section#page-settings_lan_auth #lan_auth-user').on("keyup change", function (e) {
-        g_flag_lan_auth_pass_changed = true;
-        $("#lan_auth-pass").removeAttr('placeholder');
-        on_lan_auth_user_pass_changed();
-    });
-
-    $('section#page-settings_lan_auth #lan_auth-pass').on("keyup change", function (e) {
-        g_flag_lan_auth_pass_changed = true;
-        $("#lan_auth-pass").removeAttr('placeholder');
-        on_lan_auth_user_pass_changed();
-    });
-
-    $("section#page-settings_lan_auth input[name='lan_auth_type']").change(function (e) {
-        g_flag_lan_auth_pass_changed = true;
-        $("#lan_auth-pass").removeAttr('placeholder');
-        on_lan_auth_type_changed();
-    });
-
-    $('section#page-settings_lan_auth #page-lan_auth_type-button-continue').click(function (e) {
         e.preventDefault();
         save_config();
         change_page_to_finished(true);
