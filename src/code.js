@@ -119,6 +119,18 @@ function on_network_connected_eth() {
     $("#connected-eth").show()
 }
 
+function change_page_to_network_type() {
+    change_url('page-network_type');
+}
+
+function change_page_to_wifi_connection() {
+    change_url('page-wifi_connection');
+}
+
+function change_page_to_ethernet_connection() {
+    change_url('page-ethernet_connection');
+}
+
 function change_page_to_software_update() {
     $('#page-ethernet_connection-ask_user').hide();
     $('#page-ethernet_connection-button-continue').removeClass("disable-click");
@@ -133,6 +145,22 @@ function change_page_to_update_schedule() {
 
 function change_url_software_update_progress() {
     change_url('page-software_update_progress');
+}
+
+function change_page_to_settings_lan_auth() {
+    change_url('page-settings_lan_auth');
+}
+
+function change_url_cloud_options() {
+    change_url('page-cloud_options');
+}
+
+function change_url_custom_server() {
+    change_url('page-custom_server');
+}
+
+function change_url_scanning() {
+    change_url('page-scanning');
 }
 
 function change_page_to_finished(flagAdvancedSettings) {
@@ -425,7 +453,7 @@ $(document).ready(function () {
 
     $('#page-welcome-button-get-started').click(function (e) {
         e.preventDefault();
-        change_url('page-network_type');
+        change_page_to_network_type();
     });
 
     // ==== page-network_type ==========================================================================================
@@ -440,10 +468,11 @@ $(document).ready(function () {
     $('section#page-network_type #page-network_type-button-continue').click(function (e) {
         e.preventDefault();
         let network_type = $("input[name='network_type']:checked").val();
-        if (network_type === 'wifi')
-            change_url('page-wifi_connection');
-        else
-            change_url('page-ethernet_connection');
+        if (network_type === 'wifi') {
+            change_page_to_wifi_connection();
+        } else {
+            change_page_to_ethernet_connection();
+        }
     });
 
     // ==== page-ethernet_connection ===================================================================================
@@ -687,7 +716,7 @@ $(document).ready(function () {
 
     $('section#page-update_schedule #page-update_schedule-button-continue').click(function (e) {
         e.preventDefault();
-        change_url('page-settings_lan_auth');
+        change_page_to_settings_lan_auth();
     });
 
     // ==== page-settings_lan_auth =====================================================================================
@@ -715,7 +744,7 @@ $(document).ready(function () {
 
     $('section#page-settings_lan_auth #page-lan_auth_type-button-continue').click(function (e) {
         e.preventDefault();
-        change_url('page-cloud_options');
+        change_url_cloud_options();
     });
 
     // ==== page-cloud_options =========================================================================================
@@ -761,7 +790,7 @@ $(document).ready(function () {
             save_config();
             change_page_to_finished(false);
         } else {
-            change_url('page-custom_server');
+            change_url_custom_server();
         }
     });
 
@@ -811,7 +840,7 @@ $(document).ready(function () {
 
     $('section#page-custom_server #page-custom_server-button-continue').click(function (e) {
         e.preventDefault();
-        change_url('page-scanning');
+        change_url_scanning();
     });
 
     // ==== page-scanning ==============================================================================================
