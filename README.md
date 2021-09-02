@@ -33,15 +33,15 @@ To test connection from the Gateway to HTTP-server, use `http_server_auth.py`
 
 To run HTTP-server without auth:
 
-`pyton http_server_auth.py --bind <IP>`
+`python http_server_auth.py --bind <IP>`
 
 To run HTTP-server with auth:
 
-`pyton http_server_auth.py --bind <IP> -u <username> -p <password>`
+`python http_server_auth.py --bind <IP> -u <username> -p <password>`
 
 To run HTTPS-server with auth:
 
-`pyton http_server_auth.py --bind <IP> --ssl_cert=./server.pem -u <username> -p <password>`
+`python http_server_auth.py --bind <IP> --ssl_cert=./server.pem -u <username> -p <password>`
 
 To generate certificate for HTTPS (`server.pem`):
 
