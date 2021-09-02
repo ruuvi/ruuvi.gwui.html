@@ -132,9 +132,6 @@ function change_page_to_ethernet_connection() {
 }
 
 function change_page_to_software_update() {
-    $('#page-ethernet_connection-ask_user').hide();
-    $('#page-ethernet_connection-button-continue').removeClass("disable-click");
-    $('#page-wifi_connection-button-continue').removeClass("disable-click");
     $('body').removeClass('is-loading');
     change_url('page-software_update');
 }
@@ -485,6 +482,7 @@ $(document).ready(function () {
     $('section#page-ethernet_connection').bind('onHide', function () {
         $('#page-ethernet_connection-ask_user').hide();
         $('#page-ethernet_connection-no_cable').hide();
+        $('#page-ethernet_connection-button-continue').removeClass("disable-click");
         if (g_page_ethernet_connection_timer) {
             clearTimeout(g_page_ethernet_connection_timer);
             g_page_ethernet_connection_timer = null;
@@ -541,6 +539,10 @@ $(document).ready(function () {
         flagUseSavedWiFiPassword = true;
         $('#page-wifi_connection-ssid_password').hide();
         startRefreshAP();
+    });
+
+    $('section#page-wifi_connection').bind('onHide', function () {
+        $('#page-wifi_connection-button-continue').removeClass("disable-click");
     });
 
     $('section#page-wifi_connection input#manual_ssid').on('keyup click', function () {
@@ -836,7 +838,6 @@ $(document).ready(function () {
             $('#mqtt_examples').slideUp();
         }
     });
-
 
     $('section#page-custom_server #page-custom_server-button-continue').click(function (e) {
         e.preventDefault();
