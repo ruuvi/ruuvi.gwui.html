@@ -41,6 +41,7 @@
 					<li></li>
 					<li></li>
 					<li></li>
+					<li></li>
 				</ul>
 			</div>
 
@@ -87,6 +88,7 @@
 			<div class="progressbar-container">
 				<ul class="progressbar">
 					<li class="active"></li>
+					<li></li>
 					<li></li>
 					<li></li>
 					<li></li>
@@ -151,6 +153,7 @@
 				<ul class="progressbar">
 					<li class="active"></li>
 					<li class="active"></li>
+					<li></li>
 					<li></li>
 					<li></li>
 					<li></li>
@@ -239,6 +242,7 @@
 				<ul class="progressbar">
 					<li class="active"></li>
 					<li class="active"></li>
+					<li></li>
 					<li></li>
 					<li></li>
 					<li></li>
@@ -350,6 +354,7 @@
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
+					<li></li>
 					<li></li>
 					<li></li>
 					<li></li>
@@ -468,6 +473,7 @@
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
+					<li class="active"></li>
 				</ul>
 			</div>
 
@@ -566,6 +572,7 @@
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
+					<li></li>
 					<li></li>
 					<li></li>
 				</ul>
@@ -850,6 +857,102 @@
 		</section>
 
 
+		<!-- WEB AUTHENTICATION -->
+		<section id="page-settings_lan_auth" class="hidden">
+			<h1>
+				<span lang="en">Access Settings</span>
+				<span lang="fi">Etäyhteysasetukset</span>
+			</h1>
+
+			<div class="progressbar-container">
+				<ul class="progressbar">
+					<li class="active"></li>
+					<li class="active"></li>
+					<li class="active"></li>
+					<li class="active"></li>
+					<li class="active"></li>
+					<li></li>
+					<li></li>
+				</ul>
+			</div>
+
+			<div class="ingress">
+				<p lang="en">By default, after this configuration wizard is completed, Ruuvi Gateway will be no longer
+					accessible from the local area network.</p>
+				<p lang="fi">Oletuksena ohjatun asennustoiminnon valmistuttua Ruuvi Gateway ei ole enää käytettävissä lähiverkosta.</p>
+			</div>
+
+			<div>&nbsp;</div>
+
+			<div class="ingress">
+				<p lang="en">If needed, you can make the Gateway remotely accessible in your local area network.</p>
+				<p lang="fi">Voit tarvittaessa määrittää kuinka etäyhteys voidaan luoda lähiverkosta käsin.</p>
+			</div>
+
+			<div>&nbsp;</div>
+
+			<label class="control control-radio">
+				<span lang="en">No remote conﬁguration access (default)</span>
+				<span lang="fi">Ei etäkonfigurointimahdollisuutta (oletus)</span>
+				<input id="lan_auth_type_deny" name="lan_auth_type" value="lan_auth_deny" type="radio"/>
+				<span class="control_indicator"></span>
+			</label>
+
+			<label class="control control-radio">
+				<span lang="en">Use password protection</span>
+				<span lang="fi">Käytä salasanasuojausta</span>
+				<input id="lan_auth_type_ruuvi" name="lan_auth_type" value="lan_auth_ruuvi" type="radio"/>
+				<span class="control_indicator"></span>
+			</label>
+			<div id="conf-lan_auth-login-password" class="hidden indent">
+				<label>
+					<span lang="en">Login:</span>
+					<span lang="fi">Kirjaudu sisään:</span>
+					<input id="lan_auth-user" type="text" placeholder="" value="">
+				</label>
+				<label>
+					<span lang="en">Password:</span>
+					<span lang="fi">Salasana:</span>
+					<input id="lan_auth-pass" type="password" placeholder="" value="">
+				</label>
+			</div>
+
+			<!--
+			<label class="control control-radio hidden">
+				<span lang="en">Digest authentication</span>
+				<span lang="fi">Salattu kirjautuminen</span>
+				<input id="lan_auth_type_digest" name="lan_auth_type" value="lan_auth_digest" type="radio"/>
+				<span class="control_indicator"></span>
+			</label>
+
+			<label class="control control-radio hidden">
+				<span lang="en">Basic authentication</span>
+				<span lang="fi">Salaamaton kirjautuminen</span>
+				<input id="lan_auth_type_basic" name="lan_auth_type" value="lan_auth_basic" type="radio"/>
+				<span class="control_indicator"></span>
+			</label>
+			-->
+
+			<label class="control control-radio">
+				<span lang="en">Allow access without password (not recommended)</span>
+				<span lang="fi">Salli käyttö ilman salasanaa (ei suositeltu)</span>
+				<input id="lan_auth_type_allow" name="lan_auth_type" value="lan_auth_allow" type="radio"/>
+				<span class="control_indicator"></span>
+			</label>
+
+			<div class="button-container">
+				<a href="" id="page-lan_auth_type-button-back" class="btn-back">
+					<span lang="en">Back</span>
+					<span lang="fi">Edellinen</span>
+				</a>
+				<a href="" id="page-lan_auth_type-button-continue" class="btn">
+					<span lang="en">NEXT</span>
+					<span lang="fi">SEURAAVA</span>
+				</a>
+			</div>
+		</section>
+
+
 		<!-- CLOUD OPTIONS -->
 		<section id="page-cloud_options" class="hidden">
 			<h1>
@@ -936,7 +1039,7 @@
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
-					<li></li>
+					<li class="active"></li>
 					<li></li>
 					<li></li>
 				</ul>
@@ -1111,7 +1214,7 @@
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
-					<li></li>
+					<li class="active"></li>
 					<li></li>
 				</ul>
 			</div>
@@ -1210,104 +1313,6 @@
 				</a>
 
 				<a href="" id="page-scanning-button-continue" class="btn">
-					<span lang="en">NEXT</span>
-					<span lang="fi">SEURAAVA</span>
-				</a>
-			</div>
-		</section>
-
-
-		<!-- WEB AUTHENTICATION -->
-		<section id="page-settings_lan_auth" class="hidden">
-			<h1>
-				<span lang="en">Access Settings</span>
-				<span lang="fi">Etäyhteysasetukset</span>
-			</h1>
-
-			<div class="progressbar-container">
-				<ul class="progressbar">
-					<li class="active"></li>
-					<li class="active"></li>
-					<li class="active"></li>
-					<li class="active"></li>
-					<li class="active"></li>
-					<li class="active"></li>
-					<li class="active"></li>
-					<li class="active"></li>
-					<li></li>
-				</ul>
-			</div>
-
-			<div class="ingress">
-				<p lang="en">By default, after this configuration wizard is completed, Ruuvi Gateway will be no longer
-					accessible from the local area network.</p>
-				<p lang="fi">Oletuksena ohjatun asennustoiminnon valmistuttua Ruuvi Gateway ei ole enää käytettävissä lähiverkosta.</p>
-			</div>
-
-			<div>&nbsp;</div>
-
-			<div class="ingress">
-				<p lang="en">If needed, you can make the Gateway remotely accessible in your local area network.</p>
-				<p lang="fi">Voit tarvittaessa määrittää kuinka etäyhteys voidaan luoda lähiverkosta käsin.</p>
-			</div>
-
-			<div>&nbsp;</div>
-
-			<label class="control control-radio">
-				<span lang="en">No remote conﬁguration access (default)</span>
-				<span lang="fi">Ei etäkonfigurointimahdollisuutta (oletus)</span>
-				<input id="lan_auth_type_deny" name="lan_auth_type" value="lan_auth_deny" type="radio"/>
-				<span class="control_indicator"></span>
-			</label>
-
-			<label class="control control-radio">
-				<span lang="en">Use password protection</span>
-				<span lang="fi">Käytä salasanasuojausta</span>
-				<input id="lan_auth_type_ruuvi" name="lan_auth_type" value="lan_auth_ruuvi" type="radio"/>
-				<span class="control_indicator"></span>
-			</label>
-			<div id="conf-lan_auth-login-password" class="hidden indent">
-				<label>
-					<span lang="en">Login:</span>
-					<span lang="fi">Kirjaudu sisään:</span>
-					<input id="lan_auth-user" type="text" placeholder="" value="">
-				</label>
-				<label>
-					<span lang="en">Password:</span>
-					<span lang="fi">Salasana:</span>
-					<input id="lan_auth-pass" type="password" placeholder="" value="">
-				</label>
-			</div>
-
-			<!--
-			<label class="control control-radio hidden">
-				<span lang="en">Digest authentication</span>
-				<span lang="fi">Salattu kirjautuminen</span>
-				<input id="lan_auth_type_digest" name="lan_auth_type" value="lan_auth_digest" type="radio"/>
-				<span class="control_indicator"></span>
-			</label>
-
-			<label class="control control-radio hidden">
-				<span lang="en">Basic authentication</span>
-				<span lang="fi">Salaamaton kirjautuminen</span>
-				<input id="lan_auth_type_basic" name="lan_auth_type" value="lan_auth_basic" type="radio"/>
-				<span class="control_indicator"></span>
-			</label>
-			-->
-
-			<label class="control control-radio">
-				<span lang="en">Allow access without password (not recommended)</span>
-				<span lang="fi">Salli käyttö ilman salasanaa (ei suositeltu)</span>
-				<input id="lan_auth_type_allow" name="lan_auth_type" value="lan_auth_allow" type="radio"/>
-				<span class="control_indicator"></span>
-			</label>
-
-			<div class="button-container">
-				<a href="" id="page-lan_auth_type-button-back" class="btn-back">
-					<span lang="en">Back</span>
-					<span lang="fi">Edellinen</span>
-				</a>
-				<a href="" id="page-lan_auth_type-button-continue" class="btn">
 					<span lang="en">NEXT</span>
 					<span lang="fi">SEURAAVA</span>
 				</a>
