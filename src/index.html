@@ -48,7 +48,7 @@
 			<div class="ingress">
 				<p lang="en">Setting up your Ruuvi Gateway is easy. Follow these simple steps and
 					you're ready to go.</p>
-				<p lang="en">Please be noted that your internet connection may be turned off for the duration of the
+				<p lang="en">Please note that your Internet connection may be turned off for the duration of the
 					configuration wizard.</p>
 
 				<p lang="fi">Ruuvi Gatewayn käyttöönotto on helppoa. Seuraa ohjattua asetusten määritystä kytkeäksesi
@@ -98,9 +98,9 @@
 			</div>
 
 			<div class="ingress">
-				<p lang="en">The Gateway needs an internet connection.
-					You can connect either using an Ethernet cable (RJ45) or via a wireless Wi-Fi network.
-					To ensure the most reliable internet connectivity, Ethernet is recommended.</p>
+				<p lang="en">The Gateway needs an Internet connection.
+					You can connect using either an Ethernet cable (RJ45) or via a wireless Wi-Fi network.
+					To ensure the most reliable Internet connectivity, Ethernet is recommended.</p>
 				<p lang="fi">Ruuvi Gateway tarvitsee toimiakseen internet-yhteyden.
 					Voit yhdistää internetiin joko kiinteän (Ethernet RJ45) tai langattoman (Wi-Fi)
 					lähiverkkoyhteyden avulla. Häiriöttömän yhteyden takaamiseksi suosittelemme käyttämään
@@ -528,12 +528,12 @@
 				</div>
 				<div>&nbsp;</div>
 				<div class="block-centered">
-					<span lang="en">The device will be restarted automatically in a few seconds.</span>
+					<span lang="en">The device will restart automatically in a few seconds.</span>
 					<span lang="fi">Laite käynnistyy uudelleen automaattisesti muutaman sekunnin kuluttua.</span>
 				</div>
 				<div class="block-centered">
 					<span lang="en">Please reconnect to the Wi-Fi hotspot in order to continue the configuration.
-						If the hotspot doesn't appear automatically, shortly press the button under the power
+						If the hotspot doesn't appear automatically, briefly press the button under the power
 						socket.</span>
 					<span lang="fi">Muodosta yhteys laitteen luomaan Wi-Fi-verkkoon uudelleen jatkaaksesi asetusten
 						määrittämistä. Mikäli verkko ei ilmesty näkyviin, paina lyhyesti virtaliittimen alla olevaa
@@ -551,7 +551,7 @@
 				</div>
 				<div>&nbsp;</div>
 				<div class="block-centered">
-					<span lang="en">Please reboot the device by pressing briefly the configuration button, located
+					<span lang="en">Please reboot the device by briefly pressing the configuration button, located
 						under the power socket.</span>
 					<span lang="fi">Käynnistä laite uudelleen painamalla lyhyesti virtaliittimen alla olevaa painiketta.</span>
 				</div>
@@ -581,8 +581,8 @@
 			<div class="ingress">
 				<p lang="en">
 					Please configure a convenient schedule for automatic firmware updates.
-					During the update, your Ruuvi Gateway will download the latest firmware and then
-					automatically installs it and then reboots.
+					During the update, your Ruuvi Gateway will download the latest firmware and then will
+					automatically install it and reboot.
 					(You may notice a 1-5 minutes downtime during the installation of the update.)
 				</p>
 				<p lang="fi">
@@ -630,7 +630,7 @@
 					<span class="control_indicator"></span>
 				</label>
 				<label class="control control-radio">
-					<span lang="en">Manual updates only (ei suositeltu)</span>
+					<span lang="en">Manual updates only (not recommended)</span>
 					<span lang="fi">Vain manuaaliset päivitykset (ei suositeltu)</span>
 					<input id="auto_update_cycle-manual" value="auto_update_cycle-manual" type="radio"
 						   name="auto_update_cycle">
@@ -877,7 +877,7 @@
 			</div>
 
 			<div class="ingress">
-				<p lang="en">By default, after this configuration wizard is completed, Ruuvi Gateway will be no longer
+				<p lang="en">By default, after this configuration wizard is completed, Ruuvi Gateway will no longer be
 					accessible from the local area network.</p>
 				<p lang="fi">Oletuksena ohjatun asennustoiminnon valmistuttua Ruuvi Gateway ei ole enää käytettävissä lähiverkosta.</p>
 			</div>
@@ -966,7 +966,7 @@
 			<div class="ingress">
 				<p lang="en">Almost done!</p>
 				<p lang="en">The last step is to configure where Ruuvi Gateway should send the data.
-					Default option is Ruuvi's cloud service. When using Ruuvi's secure cloud service, only you can
+					Default option is Ruuvi's Cloud service. When using Ruuvi's secure Cloud service, only you can
 					access the data of the sensors owned by you.</p>
 				<p lang="fi">Melkein valmista!</p>
 				<p lang="fi">Viimeisenä määrittelemme minne Ruuvi Gatewayn halutaan anturitiedot lähettävän.
@@ -976,7 +976,7 @@
 
 			<div id="conf-ruuvi">
 				<label class="control control-radio ">
-					<span lang="en">Ruuvi cloud (recommended)</span>
+					<span lang="en">Ruuvi Cloud (recommended)</span>
 					<span lang="fi">Ruuvin pilvipalvelu (suositeltu)</span>
 					<input id="use_ruuvi" value="ruuvi" name="connection_type" type="radio" class="conf-checkbox"
 						   checked="checked">
@@ -1168,7 +1168,7 @@
 								</div>
 							</li>
 							<li>
-								<p lang="en">Subscribe to messages from any Bluetooth sensors heard by this	Gateway:</p>
+								<p lang="en">Subscribe to messages from any Bluetooth sensor heard by this Gateway:</p>
 								<p lang="fi">Tilaa viestit kaikista tämän Gatewayn kuulemista Bluetooth-antureista:</p>
 								<div id="mqtt_example4">mosquitto_sub -h test.mosquitto.org -p 1883 -t
 									"ruuvi/AA:BB:CC:DD:EE:FF/#/#" -v
@@ -1220,14 +1220,14 @@
 			</div>
 
 			<div class="ingress">
-				<p lang="en">Ruuvi Gateway continuously listens Bluetooth beacon messages.
+				<p lang="en">Ruuvi Gateway continuously listens to Bluetooth beacon messages.
 					You can modify the listening settings.</p>
 				<p lang="fi">Ruuvi Gateway kuuntelee jatkuvasti ympäristön Bluetooth-majakkaviestejä.
 					Voit muokata kuunteluasetuksia.</p>
 			</div>
 
 			<label class="control control-radio">
-				<span lang="en">Listen Ruuvi sensors</span>
+				<span lang="en">Listen to Ruuvi sensors</span>
 				<span lang="fi">Kuuntele Ruuvi-antureita</span>
 				<input type="radio" name="filtering" value="1" checked="checked" placeholder="Scan only Ruuvitags">
 				<span class="control_indicator"></span>
@@ -1255,7 +1255,7 @@
 					<span class="control_indicator"></span>
 				</label>
 				<div style="opacity: 50%;" class="indent">
-					<small>If you enable also long range reception, the Gateway will continuously switch between the
+					<small>If you also enable long range reception, the Gateway will continuously switch between the
 						modes (normal mode 50& / long range mode 50%)</small>
 				</div>
 
@@ -1388,7 +1388,7 @@
 			</h2>
 
 			<div class="ingress">
-				<p lang="en">If you misconﬁgured, you can restart the conﬁguration Wi-Fi hotspot by shortly pressing
+				<p lang="en">If you misconﬁgured, you can restart the conﬁguration Wi-Fi hotspot by briefly pressing
 					the small button under the power socket.</p>
 				<p lang="fi">Paina laitteen virtaliittimen alla olevaa nollauspainiketta lyhyesti ja yhdistä
 					Ruuvi Gateway -laitteen Wi-Fi-hotspot-verkkoon, mikäli haluat käynnistää ohjatun käyttöönoton
@@ -1396,7 +1396,7 @@
 			</div>
 
 			<div class="ingress">
-				<p lang="en">If you want to factory reset the settings, press the small button under the power
+				<p lang="en">If you want to reset to the factory settings, press the small button under the power
 					socket for 10 seconds.</p>
 				<p lang="fi">Pidä virtaliittimen alla oleva nollauspainike alaspainettuna kymmenen sekunnin ajan
 					laitteen tehdasasetusten palauttamiseksi.</p>
