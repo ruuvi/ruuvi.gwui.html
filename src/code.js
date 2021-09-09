@@ -28,6 +28,7 @@ let counterStatusJsonTimeout = 0;
 let flagWaitingNetworkConnection = false;
 let flagNetworkConnected = false;
 let g_page_ethernet_connection_timer = null;
+let g_current_page = null;
 
 const CONNECTION_STATE = {
     NOT_CONNECTED: "NOT_CONNECTED",
@@ -83,29 +84,11 @@ function stopRefreshAP() {
     g_refreshAPActive = false;
 }
 
-// The popstate event is fired each time when the current history entry changes.
-window.addEventListener('popstate', function (event) {
-    var url = window.location.hash.substring(1);
-
-    $('section').hide();
-
-    $('#' + url).show();
-
-	setTimeout(function() {
-		window.scrollTo(0, 0);
-	}, 1);
-
-}, false);
-
 // Navigation
 function change_url(url) {
     if (window.location.hash === ('#' + url)) {
         return;
     }
-    $(window.location.hash).trigger('onHide');
-    $('#' + url).show('show', function () {
-        $(this).trigger('onShow');
-    });
     window.location.hash = url;
 }
 
@@ -399,10 +382,22 @@ function on_edit_automatic_update_settings() {
 
 
 $(document).ready(function () {
-    // Set initial hash to help back button navigation
-    window.location.hash = 'page-welcome';
-
     window.onpopstate = function (event) {
+        console.log("window.onpopstate: " + document.location.hash);
+        let url = window.location.hash.substring(1);
+        if (g_current_page) {
+            $(g_current_page).hide();
+            $(g_current_page).trigger('onHide');
+        }
+        g_current_page = '#' + url;
+        $(g_current_page).show();
+        $(g_current_page).trigger('onShow');
+
+        setTimeout(function() {
+            window.scrollTo(0, 0);
+        }, 1);
+
+
         if (document.location.hash === "#page-finished") {
             // Prevent the user from leaving this page by pressing the Back button
             window.history.pushState(null, "", "#page-finished");
@@ -437,15 +432,19 @@ $(document).ready(function () {
         console.log('Became offline, is_online=' + window.navigator.onLine);
     }, false);
 
+    // Set initial hash to help back button navigation
+    window.location.hash = 'page-welcome';
 
     // ==== page-welcome ===============================================================================================
     $('section#page-welcome').bind('onShow', function () {
+        console.log("section#page-welcome: onShow");
         let progressbar = $('#progressbar');
         progressbar.css('top', $('section#page-welcome div.progressbar-container').position().top);
         progressbar.show();
     });
 
     $('section#page-welcome').bind('onHide', function () {
+        console.log("section#page-welcome: onHide");
     });
 
     $('#page-welcome-button-get-started').click(function (e) {
@@ -455,11 +454,11 @@ $(document).ready(function () {
 
     // ==== page-network_type ==========================================================================================
     $('section#page-network_type').bind('onShow', function () {
-        networkDisconnect();
-        $('section#page-network_type input[type=radio][name=network_type]').trigger('change');
+        console.log("section#page-network_type: onShow");
     });
 
-    $('section#page-network_type input[type=radio][name=network_type]').change(function () {
+    $('section#page-network_type').bind('onHide', function () {
+        console.log("section#page-network_type: onHide");
     });
 
     $('section#page-network_type #page-network_type-button-continue').click(function (e) {
@@ -477,6 +476,7 @@ $(document).ready(function () {
         if (!$('#eth_dhcp')[0].checked) {
             $('#page-ethernet_connection-section-manual_settings').slideDown();
         }
+        networkDisconnect();
     });
 
     $('section#page-ethernet_connection').bind('onHide', function () {
@@ -526,10 +526,6 @@ $(document).ready(function () {
 
     $('section#page-ethernet_connection #page-ethernet_connection-button-back').click(function (e) {
         e.preventDefault();
-        $('#page-ethernet_connection-ask_user').hide();
-        $('#page-ethernet_connection-no_cable').hide();
-        $('#page-ethernet_connection-button-continue').removeClass("disable-click");
-        networkDisconnect();
     });
 
     // ==== page-wifi_connection =======================================================================================
@@ -538,11 +534,15 @@ $(document).ready(function () {
         checkAndUpdatePageWiFiListButtonNext();
         flagUseSavedWiFiPassword = true;
         $('#page-wifi_connection-ssid_password').hide();
+        networkDisconnect();
         startRefreshAP();
     });
 
     $('section#page-wifi_connection').bind('onHide', function () {
         $('#page-wifi_connection-button-continue').removeClass("disable-click");
+        $('#page-wifi_connection-ssid_password').hide();
+        $("#page-wifi_connection-list_of_ssid").html("");
+        stopRefreshAP();
     });
 
     $('section#page-wifi_connection input#manual_ssid').on('keyup click', function () {
@@ -616,16 +616,16 @@ $(document).ready(function () {
 
     $('#page-wifi_connection-button-back').click(function (e) {
         e.preventDefault();
-        $('#page-wifi_connection-ssid_password').hide();
-        $("#page-wifi_connection-list_of_ssid").html("");
-        networkDisconnect();
     });
 
     // ==== page-software_update =======================================================================================
     $('section#page-software_update').bind('onShow', function () {
         $('#page-software_update-latest_fw_ver').hide();
-        stopRefreshAP();
         on_show_software_update();
+    });
+
+    $('section#page-software_update').bind('onHide', function () {
+        console.log("section#page-software_update: onHide");
     });
 
     $('section#page-software_update #software_update-button-upgrade').click(function (e) {
@@ -673,8 +673,6 @@ $(document).ready(function () {
 
     $('section#page-software_update #page-software_update-button-back').click(function (e) {
         e.preventDefault();
-        networkDisconnect();
-        startRefreshAP();
     });
 
     // ==== page-software_update_progress ==============================================================================
@@ -884,7 +882,6 @@ $(document).ready(function () {
 
     $('.btn-back').click(function (e) {
         e.preventDefault();
-        console.log("on click: .btn-back");
         window.history.back();
     });
 
