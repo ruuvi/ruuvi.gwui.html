@@ -1154,10 +1154,6 @@ table {
   color: var(--color-text);
 }
 
-.text-notification {
-  color: var(--color-notification);
-}
-
 .w0,
 .w1,
 .w2,
