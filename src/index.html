@@ -70,7 +70,7 @@
 			</label>
 
 			<div id="button-container_page-welcome-button-get-started" class="button-container">
-				<a href="" id="page-welcome-button-get-started" class="btn">
+				<a href="" id="page-welcome-button-get-started" class="btn disable-click">
 					<span lang="en">LET'S GET STARTED!</span>
 					<span lang="fi">ALOITETAAN!</span>
 				</a>
@@ -128,6 +128,27 @@
 				</label>
 			</div>
 
+			<div class="border-hidden"></div>
+
+			<div id="page-network_type-access_from_lan">
+				<div class="block-centered text-notification">
+					<span lang="en">
+						LAN access detected, network configuration is disabled.
+					</span>
+					<span lang="fi">
+						LAN-yhteys havaittu, verkon määritys on poistettu käytöstä.
+					</span>
+				</div>
+				<div class="block-centered text-notification">
+					<span lang="en">
+						Press Gateway button and connect to the Gateway hotspot to reconfigure the network connection.
+					</span>
+					<span lang="fi">
+						Määritä verkkoyhteys uudelleen painamalla yhdyskäytäväpainiketta ja yhdistämällä yhdyskäytävän hotspotiin.
+					</span>
+				</div>
+			</div>
+
 			<div class="button-container">
 				<a href="" id="page-network_type-button-back" class="btn-back">
 					<span lang="en">Back</span>
@@ -136,6 +157,10 @@
 				<a href="" id="page-network_type-button-continue" class="btn">
 					<span lang="en">NEXT</span>
 					<span lang="fi">SEURAAVA</span>
+				</a>
+				<a href="" id="page-network_type-button-skip" class="btn hidden">
+					<span lang="en">SKIP</span>
+					<span lang="fi">OHITA</span>
 				</a>
 			</div>
 

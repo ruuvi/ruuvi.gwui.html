@@ -59,6 +59,7 @@ g_password = None
 g_timestamp = None
 g_auto_toggle_cnt = 0
 g_gw_mac = "AA:BB:CC:DD:EE:FF"
+g_flag_access_from_lan = False
 
 RUUVI_AUTH_REALM = 'RuuviGateway' + g_gw_mac[-5:-3] + g_gw_mac[-2:]
 
@@ -765,11 +766,13 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(tosend.encode('ascii'))
 
     @staticmethod
-    def _generate_status_json(urc, ssid, ip='0', netmask='0', gw='0', fw_updating_stage=0, percentage=0):
+    def _generate_status_json(urc, flag_access_from_lan, ssid, ip='0', netmask='0', gw='0', fw_updating_stage=0,
+                              percentage=0):
+        flag_access_from_lan = 1 if flag_access_from_lan else 0
         if fw_updating_stage == 0:
-            return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc}}}'
+            return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"lan":{flag_access_from_lan}}}'
         else:
-            return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}}}}}'
+            return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"lan":{flag_access_from_lan},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}}}}}'
 
     def _check_auth(self):
         global g_ruuvi_dict
@@ -1081,6 +1084,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 time.sleep(3.0)
                 self.wfile.write(resp)
             elif self.path == '/status.json':
+                global g_flag_access_from_lan
+                global g_software_update_stage
+                global g_software_update_percentage
+
                 if g_ssid is None:
                     ssid_key_with_val = '"ssid":null'
                 else:
@@ -1102,22 +1109,23 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         netmask = '255.255.255.0'
                         gw = '192.168.1.1'
 
-                    global g_software_update_stage
-                    global g_software_update_percentage
-
-                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED, ssid_key_with_val, ip, netmask,
-                                                         gw, g_software_update_stage, g_software_update_percentage)
+                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED, g_flag_access_from_lan,
+                                                         ssid_key_with_val, ip, netmask, gw, g_software_update_stage,
+                                                         g_software_update_percentage)
                     if 0 < g_software_update_stage < 5:
                         g_software_update_percentage += 10
                         if g_software_update_percentage >= 100:
                             g_software_update_percentage = 0
                             g_software_update_stage += 1
                 elif g_simulation_mode == SIMULATION_MODE_WIFI_FAILED_ATTEMPT:
-                    content = self._generate_status_json(STATUS_JSON_URC_WIFI_FAILED_ATTEMPT, ssid_key_with_val)
+                    content = self._generate_status_json(STATUS_JSON_URC_WIFI_FAILED_ATTEMPT, g_flag_access_from_lan,
+                                                         ssid_key_with_val)
                 elif g_simulation_mode == SIMULATION_MODE_USER_DISCONNECT:
-                    content = self._generate_status_json(STATUS_JSON_URC_USER_DISCONNECT, ssid_key_with_val)
+                    content = self._generate_status_json(STATUS_JSON_URC_USER_DISCONNECT, g_flag_access_from_lan,
+                                                         ssid_key_with_val)
                 elif g_simulation_mode == SIMULATION_MODE_LOST_CONNECTION:
-                    content = self._generate_status_json(STATUS_JSON_URC_LOST_CONNECTION, ssid_key_with_val)
+                    content = self._generate_status_json(STATUS_JSON_URC_LOST_CONNECTION, g_flag_access_from_lan,
+                                                         ssid_key_with_val)
                 else:
                     content = ''
                 print(f'Resp: {content}')
@@ -1348,6 +1356,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Simulator of Ruuvi Gateway HTTP Server')
     parser.add_argument('--port', type=int, help='Listening port for HTTP Server', default=8001)
     parser.add_argument('--ip', help='HTTP Server IP', default='0.0.0.0')
+    parser.add_argument('--lan', help='Set flag Access from LAN', action='store_true')
     args = parser.parse_args()
     print('To change the simulation mode, press digit and then Enter')
     print('Simulation modes:')
@@ -1359,6 +1368,9 @@ if __name__ == '__main__':
     print('    5 - lost connection')
 
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../src'))
+    
+    if args.lan:
+        g_flag_access_from_lan = True
 
     server = SimpleHttpServer(args.ip, args.port)
     print('HTTP Server Running: IP:%s, port:%d' % (args.ip, args.port))

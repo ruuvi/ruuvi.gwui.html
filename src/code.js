@@ -17,6 +17,7 @@ let apList = null;
 let selectedSSID = "";
 let connectedSSID = "";
 let flagUseSavedWiFiPassword = false;
+let g_flagAccessFromLAN = false;
 let g_refreshAPActive = false;
 let g_refreshAPTimer = null;
 let g_refreshAPInProgress = false;
@@ -456,6 +457,17 @@ $(document).ready(function () {
     // ==== page-network_type ==========================================================================================
     $('section#page-network_type').bind('onShow', function () {
         console.log("section#page-network_type: onShow");
+        if (g_flagAccessFromLAN) {
+            $('section#page-network_type input[type=radio][name=network_type]').prop('disabled', true);
+            $('#page-network_type-access_from_lan').show();
+            $('#page-network_type-button-continue').hide();
+            $('#page-network_type-button-skip').show();
+        } else {
+            $('section#page-network_type input[type=radio][name=network_type]').prop('disabled', false);
+            $('#page-network_type-access_from_lan').hide();
+            $('#page-network_type-button-skip').hide();
+            $('#page-network_type-button-continue').show();
+        }
     });
 
     $('section#page-network_type').bind('onHide', function () {
@@ -470,6 +482,11 @@ $(document).ready(function () {
         } else {
             change_page_to_ethernet_connection();
         }
+    });
+
+    $('section#page-network_type #page-network_type-button-skip').click(function (e) {
+        e.preventDefault();
+        change_page_to_software_update();
     });
 
     // ==== page-ethernet_connection ===================================================================================
@@ -1340,6 +1357,10 @@ function onGetStatusJson(data) {
                 // }
             }
         }
+    }
+    g_flagAccessFromLAN = data.hasOwnProperty('lan') && (data["lan"] === 1);
+    if (window.location.hash === '#page-welcome') {
+        $('#page-welcome-button-get-started').removeClass("disable-click");
     }
 }
 
