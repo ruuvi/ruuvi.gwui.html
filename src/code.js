@@ -914,9 +914,11 @@ $(document).ready(function () {
                 $(this).hide();
             if (lang === 'en') {
                 $('input#pwd').attr('placeholder', "Password");
+                $('input#mqtt_pass').attr('placeholder', "Password");
                 $('input#mqtt_client_id').attr('placeholder', "MAC-address is used if empty");
             } else if (lang === 'fi') {
                 $('input#pwd').attr('placeholder', "Salasana");
+                $('input#mqtt_pass').attr('placeholder', "Salasana");
                 $('input#mqtt_client_id').attr('placeholder', "MAC-osoitetta käytetään, jos se on tyhjä");
             }
         })
