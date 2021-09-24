@@ -715,7 +715,6 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         elif self.path == '/connect.json':
             g_timestamp = None
             g_simulation_mode = SIMULATION_MODE_USER_DISCONNECT
-            g_saved_ssid = None
 
             content = '{}'
             content_encoded = content.encode('utf-8')
