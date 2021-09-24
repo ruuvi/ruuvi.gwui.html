@@ -1184,11 +1184,8 @@ function refreshAPHTML(data) {
             }
             $('#manual_ssid').val(selected_wifi_ssid);
         } else {
-            flagUseSavedWiFiPassword = false;
             $('#input_password_block').hide();
         }
-    } else {
-        flagUseSavedWiFiPassword = false;
     }
     if (is_manual_wifi) {
         updatePositionOfWiFiPasswordInput($('#page-wifi_connection-ssid_password-wrap'));
