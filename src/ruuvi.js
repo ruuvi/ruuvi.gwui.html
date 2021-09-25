@@ -119,7 +119,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
             }
         }
 
-        data.use_filtering = ($("input[name='filtering']:checked").val() === "1");
+        data.use_filtering = ($("input[name='filtering']:checked").val() !== "0");
 
         data.use_coded_phy = $("#use_coded_phy")[0].checked;
         data.use_1mbit_phy = $("#use_1mbit_phy")[0].checked;
@@ -336,6 +336,8 @@ function get_config() {
             let http_url = "";
             let mqtt_prefix = "";
             let mqtt_client_id = "";
+            let use_filtering = false;
+            let use_coded_phy = false;
             const keys = Object.keys(data);
             for (let idx in keys) {
                 let key = keys[idx];
@@ -469,8 +471,7 @@ function get_config() {
                         $("#coordinates").val(key_value);
                         break;
                     case "use_filtering": {
-                        let value = key_value ? "1" : "0";
-                        $(`input:radio[name='filtering'][value='${value}']`).prop('checked', true);
+                        use_filtering = key_value;
                         break;
                     }
                     case "company_id":
@@ -479,7 +480,7 @@ function get_config() {
                         gw_mac = key_value;
                         break;
                     case "use_coded_phy":
-                        $("#use_coded_phy")[0].checked = key_value;
+                        use_coded_phy = key_value;
                         break;
                     case "use_1mbit_phy":
                         $("#use_1mbit_phy")[0].checked = key_value;
@@ -508,13 +509,30 @@ function get_config() {
                 $("#network_type_cable")[0].checked = false;
                 $("#network_type_wifi")[0].checked = true;
             }
-            let flag_use_ruuvi_server = !use_mqtt && (!use_http || (use_http && (http_url === "https://network.ruuvi.com/record")));
-            if (flag_use_ruuvi_server) {
+            let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
+                (!use_http || (use_http && (http_url === "https://network.ruuvi.com/record"))) &&
+                (use_filtering && !use_coded_phy);
+            if (flag_use_ruuvi_cloud_with_default_options) {
                 $("#use_custom")[0].checked = false;
                 $("#use_ruuvi")[0].checked = true;
             } else {
                 $("#use_ruuvi")[0].checked = false;
                 $("#use_custom")[0].checked = true;
+            }
+            $("#use_coded_phy")[0].checked = use_coded_phy;
+            if (!use_filtering) {
+                $(`input:radio[name='filtering'][value='0']`).prop('checked', true);
+            } else {
+                if (use_coded_phy) {
+                    $(`input:radio[name='filtering'][value='2']`).prop('checked', true);
+                } else {
+                    $(`input:radio[name='filtering'][value='1']`).prop('checked', true);
+                }
+                $("#use_1mbit_phy")[0].checked = true;
+                $("#use_extended_payload")[0].checked = true;
+                $("#use_channel_37")[0].checked = true;
+                $("#use_channel_38")[0].checked = true;
+                $("#use_channel_39")[0].checked = true;
             }
             if (!mqtt_prefix) {
                 $('#use_mqtt_prefix_ruuvi').prop('checked', true);
