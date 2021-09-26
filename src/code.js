@@ -226,12 +226,12 @@ function on_custom_connection_type_changed() {
         custom_connection_type = $("input[name='custom_connection']:checked").val();
     }
     if (custom_connection_type === 'use_http') {
-        $('#conf-settings-http').slideDown();
-        $('#conf-settings-mqtt').slideUp();
+        $('#conf-settings-mqtt').addClass('hidden');
+        $('#conf-settings-http').removeClass('hidden');
     }
     if (custom_connection_type === 'use_mqtt') {
-        $('#conf-settings-mqtt').slideDown();
-        $('#conf-settings-http').slideUp();
+        $('#conf-settings-http').addClass('hidden');
+        $('#conf-settings-mqtt').removeClass('hidden');
     }
 }
 
@@ -262,6 +262,31 @@ function on_lan_auth_user_pass_changed() {
     } else {
         $("#page-lan_auth_type-button-continue").removeClass("disable-click");
     }
+}
+
+function on_cloud_options_connection_type_changed() {
+    let connection_type = $("input[name='connection_type']:checked").val();
+    let h = "";
+    h += '<ul class="progressbar">';
+    if (connection_type === 'ruuvi') {
+        for (let i = 0; i < 6; ++i) {
+            h += '<li class="active"></li>';
+        }
+        h += '<li></li>';
+        $(`input:radio[name='custom_connection'][value='use_http']`).prop('checked', true);
+        $(`input:radio[name='filtering'][value='1']`).prop('checked', true);
+        on_settings_scan_filtering_changed();
+    } else {
+        for (let i = 0; i < 6; ++i) {
+            h += '<li class="active"></li>';
+        }
+        for (let i = 6; i < 9; ++i) {
+            h += '<li></li>';
+        }
+    }
+    h += '</ul>';
+    h += '\n';
+    $('section#page-cloud_options div.progressbar-container').html(h);
 }
 
 function on_settings_scan_filtering_changed() {
@@ -701,6 +726,23 @@ $(document).ready(function () {
 
     // ==== page-update_schedule =======================================================================================
     $('section#page-update_schedule').bind('onShow', function () {
+        $('#page-update_schedule div.btn-dropdown-arrow-up').hide();
+        $('#page-update_schedule div.btn-dropdown-arrow-down').show();
+        let auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
+        if (auto_update_cycle !== 'auto_update_cycle-regular' ||
+            !$("#conf-auto_update_schedule-button-sunday").prop('checked') ||
+            !$("#conf-auto_update_schedule-button-monday").prop('checked') ||
+            !$("#conf-auto_update_schedule-button-tuesday").prop('checked') ||
+            !$("#conf-auto_update_schedule-button-wednesday").prop('checked') ||
+            !$("#conf-auto_update_schedule-button-thursday").prop('checked') ||
+            !$("#conf-auto_update_schedule-button-friday").prop('checked') ||
+            !$("#conf-auto_update_schedule-button-saturday").prop('checked') ||
+            $("#conf-auto_update_schedule-period_from").val() !== '0' ||
+            $("#conf-auto_update_schedule-period_to").val() !== '24') {
+            clickOnDropDown('#page-update_schedule-advanced-button');
+        } else {
+            $('#page-update_schedule-advanced-dropdown').fadeOut();
+        }
         on_auto_update_cycle_changed();
         on_edit_automatic_update_settings();
     });
@@ -768,37 +810,28 @@ $(document).ready(function () {
 
     // ==== page-cloud_options =========================================================================================
     $('section#page-cloud_options').bind('onShow', function () {
-        $('section#page-cloud_options input[type=radio][name=connection_type]').trigger('change');
+        $('#page-cloud_options div.btn-dropdown-arrow-up').hide();
+        $('#page-cloud_options div.btn-dropdown-arrow-down').show();
+        let connection_type = $("input[name='connection_type']:checked").val();
+        if (connection_type !== 'ruuvi') {
+            clickOnDropDown('#page-cloud_options-advanced-button');
+        } else {
+            $('#page-cloud_options-advanced-dropdown').fadeOut();
+        }
+        on_cloud_options_connection_type_changed();
     });
 
     $('section#page-cloud_options input[type=radio][name=connection_type]').change(function () {
-        let connection_type = $("input[name='connection_type']:checked").val();
-        let h = "";
-        h += '<ul class="progressbar">';
-        if (connection_type === 'ruuvi') {
-            for (let i = 0; i < 6; ++i) {
-                h += '<li class="active"></li>';
-            }
-            h += '<li></li>';
-        } else {
-            for (let i = 0; i < 6; ++i) {
-                h += '<li class="active"></li>';
-            }
-            for (let i = 6; i < 9; ++i) {
-                h += '<li></li>';
-            }
-        }
-        h += '</ul>';
-        h += '\n';
-        $('section#page-cloud_options div.progressbar-container').html(h);
+        on_cloud_options_connection_type_changed();
     });
 
     $('section#page-cloud_options #page-cloud_options-advanced-button').click(function (e) {
         let id = $(this).attr('id');
         let base_id = id.substring(0, id.lastIndexOf('-'));
         let arrow_up_id = '#' + base_id + '-button div.btn-dropdown-arrow-up';
-        if ($(arrow_up_id).is(":hidden")) {
+        if (!$(arrow_up_id).is(":hidden")) {
             $("#use_ruuvi")[0].checked = true;
+            $(`input:radio[name='custom_connection'][value='use_http']`).prop('checked', true);
         }
     });
 
@@ -817,6 +850,11 @@ $(document).ready(function () {
     // ==== page-custom_server =========================================================================================
     $('section#page-custom_server').bind('onShow', function () {
         on_custom_connection_type_changed();
+    });
+
+    $('section#page-custom_server').bind('onHide', function () {
+        $("#conf-settings-http").addClass('hidden');
+        $("#conf-settings-mqtt").addClass('hidden');
     });
 
     $("section#page-custom_server input[name='custom_connection']").change(function (e) {
@@ -863,6 +901,15 @@ $(document).ready(function () {
 
     // ==== page-scanning ==============================================================================================
     $('section#page-scanning').bind('onShow', function () {
+        $('#page-scanning-advanced-button div.btn-dropdown-arrow-up').hide();
+        $('#page-scanning-advanced-button div.btn-dropdown-arrow-down').show();
+
+        let filtering = $("input[name='filtering']:checked").val();
+        if (filtering !== '1') {
+            clickOnDropDown('#page-scanning-advanced-button');
+        } else {
+            $('#page-scanning-advanced-dropdown').fadeOut();
+        }
         on_settings_scan_filtering_changed();
     });
 
@@ -884,19 +931,23 @@ $(document).ready(function () {
 
     // =================================================================================================================
 
-    $('.btn-dropdown').click(function (e) {
-        let id = $(this).attr('id');
+    function clickOnDropDown(id) {
         let base_id = id.substring(0, id.lastIndexOf('-'));
-        let dropdown_id = '#' + base_id + '-dropdown';
-        if ($(this).children('div.btn-dropdown-arrow-down').is(":hidden")) {
-            $(this).children('div.btn-dropdown-arrow-up').hide();
-            $(this).children('div.btn-dropdown-arrow-down').show();
+        let dropdown_id = base_id + '-dropdown';
+        if ($(id).children('div.btn-dropdown-arrow-down').is(":hidden")) {
+            $(id).children('div.btn-dropdown-arrow-up').hide();
+            $(id).children('div.btn-dropdown-arrow-down').show();
             $(dropdown_id).fadeOut();
         } else {
-            $(this).children('div.btn-dropdown-arrow-down').hide();
-            $(this).children('div.btn-dropdown-arrow-up').show();
+            $(id).children('div.btn-dropdown-arrow-down').hide();
+            $(id).children('div.btn-dropdown-arrow-up').show();
             $(dropdown_id).fadeIn();
         }
+    }
+
+    $('.btn-dropdown').click(function (e) {
+        let id = $(this).attr('id');
+        clickOnDropDown('#' + id);
     });
 
     $('.btn-back').click(function (e) {

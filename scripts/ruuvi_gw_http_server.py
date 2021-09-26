@@ -23,6 +23,10 @@ import base64
 from enum import Enum
 from typing import Optional, Dict
 
+GET_AP_JSON_TIMEOUT = 3.0
+NETWORK_CONNECTION_TIMEOUT = 3.0
+GET_LATEST_RELEASE_TIMEOUT = 10.0
+
 LAN_AUTH_TYPE_DENY = 'lan_auth_deny'
 LAN_AUTH_TYPE_RUUVI = 'lan_auth_ruuvi'
 LAN_AUTH_TYPE_DIGEST = 'lan_auth_digest'
@@ -78,7 +82,7 @@ g_ruuvi_dict = {
     'mqtt_port': 0,
     'mqtt_prefix': '',
     'mqtt_user': '',
-    'use_http': False,
+    'use_http': True,
     'http_url': 'https://network.ruuvi.com/record',
     'http_user': '',
     'lan_auth_type': LAN_AUTH_TYPE_DENY,
@@ -1080,7 +1084,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     g_auto_toggle_cnt = 0
                 print(f'Resp: {content}')
                 resp += content.encode('utf-8')
-                time.sleep(3.0)
+                time.sleep(GET_AP_JSON_TIMEOUT)
                 self.wfile.write(resp)
             elif self.path == '/status.json':
                 global g_flag_access_from_lan
@@ -1133,7 +1137,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
             elif self.path == '/github_latest_release.json':
                 content = g_content_github_latest_release
-                time.sleep(10.0)
+                time.sleep(GET_LATEST_RELEASE_TIMEOUT)
                 resp = b''
                 resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
                 resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
@@ -1327,7 +1331,7 @@ def handle_wifi_connect():
     global g_timestamp
     while True:
         if g_timestamp is not None:
-            if (time.time() - g_timestamp) > 3:
+            if (time.time() - g_timestamp) > NETWORK_CONNECTION_TIMEOUT:
                 if g_ssid is None:
                     print(f'Set simulation mode: ETH_CONNECTED')
                     g_simulation_mode = SIMULATION_MODE_ETH_CONNECTED
