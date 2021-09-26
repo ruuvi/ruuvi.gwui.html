@@ -28,10 +28,11 @@ function get_mqtt_topic_prefix() {
         mqtt_topic += gw_mac;
     }
     if ($('#use_mqtt_prefix_custom').prop('checked')) {
-        if (mqtt_topic.length > 0) {
+        let mqtt_prefix_custom = $("#mqtt_prefix_custom").val();
+        if (mqtt_topic.length > 0 && mqtt_prefix_custom.length > 0) {
             mqtt_topic += '/';
         }
-        mqtt_topic += $("#mqtt_prefix").val();
+        mqtt_topic += mqtt_prefix_custom;
     }
     return mqtt_topic;
 }
@@ -80,7 +81,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
             mqtt_port = 0;
         }
         data.mqtt_port = mqtt_port;
-        data.mqtt_prefix = $("#mqtt_prefix").val();
+        data.mqtt_prefix = get_mqtt_topic_prefix();
         data.mqtt_client_id = $("#mqtt_client_id").val();
         if (!data.mqtt_client_id) {
             data.mqtt_client_id = gw_mac;
@@ -202,33 +203,23 @@ function save_network_config(cb_on_success, cb_on_error) {
 }
 
 function on_edit_mqtt_settings() {
-    let mqtt_topic = get_mqtt_topic_prefix();
-    if (mqtt_topic.length > 0) {
-        mqtt_topic += '/';
-    } else {
-        $('#use_mqtt_prefix_ruuvi').prop('checked', true);
-        mqtt_topic = get_mqtt_topic_prefix();
-        mqtt_topic += '/';
-    }
-    mqtt_topic += '<SENSOR_MAC_ADDRESS>';
-
     let mqtt_use_prefix_ruuvi = $('#use_mqtt_prefix_ruuvi').prop('checked');
     let mqtt_use_prefix_gw_mac = $('#use_mqtt_prefix_gw_mac').prop('checked');
     let mqtt_use_prefix_custom = $('#use_mqtt_prefix_custom').prop('checked');
+    let mqtt_prefix_custom = $("#mqtt_prefix_custom").val();
+
+    let mqtt_prefix = get_mqtt_topic_prefix();
+    if (mqtt_prefix.length > 0) {
+        mqtt_prefix += '/';
+    }
+    mqtt_prefix += '<SENSOR_MAC_ADDRESS>';
 
     let mqtt_host = $('#mqtt_server').val();
     let mqtt_port = $('#mqtt_port').val();
     let mqtt_user = $('#mqtt_user').val();
     let mqtt_pass = $('#mqtt_pass').val();
-    if (mqtt_use_prefix_custom) {
-        mqtt_topic = $("#mqtt_prefix").val();
-        $("#mqtt_prefix").prop("disabled", false);
-    } else {
-        $("#mqtt_prefix").val(mqtt_topic);
-        $("#mqtt_prefix").prop("disabled", true);
-    }
+    $("#mqtt_prefix").text(mqtt_prefix);
 
-    let mqtt_prefix = $("#mqtt_prefix").val();
 
     let mosquitto_sub_cmd = `mosquitto_sub -h ${mqtt_host} -p ${mqtt_port}`;
     if (mqtt_user) {
@@ -248,11 +239,11 @@ function on_edit_mqtt_settings() {
             }
             mqtt_example1 += gw_mac;
         }
-        if (mqtt_use_prefix_custom) {
+        if (mqtt_use_prefix_custom && mqtt_prefix_custom) {
             if (mqtt_example1) {
                 mqtt_example1 += '/';
             }
-            mqtt_example1 += mqtt_prefix;
+            mqtt_example1 += mqtt_prefix_custom;
         }
         mqtt_example1 += '/gw_status';
         mqtt_example1 = `"${mqtt_example1}"`;
@@ -267,7 +258,7 @@ function on_edit_mqtt_settings() {
             }
             mqtt_example2 += '+';
         }
-        if (mqtt_use_prefix_custom) {
+        if (mqtt_use_prefix_custom && mqtt_prefix_custom) {
             if (mqtt_example2) {
                 mqtt_example2 += '/';
             }
@@ -286,7 +277,7 @@ function on_edit_mqtt_settings() {
             }
             mqtt_example3 += '+';
         }
-        if (mqtt_use_prefix_custom) {
+        if (mqtt_use_prefix_custom && mqtt_prefix_custom) {
             if (mqtt_example3) {
                 mqtt_example3 += '/';
             }
@@ -305,11 +296,11 @@ function on_edit_mqtt_settings() {
             }
             mqtt_example4 += `${gw_mac}`;
         }
-        if (mqtt_use_prefix_custom) {
+        if (mqtt_use_prefix_custom && mqtt_prefix_custom) {
             if (mqtt_example4) {
                 mqtt_example4 += '/';
             }
-            mqtt_example4 += `${mqtt_prefix}`;
+            mqtt_example4 += `${mqtt_prefix_custom}`;
         }
         mqtt_example4 += '/#';
         mqtt_example4 = `"${mqtt_example4}"`;
@@ -535,8 +526,8 @@ function get_config() {
                 $("#use_channel_39")[0].checked = true;
             }
             if (!mqtt_prefix) {
-                $('#use_mqtt_prefix_ruuvi').prop('checked', true);
-                $('#use_mqtt_prefix_gw_mac').prop('checked', true);
+                $('#use_mqtt_prefix_ruuvi').prop('checked', false);
+                $('#use_mqtt_prefix_gw_mac').prop('checked', false);
                 $('#use_mqtt_prefix_custom').prop('checked', false);
             } else {
                 let start_idx = 0;
@@ -563,7 +554,7 @@ function get_config() {
                     $('#use_mqtt_prefix_gw_mac').prop('checked', false);
                 }
                 mqtt_topic = mqtt_topic.substr(start_idx);
-                $("#mqtt_prefix").val(mqtt_topic);
+                $("#mqtt_prefix_custom").val(mqtt_topic);
                 if (mqtt_topic.length > 0) {
                     $('#use_mqtt_prefix_custom').prop('checked', true);
                 } else {
