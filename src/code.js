@@ -850,6 +850,11 @@ $(document).ready(function () {
     // ==== page-custom_server =========================================================================================
     $('section#page-custom_server').bind('onShow', function () {
         on_custom_connection_type_changed();
+        if ($('#use_mqtt_prefix_custom').prop('checked')) {
+            $('#mqtt_prefix_custom').removeClass('hidden');
+        } else {
+            $('#mqtt_prefix_custom').addClass('hidden');
+        }
     });
 
     $('section#page-custom_server').bind('onHide', function () {
@@ -880,9 +885,14 @@ $(document).ready(function () {
         on_edit_mqtt_settings();
     });
     $('#use_mqtt_prefix_custom').change(function () {
+        if ($('#use_mqtt_prefix_custom').prop('checked')) {
+            $('#mqtt_prefix_custom').removeClass('hidden');
+        } else {
+            $('#mqtt_prefix_custom').addClass('hidden');
+        }
         on_edit_mqtt_settings();
     });
-    $('#mqtt_prefix').on("input", function () {
+    $('#mqtt_prefix_custom').on("input", function () {
         on_edit_mqtt_settings();
     });
 
