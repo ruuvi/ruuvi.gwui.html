@@ -220,18 +220,15 @@ function on_show_software_update() {
 }
 
 function on_custom_connection_type_changed() {
-    let custom_connection_type = $("input[name='custom_connection']:checked").val();
-    if (custom_connection_type === undefined) {
-        $(`input:radio[name='custom_connection'][value='use_http']`).prop('checked', true);
-        custom_connection_type = $("input[name='custom_connection']:checked").val();
-    }
-    if (custom_connection_type === 'use_http') {
-        $('#conf-settings-mqtt').addClass('hidden');
+    if ($("#use_http")[0].checked) {
         $('#conf-settings-http').removeClass('hidden');
-    }
-    if (custom_connection_type === 'use_mqtt') {
+    } else {
         $('#conf-settings-http').addClass('hidden');
+    }
+    if ($("#use_mqtt")[0].checked) {
         $('#conf-settings-mqtt').removeClass('hidden');
+    } else {
+        $('#conf-settings-mqtt').addClass('hidden');
     }
 }
 
@@ -273,7 +270,8 @@ function on_cloud_options_connection_type_changed() {
             h += '<li class="active"></li>';
         }
         h += '<li></li>';
-        $(`input:radio[name='custom_connection'][value='use_http']`).prop('checked', true);
+        $('#use_http').prop('checked', true);
+        $('#use_mqtt').prop('checked', false);
         $(`input:radio[name='filtering'][value='1']`).prop('checked', true);
         on_settings_scan_filtering_changed();
     } else {
@@ -831,7 +829,8 @@ $(document).ready(function () {
         let arrow_up_id = '#' + base_id + '-button div.btn-dropdown-arrow-up';
         if (!$(arrow_up_id).is(":hidden")) {
             $("#use_ruuvi")[0].checked = true;
-            $(`input:radio[name='custom_connection'][value='use_http']`).prop('checked', true);
+            $('#use_http').prop('checked', true);
+            $('#use_mqtt').prop('checked', false);
         }
     });
 
@@ -862,7 +861,11 @@ $(document).ready(function () {
         $("#conf-settings-mqtt").addClass('hidden');
     });
 
-    $("section#page-custom_server input[name='custom_connection']").change(function (e) {
+    $("section#page-custom_server input#use_http").change(function (e) {
+        on_custom_connection_type_changed();
+    });
+
+    $("section#page-custom_server input#use_mqtt").change(function (e) {
         on_custom_connection_type_changed();
     });
 

@@ -53,11 +53,8 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
     }
 
     console.log("save_config");
-    let custom_conn = $("input[name='custom_connection']:checked").val();
     let network_type = $("input[name='network_type']:checked").val();
     let auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
-
-    console.log(custom_conn);
 
     let data = {};
 
@@ -74,7 +71,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
             }
         }
     } else {
-        data.use_mqtt = (custom_conn === 'use_mqtt');
+        data.use_mqtt = $("#use_mqtt")[0].checked;
         data.mqtt_server = $("#mqtt_server").val();
         let mqtt_port = parseInt($("#mqtt_port").val())
         if (Number.isNaN(mqtt_port)) {
@@ -89,7 +86,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         data.mqtt_user = $("#mqtt_user").val();
         data.mqtt_pass = $("#mqtt_pass").val();
 
-        data.use_http = (custom_conn === 'use_http');
+        data.use_http = $("#use_http")[0].checked;
         data.http_url = $("#http_url").val();
         data.http_user = $("#http_user").val();
         data.http_pass = $("#http_pass").val();
@@ -343,7 +340,7 @@ function get_config() {
                         use_eth = key_value
                         break;
                     case "eth_dhcp":
-                        $("#eth_dhcp")[0].checked = key_value;
+                        $("#eth_dhcp").prop('checked', key_value);
                         break;
                     case "eth_static_ip":
                         $("#eth_static_ip").val(key_value);
@@ -361,7 +358,7 @@ function get_config() {
                         $("#eth_dns2").val(key_value);
                         break;
                     case "use_http":
-                        $("#use_http")[0].checked = key_value;
+                        $("#use_http").prop('checked', key_value);
                         use_http = key_value;
                         break;
                     case "http_url":
@@ -372,7 +369,7 @@ function get_config() {
                         $("#http_user").val(key_value);
                         break;
                     case "use_mqtt":
-                        $("#use_mqtt")[0].checked = key_value;
+                        $("#use_mqtt").prop('checked', key_value);
                         use_mqtt = key_value
                         break;
                     case "mqtt_server":
@@ -396,15 +393,15 @@ function get_config() {
                         break;
                     case "lan_auth_type":
                         if (key_value === LAN_AUTH_TYPE.DENY) {
-                            $("#lan_auth_type_deny")[0].checked = true;
+                            $("#lan_auth_type_deny").prop('checked', true);
                         } else if (key_value === LAN_AUTH_TYPE.RUUVI) {
-                            $("#lan_auth_type_ruuvi")[0].checked = true;
+                            $("#lan_auth_type_ruuvi").prop('checked', true);
                         } else if (key_value === LAN_AUTH_TYPE.DIGEST) {
-                            $("#lan_auth_type_digest")[0].checked = true;
+                            $("#lan_auth_type_digest").prop('checked', true);
                         } else if (key_value === LAN_AUTH_TYPE.BASIC) {
-                            $("#lan_auth_type_basic")[0].checked = true;
+                            $("#lan_auth_type_basic").prop('checked', true);
                         } else {
-                            $("#lan_auth_type_allow")[0].checked = true;
+                            $("#lan_auth_type_allow").prop('checked', true);
                         }
                         break;
                     case "lan_auth_user": {
@@ -425,13 +422,13 @@ function get_config() {
                     }
                     case "auto_update_cycle": {
                         if (key_value === AUTO_UPDATE_CYCLE_TYPE.REGULAR) {
-                            $("#auto_update_cycle-regular")[0].checked = true;
+                            $("#auto_update_cycle-regular").prop('checked', true);
                         } else if (key_value === AUTO_UPDATE_CYCLE_TYPE.BETA_TESTER) {
-                            $("#auto_update_cycle-beta")[0].checked = true;
+                            $("#auto_update_cycle-beta").prop('checked', true);
                         } else if (key_value === AUTO_UPDATE_CYCLE_TYPE.MANUAL) {
-                            $("#auto_update_cycle-manual")[0].checked = true;
+                            $("#auto_update_cycle-manual").prop('checked', true);
                         } else {
-                            $("#auto_update_cycle-regular")[0].checked = true;
+                            $("#auto_update_cycle-regular").prop('checked', true);
                         }
                         break;
                     }
@@ -474,19 +471,19 @@ function get_config() {
                         use_coded_phy = key_value;
                         break;
                     case "use_1mbit_phy":
-                        $("#use_1mbit_phy")[0].checked = key_value;
+                        $("#use_1mbit_phy").prop('checked', key_value);
                         break;
                     case "use_extended_payload":
-                        $("#use_extended_payload")[0].checked = key_value;
+                        $("#use_extended_payload").prop('checked', key_value);
                         break;
                     case "use_channel_37":
-                        $("#use_channel_37")[0].checked = key_value;
+                        $("#use_channel_37").prop('checked', key_value);
                         break;
                     case "use_channel_38":
-                        $("#use_channel_38")[0].checked = key_value;
+                        $("#use_channel_38").prop('checked', key_value);
                         break;
                     case "use_channel_39":
-                        $("#use_channel_39")[0].checked = key_value;
+                        $("#use_channel_39").prop('checked', key_value);
                         break;
                     default:
                         alert('get_config: unhandled key: ' + key);
@@ -494,23 +491,23 @@ function get_config() {
                 }
             }
             if (use_eth) {
-                $("#network_type_wifi")[0].checked = false;
-                $("#network_type_cable")[0].checked = true;
+                $("#network_type_wifi").prop('checked', false);
+                $("#network_type_cable").prop('checked', true);
             } else {
-                $("#network_type_cable")[0].checked = false;
-                $("#network_type_wifi")[0].checked = true;
+                $("#network_type_cable").prop('checked', false);
+                $("#network_type_wifi").prop('checked', true);
             }
             let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
-                (!use_http || (use_http && (http_url === "https://network.ruuvi.com/record"))) &&
+                (use_http && (http_url === "https://network.ruuvi.com/record")) &&
                 (use_filtering && !use_coded_phy);
             if (flag_use_ruuvi_cloud_with_default_options) {
-                $("#use_custom")[0].checked = false;
-                $("#use_ruuvi")[0].checked = true;
+                $("#use_custom").prop('checked', false);
+                $("#use_ruuvi").prop('checked', true);
             } else {
-                $("#use_ruuvi")[0].checked = false;
-                $("#use_custom")[0].checked = true;
+                $("#use_ruuvi").prop('checked', false);
+                $("#use_custom").prop('checked', true);
             }
-            $("#use_coded_phy")[0].checked = use_coded_phy;
+            $("#use_coded_phy").prop('checked', use_coded_phy);
             if (!use_filtering) {
                 $(`input:radio[name='filtering'][value='0']`).prop('checked', true);
             } else {
@@ -519,11 +516,11 @@ function get_config() {
                 } else {
                     $(`input:radio[name='filtering'][value='1']`).prop('checked', true);
                 }
-                $("#use_1mbit_phy")[0].checked = true;
-                $("#use_extended_payload")[0].checked = true;
-                $("#use_channel_37")[0].checked = true;
-                $("#use_channel_38")[0].checked = true;
-                $("#use_channel_39")[0].checked = true;
+                $("#use_1mbit_phy").prop('checked', true);
+                $("#use_extended_payload").prop('checked', true);
+                $("#use_channel_37").prop('checked', true);
+                $("#use_channel_38").prop('checked', true);
+                $("#use_channel_39").prop('checked', true);
             }
             if (!mqtt_prefix) {
                 $('#use_mqtt_prefix_ruuvi').prop('checked', false);
