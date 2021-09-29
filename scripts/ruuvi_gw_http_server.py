@@ -78,6 +78,7 @@ g_ruuvi_dict = {
     'eth_dns1': "",
     'eth_dns2': "",
     'use_mqtt': False,
+    'mqtt_transport': 'TCP',
     'mqtt_server': '',
     'mqtt_port': 0,
     'mqtt_prefix': '',

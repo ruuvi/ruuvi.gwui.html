@@ -1126,6 +1126,39 @@
 			</label>
 			<div>&nbsp;</div>
 			<div id="conf-settings-mqtt" class="indent hidden">
+
+				<label class="font-bold">
+					<span lang="en">MQTT transport type</span>
+					<span lang="fi">MQTT-kuljetustyyppi</span>
+				</label>
+				<label class="control control-radio">
+					<span lang="en">MQTT over unencrypted TCP</span>
+					<span lang="fi">MQTT salaamattoman TCP kautta</span>
+					<input id="mqtt_transport_TCP" name="mqtt_transport" type="radio" value="mqtt_transport_TCP"
+						   checked="checked"/>
+					<span class="control_indicator"></span>
+				</label>
+				<label class="control control-radio">
+					<span lang="en">MQTT over SSL</span>
+					<span lang="fi">MQTT SSL kautta</span>
+					<input id="mqtt_transport_SSL" name="mqtt_transport" type="radio" value="mqtt_transport_SSL"/>
+					<span class="control_indicator"></span>
+				</label>
+				<label class="control control-radio">
+					<span lang="en">MQTT over Websocket</span>
+					<span lang="fi">MQTT Websocketin kautta</span>
+					<input id="mqtt_transport_WS" name="mqtt_transport" type="radio" value="mqtt_transport_WS"/>
+					<span class="control_indicator"></span>
+				</label>
+				<label class="control control-radio">
+					<span lang="en">MQTT over Secure Websocket</span>
+					<span lang="fi">MQTT Secure Websocketin kautta</span>
+					<input id="mqtt_transport_WSS" name="mqtt_transport" type="radio" value="mqtt_transport_WSS"/>
+					<span class="control_indicator"></span>
+				</label>
+
+				<div class="border-hidden"></div>
+
 				<label class="font-bold">
 					<span lang="en">Server</span>
 					<span lang="fi">Palvelin</span>
@@ -1136,6 +1169,7 @@
 					<span lang="fi">Portti</span>
 					<input id="mqtt_port" type="text" placeholder="" value="1883">
 				</label>
+
 				<label class="font-bold">
 					<span lang="en">User name</span>
 					<span lang="fi">Käyttäjänimi</span>
