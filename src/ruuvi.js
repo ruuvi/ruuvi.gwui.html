@@ -10,6 +10,13 @@ const LAN_AUTH_TYPE = Object.freeze({
     'ALLOW': 'lan_auth_allow'
 });
 
+const MQTT_TRANSPORT_TYPE = Object.freeze({
+    'TCP': 'TCP',
+    'SSL': 'SSL',
+    'WS': 'WS',
+    'WSS': 'WSS',
+});
+
 const AUTO_UPDATE_CYCLE_TYPE = Object.freeze({
     'REGULAR': 'regular',
     'BETA_TESTER': 'beta',
@@ -72,6 +79,20 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         }
     } else {
         data.use_mqtt = $("#use_mqtt")[0].checked;
+
+        let mqtt_transport = $("input[name='mqtt_transport']:checked").val();
+        if (mqtt_transport === "mqtt_transport_TCP") {
+            data.mqtt_transport = MQTT_TRANSPORT_TYPE.TCP;
+        } else if (mqtt_transport === "mqtt_transport_SSL") {
+            data.mqtt_transport = MQTT_TRANSPORT_TYPE.SSL;
+        } else if (mqtt_transport === "mqtt_transport_WS") {
+            data.mqtt_transport = MQTT_TRANSPORT_TYPE.WS;
+        } else if (mqtt_transport === "mqtt_transport_WSS") {
+            data.mqtt_transport = MQTT_TRANSPORT_TYPE.WSS;
+        } else {
+            data.mqtt_transport = MQTT_TRANSPORT_TYPE.TCP;
+        }
+
         data.mqtt_server = $("#mqtt_server").val();
         let mqtt_port = parseInt($("#mqtt_port").val())
         if (Number.isNaN(mqtt_port)) {
@@ -371,6 +392,17 @@ function get_config() {
                     case "use_mqtt":
                         $("#use_mqtt").prop('checked', key_value);
                         use_mqtt = key_value
+                        break;
+                    case "mqtt_transport":
+                        if (key_value === MQTT_TRANSPORT_TYPE.TCP) {
+                            $("#mqtt_transport_TCP").prop('checked', true);
+                        } else if (key_value === MQTT_TRANSPORT_TYPE.SSL) {
+                            $("#mqtt_transport_SSL").prop('checked', true);
+                        } else if (key_value === MQTT_TRANSPORT_TYPE.WS) {
+                            $("#mqtt_transport_WS").prop('checked', true);
+                        } else if (key_value === MQTT_TRANSPORT_TYPE.WSS) {
+                            $("#mqtt_transport_WSS").prop('checked', true);
+                        }
                         break;
                     case "mqtt_server":
                         if (key_value) {

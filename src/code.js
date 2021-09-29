@@ -869,6 +869,23 @@ $(document).ready(function () {
         on_custom_connection_type_changed();
     });
 
+    $('section#page-custom_server input[type=radio][name=mqtt_transport]').change(function () {
+        let mqtt_transport = $("input[name='mqtt_transport']:checked").val();
+        let default_port = 1883;
+        if (mqtt_transport === "mqtt_transport_TCP") {
+            default_port = 1883;
+        } else if (mqtt_transport === "mqtt_transport_SSL") {
+            default_port = 8883;
+        } else if (mqtt_transport === "mqtt_transport_WS") {
+            default_port = 8080;
+        } else if (mqtt_transport === "mqtt_transport_WSS") {
+            default_port = 8081;
+        }
+        if ($('#mqtt_server').val() === "test.mosquitto.org") {
+            $('#mqtt_port').val(default_port);
+        }
+    });
+
     $('#mqtt_server').on("input", function () {
         on_edit_mqtt_settings();
     });
