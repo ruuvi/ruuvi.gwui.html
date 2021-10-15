@@ -1265,6 +1265,50 @@
 				</div>
 			</div>
 
+			<label class="control control-checkbox">
+				<span lang="en">Allow sending statistics</span>
+				<span lang="fi">Salli tilastojen lähettäminen</span>
+				<input id="use_http_stat" type="checkbox">
+				<span class="control_indicator"></span>
+			</label>
+
+			<div class="border"></div>
+			<div id="page-custom_server-advanced-button" class="btn-dropdown">
+				<h2>
+					<span lang="en">Advanced settings</span>
+					<span lang="fi">Edistyneet asetukset</span>
+				</h2>
+				<div class="btn-dropdown-arrow-down"></div>
+				<div class="btn-dropdown-arrow-up hidden"></div>
+			</div>
+			<div class="border"></div>
+			<div>&nbsp;</div>
+
+			<div id="page-custom_server-advanced-dropdown" class="hidden">
+				<p>
+					<span lang="en">Configure your own HTTP-server to send statistics</span>
+					<span lang="fi">Määritä oma HTTP-palvelimesi lähettämään tilastoja</span>
+				</p>
+
+				<div id="conf-settings-http_stat" class="indent">
+					<label class="font-bold">
+						<span lang="en">HTTP-server for sending statistics</span>
+						<span lang="fi">HTTP-palvelin tilastojen lähettämiseen</span>
+						<input id="http_stat_url" type="text" placeholder="" value="">
+					</label>
+					<label class="font-bold">
+						<span lang="en">User name (optional)</span>
+						<span lang="fi">Käyttäjänimi (valinnainen)</span>
+						<input id="http_stat_user" type="text" placeholder="" value="">
+					</label>
+					<label class="font-bold">
+						<span lang="en">Password (optional)</span>
+						<span lang="fi">Salasana (valinnainen)</span>
+						<input id="http_stat_pass" type="password" placeholder="" value="">
+					</label>
+				</div>
+			</div>
+
 			<div class="button-container">
 				<a href="" id="page-custom_server-button-back" class="btn-back">
 					<span lang="en">Back</span>

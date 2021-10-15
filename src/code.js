@@ -737,9 +737,9 @@ $(document).ready(function () {
             !$("#conf-auto_update_schedule-button-saturday").prop('checked') ||
             $("#conf-auto_update_schedule-period_from").val() !== '0' ||
             $("#conf-auto_update_schedule-period_to").val() !== '24') {
-            clickOnDropDown('#page-update_schedule-advanced-button');
+            dropdownShow('#page-update_schedule-advanced-dropdown');
         } else {
-            $('#page-update_schedule-advanced-dropdown').fadeOut();
+            dropdownHide('#page-update_schedule-advanced-dropdown');
         }
         on_auto_update_cycle_changed();
         on_edit_automatic_update_settings();
@@ -812,9 +812,9 @@ $(document).ready(function () {
         $('#page-cloud_options div.btn-dropdown-arrow-down').show();
         let connection_type = $("input[name='connection_type']:checked").val();
         if (connection_type !== 'ruuvi') {
-            clickOnDropDown('#page-cloud_options-advanced-button');
+            dropdownShow('#page-cloud_options-advanced-dropdown');
         } else {
-            $('#page-cloud_options-advanced-dropdown').fadeOut();
+            dropdownHide('#page-cloud_options-advanced-dropdown');
         }
         on_cloud_options_connection_type_changed();
     });
@@ -854,6 +854,20 @@ $(document).ready(function () {
         } else {
             $('#mqtt_prefix_custom').addClass('hidden');
         }
+        if ($("#use_http_stat")[0].checked && $("#http_stat_url").val() !== "https://network.ruuvi.com/status") {
+            dropdownShow('#page-custom_server-advanced-button');
+        } else {
+            dropdownHide('#page-custom_server-advanced-button');
+        }
+        if ($("#use_http_stat")[0].checked) {
+            $('#http_stat_url').prop('disabled', false);
+            $('#http_stat_user').prop('disabled', false);
+            $('#http_stat_pass').prop('disabled', false);
+        } else {
+            $('#http_stat_url').prop('disabled', true);
+            $('#http_stat_user').prop('disabled', true);
+            $('#http_stat_pass').prop('disabled', true);
+        }
     });
 
     $('section#page-custom_server').bind('onHide', function () {
@@ -863,6 +877,18 @@ $(document).ready(function () {
 
     $("section#page-custom_server input#use_http").change(function (e) {
         on_custom_connection_type_changed();
+    });
+
+    $("section#page-custom_server input#use_http_stat").change(function (e) {
+        if ($("#use_http_stat")[0].checked) {
+            $('#http_stat_url').prop('disabled', false);
+            $('#http_stat_user').prop('disabled', false);
+            $('#http_stat_pass').prop('disabled', false);
+        } else {
+            $('#http_stat_url').prop('disabled', true);
+            $('#http_stat_user').prop('disabled', true);
+            $('#http_stat_pass').prop('disabled', true);
+        }
     });
 
     $("section#page-custom_server input#use_mqtt").change(function (e) {
@@ -936,9 +962,9 @@ $(document).ready(function () {
 
         let filtering = $("input[name='filtering']:checked").val();
         if (filtering !== '1') {
-            clickOnDropDown('#page-scanning-advanced-button');
+            dropdownShow('#page-scanning-advanced-dropdown');
         } else {
-            $('#page-scanning-advanced-dropdown').fadeOut();
+            dropdownHide('#page-scanning-advanced-dropdown');
         }
         on_settings_scan_filtering_changed();
     });
@@ -961,17 +987,27 @@ $(document).ready(function () {
 
     // =================================================================================================================
 
-    function clickOnDropDown(id) {
+    function dropdownShow(id) {
         let base_id = id.substring(0, id.lastIndexOf('-'));
         let dropdown_id = base_id + '-dropdown';
+        $(id).children('div.btn-dropdown-arrow-down').hide();
+        $(id).children('div.btn-dropdown-arrow-up').show();
+        $(dropdown_id).fadeIn();
+    }
+
+    function dropdownHide(id) {
+        let base_id = id.substring(0, id.lastIndexOf('-'));
+        let dropdown_id = base_id + '-dropdown';
+        $(id).children('div.btn-dropdown-arrow-up').hide();
+        $(id).children('div.btn-dropdown-arrow-down').show();
+        $(dropdown_id).fadeOut();
+    }
+
+    function clickOnDropDown(id) {
         if ($(id).children('div.btn-dropdown-arrow-down').is(":hidden")) {
-            $(id).children('div.btn-dropdown-arrow-up').hide();
-            $(id).children('div.btn-dropdown-arrow-down').show();
-            $(dropdown_id).fadeOut();
+            dropdownHide(id);
         } else {
-            $(id).children('div.btn-dropdown-arrow-down').hide();
-            $(id).children('div.btn-dropdown-arrow-up').show();
-            $(dropdown_id).fadeIn();
+            dropdownShow(id);
         }
     }
 
