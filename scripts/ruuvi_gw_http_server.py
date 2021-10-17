@@ -86,6 +86,9 @@ g_ruuvi_dict = {
     'use_http': True,
     'http_url': 'https://network.ruuvi.com/record',
     'http_user': '',
+    'use_http_stat': True,
+    'http_stat_url': 'https://network.ruuvi.com/status',
+    'http_stat_user': '',
     'lan_auth_type': LAN_AUTH_TYPE_DENY,
     'lan_auth_user': '',
     'lan_auth_pass': hashlib.md5(f'{"username"}:{RUUVI_AUTH_REALM}:{"password"}'.encode('utf-8')).hexdigest(),
@@ -634,6 +637,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             new_dict = json.loads(post_data)
             for key, value in new_dict.items():
                 if key == 'http_pass':
+                    continue
+                if key == 'http_stat_pass':
                     continue
                 if key == 'mqtt_pass':
                     continue

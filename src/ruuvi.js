@@ -112,6 +112,11 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         data.http_user = $("#http_user").val();
         data.http_pass = $("#http_pass").val();
 
+        data.use_http_stat = $("#use_http_stat")[0].checked;
+        data.http_stat_url = $("#http_stat_url").val();
+        data.http_stat_user = $("#http_stat_user").val();
+        data.http_stat_pass = $("#http_stat_pass").val();
+
         if (g_flag_lan_auth_pass_changed) {
             data.lan_auth_type = $("input[name='lan_auth_type']:checked").val();
             let lan_auth_user = $("#lan_auth-user").val();
@@ -341,8 +346,10 @@ function get_config() {
         if (data != null) {
             let use_eth = false;
             let use_http = false;
-            let use_mqtt = false;
             let http_url = "";
+            let use_http_stat = false;
+            let http_stat_url = "";
+            let use_mqtt = false;
             let mqtt_prefix = "";
             let mqtt_client_id = "";
             let use_filtering = false;
@@ -388,6 +395,17 @@ function get_config() {
                         break;
                     case "http_user":
                         $("#http_user").val(key_value);
+                        break;
+                    case "use_http_stat":
+                        $("#use_http_stat").prop('checked', key_value);
+                        use_http_stat = key_value;
+                        break;
+                    case "http_stat_url":
+                        $("#http_stat_url").val(key_value);
+                        http_stat_url = key_value;
+                        break;
+                    case "http_stat_user":
+                        $("#http_stat_user").val(key_value);
                         break;
                     case "use_mqtt":
                         $("#use_mqtt").prop('checked', key_value);
@@ -531,6 +549,7 @@ function get_config() {
             }
             let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
                 (use_http && (http_url === "https://network.ruuvi.com/record")) &&
+                (use_http_stat && (http_stat_url === "https://network.ruuvi.com/status")) &&
                 (use_filtering && !use_coded_phy);
             if (flag_use_ruuvi_cloud_with_default_options) {
                 $("#use_custom").prop('checked', false);
