@@ -828,7 +828,6 @@ $(document).ready(function () {
         let base_id = id.substring(0, id.lastIndexOf('-'));
         let arrow_up_id = '#' + base_id + '-button div.btn-dropdown-arrow-up';
         if (!$(arrow_up_id).is(":hidden")) {
-            $("#use_ruuvi")[0].checked = true;
             $('#use_http').prop('checked', true);
             $('#use_mqtt').prop('checked', false);
         }
