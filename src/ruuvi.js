@@ -1,6 +1,6 @@
-let mqtt_pass_changed = false;
 let gw_mac = "";
 let g_flag_lan_auth_pass_changed = false;
+const MQTT_PREFIX_MAX_LENGTH = 256;
 
 const LAN_AUTH_TYPE = Object.freeze({
     'DENY': 'lan_auth_deny',
@@ -38,6 +38,14 @@ function get_mqtt_topic_prefix() {
         let mqtt_prefix_custom = $("#mqtt_prefix_custom").val();
         if (mqtt_topic.length > 0 && mqtt_prefix_custom.length > 0) {
             mqtt_topic += '/';
+        }
+        if (mqtt_topic.length + mqtt_prefix_custom.length >= MQTT_PREFIX_MAX_LENGTH) {
+            if (mqtt_topic.length >= MQTT_PREFIX_MAX_LENGTH) {
+                mqtt_prefix_custom = "";
+            } else {
+                mqtt_prefix_custom = mqtt_prefix_custom.substring(0, MQTT_PREFIX_MAX_LENGTH - mqtt_topic.length);
+            }
+            $("#mqtt_prefix_custom").val(mqtt_prefix_custom);
         }
         mqtt_topic += mqtt_prefix_custom;
     }
