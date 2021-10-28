@@ -34,20 +34,28 @@ function get_mqtt_topic_prefix() {
         }
         mqtt_topic += gw_mac;
     }
+    let flag_add_trailing_slash = mqtt_topic.length > 0;
     if ($('#use_mqtt_prefix_custom').prop('checked')) {
         let mqtt_prefix_custom = $("#mqtt_prefix_custom").val();
-        if (mqtt_topic.length > 0 && mqtt_prefix_custom.length > 0) {
-            mqtt_topic += '/';
-        }
-        if (mqtt_topic.length + mqtt_prefix_custom.length >= MQTT_PREFIX_MAX_LENGTH) {
-            if (mqtt_topic.length >= MQTT_PREFIX_MAX_LENGTH) {
-                mqtt_prefix_custom = "";
-            } else {
-                mqtt_prefix_custom = mqtt_prefix_custom.substring(0, MQTT_PREFIX_MAX_LENGTH - mqtt_topic.length);
+        if (mqtt_prefix_custom.length > 0) {
+            flag_add_trailing_slash = /[a-zA-Z0-9]/.test(mqtt_prefix_custom.slice(-1));
+            if (mqtt_topic.length > 0) {
+                mqtt_topic += '/';
             }
-            $("#mqtt_prefix_custom").val(mqtt_prefix_custom);
+            let suffix_len = flag_add_trailing_slash ? 1 : 0;
+            if ((mqtt_topic.length + mqtt_prefix_custom.length + suffix_len) >= MQTT_PREFIX_MAX_LENGTH) {
+                if (mqtt_topic.length >= MQTT_PREFIX_MAX_LENGTH) {
+                    mqtt_prefix_custom = "";
+                } else {
+                    mqtt_prefix_custom = mqtt_prefix_custom.substring(0, MQTT_PREFIX_MAX_LENGTH - mqtt_topic.length - suffix_len);
+                }
+                $("#mqtt_prefix_custom").val(mqtt_prefix_custom);
+            }
+            mqtt_topic += mqtt_prefix_custom;
         }
-        mqtt_topic += mqtt_prefix_custom;
+    }
+    if (flag_add_trailing_slash) {
+        mqtt_topic += '/';
     }
     return mqtt_topic;
 }
@@ -240,9 +248,6 @@ function on_edit_mqtt_settings() {
     let mqtt_prefix_custom = $("#mqtt_prefix_custom").val();
 
     let mqtt_prefix = get_mqtt_topic_prefix();
-    if (mqtt_prefix.length > 0) {
-        mqtt_prefix += '/';
-    }
     mqtt_prefix += '<SENSOR_MAC_ADDRESS>';
 
     let mqtt_host = $('#mqtt_server').val();
@@ -610,6 +615,15 @@ function get_config() {
                     $('#use_mqtt_prefix_gw_mac').prop('checked', false);
                 }
                 mqtt_topic = mqtt_topic.substr(start_idx);
+                if (mqtt_topic.length > 0) {
+                    if (mqtt_topic.slice(-1) === '/') {
+                        if (mqtt_topic.length > 1) {
+                            if (/[a-zA-Z0-9]/.test(mqtt_topic.slice(-2, -1))) {
+                                mqtt_topic = mqtt_topic.slice(0, -1);
+                            }
+                        }
+                    }
+                }
                 $("#mqtt_prefix_custom").val(mqtt_topic);
                 if (mqtt_topic.length > 0) {
                     $('#use_mqtt_prefix_custom').prop('checked', true);
