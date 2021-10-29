@@ -1368,6 +1368,13 @@ function onGetStatusJson(data) {
                 $("#ip").text(data["ip"]);
                 $("#netmask").text(data["netmask"]);
                 $("#gw").text(data["gw"]);
+                if (data.hasOwnProperty('dhcp') && data["dhcp"] !== "") {
+                    $("#dhcp").text(data["dhcp"]);
+                    $("#dhcp-block").show();
+                } else {
+                    $("#dhcp").text("");
+                    $("#dhcp-block").hide();
+                }
 
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
@@ -1393,6 +1400,8 @@ function onGetStatusJson(data) {
                 $("#ip").text('0.0.0.0');
                 $("#netmask").text('0.0.0.0');
                 $("#gw").text('0.0.0.0');
+                $("#dhcp").text("");
+                $("#dhcp-block").hide();
 
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
@@ -1416,6 +1425,13 @@ function onGetStatusJson(data) {
             $("#ip").text(data["ip"]);
             $("#netmask").text(data["netmask"]);
             $("#gw").text(data["gw"]);
+            if (data.hasOwnProperty('dhcp') && data["dhcp"] !== "") {
+                $("#dhcp").text(data["dhcp"]);
+                $("#dhcp-block").show();
+            } else {
+                $("#dhcp").text("");
+                $("#dhcp-block").hide();
+            }
             switch (connectionState) {
                 case CONNECTION_STATE.NOT_CONNECTED:
                 case CONNECTION_STATE.CONNECTING:
@@ -1444,6 +1460,13 @@ function onGetStatusJson(data) {
                 $("#ip").text(data["ip"]);
                 $("#netmask").text(data["netmask"]);
                 $("#gw").text(data["gw"]);
+                if (data.hasOwnProperty('dhcp') && data["dhcp"] !== "") {
+                    $("#dhcp").text(data["dhcp"]);
+                    $("#dhcp-block").show();
+                } else {
+                    $("#dhcp").text("");
+                    $("#dhcp-block").hide();
+                }
 
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
