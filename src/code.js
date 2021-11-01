@@ -17,6 +17,9 @@ let apList = null;
 let selectedSSID = "";
 let connectedSSID = "";
 let flagUseSavedWiFiPassword = false;
+let flagUseSavedHTTPPassword = false;
+let flagUseSavedHTTPStatPassword = false;
+let flagUseSavedMQTTPassword = false;
 let g_flagAccessFromLAN = false;
 let g_refreshAPActive = false;
 let g_refreshAPTimer = null;
@@ -878,6 +881,20 @@ $(document).ready(function () {
         on_custom_connection_type_changed();
     });
 
+    $('#http_pass').on("focus", function () {
+        if (flagUseSavedHTTPPassword) {
+            flagUseSavedHTTPPassword = false;
+            $('#http_pass').val("");
+        }
+    });
+
+    $('#http_stat_pass').on("focus", function () {
+        if (flagUseSavedHTTPStatPassword) {
+            flagUseSavedHTTPStatPassword = false;
+            $('#http_stat_pass').val("");
+        }
+    });
+
     $("section#page-custom_server input#use_http_stat").change(function (e) {
         if ($("#use_http_stat")[0].checked) {
             $('#http_stat_url').prop('disabled', false);
@@ -919,6 +936,12 @@ $(document).ready(function () {
     });
     $('#mqtt_user').on("input", function () {
         on_edit_mqtt_settings();
+    });
+    $('#mqtt_pass').on("focus", function () {
+        if (flagUseSavedMQTTPassword) {
+            flagUseSavedMQTTPassword = false;
+            $('#mqtt_pass').val("");
+        }
     });
     $('#mqtt_pass').on("input", function () {
         on_edit_mqtt_settings();

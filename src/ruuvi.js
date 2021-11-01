@@ -121,17 +121,23 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
             data.mqtt_client_id = gw_mac;
         }
         data.mqtt_user = $("#mqtt_user").val();
-        data.mqtt_pass = $("#mqtt_pass").val();
+        if (!flagUseSavedMQTTPassword) {
+            data.mqtt_pass = $("#mqtt_pass").val();
+        }
 
         data.use_http = $("#use_http")[0].checked;
         data.http_url = $("#http_url").val();
         data.http_user = $("#http_user").val();
-        data.http_pass = $("#http_pass").val();
+        if (!flagUseSavedHTTPPassword) {
+            data.http_pass = $("#http_pass").val();
+        }
 
         data.use_http_stat = $("#use_http_stat")[0].checked;
         data.http_stat_url = $("#http_stat_url").val();
         data.http_stat_user = $("#http_stat_user").val();
-        data.http_stat_pass = $("#http_stat_pass").val();
+        if (!flagUseSavedHTTPStatPassword) {
+            data.http_stat_pass = $("#http_stat_pass").val();
+        }
 
         if (g_flag_lan_auth_pass_changed) {
             data.lan_auth_type = $("input[name='lan_auth_type']:checked").val();
@@ -571,6 +577,19 @@ function get_config() {
                 $("#use_ruuvi").prop('checked', false);
                 $("#use_custom").prop('checked', true);
             }
+            if ($("#http_user").val()) {
+                flagUseSavedHTTPPassword = true;
+                $("#http_pass").val("********");
+            }
+            if ($("#http_stat_user").val()) {
+                flagUseSavedHTTPStatPassword = true;
+                $("#http_stat_pass").val("********");
+            }
+            if ($("#mqtt_user").val()) {
+                flagUseSavedMQTTPassword = true;
+                $("#mqtt_pass").val("********");
+            }
+
             $("#use_coded_phy").prop('checked', use_coded_phy);
             if (!use_filtering) {
                 $(`input:radio[name='filtering'][value='0']`).prop('checked', true);
