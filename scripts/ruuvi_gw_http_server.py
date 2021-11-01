@@ -1057,7 +1057,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += content.encode('utf-8')
                 self.wfile.write(resp)
             elif self.path == '/ap.json':
-                if g_auto_toggle_cnt <= 3:
+                if True or g_auto_toggle_cnt <= 3:
                     content = '''[
 {"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
 {"ssid":"a0308","chan":1,"rssi":-56,"auth":3},
@@ -1066,6 +1066,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 {"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0},
 {"ssid":"SINGTEL-5171","chan":9,"rssi":-88,"auth":4},
 {"ssid":"1126-1","chan":11,"rssi":-89,"auth":4},
+{"ssid":"SINGTEL-5171","chan":10,"rssi":-88,"auth":0},
 {"ssid":"The Shah 5GHz-2","chan":1,"rssi":-90,"auth":3},
 {"ssid":"SINGTEL-1D28 (2G)","chan":11,"rssi":-91,"auth":3},
 {"ssid":"dlink-F864","chan":1,"rssi":-92,"auth":4},
@@ -1079,6 +1080,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 {"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0},
 {"ssid":"SINGTEL-5171","chan":9,"rssi":-88,"auth":4},
 {"ssid":"1126-1","chan":11,"rssi":-89,"auth":4},
+{"ssid":"SINGTEL-5171","chan":10,"rssi":-88,"auth":0},
 {"ssid":"The Shah 5GHz-2","chan":1,"rssi":-90,"auth":3},
 {"ssid":"SINGTEL-1D28 (2G)","chan":11,"rssi":-91,"auth":3},
 {"ssid":"dlink-74F0","chan":1,"rssi":-93,"auth":4}
@@ -1342,6 +1344,9 @@ def handle_wifi_connect():
                     print(f'Set simulation mode: ETH_CONNECTED')
                     g_simulation_mode = SIMULATION_MODE_ETH_CONNECTED
                 elif g_ssid == 'dlink-noauth':
+                    print(f'Set simulation mode: WIFI_CONNECTED')
+                    g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
+                elif g_ssid == 'SINGTEL-5171' and (g_password is None or g_password == 'null'):
                     print(f'Set simulation mode: WIFI_CONNECTED')
                     g_simulation_mode = SIMULATION_MODE_WIFI_CONNECTED
                 elif (g_password is None or g_password == 'null') and g_ssid == g_saved_ssid:
