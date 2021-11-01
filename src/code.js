@@ -615,7 +615,8 @@ $(document).ready(function () {
     $('section#page-wifi_connection input#page-wifi_connection-radio-connect_manually').change(function (e) {
         $('.wifi_password').css('height', 0);
         $('#input_ssid_block').show();
-        $('#input_password_block').show();
+        $('#input_password_block-password').show();
+        $('#wifi-connection-failed').hide();
         let div_page_wifi_list_ssid_password = $('#page-wifi_connection-ssid_password');
         let div_ssid_password_wrap = $('#page-wifi_connection-ssid_password-wrap');
         let wifi_password_position = div_ssid_password_wrap.position();
@@ -624,6 +625,7 @@ $(document).ready(function () {
         div_page_wifi_list_ssid_password.show();
         $('#manual_ssid').val("");
         $('#pwd').val("");
+        checkAndUpdatePageWiFiListButtonNext();
     });
 
     $('#page-wifi_connection-advanced-button').click(function (e) {
@@ -636,8 +638,15 @@ $(document).ready(function () {
     $('section#page-wifi_connection #page-wifi_connection-button-continue').click(function (e) {
         e.preventDefault();
         $('#wifi-connection-failed').hide();
-        let ssid = $('#manual_ssid').val();
-        let isAuthNeeded = selected_wifi_auth_required(ssid);
+        let selected_wifi_radio_button = $('input[name="wifi-name"]:checked');
+        let ssid = "";
+        let isAuthNeeded = true;
+        if (selected_wifi_radio_button[0] && (selected_wifi_radio_button[0].id === "page-wifi_connection-radio-connect_manually")) {
+            ssid = $('#manual_ssid').val();
+        } else {
+            ssid = selected_wifi_radio_button.val();
+            isAuthNeeded = !selected_wifi_radio_button.hasClass('no_auth');
+        }
 
         let pwd = $('#pwd').val();
         let password = ((flagUseSavedWiFiPassword && pwd === WIFI_USE_SAVED_PASSWORD) || !isAuthNeeded) ? null : pwd;
@@ -1224,8 +1233,7 @@ function updatePositionOfWiFiPasswordInput(div_wifi_password) {
 function onChangeWiFiName() {
     let selected_wifi = $("input[name='wifi-name']:checked");
     let ssid = selected_wifi.val();
-
-    let isAuthNeeded = selected_wifi_auth_required(ssid);
+    let isAuthNeeded = !selected_wifi.hasClass('no_auth');
 
     $('#manual_ssid').val(ssid);
     $('#pwd').val("");
@@ -1236,10 +1244,12 @@ function onChangeWiFiName() {
     } else {
         $('#input_password_block').hide();
     }
+    $('#wifi-connection-failed').hide();
 
     flagUseSavedWiFiPassword = false;
 
     updatePositionOfWiFiPasswordInput(selected_wifi.parent().parent().children(".wifi_password"));
+    checkAndUpdatePageWiFiListButtonNext();
 }
 
 function refreshAPHTML(data) {
@@ -1251,6 +1261,7 @@ function refreshAPHTML(data) {
     }
     let is_manual_wifi = false;
     let selected_wifi_radio_button = $('input[name="wifi-name"]:checked');
+    let selected_wifi_has_auth = !selected_wifi_radio_button.hasClass('no_auth');
     let selected_wifi_ssid = selected_wifi_radio_button.val();
     if (selected_wifi_radio_button[0] && (selected_wifi_radio_button[0].id === "page-wifi_connection-radio-connect_manually")) {
         is_manual_wifi = true;
@@ -1264,9 +1275,8 @@ function refreshAPHTML(data) {
 
     let div_page_wifi_list_ssid_password = $('#page-wifi_connection-ssid_password');
     if (selected_wifi_ssid) {
-        let isAuthNeeded = selected_wifi_auth_required(selected_wifi_ssid);
         $('#input_ssid_block').hide();
-        if (isAuthNeeded) {
+        if (selected_wifi_has_auth) {
             $('#input_password_block').show();
         } else {
             $('#input_password_block').hide();
@@ -1295,7 +1305,7 @@ function refreshAPHTML(data) {
         h += '    </div>';
         h += '    <input value="{0}" name="wifi-name" type="radio" class="{1}">'.format(
             e.ssid,
-            (e.auth === 0) ? 'no_auth' : '');
+            (e.auth === 0) ? 'no_auth' : 'auth');
         h += '    <span class="control_indicator"></span>';
         h += '</label>';
         h += '<div class="wifi_password"></div>';
@@ -1311,8 +1321,14 @@ function refreshAPHTML(data) {
     if (!is_manual_wifi && selected_wifi_ssid) {
         let input_id = $('input[name="wifi-name"][value="' + selected_wifi_ssid + '"]');
         if (input_id.length !== 0) {
+            if (input_id.length > 1) {
+                if (selected_wifi_has_auth) {
+                    input_id = $('input[name="wifi-name"][value="' + selected_wifi_ssid + '"].auth');
+                } else {
+                    input_id = $('input[name="wifi-name"][value="' + selected_wifi_ssid + '"].no_auth');
+                }
+            }
             input_id.prop('checked', true);
-            updatePositionOfWiFiPasswordInput(input_id.parent().parent().children(".wifi_password"));
             if (flagUseSavedWiFiPassword) {
                 let input_pwd = $('input#pwd');
                 input_pwd.val(WIFI_USE_SAVED_PASSWORD);
@@ -1324,6 +1340,11 @@ function refreshAPHTML(data) {
                 });
             }
             $('#manual_ssid').val(selected_wifi_ssid);
+
+            if (!selected_wifi_has_auth) {
+                $('#input_password_block').hide();
+            }
+            updatePositionOfWiFiPasswordInput(input_id.parent().parent().children(".wifi_password"));
         } else {
             $('#input_password_block').hide();
         }
