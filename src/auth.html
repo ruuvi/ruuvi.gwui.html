@@ -21,7 +21,6 @@
 
         div.auth-err-message {
             color: red;
-            font-size: small;
         }
 
         div.gateway_name {
@@ -139,15 +138,22 @@
                             if (request.status === 401) {
                                 $('#auth-yes').hide();
                                 $('#auth-forbidden').hide();
+                                $('#auth-denied').hide();
+                                $('#auth-reconfigure').hide();
                                 $('#lan_auth-user_login').show();
                                 _handleHeaderWwwAuth(request.getResponseHeader('WWW-Authenticate'));
                                 $('#gateway_name').text(request.responseJSON.gateway_name)
                                 updateLanAuthType(request.responseJSON.lan_auth_type);
                             } else if (request.status === 403) {
                                 $('#auth-yes').hide();
-                                $('#auth-forbidden').show();
                                 $('#lan_auth-user_login').hide();
                                 $('#gateway_name').text(request.responseJSON.gateway_name)
+                                if (request.responseJSON.lan_auth_type === "lan_auth_deny") {
+                                    $('#auth-denied').show();
+                                } else {
+                                    $('#auth-forbidden').show();
+                                }
+                                $('#auth-reconfigure').show();
                                 updateLanAuthType(request.responseJSON.lan_auth_type);
                             } else {
                                 $('#auth-yes').hide();
@@ -220,18 +226,36 @@
                 <span lang="fi">Kirjautuminen verkkokäyttöliittymään</span>
             </h1>
 
+            <div id="gateway_name" class="gateway_name"></div>
+
             <div>
                 <div id="auth-yes" class="hidden">
                     <span lang="en">Authorisation successful.</span>
                     <span lang="fi">Sisäänkirjautuminen onnistui.</span>
                 </div>
-                <div id="auth-forbidden" class="hidden">
-                    <span lang="en">Access denied.</span>
-                    <span lang="fi">Pääsy evätty.</span>
+                <div id="auth-forbidden" class="auth-err-message hidden">
+                    <span lang="en">Access from LAN is forbidden - wrong username or password.</span>
+                    <span lang="fi">Pääsy lähiverkosta on kielletty - väärä käyttäjätunnus tai salasana.</span>
+                </div>
+                <div id="auth-denied" class="auth-err-message hidden">
+                    <span lang="en">Access from LAN is denied.</span>
+                    <span lang="fi">Pääsy lähiverkosta on estetty.</span>
+                </div>
+                <div id="auth-reconfigure" class="hidden">
+                    <span lang="en">
+						In order to change the access settings, please reconfigure the Gateway using its Wi-Fi hotspot.
+						To start the hotspot, press the small configuration button for a short time,
+						found under the power socket.
+                    </span>
+                    <span lang="fi">
+                        Voit vaihtaa pääsyasetukset Gatewayn Wi-Fi-yhteyspisteen kautta.
+						Paina lyhyesti virtaliittimen alla sijaitsevaa nappia ohjatun käyttöönoton aloittamiseksi.
+                    </span>
                 </div>
             </div>
 
-            <div id="gateway_name" class="gateway_name"></div>
+            <div>&nbsp;</div>
+            <div>&nbsp;</div>
 
             <h2>
                 <span lang="en">Select language</span>
