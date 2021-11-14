@@ -366,9 +366,12 @@ function get_config() {
             let use_eth = false;
             let use_http = false;
             let http_url = "";
+            let http_user = "";
+            let http_stat_user = "";
             let use_http_stat = false;
             let http_stat_url = "";
             let use_mqtt = false;
+            let mqtt_user = "";
             let mqtt_prefix = "";
             let mqtt_client_id = "";
             let use_filtering = false;
@@ -414,6 +417,7 @@ function get_config() {
                         break;
                     case "http_user":
                         $("#http_user").val(key_value);
+                        http_user = key_value;
                         break;
                     case "use_http_stat":
                         $("#use_http_stat").prop('checked', key_value);
@@ -425,6 +429,7 @@ function get_config() {
                         break;
                     case "http_stat_user":
                         $("#http_stat_user").val(key_value);
+                        http_stat_user = key_value;
                         break;
                     case "use_mqtt":
                         $("#use_mqtt").prop('checked', key_value);
@@ -453,6 +458,7 @@ function get_config() {
                         break;
                     case "mqtt_user":
                         $("#mqtt_user").val(key_value);
+                        mqtt_user = key_value;
                         break;
                     case "mqtt_prefix":
                         mqtt_prefix = key_value;
@@ -567,8 +573,8 @@ function get_config() {
                 $("#network_type_wifi").prop('checked', true);
             }
             let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
-                (use_http && (http_url === "https://network.ruuvi.com/record")) &&
-                (use_http_stat && (http_stat_url === "https://network.ruuvi.com/status")) &&
+                (use_http && (http_url === "https://network.ruuvi.com/record") && (http_user === "")) &&
+                (use_http_stat && (http_stat_url === "https://network.ruuvi.com/status") && (http_stat_user === "")) &&
                 (use_filtering && !use_coded_phy);
             if (flag_use_ruuvi_cloud_with_default_options) {
                 $("#use_custom").prop('checked', false);
@@ -577,15 +583,15 @@ function get_config() {
                 $("#use_ruuvi").prop('checked', false);
                 $("#use_custom").prop('checked', true);
             }
-            if ($("#http_user").val()) {
+            if (http_user) {
                 flagUseSavedHTTPPassword = true;
                 $("#http_pass").val("********");
             }
-            if ($("#http_stat_user").val()) {
+            if (http_stat_user) {
                 flagUseSavedHTTPStatPassword = true;
                 $("#http_stat_pass").val("********");
             }
-            if ($("#mqtt_user").val()) {
+            if (mqtt_user) {
                 flagUseSavedMQTTPassword = true;
                 $("#mqtt_pass").val("********");
             }
