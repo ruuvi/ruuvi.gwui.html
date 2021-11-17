@@ -495,6 +495,16 @@ function get_config() {
                         }
                         break;
                     }
+                    case "lan_auth_default": {
+                        if (key_value) {
+                            $('#conf-lan_auth-login-password-non_default').hide();
+                            $('#conf-lan_auth-login-password-default').show();
+                        } else {
+                            $('#conf-lan_auth-login-password-default').hide();
+                            $('#conf-lan_auth-login-password-non_default').show();
+                        }
+                        break;
+                    }
                     case "auto_update_cycle": {
                         if (key_value === AUTO_UPDATE_CYCLE_TYPE.REGULAR) {
                             $("#auto_update_cycle-regular").prop('checked', true);

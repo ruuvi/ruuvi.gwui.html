@@ -804,6 +804,10 @@ $(document).ready(function () {
     $('section#page-settings_lan_auth #lan_auth-pass').on("keyup change", function (e) {
         g_flag_lan_auth_pass_changed = true;
         $("#lan_auth-pass").removeAttr('placeholder');
+        if ($("#conf-lan_auth-login-password-non_default:hidden")) {
+            $("#conf-lan_auth-login-password-default").hide();
+            $("#conf-lan_auth-login-password-non_default").show();
+        }
         on_lan_auth_user_pass_changed();
     });
 
