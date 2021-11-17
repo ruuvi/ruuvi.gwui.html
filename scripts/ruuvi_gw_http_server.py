@@ -33,6 +33,8 @@ LAN_AUTH_TYPE_DIGEST = 'lan_auth_digest'
 LAN_AUTH_TYPE_BASIC = 'lan_auth_basic'
 LAN_AUTH_TYPE_ALLOW = 'lan_auth_allow'
 
+LAN_AUTH_DEFAULT_USER = "Admin"
+
 AUTO_UPDATE_CYCLE_TYPE_REGULAR = 'regular'
 AUTO_UPDATE_CYCLE_TYPE_BETA_TESTER = 'beta'
 AUTO_UPDATE_CYCLE_TYPE_MANUAL = 'manual'
@@ -89,9 +91,9 @@ g_ruuvi_dict = {
     'use_http_stat': True,
     'http_stat_url': 'https://network.ruuvi.com/status',
     'http_stat_user': '',
-    'lan_auth_type': LAN_AUTH_TYPE_DENY,
-    'lan_auth_user': '',
-    'lan_auth_pass': hashlib.md5(f'{"username"}:{RUUVI_AUTH_REALM}:{"password"}'.encode('utf-8')).hexdigest(),
+    'lan_auth_type': LAN_AUTH_TYPE_RUUVI,
+    'lan_auth_user': LAN_AUTH_DEFAULT_USER,
+    'lan_auth_pass': hashlib.md5(f'{LAN_AUTH_DEFAULT_USER}:{RUUVI_AUTH_REALM}:{g_gw_mac}'.encode('utf-8')).hexdigest(),
     'auto_update_cycle': AUTO_UPDATE_CYCLE_TYPE_REGULAR,
     'auto_update_weekdays_bitmask': 0x40,
     'auto_update_interval_from': 20,
@@ -1048,9 +1050,16 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 ruuvi_dict = copy.deepcopy(g_ruuvi_dict)
                 if 'http_pass' in ruuvi_dict:
                     del ruuvi_dict['http_pass']
+                if 'http_stat_pass' in ruuvi_dict:
+                    del ruuvi_dict['http_stat_pass']
                 if 'mqtt_pass' in ruuvi_dict:
                     del ruuvi_dict['mqtt_pass']
+                ruuvi_dict['lan_auth_default'] = False
                 if 'lan_auth_pass' in ruuvi_dict:
+                    password_hashed = hashlib.md5(
+                        f'{LAN_AUTH_DEFAULT_USER}:{RUUVI_AUTH_REALM}:{g_gw_mac}'.encode('utf-8')).hexdigest()
+                    if ruuvi_dict['lan_auth_pass'] == password_hashed:
+                        ruuvi_dict['lan_auth_default'] = True
                     del ruuvi_dict['lan_auth_pass']
                 content = json.dumps(ruuvi_dict)
                 print(f'Resp: {content}')

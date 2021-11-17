@@ -954,8 +954,14 @@
 					<input id="lan_auth-user" type="text" placeholder="" value="">
 				</label>
 				<label>
-					<span lang="en">Password:</span>
-					<span lang="fi">Salasana:</span>
+					<div id="conf-lan_auth-login-password-non_default">
+						<span lang="en">Password:</span>
+						<span lang="fi">Salasana:</span>
+					</div>
+					<div id="conf-lan_auth-login-password-default" class="hidden">
+						<span lang="en">Password (the default password is written on the bottom of the gateway):</span>
+						<span lang="fi">Salasana (oletussalasana on kirjoitettu yhdyskäytävän alaosaan):</span>
+					</div>
 					<input id="lan_auth-pass" type="password" placeholder="" value="">
 				</label>
 			</div>
