@@ -920,30 +920,40 @@
 			</div>
 
 			<div class="ingress">
-				<p lang="en">By default, after this configuration wizard is completed, Ruuvi Gateway will no longer be
-					accessible from the local area network.</p>
-				<p lang="fi">Oletuksena ohjatun asennustoiminnon valmistuttua Ruuvi Gateway ei ole enää käytettävissä lähiverkosta.</p>
+				<p lang="en">
+					By default, after this configuration wizard is completed, Ruuvi Gateway will be
+					accessible from the local area network using the following credentials:
+				</p>
+				<p lang="fi">
+					Oletuksena tämän ohjatun määritystoiminnon valmistumisen jälkeen Ruuvi Gateway
+					on käytettävissä lähiverkosta seuraavilla tunnistetiedoilla:
+				</p>
 			</div>
-
-			<div>&nbsp;</div>
-
 			<div class="ingress">
-				<p lang="en">If needed, you can make the Gateway remotely accessible in your local area network.</p>
-				<p lang="fi">Voit tarvittaessa määrittää kuinka etäyhteys voidaan luoda lähiverkosta käsin.</p>
+				<p lang="en">Username: Admin</p>
+				<p lang="fi">Käyttäjätunnus: Admin</p>
+			</div>
+			<div class="ingress">
+				<p lang="en">
+					Password: Unique ID in the format XX:XX:XX:XX:XX:XX:XX:XX which is printed on the bottom of the gateway.
+				</p>
+				<p lang="fi">
+					Salasana: Yksilöllinen tunnus muodossa XX:XX:XX:XX:XX:XX:XX:XX, joka on painettu yhdyskäytävän alaosaan.
+				</p>
 			</div>
 
 			<div>&nbsp;</div>
 
 			<label class="control control-radio">
-				<span lang="en">No remote conﬁguration access (default)</span>
-				<span lang="fi">Ei etäkonfigurointimahdollisuutta (oletus)</span>
+				<span lang="en">No remote conﬁguration access</span>
+				<span lang="fi">Ei etäkonfigurointimahdollisuutta</span>
 				<input id="lan_auth_type_deny" name="lan_auth_type" value="lan_auth_deny" type="radio"/>
 				<span class="control_indicator"></span>
 			</label>
 
 			<label class="control control-radio">
-				<span lang="en">Use password protection</span>
-				<span lang="fi">Käytä salasanasuojausta</span>
+				<span lang="en">Use password protection (default)</span>
+				<span lang="fi">Käytä salasanasuojausta (oletus)</span>
 				<input id="lan_auth_type_ruuvi" name="lan_auth_type" value="lan_auth_ruuvi" type="radio"/>
 				<span class="control_indicator"></span>
 			</label>
@@ -954,14 +964,8 @@
 					<input id="lan_auth-user" type="text" placeholder="" value="">
 				</label>
 				<label>
-					<div id="conf-lan_auth-login-password-non_default">
-						<span lang="en">Password:</span>
-						<span lang="fi">Salasana:</span>
-					</div>
-					<div id="conf-lan_auth-login-password-default" class="hidden">
-						<span lang="en">Password (the default password is written on the bottom of the gateway):</span>
-						<span lang="fi">Salasana (oletussalasana on kirjoitettu yhdyskäytävän alaosaan):</span>
-					</div>
+					<span lang="en">Password:</span>
+					<span lang="fi">Salasana:</span>
 					<input id="lan_auth-pass" type="password" placeholder="" value="">
 				</label>
 			</div>

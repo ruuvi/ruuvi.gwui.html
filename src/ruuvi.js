@@ -497,11 +497,9 @@ function get_config() {
                     }
                     case "lan_auth_default": {
                         if (key_value) {
-                            $('#conf-lan_auth-login-password-non_default').hide();
-                            $('#conf-lan_auth-login-password-default').show();
+                            $('input#lan_auth-pass').attr('placeholder', "XX:XX:XX:XX:XX:XX:XX:XX");
                         } else {
-                            $('#conf-lan_auth-login-password-default').hide();
-                            $('#conf-lan_auth-login-password-non_default').show();
+                            $('input#lan_auth-pass').attr('placeholder', "********");
                         }
                         break;
                     }
