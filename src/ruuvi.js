@@ -4,6 +4,7 @@ const MQTT_PREFIX_MAX_LENGTH = 256;
 
 const LAN_AUTH_TYPE = Object.freeze({
     'DENY': 'lan_auth_deny',
+    'DEFAULT': 'lan_auth_default',
     'RUUVI': 'lan_auth_ruuvi',
     'DIGEST': 'lan_auth_digest',
     'BASIC': 'lan_auth_basic',
@@ -144,22 +145,25 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
             let lan_auth_user = $("#lan_auth-user").val();
             let lan_auth_pass = $("#lan_auth-pass").val();
             let realm = 'RuuviGateway' + gw_mac.substr(12, 2) + gw_mac.substr(15, 2);
-            if (data.lan_auth_type === 'lan_auth_deny') {
-                data.lan_auth_user = null;
-                data.lan_auth_pass = null;
-            } else if (data.lan_auth_type === 'lan_auth_ruuvi') {
+            if (data.lan_auth_type === LAN_AUTH_TYPE.RUUVI) {
                 data.lan_auth_user = lan_auth_user;
                 data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString();
-            } else if (data.lan_auth_type === 'lan_auth_digest') {
+            } else if (data.lan_auth_type === LAN_AUTH_TYPE.DIGEST) {
                 data.lan_auth_user = lan_auth_user;
                 let raw_str = lan_auth_user + ':' + realm + ':' + lan_auth_pass;
                 let auth_path_md5 = CryptoJS.MD5(raw_str);
                 data.lan_auth_pass = auth_path_md5.toString();
-            } else if (data.lan_auth_type === 'lan_auth_basic') {
+            } else if (data.lan_auth_type === LAN_AUTH_TYPE.BASIC) {
                 data.lan_auth_user = lan_auth_user;
                 data.lan_auth_pass = btoa(lan_auth_user + ':' + lan_auth_pass);
+            } else if (data.lan_auth_type === LAN_AUTH_TYPE.DENY) {
+                data.lan_auth_user = null;
+                data.lan_auth_pass = null;
+            } else if (data.lan_auth_type === LAN_AUTH_TYPE.ALLOW) {
+                data.lan_auth_user = null;
+                data.lan_auth_pass = null;
             } else {
-                data.lan_auth_type = 'lan_auth_allow';
+                data.lan_auth_type = LAN_AUTH_TYPE.DEFAULT;
                 data.lan_auth_user = null;
                 data.lan_auth_pass = null;
             }
@@ -475,9 +479,12 @@ function get_config() {
                             $("#lan_auth_type_digest").prop('checked', true);
                         } else if (key_value === LAN_AUTH_TYPE.BASIC) {
                             $("#lan_auth_type_basic").prop('checked', true);
-                        } else {
+                        } else if (key_value === LAN_AUTH_TYPE.ALLOW) {
                             $("#lan_auth_type_allow").prop('checked', true);
+                        } else {
+                            $("#lan_auth_type_default").prop('checked', true);
                         }
+                        $('input#lan_auth-pass').attr('placeholder', "********");
                         break;
                     case "lan_auth_user": {
                         let lan_auth_user = $("#lan_auth-user");
@@ -492,14 +499,6 @@ function get_config() {
                             lan_auth_pass.val('');
                             lan_auth_pass.removeAttr('placeholder');
                             g_flag_lan_auth_pass_changed = true;
-                        }
-                        break;
-                    }
-                    case "lan_auth_default": {
-                        if (key_value) {
-                            $('input#lan_auth-pass').attr('placeholder', "XX:XX:XX:XX:XX:XX:XX:XX");
-                        } else {
-                            $('input#lan_auth-pass').attr('placeholder', "********");
                         }
                         break;
                     }
