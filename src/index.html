@@ -446,8 +446,8 @@
 						<span lang="fi">Päivitys on saatavilla! Päivitä painamalla ASENNA.</span>
 					</div>
 					<div id="software_update-status-error" class="software_update-status rd hidden">
-						<span lang="en">Unable to get the latest firmware version</span>
-						<span lang="fi">Uusinta laiteohjelmistoversiota ei voitu ladata</span>
+						<span lang="en">Unable to get the latest firmware version from the server.</span>
+						<span lang="fi">Uusinta laiteohjelmistoversiota ei voitu ladata palvelimelta.</span>
 					</div>
 				</div>
 			</div>
@@ -921,19 +921,18 @@
 
 			<div class="ingress">
 				<p lang="en">
-					By default, after this configuration wizard is completed,
-					Ruuvi Gateway will be accessible from the local area network using the unique default password.
+					Define how to access Ruuvi Gateway's configuration wizard from your local area network.
 				</p>
 				<p lang="fi">
-					Oletuksena Ruuvi Gateway on käytettävissä lähiverkosta laitekohtaisella oletussalasanalla määrityksen valmistumisen jälkeen.
+					Määrittele, kuinka Ruuvi Gatewayn ohjattu käyttöönotto on saavutettavissa lähiverkon kautta.
 				</p>
 			</div>
 
 			<div>&nbsp;</div>
 
 			<label class="control control-radio">
-				<span lang="en">Use password protection with default password (default, safe)</span>
-				<span lang="fi">Käytä salasanasuojausta oletussalasanalla (oletus, turvallinen)</span>
+				<span lang="en">Password protected with the default password (default, safe)</span>
+				<span lang="fi">Salasanasuojattu oletussalasanalla (oletus, turvallinen)</span>
 				<input id="lan_auth_type_default" name="lan_auth_type" value="lan_auth_default" type="radio"/>
 				<span class="control_indicator"></span>
 			</label>
@@ -942,24 +941,24 @@
 					<p lang="en">Username: Admin</p>
 					<p lang="fi">Käyttäjätunnus: Admin</p>
 					<p lang="en">
-						Password: Unique ID in the format XX:XX:XX:XX:XX:XX:XX:XX which is printed on the bottom of the gateway.
+						Password: Unique ID (in format XX:XX:XX:XX:XX:XX:XX:XX) which is printed on the bottom of the Ruuvi Gateway.
 					</p>
 					<p lang="fi">
-						Salasana: Yksilöllinen tunnus muodossa XX:XX:XX:XX:XX:XX:XX:XX, joka on painettu yhdyskäytävän alaosaan.
+						Salasana: Yksilöllinen ID (muodossa XX:XX:XX:XX:XX:XX:XX:XX), joka on painettu Ruuvi Gatewayn pohjaan.
 					</p>
 				</div>
 			</div>
 
 			<label class="control control-radio">
-				<span lang="en">Use custom password protection (advanced, safe if using a strong password)</span>
-				<span lang="fi">Käytä mukautettua salasanasuojausta (edistynyt, turvallinen, jos käytät vahvaa salasanaa)</span>
+				<span lang="en">Protected with a custom password (advanced, safe with a strong password)</span>
+				<span lang="fi">Salasanasuojattu valinnaisella salasanalla (edistynyt, turvallinen käyttämällä vahvaa salasanaa)</span>
 				<input id="lan_auth_type_ruuvi" name="lan_auth_type" value="lan_auth_ruuvi" type="radio"/>
 				<span class="control_indicator"></span>
 			</label>
 			<div id="conf-lan_auth-login-password" class="hidden indent">
 				<label>
 					<span lang="en">Login:</span>
-					<span lang="fi">Kirjaudu sisään:</span>
+					<span lang="fi">Käyttäjätunnus:</span>
 					<input id="lan_auth-user" type="text" placeholder="" value="">
 				</label>
 				<label>
@@ -969,32 +968,16 @@
 				</label>
 			</div>
 
-			<!--
-			<label class="control control-radio hidden">
-				<span lang="en">Digest authentication</span>
-				<span lang="fi">Salattu kirjautuminen</span>
-				<input id="lan_auth_type_digest" name="lan_auth_type" value="lan_auth_digest" type="radio"/>
-				<span class="control_indicator"></span>
-			</label>
-
-			<label class="control control-radio hidden">
-				<span lang="en">Basic authentication</span>
-				<span lang="fi">Salaamaton kirjautuminen</span>
-				<input id="lan_auth_type_basic" name="lan_auth_type" value="lan_auth_basic" type="radio"/>
-				<span class="control_indicator"></span>
-			</label>
-			-->
-
 			<label class="control control-radio">
-				<span lang="en">No remote conﬁguration access (safe)</span>
-				<span lang="fi">Ei etäkonfigurointimahdollisuutta (turvallinen)</span>
+				<span lang="en">No remote conﬁgurable (extremely safe)</span>
+				<span lang="fi">Ei etäkonfiguroitavissa (erittäin turvallinen)</span>
 				<input id="lan_auth_type_deny" name="lan_auth_type" value="lan_auth_deny" type="radio"/>
 				<span class="control_indicator"></span>
 			</label>
 
 			<label class="control control-radio">
-				<span lang="en">Allow remote configuration without password (unsafe, not recommended)</span>
-				<span lang="fi">Salli etämääritys ilman salasanaa (vaarallinen, ei suositella)</span>
+				<span lang="en">Remote configurable without a password (unsafe, not recommended)</span>
+				<span lang="fi">Etäkonfiguroitavissa ilman salasanaa (turvaton, ei suositella)</span>
 				<input id="lan_auth_type_allow" name="lan_auth_type" value="lan_auth_allow" type="radio"/>
 				<span class="control_indicator"></span>
 			</label>
@@ -1025,7 +1008,7 @@
 			<div class="ingress">
 				<p lang="en">Almost done!</p>
 				<p lang="en">The last step is to configure where Ruuvi Gateway should send the data.
-					Default option is Ruuvi's Cloud service. When using Ruuvi's secure Cloud service, only you can
+					Default option is Ruuvi's cloud service. When using Ruuvi's secure cloud service, only you can
 					access the data of the sensors owned by you.</p>
 				<p lang="fi">Melkein valmista!</p>
 				<p lang="fi">Viimeisenä määrittelemme minne Ruuvi Gatewayn halutaan anturitiedot lähettävän.
