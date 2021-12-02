@@ -1,6 +1,8 @@
 let gw_mac = "";
 let g_flag_lan_auth_pass_changed = false;
 const MQTT_PREFIX_MAX_LENGTH = 256;
+const HTTP_URL_DEFAULT = "https://network.ruuvi.com/record";
+const HTTP_STAT_URL_DEFAULT = "https://network.ruuvi.com/status";
 
 const LAN_AUTH_TYPE = Object.freeze({
     'DENY': 'lan_auth_deny',
@@ -580,8 +582,8 @@ function get_config() {
                 $("#network_type_wifi").prop('checked', true);
             }
             let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
-                (use_http && (http_url === "https://network.ruuvi.com/record") && (http_user === "")) &&
-                (use_http_stat && (http_stat_url === "https://network.ruuvi.com/status") && (http_stat_user === "")) &&
+                (use_http && (http_url === HTTP_URL_DEFAULT) && (http_user === "")) &&
+                (use_http_stat && (http_stat_url === HTTP_STAT_URL_DEFAULT) && (http_stat_user === "")) &&
                 (use_filtering && !use_coded_phy);
             if (flag_use_ruuvi_cloud_with_default_options) {
                 $("#use_custom").prop('checked', false);
