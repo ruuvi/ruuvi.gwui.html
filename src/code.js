@@ -288,6 +288,13 @@ function on_cloud_options_connection_type_changed() {
         }
         h += '<li></li>';
         $('#use_http').prop('checked', true);
+        $('#http_url').val(HTTP_URL_DEFAULT);
+        $('#http_user').val("");
+        $('#http_pass').val("");
+        $('#use_http_stat').prop('checked', true);
+        $('#http_stat_url').val(HTTP_STAT_URL_DEFAULT);
+        $('#http_stat_user').val("");
+        $('#http_stat_pass').val("");
         $('#use_mqtt').prop('checked', false);
         $(`input:radio[name='filtering'][value='1']`).prop('checked', true);
         on_settings_scan_filtering_changed();
