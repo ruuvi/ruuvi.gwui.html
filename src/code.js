@@ -241,10 +241,23 @@ function on_lan_auth_type_changed() {
         $(`input:radio[name='lan_auth_type'][value='lan_auth_deny']`).prop('checked', true);
         lan_auth_type = $("input[name='lan_auth_type']:checked").val();
     }
-    if (lan_auth_type === 'lan_auth_allow' || lan_auth_type === 'lan_auth_deny') {
-        $('#conf-lan_auth-login-password').slideUp();
-    } else {
-        $('#conf-lan_auth-login-password').slideDown();
+    switch (lan_auth_type)
+    {
+        case LAN_AUTH_TYPE.ALLOW:
+        case LAN_AUTH_TYPE.DENY:
+            $('#conf-lan_auth-login-password').slideUp();
+            $('#conf-lan_auth-default').slideUp();
+            break;
+        case LAN_AUTH_TYPE.DEFAULT:
+            $('#conf-lan_auth-login-password').slideUp();
+            $('#conf-lan_auth-default').slideDown();
+            break;
+        case LAN_AUTH_TYPE.RUUVI:
+        case LAN_AUTH_TYPE.BASIC:
+        case LAN_AUTH_TYPE.DIGEST:
+            $('#conf-lan_auth-default').slideUp();
+            $('#conf-lan_auth-login-password').slideDown();
+            break;
     }
     on_lan_auth_user_pass_changed();
 }
@@ -252,7 +265,8 @@ function on_lan_auth_type_changed() {
 function on_lan_auth_user_pass_changed() {
     let lan_auth_type = $("input[name='lan_auth_type']:checked").val();
     let flag_need_to_disable = false;
-    if (lan_auth_type !== 'lan_auth_allow' && lan_auth_type !== 'lan_auth_deny') {
+    if (lan_auth_type !== LAN_AUTH_TYPE.ALLOW && lan_auth_type !== LAN_AUTH_TYPE.DENY &&
+        lan_auth_type !== LAN_AUTH_TYPE.DEFAULT) {
         if ($("#lan_auth-user").val() === "" || ($("#lan_auth-pass").val() === "" && g_flag_lan_auth_pass_changed)) {
             flag_need_to_disable = true;
         }
@@ -804,16 +818,11 @@ $(document).ready(function () {
     $('section#page-settings_lan_auth #lan_auth-pass').on("keyup change", function (e) {
         g_flag_lan_auth_pass_changed = true;
         $("#lan_auth-pass").removeAttr('placeholder');
-        if ($("#conf-lan_auth-login-password-non_default:hidden")) {
-            $("#conf-lan_auth-login-password-default").hide();
-            $("#conf-lan_auth-login-password-non_default").show();
-        }
         on_lan_auth_user_pass_changed();
     });
 
     $("section#page-settings_lan_auth input[name='lan_auth_type']").change(function (e) {
         g_flag_lan_auth_pass_changed = true;
-        $("#lan_auth-pass").removeAttr('placeholder');
         on_lan_auth_type_changed();
     });
 
