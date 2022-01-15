@@ -170,6 +170,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
                 data.lan_auth_pass = null;
             }
         }
+        data.lan_auth_api_key = $("#lan_auth-api_key").val();
 
         data.use_filtering = ($("input[name='filtering']:checked").val() !== "0");
 
@@ -501,6 +502,15 @@ function get_config() {
                             lan_auth_pass.val('');
                             lan_auth_pass.removeAttr('placeholder');
                             g_flag_lan_auth_pass_changed = true;
+                        }
+                        break;
+                    }
+                    case "lan_auth_api_key": {
+                        let lan_auth_api_key = $("#lan_auth-api_key");
+                        if (key_value) {
+                            lan_auth_api_key.val(key_value);
+                        } else {
+                            lan_auth_api_key.val('');
                         }
                         break;
                     }

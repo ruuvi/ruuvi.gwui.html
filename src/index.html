@@ -9,6 +9,7 @@
 	<script src="crypto-js-4.0.0/core.js"></script>
 	<script src="crypto-js-4.0.0/md5.js"></script>
 	<script src="crypto-js-4.0.0/sha256.js"></script>
+	<script src="crypto-js-4.0.0/enc-base64.js"></script>
 	<link rel="stylesheet" href="css/style.css">
 	<script src="code.js"></script>
 	<script src="ruuvi.js"></script>
@@ -981,6 +982,37 @@
 				<input id="lan_auth_type_allow" name="lan_auth_type" value="lan_auth_allow" type="radio"/>
 				<span class="control_indicator"></span>
 			</label>
+
+			<div>&nbsp;</div>
+			<div class="border"></div>
+			<div id="page-settings_lan_auth-advanced-button" class="btn-dropdown">
+				<h2>
+					<span lang="en">Advanced settings</span>
+					<span lang="fi">Edistyneet asetukset</span>
+				</h2>
+				<div class="btn-dropdown-arrow-down"></div>
+				<div class="btn-dropdown-arrow-up hidden"></div>
+			</div>
+			<div class="border"></div>
+			<div>&nbsp;</div>
+
+			<div id="page-settings_lan_auth-advanced-dropdown" class="hidden">
+				<div>
+					<label class="control control-checkbox">
+						<span lang="en">Use bearer authentication</span>
+						<span lang="fi">Käytä siirtotien todennusta</span>
+						<input type="checkbox" id="settings_lan_auth-use_api_key">
+						<span class="control_indicator"></span>
+					</label>
+				</div>
+				<div id="settings_lan_auth-api_key" class="indent hidden">
+					<label for="settings_lan_auth-api_key">
+						<span lang="en">API key (token):</span>
+						<span lang="fi">API-avain (tunnus):</span>
+						<input id="lan_auth-api_key" type="text" value="">
+					</label>
+				</div>
+			</div>
 
 			<div class="button-container">
 				<a href="" id="page-lan_auth_type-button-back" class="btn-back">

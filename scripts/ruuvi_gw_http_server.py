@@ -98,6 +98,7 @@ g_ruuvi_dict = {
     'lan_auth_type': LAN_AUTH_TYPE_DEFAULT,
     'lan_auth_user': LAN_AUTH_DEFAULT_USER,
     'lan_auth_pass': '',
+    'lan_auth_api_key': '',
     'auto_update_cycle': AUTO_UPDATE_CYCLE_TYPE_REGULAR,
     'auto_update_weekdays_bitmask': 0x40,
     'auto_update_interval_from': 20,
