@@ -22,6 +22,10 @@ import hashlib
 import base64
 from enum import Enum
 from typing import Optional, Dict
+import Crypto.Util.Padding
+from Crypto.PublicKey import ECC
+from Crypto.Cipher import AES
+from Crypto.Hash import SHA256
 
 GET_AP_JSON_TIMEOUT = 3.0
 NETWORK_CONNECTION_TIMEOUT = 3.0
@@ -68,6 +72,7 @@ g_auto_toggle_cnt = 0
 g_gw_mac = "AA:BB:CC:DD:EE:FF"
 g_gw_unique_id = "00:11:22:33:44:55:66:77"
 g_flag_access_from_lan = False
+g_aes_key = None
 
 RUUVI_AUTH_REALM = 'RuuviGateway' + g_gw_mac[-5:-3] + g_gw_mac[-2:]
 
@@ -328,6 +333,11 @@ g_content_github_latest_release = '''{
 }
  '''
 
+
+def ecdh_compute_shared_secret(priv_key: ECC.EccKey, pub_key: ECC.EccKey):
+    return (priv_key.d * pub_key.pointQ).x % priv_key._curve.order
+
+
 class LoginSession(object):
     def __init__(self):
         challenge_random = ''.join(random.choice(string.ascii_uppercase) for i in range(32))
@@ -449,6 +459,34 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             d[cookie_name] = cookie_val
         return d
 
+    def _on_post_resp(self, http_status, content_type, content):
+        content = content.encode('utf-8')
+        resp = b''
+        resp += f'HTTP/1.1 {http_status}\r\n'.encode('ascii')
+        resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'Content-Type: {content_type}'.encode('ascii')
+        resp += f'Content-Length: {len(content)}'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += content
+        print(f'Response: {resp}')
+        self.wfile.write(resp)
+
+    def _on_post_resp_400(self, desc=''):
+        content = f'''
+<html>
+<head><title>400 Bad Request</title></head>
+<body>
+<center><h1>400 Bad Request</h1></center>
+<hr>
+<center>Ruuvi Gateway</center>
+<p>{desc}</p>
+</body>
+</html>
+'''
+        self._on_post_resp('400 Bad Request', 'text/html; charset=utf-8', content)
+
     def _on_post_resp_404(self):
         content = '''
 <html>
@@ -459,17 +497,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 </body>
 </html>
 '''
-        resp = b''
-        resp += f'HTTP/1.1 404 Not Found\r\n'.encode('ascii')
-        resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
-        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-        resp += f'Pragma: no-cache\r\n'.encode('ascii')
-        resp += f'Content-Type: text/html; charset=utf-8'.encode('ascii')
-        resp += f'Content-Length: {len(content)}'.encode('ascii')
-        resp += f'\r\n'.encode('ascii')
-        resp += content.encode('utf-8')
-        print(f'Response: {resp}')
-        self.wfile.write(resp)
+        self._on_post_resp('404 Not Found', 'text/html; charset=utf-8', content)
 
     def _on_post_resp_401(self, message=None):
         cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
@@ -514,6 +542,80 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(resp)
         else:
             raise RuntimeError("Unsupported AuthType")
+
+    @staticmethod
+    def _prep_resp_200_ok(conent_type):
+        resp = b''
+        resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: {conent_type}\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        return resp
+
+    def _write_resp_json(self, resp_content):
+        resp_content_encoded = resp_content.encode('utf-8')
+        resp = self._prep_resp_200_ok('application/json')
+        resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += resp_content_encoded
+        print(f'Response: {resp}')
+        self.wfile.write(resp)
+
+    @staticmethod
+    def _ecdh_handshake(pub_key):
+        global g_aes_key
+        if pub_key is None:
+            g_aes_key = None
+            return None
+        ecdh_curve_name = 'secp256r1'
+        ecdh_cli_pub_key = ECC.import_key(base64.b64decode(pub_key), curve_name=ecdh_curve_name)
+        ecdh_keys = ECC.generate(curve=ecdh_curve_name)
+
+        ecdh_shared_secret = ecdh_compute_shared_secret(ecdh_keys, ecdh_cli_pub_key.public_key())
+        print(f'ECDH shared secret: {ecdh_shared_secret.to_bytes().hex()}')
+        g_aes_key = hashlib.sha256(ecdh_shared_secret.to_bytes()).digest()
+        print(f'AES key: {g_aes_key.hex()}')
+
+        srv_pub_key_b64 = base64.b64encode(ecdh_keys.public_key().export_key(format='SEC1')).decode('utf-8')
+        return srv_pub_key_b64
+
+    def _ecdh_decrypt_request(self, aes_key):
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length).decode('ascii')
+        try:
+            req_dict = json.loads(post_data)
+        except json.decoder.JSONDecodeError as ex:
+            print(f'Error: Failed to load encrypted json: {ex}')
+            return None
+        try:
+            req_encrypted = req_dict['encrypted']
+            req_iv = req_dict['iv']
+            req_hash = req_dict['hash']
+        except KeyError as ex:
+            print(f'Error: Bad encrypted json: {ex}')
+            return None
+
+        cipher = AES.new(aes_key, AES.MODE_CBC, iv=base64.b64decode(req_iv))
+        try:
+            req_decrypted = Crypto.Util.Padding.unpad(cipher.decrypt(base64.b64decode(req_encrypted)), AES.block_size)
+        except ValueError as ex:
+            print(f'Error: Bad padding: {ex}')
+            return None
+
+        hash_actual = SHA256.new(req_decrypted).digest().hex()
+        hash_expected = base64.b64decode(req_hash).hex()
+        if hash_actual != hash_expected:
+            print(f'Error: Verification failed')
+            return None
+
+        req_decrypted = req_decrypted.decode('utf-8')
+
+        try:
+            req_dict = json.loads(req_decrypted)
+        except json.decoder.JSONDecodeError as ex:
+            print(f'Error: Failed to load decrypted json: {ex}')
+            return None
+        return req_dict
 
     def do_POST(self):
         global g_ssid
@@ -594,9 +696,17 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             print(f'Response: {resp}')
             self.wfile.write(resp)
         elif self.path == '/connect.json':
-            ssid = self._get_value_from_headers('X-Custom-ssid: ')
-            password = self._get_value_from_headers('X-Custom-pwd: ')
             resp = b''
+            req_dict = self._ecdh_decrypt_request(g_aes_key)
+            if req_dict is None:
+                resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
+                resp += f'Content-Length: 0\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                print(f'Response: {resp}')
+                self.wfile.write(resp)
+                return
+            ssid = req_dict['ssid']
+            password = req_dict['password']
             if ssid is None and password is None:
                 print(f'Try to connect to Ethernet')
                 g_ssid = None
@@ -639,11 +749,16 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             print(f'Response: {resp}')
             self.wfile.write(resp)
         elif self.path == '/ruuvi.json':
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length).decode('ascii')
-            new_dict = json.loads(post_data)
+            req_dict = self._ecdh_decrypt_request(g_aes_key)
+            if req_dict is None:
+                resp = b''
+                resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
+                resp += f'Content-Length: {0}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                self.wfile.write(resp)
+                return
             flag_use_default_lan_auth = False
-            for key, value in new_dict.items():
+            for key, value in req_dict.items():
                 if key == 'http_pass':
                     continue
                 if key == 'http_stat_pass':
@@ -1052,17 +1167,21 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_login_session
         global g_auto_toggle_cnt
         print('GET %s' % self.path)
-        if self.path == '/auth' or self.path.startswith('/auth?') or self.path == '/auth.html':
+        file_path = self.path.split('?')[0]
+        if file_path == '/auth' or self.path == '/auth.html':
             self._do_get_auth()
             return
-        elif self.path.endswith('.json'):
+        elif file_path.endswith('.json'):
             resp = b''
             resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp += f'\r\n'.encode('ascii')
-            if self.path == '/ruuvi.json':
+            if file_path == '/ruuvi.json':
+                pub_key_b64_cli = self._ecdh_handshake(self._get_value_from_headers('ruuvi_ecdh_pub_key: '))
+                resp += f'ruuvi_ecdh_pub_key: {pub_key_b64_cli}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+
                 ruuvi_dict = copy.deepcopy(g_ruuvi_dict)
                 if 'http_pass' in ruuvi_dict:
                     del ruuvi_dict['http_pass']
@@ -1083,7 +1202,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 print(f'Resp: {content}')
                 resp += content.encode('utf-8')
                 self.wfile.write(resp)
-            elif self.path == '/ap.json':
+            elif file_path == '/ap.json':
+                resp += f'\r\n'.encode('ascii')
                 if True or g_auto_toggle_cnt <= 3:
                     content = '''[
 {"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
@@ -1121,11 +1241,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += content.encode('utf-8')
                 time.sleep(GET_AP_JSON_TIMEOUT)
                 self.wfile.write(resp)
-            elif self.path == '/status.json':
+            elif file_path == '/status.json':
                 global g_flag_access_from_lan
                 global g_software_update_stage
                 global g_software_update_percentage
 
+                resp += f'\r\n'.encode('ascii')
                 if g_ssid is None:
                     ssid_key_with_val = '"ssid":null'
                 else:
@@ -1170,7 +1291,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += content.encode('utf-8')
                 self.wfile.write(resp)
 
-            elif self.path == '/github_latest_release.json':
+            elif file_path == '/github_latest_release.json':
                 content = g_content_github_latest_release
                 time.sleep(GET_LATEST_RELEASE_TIMEOUT)
                 resp = b''
@@ -1184,7 +1305,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 print(f'Resp: {content}')
                 resp += content.encode('utf-8')
                 self.wfile.write(resp)
-            elif self.path == '/github_latest_release_without_len.json':
+            elif file_path == '/github_latest_release_without_len.json':
                 content = g_content_github_latest_release
                 time.sleep(10.0)
                 resp = b''
@@ -1197,7 +1318,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 print(f'Resp: {content}')
                 resp += content.encode('utf-8')
                 self.wfile.write(resp)
-            elif self.path == '/github_latest_release_chunked.json':
+            elif file_path == '/github_latest_release_chunked.json':
                 chunk1 = g_content_github_latest_release[:10]
                 chunk2 = g_content_github_latest_release[10:5000]
                 chunk3 = g_content_github_latest_release[5000:]
@@ -1232,7 +1353,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += f'\r\n'.encode('ascii')
                 self.wfile.write(resp)
             pass
-        elif self.path == '/metrics':
+        elif file_path == '/metrics':
             if not self._check_auth():
                 lan_auth_type = g_ruuvi_dict['lan_auth_type']
                 if lan_auth_type == LAN_AUTH_TYPE_RUUVI or lan_auth_type == LAN_AUTH_TYPE_DENY:
@@ -1240,7 +1361,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     resp += f'HTTP/1.1 302 Found\r\n'.encode('ascii')
                     resp += f'Location: {"/auth.html"}\r\n'.encode('ascii')
                     resp += f'Server: {"Ruuvi Gateway"}\r\n'.encode('ascii')
-                    resp += f'Set-Cookie: {COOKIE_RUUVI_PREV_URL}={self.path}\r\n'.encode('ascii')
+                    resp += f'Set-Cookie: {COOKIE_RUUVI_PREV_URL}={file_path}\r\n'.encode('ascii')
                     resp += f'\r\n'.encode('ascii')
                     self.wfile.write(resp)
                     return
@@ -1285,7 +1406,7 @@ ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DEFAULT"} 93756
             resp += content_encoded
             self.wfile.write(resp)
         else:
-            if self.path == '/':
+            if file_path == '/':
                 file_path = 'index.html'
             else:
                 file_path = self.path[1:]

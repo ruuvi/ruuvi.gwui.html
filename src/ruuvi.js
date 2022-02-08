@@ -1,3 +1,5 @@
+let g_ecdh;
+let g_aes_key;
 let gw_mac = "";
 let g_flag_lan_auth_pass_changed = false;
 const MQTT_PREFIX_MAX_LENGTH = 256;
@@ -220,13 +222,16 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
 
     console.log(data);
 
+    let data_encrypted = ruuvi_edch_encrypt(JSON.stringify(data));
+
     $.ajax({
         url: '/ruuvi.json',
         dataType: 'json',
         contentType: 'application/json',
         method: 'POST',
         cache: false,
-        data: JSON.stringify(data),
+        headers: {'ruuvi_ecdh_encrypted': true},
+        data: data_encrypted,
         success: function (data, text) {
             let tmp = data;
             startCheckStatus();
@@ -367,321 +372,380 @@ function on_edit_mqtt_settings() {
     }
 }
 
-function get_config() {
-    $.getJSON("/ruuvi.json", function (data) {
-        if (data != null) {
-            let use_eth = false;
-            let use_http = false;
-            let http_url = "";
-            let http_user = "";
-            let http_stat_user = "";
-            let use_http_stat = false;
-            let http_stat_url = "";
-            let use_mqtt = false;
-            let mqtt_user = "";
-            let mqtt_prefix = "";
-            let mqtt_client_id = "";
-            let use_filtering = false;
-            let use_coded_phy = false;
-            const keys = Object.keys(data);
-            for (let idx in keys) {
-                let key = keys[idx];
-                let key_value = data[key];
-                switch (key) {
-                    case "fw_ver":
-                        $("#software_update-version-current").text(key_value);
-                        break;
-                    case "nrf52_fw_ver":
-                        break;
-                    case "use_eth":
-                        use_eth = key_value
-                        break;
-                    case "eth_dhcp":
-                        $("#eth_dhcp").prop('checked', key_value);
-                        break;
-                    case "eth_static_ip":
-                        $("#eth_static_ip").val(key_value);
-                        break;
-                    case "eth_netmask":
-                        $("#eth_netmask").val(key_value);
-                        break;
-                    case "eth_gw":
-                        $("#eth_gw").val(key_value);
-                        break;
-                    case "eth_dns1":
-                        $("#eth_dns1").val(key_value);
-                        break;
-                    case "eth_dns2":
-                        $("#eth_dns2").val(key_value);
-                        break;
-                    case "use_http":
-                        $("#use_http").prop('checked', key_value);
-                        use_http = key_value;
-                        break;
-                    case "http_url":
-                        $("#http_url").val(key_value);
-                        http_url = key_value;
-                        break;
-                    case "http_user":
-                        $("#http_user").val(key_value);
-                        http_user = key_value;
-                        break;
-                    case "use_http_stat":
-                        $("#use_http_stat").prop('checked', key_value);
-                        use_http_stat = key_value;
-                        break;
-                    case "http_stat_url":
-                        $("#http_stat_url").val(key_value);
-                        http_stat_url = key_value;
-                        break;
-                    case "http_stat_user":
-                        $("#http_stat_user").val(key_value);
-                        http_stat_user = key_value;
-                        break;
-                    case "use_mqtt":
-                        $("#use_mqtt").prop('checked', key_value);
-                        use_mqtt = key_value
-                        break;
-                    case "mqtt_transport":
-                        if (key_value === MQTT_TRANSPORT_TYPE.TCP) {
-                            $("#mqtt_transport_TCP").prop('checked', true);
-                        } else if (key_value === MQTT_TRANSPORT_TYPE.SSL) {
-                            $("#mqtt_transport_SSL").prop('checked', true);
-                        } else if (key_value === MQTT_TRANSPORT_TYPE.WS) {
-                            $("#mqtt_transport_WS").prop('checked', true);
-                        } else if (key_value === MQTT_TRANSPORT_TYPE.WSS) {
-                            $("#mqtt_transport_WSS").prop('checked', true);
-                        }
-                        break;
-                    case "mqtt_server":
-                        if (key_value) {
-                            $("#mqtt_server").val(key_value);
-                        }
-                        break;
-                    case "mqtt_port":
-                        if (key_value) {
-                            $("#mqtt_port").val(key_value);
-                        }
-                        break;
-                    case "mqtt_user":
-                        $("#mqtt_user").val(key_value);
-                        mqtt_user = key_value;
-                        break;
-                    case "mqtt_prefix":
-                        mqtt_prefix = key_value;
-                        break;
-                    case "mqtt_client_id":
-                        mqtt_client_id = key_value;
-                        break;
-                    case "lan_auth_type":
-                        if (key_value === LAN_AUTH_TYPE.DENY) {
-                            $("#lan_auth_type_deny").prop('checked', true);
-                        } else if (key_value === LAN_AUTH_TYPE.RUUVI) {
-                            $("#lan_auth_type_ruuvi").prop('checked', true);
-                        } else if (key_value === LAN_AUTH_TYPE.DIGEST) {
-                            $("#lan_auth_type_digest").prop('checked', true);
-                        } else if (key_value === LAN_AUTH_TYPE.BASIC) {
-                            $("#lan_auth_type_basic").prop('checked', true);
-                        } else if (key_value === LAN_AUTH_TYPE.ALLOW) {
-                            $("#lan_auth_type_allow").prop('checked', true);
-                        } else {
-                            $("#lan_auth_type_default").prop('checked', true);
-                        }
-                        $('input#lan_auth-pass').attr('placeholder', "********");
-                        break;
-                    case "lan_auth_user": {
-                        let lan_auth_user = $("#lan_auth-user");
-                        let lan_auth_pass = $("#lan_auth-pass");
-                        if (key_value) {
-                            lan_auth_user.val(key_value);
-                            lan_auth_pass.val('');
-                            lan_auth_pass.attr('placeholder', '********');
-                            g_flag_lan_auth_pass_changed = false;
-                        } else {
-                            lan_auth_user.val('');
-                            lan_auth_pass.val('');
-                            lan_auth_pass.removeAttr('placeholder');
-                            g_flag_lan_auth_pass_changed = true;
-                        }
-                        break;
-                    }
-                    case "lan_auth_api_key": {
-                        let lan_auth_api_key = $("#lan_auth-api_key");
-                        if (key_value) {
-                            lan_auth_api_key.val(key_value);
-                        } else {
-                            lan_auth_api_key.val('');
-                        }
-                        break;
-                    }
-                    case "auto_update_cycle": {
-                        if (key_value === AUTO_UPDATE_CYCLE_TYPE.REGULAR) {
-                            $("#auto_update_cycle-regular").prop('checked', true);
-                        } else if (key_value === AUTO_UPDATE_CYCLE_TYPE.BETA_TESTER) {
-                            $("#auto_update_cycle-beta").prop('checked', true);
-                        } else if (key_value === AUTO_UPDATE_CYCLE_TYPE.MANUAL) {
-                            $("#auto_update_cycle-manual").prop('checked', true);
-                        } else {
-                            $("#auto_update_cycle-regular").prop('checked', true);
-                        }
-                        break;
-                    }
-                    case "auto_update_weekdays_bitmask": {
-                        let weekdays_bitmask = parseInt(key_value);
-                        $("#conf-auto_update_schedule-button-sunday").prop('checked', (weekdays_bitmask & 0x01) !== 0).change();
-                        $("#conf-auto_update_schedule-button-monday").prop('checked', (weekdays_bitmask & 0x02) !== 0).change();
-                        $("#conf-auto_update_schedule-button-tuesday").prop('checked', (weekdays_bitmask & 0x04) !== 0).change();
-                        $("#conf-auto_update_schedule-button-wednesday").prop('checked', (weekdays_bitmask & 0x08) !== 0).change();
-                        $("#conf-auto_update_schedule-button-thursday").prop('checked', (weekdays_bitmask & 0x10) !== 0).change();
-                        $("#conf-auto_update_schedule-button-friday").prop('checked', (weekdays_bitmask & 0x20) !== 0).change();
-                        $("#conf-auto_update_schedule-button-saturday").prop('checked', (weekdays_bitmask & 0x40) !== 0).change();
-                        break;
-                    }
-                    case "auto_update_interval_from": {
-                        $('#conf-auto_update_schedule-period_from option[value=' + key_value + ']').prop('selected', true);
-                        break;
-                    }
-                    case "auto_update_interval_to": {
-                        $('#conf-auto_update_schedule-period_to option[value=' + key_value + ']').prop('selected', true);
-                        break;
-                    }
-                    case "auto_update_tz_offset_hours": {
-                        $('#conf-auto_update_schedule-tz option[value=' + key_value + ']').prop('selected', true);
-                        break;
-                    }
-                    case "coordinates":
-                        $("#coordinates").val(key_value);
-                        break;
-                    case "use_filtering": {
-                        use_filtering = key_value;
-                        break;
-                    }
-                    case "company_id":
-                        break;
-                    case "gw_mac":
-                        gw_mac = key_value;
-                        break;
-                    case "use_coded_phy":
-                        use_coded_phy = key_value;
-                        break;
-                    case "use_1mbit_phy":
-                        $("#use_1mbit_phy").prop('checked', key_value);
-                        break;
-                    case "use_extended_payload":
-                        $("#use_extended_payload").prop('checked', key_value);
-                        break;
-                    case "use_channel_37":
-                        $("#use_channel_37").prop('checked', key_value);
-                        break;
-                    case "use_channel_38":
-                        $("#use_channel_38").prop('checked', key_value);
-                        break;
-                    case "use_channel_39":
-                        $("#use_channel_39").prop('checked', key_value);
-                        break;
-                    default:
-                        alert('get_config: unhandled key: ' + key);
-                        break;
-                }
-            }
-            if (use_eth) {
-                $("#network_type_wifi").prop('checked', false);
-                $("#network_type_cable").prop('checked', true);
-            } else {
-                $("#network_type_cable").prop('checked', false);
-                $("#network_type_wifi").prop('checked', true);
-            }
-            let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
-                (use_http && (http_url === HTTP_URL_DEFAULT) && (http_user === "")) &&
-                (use_http_stat && (http_stat_url === HTTP_STAT_URL_DEFAULT) && (http_stat_user === "")) &&
-                (use_filtering && !use_coded_phy);
-            if (flag_use_ruuvi_cloud_with_default_options) {
-                $("#use_custom").prop('checked', false);
-                $("#use_ruuvi").prop('checked', true);
-            } else {
-                $("#use_ruuvi").prop('checked', false);
-                $("#use_custom").prop('checked', true);
-            }
-            if (http_user) {
-                flagUseSavedHTTPPassword = true;
-                $("#http_pass").val("********");
-            }
-            if (http_stat_user) {
-                flagUseSavedHTTPStatPassword = true;
-                $("#http_stat_pass").val("********");
-            }
-            if (mqtt_user) {
-                flagUseSavedMQTTPassword = true;
-                $("#mqtt_pass").val("********");
-            }
+function buf2hex(buffer) { // buffer is an ArrayBuffer
+    return [...new Uint8Array(buffer)]
+        .map(x => x.toString(16).padStart(2, '0'))
+        .join('');
+}
 
-            $("#use_coded_phy").prop('checked', use_coded_phy);
-            if (!use_filtering) {
-                $(`input:radio[name='filtering'][value='0']`).prop('checked', true);
-            } else {
-                if (use_coded_phy) {
-                    $(`input:radio[name='filtering'][value='2']`).prop('checked', true);
-                } else {
-                    $(`input:radio[name='filtering'][value='1']`).prop('checked', true);
+function ruuvi_edch_encrypt(msg) {
+    let hash = crypto_browserify.createHash('sha256').update(msg).digest();
+    let aes_iv = crypto_browserify.randomBytes(16);
+    let aes_cipher = crypto_browserify.createCipheriv("aes-256-cbc", g_aes_key, aes_iv);
+    let msg_encrypted = aes_cipher.update(msg, 'utf8', 'base64');
+    msg_encrypted += aes_cipher.final('base64');
+    return JSON.stringify({
+        'encrypted': msg_encrypted,
+        'iv': arrayBufferToBase64(aes_iv),
+        'hash': arrayBufferToBase64(hash)
+    });
+}
+
+function on_get_config(data, ecdh_pub_key_srv_b64)
+{
+    g_aes_key = null;
+    if (ecdh_pub_key_srv_b64) {
+        let ecdh_pub_key_srv = crypto_browserify.createECDH('secp256r1');
+        ecdh_pub_key_srv.generateKeys();
+        let ecdh_pub_key_srv_buf = arrayBufferFromBase64(ecdh_pub_key_srv_b64);
+        console.log(`ECDH PubKey(Srv): ${buf2hex(ecdh_pub_key_srv_buf)}`);
+        ecdh_pub_key_srv.setPublicKey(ecdh_pub_key_srv_buf)
+        let shared_secret = g_ecdh.computeSecret(ecdh_pub_key_srv.getPublicKey());
+        // console.log(`Shared secret: ${buf2hex(shared_secret)}`);
+        g_aes_key = crypto_browserify.createHash('sha256').update(shared_secret).digest();
+        // console.log(`AES key: ${buf2hex(g_aes_key)}`);
+    }
+
+    if (data != null) {
+        let use_eth = false;
+        let use_http = false;
+        let http_url = "";
+        let http_user = "";
+        let http_stat_user = "";
+        let use_http_stat = false;
+        let http_stat_url = "";
+        let use_mqtt = false;
+        let mqtt_user = "";
+        let mqtt_prefix = "";
+        let mqtt_client_id = "";
+        let use_filtering = false;
+        let use_coded_phy = false;
+        const keys = Object.keys(data);
+        for (let idx in keys) {
+            let key = keys[idx];
+            let key_value = data[key];
+            switch (key) {
+                case "fw_ver":
+                    $("#software_update-version-current").text(key_value);
+                    break;
+                case "nrf52_fw_ver":
+                    break;
+                case "use_eth":
+                    use_eth = key_value
+                    break;
+                case "eth_dhcp":
+                    $("#eth_dhcp").prop('checked', key_value);
+                    break;
+                case "eth_static_ip":
+                    $("#eth_static_ip").val(key_value);
+                    break;
+                case "eth_netmask":
+                    $("#eth_netmask").val(key_value);
+                    break;
+                case "eth_gw":
+                    $("#eth_gw").val(key_value);
+                    break;
+                case "eth_dns1":
+                    $("#eth_dns1").val(key_value);
+                    break;
+                case "eth_dns2":
+                    $("#eth_dns2").val(key_value);
+                    break;
+                case "use_http":
+                    $("#use_http").prop('checked', key_value);
+                    use_http = key_value;
+                    break;
+                case "http_url":
+                    $("#http_url").val(key_value);
+                    http_url = key_value;
+                    break;
+                case "http_user":
+                    $("#http_user").val(key_value);
+                    http_user = key_value;
+                    break;
+                case "use_http_stat":
+                    $("#use_http_stat").prop('checked', key_value);
+                    use_http_stat = key_value;
+                    break;
+                case "http_stat_url":
+                    $("#http_stat_url").val(key_value);
+                    http_stat_url = key_value;
+                    break;
+                case "http_stat_user":
+                    $("#http_stat_user").val(key_value);
+                    http_stat_user = key_value;
+                    break;
+                case "use_mqtt":
+                    $("#use_mqtt").prop('checked', key_value);
+                    use_mqtt = key_value
+                    break;
+                case "mqtt_transport":
+                    if (key_value === MQTT_TRANSPORT_TYPE.TCP) {
+                        $("#mqtt_transport_TCP").prop('checked', true);
+                    } else if (key_value === MQTT_TRANSPORT_TYPE.SSL) {
+                        $("#mqtt_transport_SSL").prop('checked', true);
+                    } else if (key_value === MQTT_TRANSPORT_TYPE.WS) {
+                        $("#mqtt_transport_WS").prop('checked', true);
+                    } else if (key_value === MQTT_TRANSPORT_TYPE.WSS) {
+                        $("#mqtt_transport_WSS").prop('checked', true);
+                    }
+                    break;
+                case "mqtt_server":
+                    if (key_value) {
+                        $("#mqtt_server").val(key_value);
+                    }
+                    break;
+                case "mqtt_port":
+                    if (key_value) {
+                        $("#mqtt_port").val(key_value);
+                    }
+                    break;
+                case "mqtt_user":
+                    $("#mqtt_user").val(key_value);
+                    mqtt_user = key_value;
+                    break;
+                case "mqtt_prefix":
+                    mqtt_prefix = key_value;
+                    break;
+                case "mqtt_client_id":
+                    mqtt_client_id = key_value;
+                    break;
+                case "lan_auth_type":
+                    if (key_value === LAN_AUTH_TYPE.DENY) {
+                        $("#lan_auth_type_deny").prop('checked', true);
+                    } else if (key_value === LAN_AUTH_TYPE.RUUVI) {
+                        $("#lan_auth_type_ruuvi").prop('checked', true);
+                    } else if (key_value === LAN_AUTH_TYPE.DIGEST) {
+                        $("#lan_auth_type_digest").prop('checked', true);
+                    } else if (key_value === LAN_AUTH_TYPE.BASIC) {
+                        $("#lan_auth_type_basic").prop('checked', true);
+                    } else if (key_value === LAN_AUTH_TYPE.ALLOW) {
+                        $("#lan_auth_type_allow").prop('checked', true);
+                    } else {
+                        $("#lan_auth_type_default").prop('checked', true);
+                    }
+                    $('input#lan_auth-pass').attr('placeholder', "********");
+                    break;
+                case "lan_auth_user": {
+                    let lan_auth_user = $("#lan_auth-user");
+                    let lan_auth_pass = $("#lan_auth-pass");
+                    if (key_value) {
+                        lan_auth_user.val(key_value);
+                        lan_auth_pass.val('');
+                        lan_auth_pass.attr('placeholder', '********');
+                        g_flag_lan_auth_pass_changed = false;
+                    } else {
+                        lan_auth_user.val('');
+                        lan_auth_pass.val('');
+                        lan_auth_pass.removeAttr('placeholder');
+                        g_flag_lan_auth_pass_changed = true;
+                    }
+                    break;
                 }
-                $("#use_1mbit_phy").prop('checked', true);
-                $("#use_extended_payload").prop('checked', true);
-                $("#use_channel_37").prop('checked', true);
-                $("#use_channel_38").prop('checked', true);
-                $("#use_channel_39").prop('checked', true);
+                case "lan_auth_api_key": {
+                    let lan_auth_api_key = $("#lan_auth-api_key");
+                    if (key_value) {
+                        lan_auth_api_key.val(key_value);
+                    } else {
+                        lan_auth_api_key.val('');
+                    }
+                    break;
+                }
+                case "auto_update_cycle": {
+                    if (key_value === AUTO_UPDATE_CYCLE_TYPE.REGULAR) {
+                        $("#auto_update_cycle-regular").prop('checked', true);
+                    } else if (key_value === AUTO_UPDATE_CYCLE_TYPE.BETA_TESTER) {
+                        $("#auto_update_cycle-beta").prop('checked', true);
+                    } else if (key_value === AUTO_UPDATE_CYCLE_TYPE.MANUAL) {
+                        $("#auto_update_cycle-manual").prop('checked', true);
+                    } else {
+                        $("#auto_update_cycle-regular").prop('checked', true);
+                    }
+                    break;
+                }
+                case "auto_update_weekdays_bitmask": {
+                    let weekdays_bitmask = parseInt(key_value);
+                    $("#conf-auto_update_schedule-button-sunday").prop('checked', (weekdays_bitmask & 0x01) !== 0).change();
+                    $("#conf-auto_update_schedule-button-monday").prop('checked', (weekdays_bitmask & 0x02) !== 0).change();
+                    $("#conf-auto_update_schedule-button-tuesday").prop('checked', (weekdays_bitmask & 0x04) !== 0).change();
+                    $("#conf-auto_update_schedule-button-wednesday").prop('checked', (weekdays_bitmask & 0x08) !== 0).change();
+                    $("#conf-auto_update_schedule-button-thursday").prop('checked', (weekdays_bitmask & 0x10) !== 0).change();
+                    $("#conf-auto_update_schedule-button-friday").prop('checked', (weekdays_bitmask & 0x20) !== 0).change();
+                    $("#conf-auto_update_schedule-button-saturday").prop('checked', (weekdays_bitmask & 0x40) !== 0).change();
+                    break;
+                }
+                case "auto_update_interval_from": {
+                    $('#conf-auto_update_schedule-period_from option[value=' + key_value + ']').prop('selected', true);
+                    break;
+                }
+                case "auto_update_interval_to": {
+                    $('#conf-auto_update_schedule-period_to option[value=' + key_value + ']').prop('selected', true);
+                    break;
+                }
+                case "auto_update_tz_offset_hours": {
+                    $('#conf-auto_update_schedule-tz option[value=' + key_value + ']').prop('selected', true);
+                    break;
+                }
+                case "coordinates":
+                    $("#coordinates").val(key_value);
+                    break;
+                case "use_filtering": {
+                    use_filtering = key_value;
+                    break;
+                }
+                case "company_id":
+                    break;
+                case "gw_mac":
+                    gw_mac = key_value;
+                    break;
+                case "use_coded_phy":
+                    use_coded_phy = key_value;
+                    break;
+                case "use_1mbit_phy":
+                    $("#use_1mbit_phy").prop('checked', key_value);
+                    break;
+                case "use_extended_payload":
+                    $("#use_extended_payload").prop('checked', key_value);
+                    break;
+                case "use_channel_37":
+                    $("#use_channel_37").prop('checked', key_value);
+                    break;
+                case "use_channel_38":
+                    $("#use_channel_38").prop('checked', key_value);
+                    break;
+                case "use_channel_39":
+                    $("#use_channel_39").prop('checked', key_value);
+                    break;
+                default:
+                    alert('get_config: unhandled key: ' + key);
+                    break;
             }
-            if (!mqtt_prefix) {
-                $('#use_mqtt_prefix_ruuvi').prop('checked', false);
-                $('#use_mqtt_prefix_gw_mac').prop('checked', false);
-                $('#use_mqtt_prefix_custom').prop('checked', false);
+        }
+        if (use_eth) {
+            $("#network_type_wifi").prop('checked', false);
+            $("#network_type_cable").prop('checked', true);
+        } else {
+            $("#network_type_cable").prop('checked', false);
+            $("#network_type_wifi").prop('checked', true);
+        }
+        let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
+            (use_http && (http_url === HTTP_URL_DEFAULT) && (http_user === "")) &&
+            (use_http_stat && (http_stat_url === HTTP_STAT_URL_DEFAULT) && (http_stat_user === "")) &&
+            (use_filtering && !use_coded_phy);
+        if (flag_use_ruuvi_cloud_with_default_options) {
+            $("#use_custom").prop('checked', false);
+            $("#use_ruuvi").prop('checked', true);
+        } else {
+            $("#use_ruuvi").prop('checked', false);
+            $("#use_custom").prop('checked', true);
+        }
+        if (http_user) {
+            flagUseSavedHTTPPassword = true;
+            $("#http_pass").val("********");
+        }
+        if (http_stat_user) {
+            flagUseSavedHTTPStatPassword = true;
+            $("#http_stat_pass").val("********");
+        }
+        if (mqtt_user) {
+            flagUseSavedMQTTPassword = true;
+            $("#mqtt_pass").val("********");
+        }
+
+        $("#use_coded_phy").prop('checked', use_coded_phy);
+        if (!use_filtering) {
+            $(`input:radio[name='filtering'][value='0']`).prop('checked', true);
+        } else {
+            if (use_coded_phy) {
+                $(`input:radio[name='filtering'][value='2']`).prop('checked', true);
             } else {
-                let start_idx = 0;
-                let prefix_ruuvi = 'ruuvi';
-                let mqtt_topic = mqtt_prefix;
-                if ((mqtt_topic === prefix_ruuvi) || mqtt_topic.startsWith(prefix_ruuvi + '/')) {
-                    $('#use_mqtt_prefix_ruuvi').prop('checked', true);
-                    start_idx = prefix_ruuvi.length;
-                    if (mqtt_topic[start_idx] === '/') {
-                        start_idx += 1;
-                    }
-                } else {
-                    $('#use_mqtt_prefix_ruuvi').prop('checked', false);
+                $(`input:radio[name='filtering'][value='1']`).prop('checked', true);
+            }
+            $("#use_1mbit_phy").prop('checked', true);
+            $("#use_extended_payload").prop('checked', true);
+            $("#use_channel_37").prop('checked', true);
+            $("#use_channel_38").prop('checked', true);
+            $("#use_channel_39").prop('checked', true);
+        }
+        if (!mqtt_prefix) {
+            $('#use_mqtt_prefix_ruuvi').prop('checked', false);
+            $('#use_mqtt_prefix_gw_mac').prop('checked', false);
+            $('#use_mqtt_prefix_custom').prop('checked', false);
+        } else {
+            let start_idx = 0;
+            let prefix_ruuvi = 'ruuvi';
+            let mqtt_topic = mqtt_prefix;
+            if ((mqtt_topic === prefix_ruuvi) || mqtt_topic.startsWith(prefix_ruuvi + '/')) {
+                $('#use_mqtt_prefix_ruuvi').prop('checked', true);
+                start_idx = prefix_ruuvi.length;
+                if (mqtt_topic[start_idx] === '/') {
+                    start_idx += 1;
                 }
-                mqtt_topic = mqtt_topic.substr(start_idx);
-                start_idx = 0;
-                if ((mqtt_topic === gw_mac) || mqtt_topic.startsWith(gw_mac + '/')) {
-                    $('#use_mqtt_prefix_gw_mac').prop('checked', true);
-                    start_idx = gw_mac.length;
-                    if (mqtt_topic[start_idx] === '/') {
-                        start_idx += 1;
-                    }
-                } else {
-                    $('#use_mqtt_prefix_gw_mac').prop('checked', false);
+            } else {
+                $('#use_mqtt_prefix_ruuvi').prop('checked', false);
+            }
+            mqtt_topic = mqtt_topic.substr(start_idx);
+            start_idx = 0;
+            if ((mqtt_topic === gw_mac) || mqtt_topic.startsWith(gw_mac + '/')) {
+                $('#use_mqtt_prefix_gw_mac').prop('checked', true);
+                start_idx = gw_mac.length;
+                if (mqtt_topic[start_idx] === '/') {
+                    start_idx += 1;
                 }
-                mqtt_topic = mqtt_topic.substr(start_idx);
-                if (mqtt_topic.length > 0) {
-                    if (mqtt_topic.slice(-1) === '/') {
-                        if (mqtt_topic.length > 1) {
-                            if (/[a-zA-Z0-9]/.test(mqtt_topic.slice(-2, -1))) {
-                                mqtt_topic = mqtt_topic.slice(0, -1);
-                            }
+            } else {
+                $('#use_mqtt_prefix_gw_mac').prop('checked', false);
+            }
+            mqtt_topic = mqtt_topic.substr(start_idx);
+            if (mqtt_topic.length > 0) {
+                if (mqtt_topic.slice(-1) === '/') {
+                    if (mqtt_topic.length > 1) {
+                        if (/[a-zA-Z0-9]/.test(mqtt_topic.slice(-2, -1))) {
+                            mqtt_topic = mqtt_topic.slice(0, -1);
                         }
                     }
                 }
-                $("#mqtt_prefix_custom").val(mqtt_topic);
-                if (mqtt_topic.length > 0) {
-                    $('#use_mqtt_prefix_custom').prop('checked', true);
-                } else {
-                    $('#use_mqtt_prefix_custom').prop('checked', false);
-                }
             }
-            if (!mqtt_client_id) {
-                mqtt_client_id = gw_mac;
+            $("#mqtt_prefix_custom").val(mqtt_topic);
+            if (mqtt_topic.length > 0) {
+                $('#use_mqtt_prefix_custom').prop('checked', true);
+            } else {
+                $('#use_mqtt_prefix_custom').prop('checked', false);
             }
-            $("#mqtt_client_id").val(mqtt_client_id);
-            on_edit_mqtt_settings();
         }
-    });
+        if (!mqtt_client_id) {
+            mqtt_client_id = gw_mac;
+        }
+        $("#mqtt_client_id").val(mqtt_client_id);
+        on_edit_mqtt_settings();
+    }
+}
+
+function arrayBufferToBase64(arrayBuffer) {
+    return btoa(String.fromCharCode.apply(null, new Uint8Array(arrayBuffer)));
+}
+
+function arrayBufferFromBase64(base64_string) {
+    return Uint8Array.from(atob(base64_string), c => c.charCodeAt(0));
+}
+
+function get_config() {
+    g_ecdh = crypto_browserify.createECDH('secp256r1');
+    let pub_key = g_ecdh.generateKeys();
+    console.log(`ECDH PubKey(Cli): ${buf2hex(pub_key)}`);
+    $.ajax({
+            method: 'GET',
+            url: '/ruuvi.json',
+            accept: "application/json, text/plain, */*",
+            dataType: 'json',
+            cache: false,
+            headers: {'ruuvi_ecdh_pub_key': arrayBufferToBase64(pub_key)},
+            success: function (data, textStatus, request) {
+                on_get_config(data, request.getResponseHeader('ruuvi_ecdh_pub_key'));
+            },
+            error: function (request, status, error) {
+            }
+        }
+    );
 }
 
 function showError(error) {

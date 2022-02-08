@@ -1150,25 +1150,24 @@ function networkConnect(ssid, password) {
     selectedSSID = ssid;
     $(".wifi-network-name").text(ssid);
 
-    let req_connect_header = null;
-    if (ssid) {
-        if (password) {
-            req_connect_header = {'X-Custom-ssid': ssid, 'X-Custom-pwd': password};
-        } else {
-            // reconnect to saved WiFi
-            req_connect_header = {'X-Custom-ssid': ssid};
-        }
-    }
-
     stopCheckStatus();
+
+    let stub = ''
+    let json_content = JSON.stringify({'ssid': ssid, 'password': password, 'stub':stub});
+    if (json_content.length < 240) {
+        // Make the length of the message the same, regardless of the length of ssid/password
+        stub = ' '.repeat(240 - json_content.length);
+        json_content = JSON.stringify({'ssid': ssid, 'password': password, 'stub':stub});
+    }
+    let json_content_encrypted = ruuvi_edch_encrypt(json_content);
+
     $.ajax({
             method: 'POST',
             url: '/connect.json',
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
             cache: false,
-            headers: req_connect_header,
-            data: JSON.stringify({'timestamp': Date.now()}),
+            data: json_content_encrypted,
             success: function (data, text) {
                 connectionState = CONNECTION_STATE.CONNECTING;
                 //now we can re-set the intervals regardless of result
