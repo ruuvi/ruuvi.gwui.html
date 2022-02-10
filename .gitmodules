@@ -1,0 +1,3 @@
+[submodule "crypto-browserify"]
+	path = crypto-browserify
+	url = https://github.com/crypto-browserify/crypto-browserify.git

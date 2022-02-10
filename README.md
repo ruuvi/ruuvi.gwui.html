@@ -3,6 +3,13 @@
 ## Ruuvi Gateway web UI
 This repository contains files related to the web interface of the Gateway configurator. 
 
+### Pre-requisites:
+* npm and crypto-browserify:
+ 
+`sudo apt install npm`
+
+`sudo npm install -g browserify browserify-shim`
+
 ## Gateway simulator
 
 For the UI testing, a Gateway simulator can be used.
