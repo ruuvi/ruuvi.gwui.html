@@ -15,3 +15,5 @@ if [ ! -f "$CRYPTO_BROWSERIFY_JS" ]; then
   test $? -eq 0 || exit $?
 fi
 [ -f "$CRYPTO_BROWSERIFY/package-lock.json" ] && rm "$CRYPTO_BROWSERIFY/package-lock.json"
+exit 0
+
