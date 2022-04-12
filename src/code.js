@@ -301,7 +301,7 @@ function on_cloud_options_connection_type_changed() {
         $('#http_stat_user').val("");
         $('#http_stat_pass').val("");
         $('#use_mqtt').prop('checked', false);
-        $(`input:radio[name='filtering'][value='1']`).prop('checked', true);
+        $(`input:radio[name='company_use_filtering'][value='1']`).prop('checked', true);
         on_settings_scan_filtering_changed();
     } else {
         for (let i = 0; i < 6; ++i) {
@@ -317,25 +317,25 @@ function on_cloud_options_connection_type_changed() {
 }
 
 function on_settings_scan_filtering_changed() {
-    let filtering = $("input[name='filtering']:checked").val();
+    let filtering = $("input[name='company_use_filtering']:checked").val();
     if (filtering === "0") {
         $('#page-scanning-all_nearby_beacons-scanning_options').slideDown();
     } else if (filtering === "1") {
         $('#page-scanning-all_nearby_beacons-scanning_options').slideUp();
-        $("#use_coded_phy")[0].checked = false;
-        $("#use_1mbit_phy")[0].checked = true;
-        $("#use_extended_payload")[0].checked = true;
-        $("#use_channel_37")[0].checked = true;
-        $("#use_channel_38")[0].checked = true;
-        $("#use_channel_39")[0].checked = true;
+        $("#scan_coded_phy")[0].checked = false;
+        $("#scan_1mbit_phy")[0].checked = true;
+        $("#scan_extended_payload")[0].checked = true;
+        $("#scan_channel_37")[0].checked = true;
+        $("#scan_channel_38")[0].checked = true;
+        $("#scan_channel_39")[0].checked = true;
     } else if (filtering === "2") {
         $('#page-scanning-all_nearby_beacons-scanning_options').slideUp();
-        $("#use_coded_phy")[0].checked = true;
-        $("#use_1mbit_phy")[0].checked = true;
-        $("#use_extended_payload")[0].checked = true;
-        $("#use_channel_37")[0].checked = true;
-        $("#use_channel_38")[0].checked = true;
-        $("#use_channel_39")[0].checked = true;
+        $("#scan_coded_phy")[0].checked = true;
+        $("#scan_1mbit_phy")[0].checked = true;
+        $("#scan_extended_payload")[0].checked = true;
+        $("#scan_channel_37")[0].checked = true;
+        $("#scan_channel_38")[0].checked = true;
+        $("#scan_channel_39")[0].checked = true;
     }
 }
 
@@ -1050,7 +1050,7 @@ $(document).ready(function () {
         $('#page-scanning-advanced-button div.btn-dropdown-arrow-up').hide();
         $('#page-scanning-advanced-button div.btn-dropdown-arrow-down').show();
 
-        let filtering = $("input[name='filtering']:checked").val();
+        let filtering = $("input[name='company_use_filtering']:checked").val();
         if (filtering !== '1') {
             dropdownShow('#page-scanning-advanced-dropdown');
         } else {
@@ -1059,7 +1059,7 @@ $(document).ready(function () {
         on_settings_scan_filtering_changed();
     });
 
-    $("section#page-scanning input[name='filtering']").change(function (e) {
+    $("section#page-scanning input[name='company_use_filtering']").change(function (e) {
         on_settings_scan_filtering_changed();
     });
 

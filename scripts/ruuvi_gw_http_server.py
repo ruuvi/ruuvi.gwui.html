@@ -110,15 +110,15 @@ g_ruuvi_dict = {
     'auto_update_interval_to': 23,
     'auto_update_tz_offset_hours': 3,
     'gw_mac': g_gw_mac,
-    'use_filtering': True,
-    'company_id': "0x0499",
+    'company_use_filtering': True,
+    'company_id': 0x0499,
     'coordinates': "",
-    'use_coded_phy': False,
-    'use_1mbit_phy': True,
-    'use_extended_payload': True,
-    'use_channel_37': True,
-    'use_channel_38': True,
-    'use_channel_39': True,
+    'scan_coded_phy': False,
+    'scan_1mbit_phy': True,
+    'scan_extended_payload': True,
+    'scan_channel_37': True,
+    'scan_channel_38': True,
+    'scan_channel_39': True,
 }
 
 g_content_github_latest_release = '''{
@@ -1530,7 +1530,7 @@ if __name__ == '__main__':
     print('    5 - lost connection')
 
     os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../src'))
-    
+
     if args.lan:
         g_flag_access_from_lan = True
 
