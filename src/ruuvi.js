@@ -174,14 +174,14 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         }
         data.lan_auth_api_key = $("#lan_auth-api_key").val();
 
-        data.use_filtering = ($("input[name='filtering']:checked").val() !== "0");
+        data.company_use_filtering = ($("input[name='company_use_filtering']:checked").val() !== "0");
 
-        data.use_coded_phy = $("#use_coded_phy")[0].checked;
-        data.use_1mbit_phy = $("#use_1mbit_phy")[0].checked;
-        data.use_extended_payload = $("#use_extended_payload")[0].checked;
-        data.use_channel_37 = $("#use_channel_37")[0].checked;
-        data.use_channel_38 = $("#use_channel_38")[0].checked;
-        data.use_channel_39 = $("#use_channel_39")[0].checked;
+        data.scan_coded_phy = $("#scan_coded_phy")[0].checked;
+        data.scan_1mbit_phy = $("#scan_1mbit_phy")[0].checked;
+        data.scan_extended_payload = $("#scan_extended_payload")[0].checked;
+        data.scan_channel_37 = $("#scan_channel_37")[0].checked;
+        data.scan_channel_38 = $("#scan_channel_38")[0].checked;
+        data.scan_channel_39 = $("#scan_channel_39")[0].checked;
 
         if (auto_update_cycle === "auto_update_cycle-regular") {
             data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.REGULAR;
@@ -418,8 +418,14 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
         let mqtt_user = "";
         let mqtt_prefix = "";
         let mqtt_client_id = "";
-        let use_filtering = false;
-        let use_coded_phy = false;
+        let company_use_filtering = false;
+        let company_id = 0;
+        let scan_coded_phy = false;
+        let scan_1mbit_phy = false;
+        let scan_extended_payload = false;
+        let scan_channel_37 = false;
+        let scan_channel_38 = false;
+        let scan_channel_39 = false;
         const keys = Object.keys(data);
         for (let idx in keys) {
             let key = keys[idx];
@@ -589,32 +595,37 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                 case "coordinates":
                     $("#coordinates").val(key_value);
                     break;
-                case "use_filtering": {
-                    use_filtering = key_value;
+                case "company_use_filtering":
+                    company_use_filtering = key_value;
                     break;
-                }
                 case "company_id":
+                    company_id = parseInt(key_value);
                     break;
                 case "gw_mac":
                     gw_mac = key_value;
                     break;
-                case "use_coded_phy":
-                    use_coded_phy = key_value;
+                case "scan_coded_phy":
+                    scan_coded_phy = key_value;
                     break;
-                case "use_1mbit_phy":
-                    $("#use_1mbit_phy").prop('checked', key_value);
+                case "scan_1mbit_phy":
+                    scan_1mbit_phy = key_value;
+                    $("#scan_1mbit_phy").prop('checked', key_value);
                     break;
-                case "use_extended_payload":
-                    $("#use_extended_payload").prop('checked', key_value);
+                case "scan_extended_payload":
+                    scan_extended_payload = key_value;
+                    $("#scan_extended_payload").prop('checked', key_value);
                     break;
-                case "use_channel_37":
-                    $("#use_channel_37").prop('checked', key_value);
+                case "scan_channel_37":
+                    scan_channel_37 = key_value;
+                    $("#scan_channel_37").prop('checked', key_value);
                     break;
-                case "use_channel_38":
-                    $("#use_channel_38").prop('checked', key_value);
+                case "scan_channel_38":
+                    scan_channel_38 = key_value;
+                    $("#scan_channel_38").prop('checked', key_value);
                     break;
-                case "use_channel_39":
-                    $("#use_channel_39").prop('checked', key_value);
+                case "scan_channel_39":
+                    scan_channel_39 = key_value;
+                    $("#scan_channel_39").prop('checked', key_value);
                     break;
                 default:
                     alert('get_config: unhandled key: ' + key);
@@ -631,7 +642,9 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
         let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
             (use_http && (http_url === HTTP_URL_DEFAULT) && (http_user === "")) &&
             (use_http_stat && (http_stat_url === HTTP_STAT_URL_DEFAULT) && (http_stat_user === "")) &&
-            (use_filtering && !use_coded_phy);
+            (company_use_filtering && (company_id === 0x0499) &&
+                !scan_coded_phy && scan_1mbit_phy && scan_extended_payload &&
+                scan_channel_37 && scan_channel_38 && scan_channel_39);
         if (flag_use_ruuvi_cloud_with_default_options) {
             $("#use_custom").prop('checked', false);
             $("#use_ruuvi").prop('checked', true);
@@ -652,20 +665,20 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
             $("#mqtt_pass").val("********");
         }
 
-        $("#use_coded_phy").prop('checked', use_coded_phy);
-        if (!use_filtering) {
-            $(`input:radio[name='filtering'][value='0']`).prop('checked', true);
+        $("#scan_coded_phy").prop('checked', scan_coded_phy);
+        if (!company_use_filtering) {
+            $(`input:radio[name='company_use_filtering'][value='0']`).prop('checked', true);
         } else {
-            if (use_coded_phy) {
-                $(`input:radio[name='filtering'][value='2']`).prop('checked', true);
+            if (scan_coded_phy) {
+                $(`input:radio[name='company_use_filtering'][value='2']`).prop('checked', true);
             } else {
-                $(`input:radio[name='filtering'][value='1']`).prop('checked', true);
+                $(`input:radio[name='company_use_filtering'][value='1']`).prop('checked', true);
             }
-            $("#use_1mbit_phy").prop('checked', true);
-            $("#use_extended_payload").prop('checked', true);
-            $("#use_channel_37").prop('checked', true);
-            $("#use_channel_38").prop('checked', true);
-            $("#use_channel_39").prop('checked', true);
+            $("#scan_1mbit_phy").prop('checked', true);
+            $("#scan_extended_payload").prop('checked', true);
+            $("#scan_channel_37").prop('checked', true);
+            $("#scan_channel_38").prop('checked', true);
+            $("#scan_channel_39").prop('checked', true);
         }
         if (!mqtt_prefix) {
             $('#use_mqtt_prefix_ruuvi').prop('checked', false);

@@ -1395,7 +1395,7 @@
 			<label class="control control-radio">
 				<span lang="en">Listen to Ruuvi sensors</span>
 				<span lang="fi">Kuuntele Ruuvi-antureita</span>
-				<input type="radio" name="filtering" value="1" checked="checked" placeholder="Scan only Ruuvitags">
+				<input type="radio" name="company_use_filtering" value="1" checked="checked" placeholder="Scan only Ruuvitags">
 				<span class="control_indicator"></span>
 			</label>
 
@@ -1417,7 +1417,7 @@
 				<label class="control control-radio">
 					<span lang="en">Ruuvi sensors (experimental long range sensors included)</span>
 					<span lang="fi">Ruuvi-anturit (myös kokeelliset pitkän kantaman anturit)</span>
-					<input type="radio" name="filtering" value="2" checked="checked" placeholder="Scan only Ruuvitags">
+					<input type="radio" name="company_use_filtering" value="2" checked="checked" placeholder="Scan only Ruuvitags">
 					<span class="control_indicator"></span>
 				</label>
 				<div style="opacity: 50%;" class="indent">
@@ -1433,44 +1433,44 @@
 				<label class="control control-radio">
 					<span lang="en">All (including third party beacons)</span>
 					<span lang="fi">Kaikki (mukaan lukien kolmansien osapuolten majakat)</span>
-					<input type="radio" name="filtering" value="0" placeholder="Scan all beacons">
+					<input type="radio" name="company_use_filtering" value="0" placeholder="Scan all beacons">
 					<span class="control_indicator"></span>
 				</label>
 				<div id="page-scanning-all_nearby_beacons-scanning_options" class="indent hidden">
 					<label class="control control-checkbox">
 						<span lang="en">Use coded PHY (long range)</span>
 						<span lang="fi">Käytä koodattua PHY:tä (pitkä kantama)</span>
-						<input id="use_coded_phy" type="checkbox">
+						<input id="scan_coded_phy" type="checkbox">
 						<span class="control_indicator"></span>
 					</label>
 					<label class="control control-checkbox">
 						<span lang="en">Use 1 MBit/s PHY</span>
 						<span lang="fi">Skannaa 1 MBit/s-lähetyksiä</span>
-						<input id="use_1mbit_phy" type="checkbox">
+						<input id="scan_1mbit_phy" type="checkbox">
 						<span class="control_indicator"></span>
 					</label>
 					<label class="control control-checkbox">
 						<span lang="en">Use extended payload</span>
 						<span lang="fi">Skannaa pidennettyjä lähetyksiä</span>
-						<input id="use_extended_payload" type="checkbox">
+						<input id="scan_extended_payload" type="checkbox">
 						<span class="control_indicator"></span>
 					</label>
 					<label class="control control-checkbox">
 						<span lang="en">Use channel 37</span>
 						<span lang="fi">Skannaa kanavaa 37</span>
-						<input id="use_channel_37" type="checkbox">
+						<input id="scan_channel_37" type="checkbox">
 						<span class="control_indicator"></span>
 					</label>
 					<label class="control control-checkbox">
 						<span lang="en">Use channel 38</span>
 						<span lang="fi">Skannaa kanavaa 38</span>
-						<input id="use_channel_38" type="checkbox">
+						<input id="scan_channel_38" type="checkbox">
 						<span class="control_indicator"></span>
 					</label>
 					<label class="control control-checkbox">
 						<span lang="en">Use channel 39</span>
 						<span lang="fi">Skannaa kanavaa 39</span>
-						<input id="use_channel_39" type="checkbox">
+						<input id="scan_channel_39" type="checkbox">
 						<span class="control_indicator"></span>
 					</label>
 				</div>
