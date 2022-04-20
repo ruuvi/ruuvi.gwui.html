@@ -18,6 +18,7 @@ let selectedSSID = "";
 let connectedSSID = "";
 let flagUseSavedWiFiPassword = false;
 let flagUseSavedHTTPPassword = false;
+let flagUseSavedRemoteCfgAuthBasicPassword = false;
 let flagUseSavedHTTPStatPassword = false;
 let flagUseSavedMQTTPassword = false;
 let g_flagAccessFromLAN = false;
@@ -124,6 +125,10 @@ function change_page_to_software_update() {
     change_url('page-software_update');
 }
 
+function change_page_to_remote_cfg() {
+    change_url('page-remote_cfg');
+}
+
 function change_page_to_update_schedule() {
     change_url('page-update_schedule');
 }
@@ -148,17 +153,11 @@ function change_url_scanning() {
     change_url('page-scanning');
 }
 
-function change_page_to_finished(flagAdvancedSettings) {
+function change_page_to_finished(num_steps) {
     let h = "";
     h += '<ul class="progressbar">';
-    if (flagAdvancedSettings) {
-        for (let i = 0; i < 9; ++i) {
-            h += '<li class="active"></li>';
-        }
-    } else {
-        for (let i = 0; i < 7; ++i) {
-            h += '<li class="active"></li>';
-        }
+    for (let i = 0; i < num_steps; ++i) {
+        h += '<li class="active"></li>';
     }
     h += '</ul>';
     $('section#page-finished div.progressbar-container').html(h);
@@ -220,6 +219,95 @@ function on_show_software_update() {
         $("#software_update-status-error").show();
         $('body').removeClass('is-loading');
     });
+}
+
+function on_remote_cfg_changed() {
+    let h = "";
+    h += '<ul class="progressbar">';
+    if ($('#remote_cfg-use').prop('checked')) {
+        $('#remote_cfg-options').removeClass('hidden');
+        for (let i = 0; i < 4; ++i) {
+            h += '<li class="active"></li>';
+        }
+        for (let i = 4; i < 5; ++i) {
+            h += '<li></li>';
+        }
+        $("#remote_cfg-button-download").removeClass("hidden");
+        $("#page-remote_cfg-button-continue").addClass("disable-click");
+    } else {
+        $('#remote_cfg-options').addClass('hidden');
+        for (let i = 0; i < 4; ++i) {
+            h += '<li class="active"></li>';
+        }
+        for (let i = 4; i < 8; ++i) {
+            h += '<li></li>';
+        }
+        $("#page-remote_cfg-button-continue").removeClass("disable-click");
+        $("#remote_cfg-button-download").addClass("hidden");
+    }
+    h += '</ul>';
+    h += '\n';
+    $('section#page-remote_cfg div.progressbar-container').html(h);
+
+    let remote_cfg_auth_type = $("input[name='remote_cfg_auth_type']:checked").val();
+    if ($('#remote_cfg-use_auth').prop('checked')) {
+        $('#conf-remote_cfg-auth-options').removeClass('hidden');
+        if (remote_cfg_auth_type === undefined) {
+            $(`input:radio[name='remote_cfg_auth_type'][value='remote_cfg_auth_type_basic']`).prop('checked', true);
+            remote_cfg_auth_type = $("input[name='remote_cfg_auth_type']:checked").val();
+        }
+        if (remote_cfg_auth_type === "remote_cfg_auth_type_bearer") {
+            $('#conf-remote_cfg-auth_bearer-options').removeClass('hidden');
+            $('#conf-remote_cfg-auth_basic-options').addClass('hidden');
+        } else {
+            $('#conf-remote_cfg-auth_basic-options').removeClass('hidden');
+            $('#conf-remote_cfg-auth_bearer-options').addClass('hidden');
+        }
+    } else {
+        $('#conf-remote_cfg-auth-options').addClass('hidden');
+    }
+    let remote_cfg_base_url = $("#remote_cfg-base_url");
+    let base_url = remote_cfg_base_url.val();
+    let full_url = "";
+
+    let flag_valid = true;
+    if (base_url !== "") {
+        let gw_cfg_json_name = "gw_cfg.json";
+        if (base_url.endsWith(gw_cfg_json_name)) {
+            base_url = base_url.slice(0, -1 * gw_cfg_json_name.length);
+        }
+        full_url = ''
+        if (!base_url.startsWith("http://") && !base_url.startsWith("https://")) {
+            full_url += "http://";
+        }
+        full_url += base_url;
+        if (!full_url.endsWith("/")) {
+            full_url += "/";
+        }
+        full_url += gw_cfg_json_name
+    } else {
+        flag_valid = false;
+    }
+    if ($('#remote_cfg-use_auth').prop('checked')) {
+        if (remote_cfg_auth_type === "remote_cfg_auth_type_bearer") {
+            if ($('#remote_cfg-auth_bearer-token').val() === "") {
+                flag_valid = false;
+            }
+        } else {
+            if (($('#remote_cfg-auth_basic-user').val() === "") || ($('#remote_cfg-auth_basic-password').val() === "")) {
+                flag_valid = false;
+            }
+        }
+    }
+    if (remote_cfg_base_url.val() !== base_url) {
+        remote_cfg_base_url.val(base_url);
+    }
+    $("#remote_cfg-url").text(full_url);
+    if (flag_valid) {
+        $("#remote_cfg-button-download").removeClass("disable-click");
+    } else {
+        $("#remote_cfg-button-download").addClass("disable-click");
+    }
 }
 
 function on_custom_connection_type_changed() {
@@ -288,7 +376,7 @@ function on_cloud_options_connection_type_changed() {
     let h = "";
     h += '<ul class="progressbar">';
     if (connection_type === 'ruuvi') {
-        for (let i = 0; i < 6; ++i) {
+        for (let i = 0; i < 7; ++i) {
             h += '<li class="active"></li>';
         }
         h += '<li></li>';
@@ -304,10 +392,10 @@ function on_cloud_options_connection_type_changed() {
         $(`input:radio[name='company_use_filtering'][value='1']`).prop('checked', true);
         on_settings_scan_filtering_changed();
     } else {
-        for (let i = 0; i < 6; ++i) {
+        for (let i = 0; i < 7; ++i) {
             h += '<li class="active"></li>';
         }
-        for (let i = 6; i < 9; ++i) {
+        for (let i = 7; i < 10; ++i) {
             h += '<li></li>';
         }
     }
@@ -755,7 +843,7 @@ $(document).ready(function () {
 
     $('section#page-software_update #page-software_update-button-continue').click(function (e) {
         e.preventDefault();
-        change_page_to_update_schedule();
+        change_page_to_remote_cfg();
     });
 
     $('section#page-software_update #page-software_update-button-back').click(function (e) {
@@ -765,6 +853,98 @@ $(document).ready(function () {
     // ==== page-software_update_progress ==============================================================================
 
     $('section#page-software_update_progress').bind('onShow', function () {
+    });
+
+    // ==== page-remote_cfg ============================================================================================
+    $('section#page-remote_cfg').bind('onShow', function () {
+        $("#remote_cfg-base_url").val($("#remote_cfg-url").text());
+        on_remote_cfg_changed();
+    });
+
+    $('#remote_cfg-base_url').on("input", function () {
+        on_remote_cfg_changed();
+    });
+
+    $('#remote_cfg-base_url').change(function () {
+        on_remote_cfg_changed();
+    });
+
+    $('#remote_cfg-auth_basic-user').on("input", function () {
+        on_remote_cfg_changed();
+    });
+
+    $('#remote_cfg-auth_basic-user').change(function () {
+        on_remote_cfg_changed();
+    });
+
+    $('#remote_cfg-auth_bearer-token').on("input", function () {
+        on_remote_cfg_changed();
+    });
+
+    $('#remote_cfg-auth_bearer-token').change(function () {
+        on_remote_cfg_changed();
+    });
+
+    $('#remote_cfg-auth_basic-password').on("input", function () {
+        on_remote_cfg_changed();
+    });
+
+    $('#remote_cfg-auth_basic-password').change(function () {
+        on_remote_cfg_changed();
+    });
+
+    $("section#page-remote_cfg input#remote_cfg-use").change(function (e) {
+        on_remote_cfg_changed();
+    });
+
+    $("section#page-remote_cfg input#remote_cfg-use_auth").change(function (e) {
+        on_remote_cfg_changed();
+    });
+
+    $("section#page-remote_cfg input#remote_cfg_auth_type_basic").change(function (e) {
+        on_remote_cfg_changed();
+    });
+
+    $("section#page-remote_cfg input#remote_cfg_auth_type_bearer").change(function (e) {
+        on_remote_cfg_changed();
+    });
+
+    $('#remote_cfg-auth_basic-password').on("focus", function () {
+        if (flagUseSavedRemoteCfgAuthBasicPassword) {
+            flagUseSavedRemoteCfgAuthBasicPassword = false;
+            $('#remote_cfg-auth_basic-password').val("");
+            on_remote_cfg_changed();
+        }
+    });
+
+    $('section#page-remote_cfg #page-remote_cfg-button-continue').click(function (e) {
+        e.preventDefault();
+        change_page_to_update_schedule();
+    });
+
+    $('section#page-remote_cfg #remote_cfg-button-download').click(function (e) {
+        e.preventDefault();
+        $('#page-remote_cfg-status').addClass('hidden');
+        save_config();
+        $.ajax({
+                method: 'POST',
+                url: '/gw_cfg_download',
+                dataType: 'text',
+                contentType: "application/json; charset=utf-8",
+                cache: false,
+                success: function (data, text) {
+                    change_page_to_finished(5);
+                },
+                error: function (request, status, error) {
+                    let desc = 'Status: ' + request.status + ' (' + request.statusText + ')';
+                    if (request.responseText) {
+                        desc += "\nResponse: " + request.responseText;
+                    }
+                    $('#page-remote_cfg-status-error-desc').text(desc);
+                    $('#page-remote_cfg-status-error').removeClass('hidden');
+                }
+            }
+        );
     });
 
     // ==== page-update_schedule =======================================================================================
@@ -909,7 +1089,7 @@ $(document).ready(function () {
         let connection_type = $("input[name='connection_type']:checked").val();
         if (connection_type === 'ruuvi') {
             save_config();
-            change_page_to_finished(false);
+            change_page_to_finished(8);
         } else {
             change_url_custom_server();
         }
@@ -1066,7 +1246,7 @@ $(document).ready(function () {
     $('section#page-scanning #page-scanning-button-continue').click(function (e) {
         e.preventDefault();
         save_config();
-        change_page_to_finished(true);
+        change_page_to_finished(10);
     });
 
     // ==== page-finished ==============================================================================================

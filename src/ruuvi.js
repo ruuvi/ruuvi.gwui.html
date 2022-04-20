@@ -6,6 +6,12 @@ const MQTT_PREFIX_MAX_LENGTH = 256;
 const HTTP_URL_DEFAULT = "https://network.ruuvi.com/record";
 const HTTP_STAT_URL_DEFAULT = "https://network.ruuvi.com/status";
 
+const REMOTE_CFG_AUTH_TYPE = Object.freeze({
+    'NO': 'no',
+    'BASIC': 'basic',
+    'BEARER': 'bearer',
+});
+
 const LAN_AUTH_TYPE = Object.freeze({
     'DENY': 'lan_auth_deny',
     'DEFAULT': 'lan_auth_default',
@@ -99,6 +105,39 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
             }
         }
     } else {
+        data.remote_cfg_use = $("#remote_cfg-use").prop('checked');
+        data.remote_cfg_url = $("#remote_cfg-url").text();
+        if ($('#remote_cfg-use_auth').prop('checked')) {
+            let remote_cfg_auth_type = $("input[name='remote_cfg_auth_type']:checked").val();
+            if (remote_cfg_auth_type === "remote_cfg_auth_type_basic") {
+                data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.BASIC;
+                data.remote_cfg_auth_basic_user = $("#remote_cfg-auth_basic-user").val();
+                if (!flagUseSavedRemoteCfgAuthBasicPassword)
+                {
+                    data.remote_cfg_auth_basic_pass = $("#remote_cfg-auth_basic-password").val();
+                }
+            } else if (remote_cfg_auth_type === "remote_cfg_auth_type_bearer") {
+                data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.BEARER;
+                data.remote_cfg_auth_bearer_token = $("#remote_cfg-auth_bearer-token").val();
+            }
+        } else {
+            data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.NO;
+        }
+
+        data.use_http = $("#use_http")[0].checked;
+        data.http_url = $("#http_url").val();
+        data.http_user = $("#http_user").val();
+        if (!flagUseSavedHTTPPassword) {
+            data.http_pass = $("#http_pass").val();
+        }
+
+        data.use_http_stat = $("#use_http_stat")[0].checked;
+        data.http_stat_url = $("#http_stat_url").val();
+        data.http_stat_user = $("#http_stat_user").val();
+        if (!flagUseSavedHTTPStatPassword) {
+            data.http_stat_pass = $("#http_stat_pass").val();
+        }
+
         data.use_mqtt = $("#use_mqtt")[0].checked;
 
         let mqtt_transport = $("input[name='mqtt_transport']:checked").val();
@@ -128,20 +167,6 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         data.mqtt_user = $("#mqtt_user").val();
         if (!flagUseSavedMQTTPassword) {
             data.mqtt_pass = $("#mqtt_pass").val();
-        }
-
-        data.use_http = $("#use_http")[0].checked;
-        data.http_url = $("#http_url").val();
-        data.http_user = $("#http_user").val();
-        if (!flagUseSavedHTTPPassword) {
-            data.http_pass = $("#http_pass").val();
-        }
-
-        data.use_http_stat = $("#use_http_stat")[0].checked;
-        data.http_stat_url = $("#http_stat_url").val();
-        data.http_stat_user = $("#http_stat_user").val();
-        if (!flagUseSavedHTTPStatPassword) {
-            data.http_stat_pass = $("#http_stat_pass").val();
         }
 
         if (g_flag_lan_auth_pass_changed) {
@@ -408,6 +433,8 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
 
     if (data != null) {
         let use_eth = false;
+        let remote_cfg_use = false;
+        let remote_cfg_auth_type= REMOTE_CFG_AUTH_TYPE.NO;
         let use_http = false;
         let http_url = "";
         let http_user = "";
@@ -456,6 +483,27 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                     break;
                 case "eth_dns2":
                     $("#eth_dns2").val(key_value);
+                    break;
+                case "remote_cfg_use":
+                    remote_cfg_use = key_value;
+                    break;
+                case "remote_cfg_url":
+                    $('#remote_cfg-url').text(key_value);
+                    break;
+                case "remote_cfg_auth_type":
+                    remote_cfg_auth_type = key_value;
+                    break;
+                case "remote_cfg_auth_basic_user":
+                    $("#remote_cfg-auth_basic-user").val(key_value);
+                    break;
+                case "remote_cfg_auth_basic_pass":
+                    $("#remote_cfg-auth_basic-password").val(key_value);
+                    break;
+                case "remote_cfg_auth_bearer_token":
+                    $("#remote_cfg-auth_bearer-token").val(key_value);
+                    break;
+                case "remote_cfg_refresh_interval_minutes":
+                    // this parameter is not used in UI
                     break;
                 case "use_http":
                     $("#use_http").prop('checked', key_value);
@@ -639,6 +687,20 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
             $("#network_type_cable").prop('checked', false);
             $("#network_type_wifi").prop('checked', true);
         }
+
+        $("#remote_cfg-use").prop('checked', remote_cfg_use);
+        if (remote_cfg_auth_type === REMOTE_CFG_AUTH_TYPE.NO) {
+            $("#remote_cfg-use_auth").prop('checked', false);
+        } else if (remote_cfg_auth_type === REMOTE_CFG_AUTH_TYPE.BASIC) {
+            $("#remote_cfg-use_auth").prop('checked', true);
+            $("#remote_cfg_auth_type_basic").prop('checked', true);
+        } else if (remote_cfg_auth_type === REMOTE_CFG_AUTH_TYPE.BEARER) {
+            $("#remote_cfg-use_auth").prop('checked', true);
+            $("#remote_cfg_auth_type_bearer").prop('checked', true);
+        }
+        flagUseSavedRemoteCfgAuthBasicPassword = true;
+        $("#remote_cfg-auth_basic-password").val("********");
+
         let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
             (use_http && (http_url === HTTP_URL_DEFAULT) && (http_user === "")) &&
             (use_http_stat && (http_stat_url === HTTP_STAT_URL_DEFAULT) && (http_stat_user === "")) &&
@@ -652,6 +714,7 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
             $("#use_ruuvi").prop('checked', false);
             $("#use_custom").prop('checked', true);
         }
+
         if (http_user) {
             flagUseSavedHTTPPassword = true;
             $("#http_pass").val("********");

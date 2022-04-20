@@ -20,6 +20,8 @@ import string
 import random
 import hashlib
 import base64
+import urllib.request
+import urllib.error
 from enum import Enum
 from typing import Optional, Dict
 import Crypto.Util.Padding
@@ -88,18 +90,22 @@ g_ruuvi_dict = {
     'eth_gw': "",
     'eth_dns1': "",
     'eth_dns2': "",
-    'use_mqtt': False,
-    'mqtt_transport': 'TCP',
-    'mqtt_server': '',
-    'mqtt_port': 0,
-    'mqtt_prefix': '',
-    'mqtt_user': '',
+    'remote_cfg_use': False,
+    'remote_cfg_url': '',
+    'remote_cfg_auth_type': 'no',
+    'remote_cfg_refresh_interval_minutes': 0,
     'use_http': True,
     'http_url': 'https://network.ruuvi.com/record',
     'http_user': '',
     'use_http_stat': True,
     'http_stat_url': 'https://network.ruuvi.com/status',
     'http_stat_user': '',
+    'use_mqtt': False,
+    'mqtt_transport': 'TCP',
+    'mqtt_server': '',
+    'mqtt_port': 0,
+    'mqtt_prefix': '',
+    'mqtt_user': '',
     'lan_auth_type': LAN_AUTH_TYPE_DEFAULT,
     'lan_auth_user': LAN_AUTH_DEFAULT_USER,
     'lan_auth_pass': '',
@@ -783,6 +789,32 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             content = '{}'
             content_encoded = content.encode('utf-8')
             resp = b''
+            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            resp += content_encoded
+            self.wfile.write(resp)
+        elif self.path == '/gw_cfg_download':
+            resp = b''
+            try:
+                response = urllib.request.urlopen(g_ruuvi_dict['remote_cfg_url'])
+            except urllib.error.HTTPError as ex:
+                resp += f'HTTP/1.1 {ex.code} {ex.msg}\r\n'.encode('ascii')
+                resp += f'Content-Length: 0\r\n'.encode('ascii')
+                self.wfile.write(resp)
+                return
+            except:
+                resp += f'HTTP/1.1 503 Service Unavailable\r\n'.encode('ascii')
+                resp += f'Content-Length: 0\r\n'.encode('ascii')
+                self.wfile.write(resp)
+                return
+            response_data = response.read()
+            response_text = response_data.decode('utf-8')
+            content = '{}'
+            content_encoded = content.encode('utf-8')
             resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
