@@ -19,6 +19,7 @@ let connectedSSID = "";
 let flagUseSavedWiFiPassword = false;
 let flagUseSavedHTTPPassword = false;
 let flagUseSavedRemoteCfgAuthBasicPassword = false;
+let flagUseSavedRemoteCfgAuthBearerToken = false;
 let flagUseSavedHTTPStatPassword = false;
 let flagUseSavedMQTTPassword = false;
 let g_flagAccessFromLAN = false;
@@ -877,19 +878,19 @@ $(document).ready(function () {
         on_remote_cfg_changed();
     });
 
-    $('#remote_cfg-auth_bearer-token').on("input", function () {
-        on_remote_cfg_changed();
-    });
-
-    $('#remote_cfg-auth_bearer-token').change(function () {
-        on_remote_cfg_changed();
-    });
-
     $('#remote_cfg-auth_basic-password').on("input", function () {
         on_remote_cfg_changed();
     });
 
     $('#remote_cfg-auth_basic-password').change(function () {
+        on_remote_cfg_changed();
+    });
+
+    $('#remote_cfg-auth_bearer-token').on("input", function () {
+        on_remote_cfg_changed();
+    });
+
+    $('#remote_cfg-auth_bearer-token').change(function () {
         on_remote_cfg_changed();
     });
 
@@ -913,6 +914,14 @@ $(document).ready(function () {
         if (flagUseSavedRemoteCfgAuthBasicPassword) {
             flagUseSavedRemoteCfgAuthBasicPassword = false;
             $('#remote_cfg-auth_basic-password').val("");
+            on_remote_cfg_changed();
+        }
+    });
+
+    $('#remote_cfg-auth_bearer-token').on("focus", function () {
+        if (flagUseSavedRemoteCfgAuthBearerToken) {
+            flagUseSavedRemoteCfgAuthBearerToken = false;
+            $('#remote_cfg-auth_bearer-token').val("");
             on_remote_cfg_changed();
         }
     });

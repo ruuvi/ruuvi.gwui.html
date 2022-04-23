@@ -118,7 +118,10 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
                 }
             } else if (remote_cfg_auth_type === "remote_cfg_auth_type_bearer") {
                 data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.BEARER;
-                data.remote_cfg_auth_bearer_token = $("#remote_cfg-auth_bearer-token").val();
+                if (!flagUseSavedRemoteCfgAuthBearerToken)
+                {
+                    data.remote_cfg_auth_bearer_token = $("#remote_cfg-auth_bearer-token").val();
+                }
             }
         } else {
             data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.NO;
@@ -496,12 +499,6 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                 case "remote_cfg_auth_basic_user":
                     $("#remote_cfg-auth_basic-user").val(key_value);
                     break;
-                case "remote_cfg_auth_basic_pass":
-                    $("#remote_cfg-auth_basic-password").val(key_value);
-                    break;
-                case "remote_cfg_auth_bearer_token":
-                    $("#remote_cfg-auth_bearer-token").val(key_value);
-                    break;
                 case "remote_cfg_refresh_interval_minutes":
                     // this parameter is not used in UI
                     break;
@@ -694,12 +691,14 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
         } else if (remote_cfg_auth_type === REMOTE_CFG_AUTH_TYPE.BASIC) {
             $("#remote_cfg-use_auth").prop('checked', true);
             $("#remote_cfg_auth_type_basic").prop('checked', true);
+            flagUseSavedRemoteCfgAuthBasicPassword = true;
+            $("#remote_cfg-auth_basic-password").val("********");
         } else if (remote_cfg_auth_type === REMOTE_CFG_AUTH_TYPE.BEARER) {
             $("#remote_cfg-use_auth").prop('checked', true);
             $("#remote_cfg_auth_type_bearer").prop('checked', true);
+            flagUseSavedRemoteCfgAuthBearerToken = true;
+            $("#remote_cfg-auth_bearer-token").val("********");
         }
-        flagUseSavedRemoteCfgAuthBasicPassword = true;
-        $("#remote_cfg-auth_basic-password").val("********");
 
         let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
             (use_http && (http_url === HTTP_URL_DEFAULT) && (http_user === "")) &&
