@@ -20,6 +20,7 @@ let flagUseSavedWiFiPassword = false;
 let flagUseSavedHTTPPassword = false;
 let flagUseSavedRemoteCfgAuthBasicPassword = false;
 let flagUseSavedRemoteCfgAuthBearerToken = false;
+let flagUseSavedLanAuthApiKey = false;
 let flagUseSavedHTTPStatPassword = false;
 let flagUseSavedMQTTPassword = false;
 let g_flagAccessFromLAN = false;
@@ -1060,6 +1061,14 @@ $(document).ready(function () {
             lan_auth_api_key.val('');
         }
         on_lan_auth_user_pass_changed();
+    });
+
+    $('section#page-settings_lan_auth #lan_auth-api_key').on("focus", function () {
+        if (flagUseSavedLanAuthApiKey) {
+            flagUseSavedLanAuthApiKey = false;
+            $('#lan_auth-api_key').val("");
+            on_lan_auth_user_pass_changed();
+        }
     });
 
     $('section#page-settings_lan_auth #lan_auth-api_key').on("input", function () {
