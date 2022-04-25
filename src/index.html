@@ -44,6 +44,7 @@
 					<li></li>
 					<li></li>
 					<li></li>
+					<li></li>
 				</ul>
 			</div>
 
@@ -89,6 +90,7 @@
 			<div class="progressbar-container">
 				<ul class="progressbar">
 					<li class="active"></li>
+					<li></li>
 					<li></li>
 					<li></li>
 					<li></li>
@@ -199,6 +201,7 @@
 					<li></li>
 					<li></li>
 					<li></li>
+					<li></li>
 				</ul>
 			</div>
 
@@ -283,6 +286,7 @@
 				<ul class="progressbar">
 					<li class="active"></li>
 					<li class="active"></li>
+					<li></li>
 					<li></li>
 					<li></li>
 					<li></li>
@@ -403,6 +407,7 @@
 					<li></li>
 					<li></li>
 					<li></li>
+					<li></li>
 				</ul>
 			</div>
 
@@ -519,6 +524,7 @@
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
+					<li class="active"></li>
 				</ul>
 			</div>
 
@@ -604,6 +610,123 @@
 		</section>
 
 
+		<!-- REMOTE CFG -->
+		<section id="page-remote_cfg" class="hidden">
+			<h1>
+				<span lang="en">Automatic Configuration Download</span>
+				<span lang="fi">Automaattinen Määritysten Lataus</span>
+			</h1>
+
+			<div class="progressbar-container">
+				<ul class="progressbar">
+					<li class="active"></li>
+					<li class="active"></li>
+					<li class="active"></li>
+					<li class="active"></li>
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+				</ul>
+			</div>
+
+			<div>
+				<label class="control control-checkbox">
+					<span lang="en">Use automatic configuration downloading from a remote server (HTTP/HTTPS)</span>
+					<span lang="fi">Käytä automaattista asetusten latausta etäpalvelimelta (HTTP/HTTPS)</span>
+					<input type="checkbox" id="remote_cfg-use">
+					<span class="control_indicator"></span>
+				</label>
+			</div>
+			<div id="remote_cfg-options" class="indent hidden">
+				<label for="remote_cfg-base_url">
+					<span lang="en">Base URL:</span>
+					<span lang="fi">Perus-URL-osoite:</span>
+					<input id="remote_cfg-base_url" type="text" value="">
+				</label>
+				<label class="font-bold">
+					<span lang="en">URL:</span>
+					<span lang="fi">URL:</span>
+				</label>
+				<label id="remote_cfg-url" class="input-primary">
+				</label>
+
+				<div>&nbsp;</div>
+
+				<label class="control control-checkbox">
+					<span lang="en">Use authentication</span>
+					<span lang="fi">Käytä todennusta</span>
+					<input type="checkbox" id="remote_cfg-use_auth">
+					<span class="control_indicator"></span>
+				</label>
+
+				<div id="conf-remote_cfg-auth-options" class="hidden indent">
+					<label class="control control-radio">
+						<span lang="en">Basic authentication</span>
+						<span lang="fi">Perustodennus</span>
+						<input id="remote_cfg_auth_type_basic" name="remote_cfg_auth_type"
+							   value="remote_cfg_auth_type_basic" type="radio"/>
+						<span class="control_indicator"></span>
+					</label>
+					<div id="conf-remote_cfg-auth_basic-options" class="hidden indent">
+						<label>
+							<span lang="en">User:</span>
+							<span lang="fi">Käyttäjä:</span>
+							<input id="remote_cfg-auth_basic-user" type="text" placeholder="" value="">
+						</label>
+						<label>
+							<span lang="en">Password:</span>
+							<span lang="fi">Salasana:</span>
+							<input id="remote_cfg-auth_basic-password" type="password" placeholder="" value="">
+						</label>
+					</div>
+					<label class="control control-radio">
+						<span lang="en">Bearer authentication</span>
+						<span lang="fi">Kuljettajan todennus</span>
+						<input id="remote_cfg_auth_type_bearer" name="remote_cfg_auth_type"
+							   value="remote_cfg_auth_type_bearer" type="radio"/>
+						<span class="control_indicator"></span>
+					</label>
+					<div id="conf-remote_cfg-auth_bearer-options" class="hidden indent">
+						<label>
+							<span lang="en">Token:</span>
+							<span lang="fi">Token:</span>
+							<input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
+						</label>
+					</div>
+				</div>
+
+				<div class="block-centered">
+					<button class="btn" id="remote_cfg-button-download" type="button">
+						<span lang="en">DOWNLOAD</span>
+						<span lang="fi">LADATA</span>
+					</button>
+				</div>
+
+				<div>&nbsp;</div>
+
+				<div id="page-remote_cfg-status-error" class="rd hidden">
+					<div class="block-centered">
+						<span lang="en">Failed to get gw_cfg.json from the remote server.</span>
+						<span lang="fi">gw_cfg.json in hakeminen palvelimelta epäonnistui.</span>
+					</div>
+					<div id="page-remote_cfg-status-error-desc" class="block-centered">
+					</div>
+				</div>
+			</div>
+
+			<div class="button-container">
+				<a href="" id="page-remote_cfg-button-back" class="btn-back">
+					<span lang="en">Back</span>
+					<span lang="fi">Edellinen</span>
+				</a>
+				<a href="" id="page-remote_cfg-button-continue" class="btn">
+					<span lang="en">NEXT</span>
+					<span lang="fi">SEURAAVA</span>
+				</a>
+			</div>
+		</section>
+
 		<!-- UPDATE SCHEDULE -->
 		<section id="page-update_schedule" class="hidden">
 			<h1>
@@ -613,6 +736,7 @@
 
 			<div class="progressbar-container">
 				<ul class="progressbar">
+					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
@@ -916,6 +1040,7 @@
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
+					<li class="active"></li>
 					<li></li>
 					<li></li>
 				</ul>
@@ -1044,6 +1169,7 @@
 			</h1>
 
 			<div class="progressbar-container">
+				<!-- the content is generated by on_cloud_options_connection_type_changed -->
 			</div>
 
 			<div class="ingress">
@@ -1116,6 +1242,7 @@
 
 			<div class="progressbar-container">
 				<ul class="progressbar">
+					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
@@ -1373,6 +1500,7 @@
 
 			<div class="progressbar-container">
 				<ul class="progressbar">
+					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
