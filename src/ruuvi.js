@@ -34,6 +34,13 @@ const AUTO_UPDATE_CYCLE_TYPE = Object.freeze({
     'MANUAL': 'manual',
 });
 
+const NTP_DEFAULT = Object.freeze({
+    'SERVER1': "time.google.com",
+    'SERVER2': "time.cloudflare.com",
+    'SERVER3': "time.nist.gov",
+    'SERVER4': "pool.ntp.org",
+});
+
 function get_mqtt_topic_prefix() {
     let mqtt_topic = "";
     if ($('#use_mqtt_prefix_ruuvi').prop('checked')) {
@@ -176,7 +183,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
             data.lan_auth_type = $("input[name='lan_auth_type']:checked").val();
             let lan_auth_user = $("#lan_auth-user").val();
             let lan_auth_pass = $("#lan_auth-pass").val();
-            let realm = 'RuuviGateway' + gw_mac.substr(12, 2) + gw_mac.substr(15, 2);
+            let realm = 'RuuviGateway' + gw_mac.substring(12, 14) + gw_mac.substring(15, 17);
             if (data.lan_auth_type === LAN_AUTH_TYPE.RUUVI) {
                 data.lan_auth_user = lan_auth_user;
                 data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString();
@@ -249,6 +256,26 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         data.auto_update_interval_from = parseInt($("#conf-auto_update_schedule-period_from").val());
         data.auto_update_interval_to = parseInt($("#conf-auto_update_schedule-period_to").val());
         data.auto_update_tz_offset_hours = parseInt($("#conf-auto_update_schedule-tz").val());
+
+        let ntp_sync = $("input[name='ntp_sync']:checked").val();
+        if (ntp_sync === "ntp_sync_default" || ntp_sync === "ntp_sync_custom")
+        {
+            data.ntp_use = true;
+            data.ntp_use_dhcp = false;
+            data.ntp_server1 = $('#ntp_server1').val();
+            data.ntp_server2 = $('#ntp_server2').val();
+            data.ntp_server3 = $('#ntp_server3').val();
+            data.ntp_server4 = $('#ntp_server4').val();
+        }
+        else if (ntp_sync === "ntp_sync_dhcp")
+        {
+            data.ntp_use = true;
+            data.ntp_use_dhcp = true;
+        }
+        else if (ntp_sync === "ntp_sync_disabled")
+        {
+            data.ntp_use = false;
+        }
     }
 
     console.log(data);
@@ -451,6 +478,12 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
         let mqtt_user = "";
         let mqtt_prefix = "";
         let mqtt_client_id = "";
+        let ntp_use = true;
+        let ntp_use_dhcp = false;
+        let ntp_server1 = "";
+        let ntp_server2 = "";
+        let ntp_server3 = "";
+        let ntp_server4 = "";
         let company_use_filtering = false;
         let company_id = 0;
         let scan_coded_phy = false;
@@ -468,6 +501,9 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                     $("#software_update-version-current").text(key_value);
                     break;
                 case "nrf52_fw_ver":
+                    break;
+                case "gw_mac":
+                    gw_mac = key_value;
                     break;
                 case "use_eth":
                     use_eth = key_value
@@ -631,17 +667,29 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                     $('#conf-auto_update_schedule-tz option[value=' + key_value + ']').prop('selected', true);
                     break;
                 }
-                case "coordinates":
-                    $("#coordinates").val(key_value);
+                case "ntp_use":
+                    ntp_use = key_value;
+                    break;
+                case "ntp_use_dhcp":
+                    ntp_use_dhcp = key_value;
+                    break;
+                case "ntp_server1":
+                    ntp_server1 = key_value;
+                    break;
+                case "ntp_server2":
+                    ntp_server2 = key_value;
+                    break;
+                case "ntp_server3":
+                    ntp_server3 = key_value;
+                    break;
+                case "ntp_server4":
+                    ntp_server4 = key_value;
                     break;
                 case "company_use_filtering":
                     company_use_filtering = key_value;
                     break;
                 case "company_id":
                     company_id = parseInt(key_value);
-                    break;
-                case "gw_mac":
-                    gw_mac = key_value;
                     break;
                 case "scan_coded_phy":
                     scan_coded_phy = key_value;
@@ -665,6 +713,9 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                 case "scan_channel_39":
                     scan_channel_39 = key_value;
                     $("#scan_channel_39").prop('checked', key_value);
+                    break;
+                case "coordinates":
+                    $("#coordinates").val(key_value);
                     break;
                 default:
                     alert('get_config: unhandled key: ' + key);
@@ -692,6 +743,37 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
             $("#remote_cfg_auth_type_bearer").prop('checked', true);
             flagUseSavedRemoteCfgAuthBearerToken = true;
             $("#remote_cfg-auth_bearer-token").val("********");
+        }
+
+        $('#ntp_server1').val(ntp_server1);
+        $('#ntp_server2').val(ntp_server2);
+        $('#ntp_server3').val(ntp_server3);
+        $('#ntp_server4').val(ntp_server4);
+
+        if (ntp_use)
+        {
+            if (ntp_use_dhcp)
+            {
+                $("#ntp_sync_dhcp").prop('checked', true);
+            }
+            else
+            {
+                if (ntp_server1 === NTP_DEFAULT.SERVER1 &&
+                    ntp_server2 === NTP_DEFAULT.SERVER2 &&
+                    ntp_server3 === NTP_DEFAULT.SERVER3 &&
+                    ntp_server4 === NTP_DEFAULT.SERVER4)
+                {
+                    $("#ntp_sync_default").prop('checked', true);
+                }
+                else
+                {
+                    $("#ntp_sync_custom").prop('checked', true);
+                }
+            }
+        }
+        else
+        {
+            $("#ntp_sync_disabled").prop('checked', true);
         }
 
         let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
@@ -753,7 +835,7 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
             } else {
                 $('#use_mqtt_prefix_ruuvi').prop('checked', false);
             }
-            mqtt_topic = mqtt_topic.substr(start_idx);
+            mqtt_topic = mqtt_topic.substring(start_idx);
             start_idx = 0;
             if ((mqtt_topic === gw_mac) || mqtt_topic.startsWith(gw_mac + '/')) {
                 $('#use_mqtt_prefix_gw_mac').prop('checked', true);
@@ -764,7 +846,7 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
             } else {
                 $('#use_mqtt_prefix_gw_mac').prop('checked', false);
             }
-            mqtt_topic = mqtt_topic.substr(start_idx);
+            mqtt_topic = mqtt_topic.substring(start_idx);
             if (mqtt_topic.length > 0) {
                 if (mqtt_topic.slice(-1) === '/') {
                     if (mqtt_topic.length > 1) {

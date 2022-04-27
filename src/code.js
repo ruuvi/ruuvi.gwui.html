@@ -143,6 +143,10 @@ function change_page_to_settings_lan_auth() {
     change_url('page-settings_lan_auth');
 }
 
+function change_url_ntp_config() {
+    change_url('page-ntp_config');
+}
+
 function change_url_cloud_options() {
     change_url('page-cloud_options');
 }
@@ -241,7 +245,7 @@ function on_remote_cfg_changed() {
         for (let i = 0; i < 4; ++i) {
             h += '<li class="active"></li>';
         }
-        for (let i = 4; i < 8; ++i) {
+        for (let i = 4; i < 9; ++i) {
             h += '<li></li>';
         }
         $("#page-remote_cfg-button-continue").removeClass("disable-click");
@@ -373,12 +377,31 @@ function on_lan_auth_user_pass_changed() {
     }
 }
 
+function on_ntp_config_changed() {
+    let ntp_sync = $("input[name='ntp_sync']:checked").val();
+    if (ntp_sync === "ntp_sync_default") {
+        $('#ntp_server1').val(NTP_DEFAULT.SERVER1);
+        $('#ntp_server2').val(NTP_DEFAULT.SERVER2);
+        $('#ntp_server3').val(NTP_DEFAULT.SERVER3);
+        $('#ntp_server4').val(NTP_DEFAULT.SERVER4);
+        $('#page-ntp_config-custom_options').hide();
+    } else if (ntp_sync === "ntp_sync_custom") {
+        $('#page-ntp_config-custom_options').show();
+    } else if (ntp_sync === "ntp_sync_dhcp" || ntp_sync === "ntp_sync_disabled") {
+        $('#ntp_server1').val("");
+        $('#ntp_server2').val("");
+        $('#ntp_server3').val("");
+        $('#ntp_server4').val("");
+        $('#page-ntp_config-custom_options').hide();
+    }
+}
+
 function on_cloud_options_connection_type_changed() {
     let connection_type = $("input[name='connection_type']:checked").val();
     let h = "";
     h += '<ul class="progressbar">';
     if (connection_type === 'ruuvi') {
-        for (let i = 0; i < 7; ++i) {
+        for (let i = 0; i < 8; ++i) {
             h += '<li class="active"></li>';
         }
         h += '<li></li>';
@@ -394,10 +417,10 @@ function on_cloud_options_connection_type_changed() {
         $(`input:radio[name='company_use_filtering'][value='1']`).prop('checked', true);
         on_settings_scan_filtering_changed();
     } else {
-        for (let i = 0; i < 7; ++i) {
+        for (let i = 0; i < 8; ++i) {
             h += '<li class="active"></li>';
         }
-        for (let i = 7; i < 10; ++i) {
+        for (let i = 8; i < 11; ++i) {
             h += '<li></li>';
         }
     }
@@ -1046,7 +1069,7 @@ $(document).ready(function () {
 
     $('section#page-settings_lan_auth #page-lan_auth_type-button-continue').click(function (e) {
         e.preventDefault();
-        change_url_cloud_options();
+        change_url_ntp_config();
     });
 
     $('section#page-settings_lan_auth #settings_lan_auth-use_api_key').change(function (e) {
@@ -1073,6 +1096,20 @@ $(document).ready(function () {
 
     $('section#page-settings_lan_auth #lan_auth-api_key').on("input", function () {
         on_lan_auth_user_pass_changed();
+    });
+
+    // ==== page-ntp_config ============================================================================================
+    $('section#page-ntp_config').bind('onShow', function () {
+        on_ntp_config_changed();
+    });
+
+    $('section#page-ntp_config input[type=radio][name=ntp_sync]').change(function () {
+        on_ntp_config_changed();
+    });
+
+    $('section#page-ntp_config #page-ntp_config-button-continue').click(function (e) {
+        e.preventDefault();
+        change_url_cloud_options();
     });
 
     // ==== page-cloud_options =========================================================================================
@@ -1107,7 +1144,7 @@ $(document).ready(function () {
         let connection_type = $("input[name='connection_type']:checked").val();
         if (connection_type === 'ruuvi') {
             save_config();
-            change_page_to_finished(8);
+            change_page_to_finished(9);
         } else {
             change_url_custom_server();
         }
@@ -1264,7 +1301,7 @@ $(document).ready(function () {
     $('section#page-scanning #page-scanning-button-continue').click(function (e) {
         e.preventDefault();
         save_config();
-        change_page_to_finished(10);
+        change_page_to_finished(11);
     });
 
     // ==== page-finished ==============================================================================================

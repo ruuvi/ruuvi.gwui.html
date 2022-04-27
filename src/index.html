@@ -45,6 +45,7 @@
 					<li></li>
 					<li></li>
 					<li></li>
+					<li></li>
 				</ul>
 			</div>
 
@@ -90,6 +91,7 @@
 			<div class="progressbar-container">
 				<ul class="progressbar">
 					<li class="active"></li>
+					<li></li>
 					<li></li>
 					<li></li>
 					<li></li>
@@ -202,6 +204,7 @@
 					<li></li>
 					<li></li>
 					<li></li>
+					<li></li>
 				</ul>
 			</div>
 
@@ -286,6 +289,7 @@
 				<ul class="progressbar">
 					<li class="active"></li>
 					<li class="active"></li>
+					<li></li>
 					<li></li>
 					<li></li>
 					<li></li>
@@ -408,6 +412,7 @@
 					<li></li>
 					<li></li>
 					<li></li>
+					<li></li>
 				</ul>
 			</div>
 
@@ -525,6 +530,7 @@
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
+					<li class="active"></li>
 				</ul>
 			</div>
 
@@ -623,6 +629,7 @@
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
+					<li></li>
 					<li></li>
 					<li></li>
 					<li></li>
@@ -741,6 +748,7 @@
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
+					<li></li>
 					<li></li>
 					<li></li>
 					<li></li>
@@ -1043,6 +1051,7 @@
 					<li class="active"></li>
 					<li></li>
 					<li></li>
+					<li></li>
 				</ul>
 			</div>
 
@@ -1160,6 +1169,85 @@
 			</div>
 		</section>
 
+		<!-- NTP CONFIGURATION -->
+		<section id="page-ntp_config" class="hidden">
+			<h1>
+				<span lang="en">Time Synchronization Options</span>
+				<span lang="fi">Ajan Synkronointiasetukset</span>
+			</h1>
+
+			<div class="progressbar-container">
+				<ul class="progressbar">
+					<li class="active"></li>
+					<li class="active"></li>
+					<li class="active"></li>
+					<li class="active"></li>
+					<li class="active"></li>
+					<li class="active"></li>
+					<li class="active"></li>
+					<li></li>
+					<li></li>
+				</ul>
+			</div>
+
+			<label class="control control-radio">
+				<span lang="en">Use default set of NTP-servers for time synchronization</span>
+				<span lang="fi">Käytä oletusarvoisia NTP-palvelimia ajan synkronointiin</span>
+				<input id="ntp_sync_default" name="ntp_sync" value="ntp_sync_default" type="radio"/>
+				<span class="control_indicator"></span>
+			</label>
+			<label class="control control-radio">
+				<span lang="en">Use custom set of NTP-servers for time synchronization</span>
+				<span lang="fi">Käytä mukautettuja NTP-palvelimia ajan synkronointiin</span>
+				<input id="ntp_sync_custom" name="ntp_sync" value="ntp_sync_custom" type="radio"/>
+				<span class="control_indicator"></span>
+			</label>
+			<div id="page-ntp_config-custom_options" class="indent hidden">
+				<label class="font-bold">
+					<span lang="en">Server1</span>
+					<span lang="fi">Palvelin1</span>
+					<input id="ntp_server1" type="text" value="time.google.com">
+				</label>
+				<label class="font-bold">
+					<span lang="en">Server2</span>
+					<span lang="fi">Palvelin2</span>
+					<input id="ntp_server2" type="text" value="time.cloudflare.com">
+				</label>
+				<label class="font-bold">
+					<span lang="en">Server3</span>
+					<span lang="fi">Palvelin3</span>
+					<input id="ntp_server3" type="text" value="time.nist.gov">
+				</label>
+				<label class="font-bold">
+					<span lang="en">Server4</span>
+					<span lang="fi">Palvelin4</span>
+					<input id="ntp_server4" type="text" value="pool.ntp.org">
+				</label>
+			</div>
+			<label class="control control-radio">
+				<span lang="en">Use DHCP to get a set of NTP-servers for time synchronization</span>
+				<span lang="fi">Käytä DHCP:tä saadaksesi joukon NTP-palvelimia ajan synkronointia varten</span>
+				<input id="ntp_sync_dhcp" name="ntp_sync" value="ntp_sync_dhcp" type="radio"/>
+				<span class="control_indicator"></span>
+			</label>
+			<label class="control control-radio">
+				<span lang="en">Do not use time synchronization</span>
+				<span lang="fi">Älä käytä ajan synkronointia</span>
+				<input id="ntp_sync_disabled" name="ntp_sync" value="ntp_sync_disabled" type="radio"/>
+				<span class="control_indicator"></span>
+			</label>
+
+			<div class="button-container">
+				<a href="" id="page-ntp_config-button-back" class="btn-back">
+					<span lang="en">Back</span>
+					<span lang="fi">Edellinen</span>
+				</a>
+				<a href="" id="page-ntp_config-button-continue" class="btn">
+					<span lang="en">NEXT</span>
+					<span lang="fi">SEURAAVA</span>
+				</a>
+			</div>
+		</section>
 
 		<!-- CLOUD OPTIONS -->
 		<section id="page-cloud_options" class="hidden">
@@ -1242,6 +1330,7 @@
 
 			<div class="progressbar-container">
 				<ul class="progressbar">
+					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
@@ -1509,6 +1598,7 @@
 					<li class="active"></li>
 					<li class="active"></li>
 					<li class="active"></li>
+					<li class="active"></li>
 					<li></li>
 				</ul>
 			</div>
@@ -1625,6 +1715,7 @@
 			</h1>
 
 			<div class="progressbar-container">
+				<!-- the content is generated by change_page_to_finished -->
 			</div>
 
 			<div class="block-centered font-bold">
