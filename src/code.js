@@ -1082,6 +1082,7 @@ $(document).ready(function () {
         } else {
             $('#settings_lan_auth-api_key').hide();
             lan_auth_api_key.val('');
+            flagUseSavedLanAuthApiKey = false;
         }
         on_lan_auth_user_pass_changed();
     });
