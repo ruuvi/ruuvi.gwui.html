@@ -1220,7 +1220,7 @@ $(document).ready(function () {
         if (mqtt_transport === "mqtt_transport_TCP") {
             default_port = 1883;
         } else if (mqtt_transport === "mqtt_transport_SSL") {
-            default_port = 8883;
+            default_port = 8886;
         } else if (mqtt_transport === "mqtt_transport_WS") {
             default_port = 8080;
         } else if (mqtt_transport === "mqtt_transport_WSS") {
