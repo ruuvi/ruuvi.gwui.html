@@ -632,6 +632,14 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                     }
                     break;
                 }
+                case "lan_auth_api_key_use": {
+                    $('#settings_lan_auth-use_api_key').prop('checked', key_value);
+                    if (key_value) {
+                        $("#lan_auth-api_key").val("********");
+                        flagUseSavedLanAuthApiKey = true;
+                    }
+                    break;
+                }
                 case "auto_update_cycle": {
                     if (key_value === AUTO_UPDATE_CYCLE_TYPE.REGULAR) {
                         $("#auto_update_cycle-regular").prop('checked', true);
@@ -868,9 +876,6 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
         }
         $("#mqtt_client_id").val(mqtt_client_id);
         on_edit_mqtt_settings();
-
-        flagUseSavedLanAuthApiKey = true;
-        $("#lan_auth-api_key").val("********");
     }
 }
 
