@@ -787,6 +787,10 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
         let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
             (use_http && (http_url === HTTP_URL_DEFAULT) && (http_user === "")) &&
             (use_http_stat && (http_stat_url === HTTP_STAT_URL_DEFAULT) && (http_stat_user === "")) &&
+            (ntp_use && !ntp_use_dhcp && (ntp_server1 === NTP_DEFAULT.SERVER1 &&
+                ntp_server2 === NTP_DEFAULT.SERVER2 &&
+                ntp_server3 === NTP_DEFAULT.SERVER3 &&
+                ntp_server4 === NTP_DEFAULT.SERVER4)) &&
             (company_use_filtering && (company_id === 0x0499) &&
                 !scan_coded_phy && scan_1mbit_phy && scan_extended_payload &&
                 scan_channel_37 && scan_channel_38 && scan_channel_39);
