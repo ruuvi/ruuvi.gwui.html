@@ -245,7 +245,7 @@ function on_remote_cfg_changed() {
         for (let i = 0; i < 4; ++i) {
             h += '<li class="active"></li>';
         }
-        for (let i = 4; i < 9; ++i) {
+        for (let i = 4; i < 8; ++i) {
             h += '<li></li>';
         }
         $("#page-remote_cfg-button-continue").removeClass("disable-click");
@@ -401,7 +401,7 @@ function on_cloud_options_connection_type_changed() {
     let h = "";
     h += '<ul class="progressbar">';
     if (connection_type === 'ruuvi') {
-        for (let i = 0; i < 8; ++i) {
+        for (let i = 0; i < 7; ++i) {
             h += '<li class="active"></li>';
         }
         h += '<li></li>';
@@ -417,10 +417,10 @@ function on_cloud_options_connection_type_changed() {
         $(`input:radio[name='company_use_filtering'][value='1']`).prop('checked', true);
         on_settings_scan_filtering_changed();
     } else {
-        for (let i = 0; i < 8; ++i) {
+        for (let i = 0; i < 7; ++i) {
             h += '<li class="active"></li>';
         }
-        for (let i = 8; i < 11; ++i) {
+        for (let i = 8; i < 12; ++i) {
             h += '<li></li>';
         }
     }
@@ -1069,7 +1069,7 @@ $(document).ready(function () {
 
     $('section#page-settings_lan_auth #page-lan_auth_type-button-continue').click(function (e) {
         e.preventDefault();
-        change_url_ntp_config();
+        change_url_cloud_options();
     });
 
     $('section#page-settings_lan_auth #settings_lan_auth-use_api_key').change(function (e) {
@@ -1110,7 +1110,7 @@ $(document).ready(function () {
 
     $('section#page-ntp_config #page-ntp_config-button-continue').click(function (e) {
         e.preventDefault();
-        change_url_cloud_options();
+        change_url_scanning();
     });
 
     // ==== page-cloud_options =========================================================================================
@@ -1145,7 +1145,7 @@ $(document).ready(function () {
         let connection_type = $("input[name='connection_type']:checked").val();
         if (connection_type === 'ruuvi') {
             save_config();
-            change_page_to_finished(9);
+            change_page_to_finished(8);
         } else {
             change_url_custom_server();
         }
@@ -1278,7 +1278,7 @@ $(document).ready(function () {
 
     $('section#page-custom_server #page-custom_server-button-continue').click(function (e) {
         e.preventDefault();
-        change_url_scanning();
+        change_url_ntp_config();
     });
 
     // ==== page-scanning ==============================================================================================
