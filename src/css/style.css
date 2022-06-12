@@ -605,8 +605,8 @@ body {
 }
 @media (min-width: 576px) {
   body {
-    padding-top: 10vh;
-    padding-bottom: 75px;
+    padding-top: 5vh;
+    padding-bottom: 1vh;
   }
 }
 body.is-loading:before {
@@ -704,6 +704,9 @@ body.is-loading:after {
 }
 #app-footer p {
   margin: 0;
+}
+#ruuvi_fw_ver {
+  font-size: smaller;
 }
 
 #logo {

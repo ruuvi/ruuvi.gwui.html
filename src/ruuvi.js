@@ -499,6 +499,7 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
             switch (key) {
                 case "fw_ver":
                     $("#software_update-version-current").text(key_value);
+                    $("#ruuvi_fw_ver").text(key_value);
                     break;
                 case "nrf52_fw_ver":
                     break;
