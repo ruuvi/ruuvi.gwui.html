@@ -717,6 +717,7 @@ $(document).ready(function () {
         $('body').addClass('is-loading');
         checkAndUpdatePageWiFiListButtonNext();
         flagUseSavedWiFiPassword = true;
+        $('#wifi-show-password').prop("disabled", true);
         $('#page-wifi_connection-ssid_password').hide();
         networkDisconnect();
         startRefreshAP();
@@ -743,10 +744,6 @@ $(document).ready(function () {
 
     $('section#page-wifi_connection input#wifi-show-password').click(function (e) {
         let pwd = $('#pwd');
-        if (flagUseSavedWiFiPassword) {
-            flagUseSavedWiFiPassword = false;
-            pwd.val("");
-        }
         if (pwd.prop("type") === "password") {
             pwd.prop("type", "text");
         } else {
@@ -1556,6 +1553,7 @@ function onChangeWiFiName() {
     $('#wifi-connection-status-block').hide();
 
     flagUseSavedWiFiPassword = false;
+    $('#wifi-show-password').prop("disabled", false);
 
     updatePositionOfWiFiPasswordInput();
     checkAndUpdatePageWiFiListButtonNext();
@@ -1657,6 +1655,7 @@ function refreshAPHTML(data) {
                 input_pwd.focus(function () {
                     if (flagUseSavedWiFiPassword) {
                         flagUseSavedWiFiPassword = false;
+                        $('#wifi-show-password').prop("disabled", false);
                         $('input#pwd').val("");
                     }
                 });
