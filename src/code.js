@@ -1456,6 +1456,9 @@ function rssiToIcon(rssi) {
     }
 }
 
+let g_refresh_ap_timeout_default = 10000;
+let g_refresh_ap_timeout = g_refresh_ap_timeout_default;
+
 // Load wifi list
 function refreshAP() {
     g_refreshAPTimer = null;
@@ -1475,9 +1478,10 @@ function refreshAP() {
     $.ajax({
         dataType: "json",
         url: "/ap.json",
-        timeout: 10000,
+        timeout: g_refresh_ap_timeout,
         success: function (data, text) {
             g_refreshAPInProgress = false;
+            g_refresh_ap_timeout = g_refresh_ap_timeout_default;
             if (data.length > 0) {
                 //sort by signal strength
                 data.sort(function (a, b) {
@@ -1493,22 +1497,40 @@ function refreshAP() {
                 startCheckStatus();
             }
             if (g_refreshAPActive) {
-                startRefreshAP(2000);
+                let timestamp2 = new Date();
+                let delta_ms = timestamp2 - timestamp1;
+                if (delta_ms < 5000) {
+                    startRefreshAP(5000 - delta_ms);
+                } else {
+                    startRefreshAP(2000);
+                }
             }
         },
         error: function (request, status, error) {
+            console.log("ajax: refreshAP: error, status=" + status + ", error=" + error + ", timeout=" + g_refresh_ap_timeout);
+            if (status === 'timeout') {
+                if (g_refresh_ap_timeout <= 20000) {
+                    g_refresh_ap_timeout += 5000;
+                }
+                let body = $('body');
+                if (body.hasClass('is-loading')) {
+                    if (g_refresh_ap_timeout > 20000) {
+                        console.log("Timeout for ap.json request, try to reload page");
+                        window.location.reload();
+                    }
+                }
+            }
             g_refreshAPInProgress = false;
             let timestamp2 = new Date();
-            console.log("ajax: refreshAP: error, status=" + status + ", error=" + error);
             if (prevCheckStatusActive) {
                 startCheckStatus();
             }
             if (g_refreshAPActive) {
                 let delta_ms = timestamp2 - timestamp1;
-                if (delta_ms < 2000) {
-                    startRefreshAP(2000 - delta_ms);
+                if (delta_ms < 5000) {
+                    startRefreshAP(5000 - delta_ms);
                 } else {
-                    startRefreshAP();
+                    startRefreshAP(5000);
                 }
             }
         }
