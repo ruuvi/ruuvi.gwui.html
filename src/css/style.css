@@ -705,7 +705,7 @@ body.is-loading:after {
 #app-footer p {
   margin: 0;
 }
-#ruuvi_fw_ver {
+#app-footer-fw_ver {
   font-size: smaller;
 }
 
