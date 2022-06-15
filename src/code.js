@@ -767,6 +767,8 @@ $(document).ready(function () {
         $('#pwd').val("");
         updatePositionOfWiFiPasswordInput();
         checkAndUpdatePageWiFiListButtonNext();
+        $("input[name='wifi-name']").parent().removeClass('mouse-cursor-default');
+        $('#page-wifi_connection-radio-connect_manually').parent().addClass('mouse-cursor-default');
     });
 
     $('#page-wifi_connection-advanced-button').click(function (e) {
@@ -1557,6 +1559,9 @@ function onChangeWiFiName() {
 
     updatePositionOfWiFiPasswordInput();
     checkAndUpdatePageWiFiListButtonNext();
+    $('#page-wifi_connection-radio-connect_manually').parent().removeClass('mouse-cursor-default');
+    $("input[name='wifi-name']").parent().removeClass('mouse-cursor-default');
+    selected_wifi.parent().addClass('mouse-cursor-default');
 }
 
 function refreshAPHTML(data) {
@@ -1635,6 +1640,7 @@ function refreshAPHTML(data) {
             }
             if (input_id) {
                 input_id.prop('checked', true);
+                input_id.parent().addClass('mouse-cursor-default');
             }
 
             if (selected_wifi_ssid) {
