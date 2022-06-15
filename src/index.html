@@ -631,87 +631,109 @@
 				</ul>
 			</div>
 
-			<div>
-				<label class="control control-checkbox">
-					<span lang="en">Use automatic configuration downloading from a remote server (HTTP/HTTPS)</span>
-					<span lang="fi">Käytä automaattista asetusten latausta etäpalvelimelta (HTTP/HTTPS)</span>
-					<input type="checkbox" id="remote_cfg-use">
-					<span class="control_indicator"></span>
-				</label>
+			<div class="ingress">
+				<p lang="en">If you are an advanced user, then you can configure getting
+					the Ruuvi Gateway configuration from a remote server by HTTP(S),
+					in this case, you do not need to configure the Gateway manually.</p>
+				<p lang="fi">Jos olet kokenut käyttäjä, voit määrittää Ruuvi Gatewayn määritysten hakemisen
+					etäpalvelimelta HTTP(S:n) kautta, tässä tapauksessa sinun ei tarvitse määrittää yhdyskäytävää
+					manuaalisesti.</p>
 			</div>
-			<div id="remote_cfg-options" class="indent hidden">
-				<label for="remote_cfg-base_url">
-					<span lang="en">Base URL:</span>
-					<span lang="fi">Perus-URL-osoite:</span>
-					<input id="remote_cfg-base_url" type="text" value="">
-				</label>
-				<label class="font-bold">
-					<span lang="en">URL:</span>
-					<span lang="fi">URL:</span>
-				</label>
-				<label id="remote_cfg-url" class="input-primary">
-				</label>
 
-				<div>&nbsp;</div>
+			<div class="border"></div>
+			<div id="page-remote_cfg-advanced-button" class="btn-dropdown">
+				<h2>
+					<span lang="en">Advanced settings</span>
+					<span lang="fi">Edistyneet asetukset</span>
+				</h2>
+				<div class="btn-dropdown-arrow-down"></div>
+				<div class="btn-dropdown-arrow-up hidden"></div>
+			</div>
+			<div class="border"></div>
 
-				<label class="control control-checkbox">
-					<span lang="en">Use authentication</span>
-					<span lang="fi">Käytä todennusta</span>
-					<input type="checkbox" id="remote_cfg-use_auth">
-					<span class="control_indicator"></span>
-				</label>
-
-				<div id="conf-remote_cfg-auth-options" class="hidden indent">
-					<label class="control control-radio">
-						<span lang="en">Basic authentication</span>
-						<span lang="fi">Perustodennus</span>
-						<input id="remote_cfg_auth_type_basic" name="remote_cfg_auth_type"
-							   value="remote_cfg_auth_type_basic" type="radio"/>
+			<div id="page-remote_cfg-advanced-dropdown" class="hidden">
+				<div>
+					<label class="control control-checkbox">
+						<span lang="en">Use automatic configuration downloading from a remote server (HTTP/HTTPS)</span>
+						<span lang="fi">Käytä automaattista asetusten latausta etäpalvelimelta (HTTP/HTTPS)</span>
+						<input type="checkbox" id="remote_cfg-use">
 						<span class="control_indicator"></span>
 					</label>
-					<div id="conf-remote_cfg-auth_basic-options" class="hidden indent">
-						<label>
-							<span lang="en">User:</span>
-							<span lang="fi">Käyttäjä:</span>
-							<input id="remote_cfg-auth_basic-user" type="text" placeholder="" value="">
-						</label>
-						<label>
-							<span lang="en">Password:</span>
-							<span lang="fi">Salasana:</span>
-							<input id="remote_cfg-auth_basic-password" type="password" placeholder="" value="">
-						</label>
-					</div>
-					<label class="control control-radio">
-						<span lang="en">Bearer authentication</span>
-						<span lang="fi">Kuljettajan todennus</span>
-						<input id="remote_cfg_auth_type_bearer" name="remote_cfg_auth_type"
-							   value="remote_cfg_auth_type_bearer" type="radio"/>
+				</div>
+				<div id="remote_cfg-options" class="indent hidden">
+					<label for="remote_cfg-base_url">
+						<span lang="en">Base URL:</span>
+						<span lang="fi">Perus-URL-osoite:</span>
+						<input id="remote_cfg-base_url" type="text" value="">
+					</label>
+					<label class="font-bold">
+						<span lang="en">URL:</span>
+						<span lang="fi">URL:</span>
+					</label>
+					<label id="remote_cfg-url" class="input-primary">
+					</label>
+
+					<div>&nbsp;</div>
+
+					<label class="control control-checkbox">
+						<span lang="en">Use authentication</span>
+						<span lang="fi">Käytä todennusta</span>
+						<input type="checkbox" id="remote_cfg-use_auth">
 						<span class="control_indicator"></span>
 					</label>
-					<div id="conf-remote_cfg-auth_bearer-options" class="hidden indent">
-						<label>
-							<span lang="en">Token:</span>
-							<span lang="fi">Token:</span>
-							<input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
+
+					<div id="conf-remote_cfg-auth-options" class="hidden indent">
+						<label class="control control-radio">
+							<span lang="en">Basic authentication</span>
+							<span lang="fi">Perustodennus</span>
+							<input id="remote_cfg_auth_type_basic" name="remote_cfg_auth_type"
+								   value="remote_cfg_auth_type_basic" type="radio"/>
+							<span class="control_indicator"></span>
 						</label>
+						<div id="conf-remote_cfg-auth_basic-options" class="hidden indent">
+							<label>
+								<span lang="en">User:</span>
+								<span lang="fi">Käyttäjä:</span>
+								<input id="remote_cfg-auth_basic-user" type="text" placeholder="" value="">
+							</label>
+							<label>
+								<span lang="en">Password:</span>
+								<span lang="fi">Salasana:</span>
+								<input id="remote_cfg-auth_basic-password" type="password" placeholder="" value="">
+							</label>
+						</div>
+						<label class="control control-radio">
+							<span lang="en">Bearer authentication</span>
+							<span lang="fi">Kuljettajan todennus</span>
+							<input id="remote_cfg_auth_type_bearer" name="remote_cfg_auth_type"
+								   value="remote_cfg_auth_type_bearer" type="radio"/>
+							<span class="control_indicator"></span>
+						</label>
+						<div id="conf-remote_cfg-auth_bearer-options" class="hidden indent">
+							<label>
+								<span lang="en">Token:</span>
+								<span lang="fi">Token:</span>
+								<input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
+							</label>
+						</div>
 					</div>
-				</div>
 
-				<div class="block-centered">
-					<button class="btn" id="remote_cfg-button-download" type="button">
-						<span lang="en">DOWNLOAD</span>
-						<span lang="fi">LATAA</span>
-					</button>
-				</div>
-
-				<div>&nbsp;</div>
-
-				<div id="page-remote_cfg-status-error" class="rd hidden">
 					<div class="block-centered">
-						<span lang="en">Failed to get gw_cfg.json from the remote server.</span>
-						<span lang="fi">gw_cfg.json-tiedoston hakeminen palvelimelta epäonnistui.</span>
+						<button class="btn" id="remote_cfg-button-download" type="button">
+							<span lang="en">DOWNLOAD</span>
+							<span lang="fi">LATAA</span>
+						</button>
 					</div>
-					<div id="page-remote_cfg-status-error-desc" class="block-centered">
+
+					<div>&nbsp;</div>
+
+					<div id="page-remote_cfg-status-error" class="rd hidden">
+						<div class="block-centered">
+							<span lang="en">Failed to get gw_cfg.json from the remote server.</span>
+							<span lang="fi">gw_cfg.json-tiedoston hakeminen palvelimelta epäonnistui.</span>
+						</div>
+						<div id="page-remote_cfg-status-error-desc" class="block-centered">
+						</div>
 					</div>
 				</div>
 			</div>
