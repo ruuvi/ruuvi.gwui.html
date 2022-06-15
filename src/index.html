@@ -1435,13 +1435,6 @@
 				</div>
 			</div>
 
-			<label class="control control-checkbox">
-				<span lang="en">Allow sending statistics</span>
-				<span lang="fi">Salli tilastojen lähettäminen</span>
-				<input id="use_http_stat" type="checkbox">
-				<span class="control_indicator"></span>
-			</label>
-
 			<div>&nbsp;</div>
 			<div class="border"></div>
 			<div id="page-custom_server-advanced-button" class="btn-dropdown">
@@ -1456,12 +1449,23 @@
 			<div>&nbsp;</div>
 
 			<div id="page-custom_server-advanced-dropdown" class="hidden">
-				<p>
-					<span lang="en">Configure your own HTTP-server to send statistics</span>
-					<span lang="fi">Määritä oma HTTP-palvelimesi lähettämään tilastoja</span>
-				</p>
+				<label class="control control-checkbox">
+					<span lang="en">Allow sending statistics</span>
+					<span lang="fi">Salli tilastojen lähettäminen</span>
+					<input id="use_http_stat" type="checkbox">
+					<span class="control_indicator"></span>
+				</label>
 
-				<div id="conf-settings-http_stat" class="indent">
+				<div>&nbsp;</div>
+
+				<div id="conf-settings-http_stat" class="indent hidden">
+					<p>
+						<span lang="en">Use Ruuvi (default: https://network.ruuvi.com/status) or configure your own HTTP-server to send statistics</span>
+						<span lang="fi">Käytä Ruuvi (oletus: https://network.ruuvi.com/status) tai määritä oma HTTP-palvelimesi lähettämään tilastoja</span>
+					</p>
+
+					<div class="border"></div>
+
 					<label class="font-bold">
 						<span lang="en">HTTP-server for sending statistics</span>
 						<span lang="fi">HTTP-palvelin tilastojen lähettämiseen</span>

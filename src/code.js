@@ -1166,10 +1166,12 @@ $(document).ready(function () {
             dropdownHide('#page-custom_server-advanced-button');
         }
         if ($("#use_http_stat")[0].checked) {
+            $('#conf-settings-http_stat').removeClass('hidden')
             $('#http_stat_url').prop('disabled', false);
             $('#http_stat_user').prop('disabled', false);
             $('#http_stat_pass').prop('disabled', false);
         } else {
+            $('#conf-settings-http_stat').addClass('hidden')
             $('#http_stat_url').prop('disabled', true);
             $('#http_stat_user').prop('disabled', true);
             $('#http_stat_pass').prop('disabled', true);
@@ -1201,10 +1203,12 @@ $(document).ready(function () {
 
     $("section#page-custom_server input#use_http_stat").change(function (e) {
         if ($("#use_http_stat")[0].checked) {
+            $('#conf-settings-http_stat').removeClass('hidden')
             $('#http_stat_url').prop('disabled', false);
             $('#http_stat_user').prop('disabled', false);
             $('#http_stat_pass').prop('disabled', false);
         } else {
+            $('#conf-settings-http_stat').addClass('hidden')
             $('#http_stat_url').prop('disabled', true);
             $('#http_stat_user').prop('disabled', true);
             $('#http_stat_pass').prop('disabled', true);
