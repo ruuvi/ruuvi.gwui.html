@@ -171,6 +171,10 @@ function change_page_to_finished(num_steps) {
 }
 
 function on_show_software_update() {
+    if ($('#software_update-version-latest').text() !== "") {
+        return;
+    }
+    $('#page-software_update-latest_fw_ver').hide();
     $("#software_update-button-upgrade").addClass("disable-click");
     $('.software_update-status').hide();
     $("#page-software_update-in_progress").show();
@@ -550,6 +554,9 @@ $(document).ready(function () {
     window.onpopstate = function (event) {
         console.log("window.onpopstate: " + document.location.hash);
         let url = window.location.hash.substring(1);
+        if (url.startsWith('popup-')) {
+            return;
+        }
         if (g_current_page) {
             $(g_current_page).hide();
             $(g_current_page).trigger('onHide');
@@ -820,7 +827,6 @@ $(document).ready(function () {
 
     // ==== page-software_update =======================================================================================
     $('section#page-software_update').bind('onShow', function () {
-        $('#page-software_update-latest_fw_ver').hide();
         on_show_software_update();
     });
 

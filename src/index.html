@@ -483,12 +483,44 @@
 
 			<div id="page-software_update-advanced-dropdown" class="hidden">
 				<div>
-					<label class="control control-checkbox">
+					<label class="control control-checkbox control-float-left">
 						<span lang="en">Specify a URL that contains required firmware update binaries.</span>
 						<span lang="fi">Anna URL-osoite, josta löytyy tarvittavat laiteohjelmistotiedostot.</span>
 						<input type="checkbox" id="software_update-set-url-manually">
 						<span class="control_indicator"></span>
 					</label>
+
+					<a class="button-info" href="#popup-button-info-software_update">i
+						<span lang="en" class="button-info-tooltip-text">Info</span>
+						<span lang="fi" class="button-info-tooltip-text">Tiedot</span>
+					</a>
+
+					<div id="popup-button-info-software_update" class="button-info-overlay">
+						<div class="button-info-popup">
+							<h1>How to install custom firmware</h1>
+							<a class="button-info-popup-close" onclick="window.history.back()">&times;</a>
+							<div class="button-info-content">
+								<p>
+									<span lang="en">You need to prepare firmware binaries (ruuvi_gateway_esp.bin,
+										fatfs_gwui.bin and fatfs_nrf52.bin) and put them on your HTTP server.
+									</span>
+									<span lang="fi">Sinun on valmisteltava laiteohjelmiston binaarit
+										(ruuvi_gateway_esp.bin, fatfs_gwui.bin ja fatfs_nrf52.bin)
+										ja laita ne HTTP-palvelimellesi.
+									</span>
+								</p>
+								<p>
+									<span lang="en">You can find more detailed instructions here:
+										https://docs.ruuvi.com/ruuvi-gateway-firmware/gw-install-custom-firmware
+									</span>
+									<span lang="fi">Tarkemmat ohjeet löydät täältä:
+										https://docs.ruuvi.com/ruuvi-gateway-firmware/gw-install-custom-firmware
+									</span>
+								</p>
+							</div>
+						</div>
+					</div>
+
 				</div>
 				<label for="software_update-url">
 					<input id="software_update-url" type="text" value="" class="hidden">

@@ -343,6 +343,10 @@ progress {
 	margin-top: 0;
 	cursor: pointer;
 
+	&-float-left {
+		float: left;
+	}
+
 	+ .control {
 		margin-top: 5px;
 	}
@@ -488,6 +492,103 @@ select {
 
 .blur {
 	filter: blur(2px);
+}
+
+.button-info {
+	position: relative;
+	border-radius: 50%;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	width: 2em;
+	height: 2em;
+	line-height: 2em;
+	font-style: italic;
+	font-family: "Montserrat", sans-serif;
+	color: var(--color-notification);
+	background-color: var(--color-primary);
+	border-width: 0;
+}
+
+.button-info:hover {
+	background-color: var(--color-primary-hover);
+	cursor: pointer;
+}
+
+.button-info-overlay {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.7);
+	transition: opacity 500ms;
+	visibility: hidden;
+	opacity: 0;
+	z-index: 999;
+}
+.button-info-overlay:target {
+	visibility: visible;
+	opacity: 1;
+}
+.button-info-popup {
+	margin: 70px auto;
+	padding: 20px 30px 20px 20px;
+	background: var(--color-background);
+	border-radius: 10px;
+	width: 70%;
+	position: relative;
+	transition: all 5s ease-in-out;
+}
+.button-info-content {
+	color: var(--color-text);
+	text-align: justify;
+}
+.button-info-popup-close {
+	position: absolute;
+	top: 0;
+	right: 10px;
+	transition: all 200ms;
+	font-size: 28px;
+	font-weight: bold;
+	text-decoration: none;
+	color: var(--color-primary);
+	cursor: pointer;
+}
+.button-info-popup-close:hover {
+	color: var(--color-primary-hover);
+}
+
+.button-info .button-info-tooltip-text {
+	visibility: hidden;
+	width: 120px;
+	color: var(--color-notification);
+	background-color: var(--color-primary);
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+	position: absolute;
+	z-index: 1;
+	bottom: 110%;
+	left: -250%;
+	margin-left: 0;
+	transition: opacity 0.3s;
+}
+
+.button-info .button-info-tooltip-text::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 75%;
+	margin-left: 0;
+	border-width: 5px;
+	border-style: solid;
+	border-color: var(--color-primary) transparent transparent transparent;
+}
+
+.button-info:hover .button-info-tooltip-text {
+	visibility: visible;
+	opacity: 1;
 }
 
 table {
