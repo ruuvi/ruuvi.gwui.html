@@ -376,6 +376,7 @@
 						<span lang="fi">Yhteyden muodostaminen epäonnistui. Yritä uudelleen.</span>
 					</div>
 				</div>
+				<div>&nbsp;</div>
 			</div>
 
 			<div class="button-container">
@@ -501,8 +502,14 @@
 					<span lang="fi">Edellinen</span>
 				</a>
 				<a href="" id="page-software_update-button-continue" class="btn">
-					<span lang="en">NEXT</span>
-					<span lang="fi">SEURAAVA</span>
+					<div id="page-software_update-button-continue_no_update">
+						<span lang="en">NEXT</span>
+						<span lang="fi">SEURAAVA</span>
+					</div>
+					<div id="page-software_update-button-continue_without_update" class="hidden">
+						<span lang="en">Continue without updating</span>
+						<span lang="fi">Jatka päivittämättä</span>
+					</div>
 				</a>
 			</div>
 		</section>
@@ -1214,8 +1221,8 @@
 				</p>
 
 				<label class="control control-radio">
-					<span lang="en">Use a custom server and configure more settings</span>
-					<span lang="fi">Käytä omaa palvelinta ja säädä muita lisäasetuksia</span>
+					<span lang="en">Use Ruuvi Cloud or/and a custom server and configure more settings</span>
+					<span lang="fi">Käytä Ruuvi Cloudia ja/tai muuta palvelinta sekä säädä muita lisäasetuksia</span>
 					<input id="use_custom" value="custom" name="connection_type" type="radio" class="conf-checkbox">
 					<span class="control_indicator"></span>
 				</label>
@@ -1263,16 +1270,16 @@
 			</div>
 
 			<label class="control control-checkbox">
-				<span lang="en">HTTP</span>
-				<span lang="fi">HTTP</span>
+				<span lang="en">HTTP(S)</span>
+				<span lang="fi">HTTP(S)</span>
 				<input id="use_http" type="checkbox">
 				<span class="control_indicator"></span>
 			</label>
 			<div>&nbsp;</div>
 			<div id="conf-settings-http" class="indent hidden">
 				<label class="font-bold">
-					<span lang="en">Server address</span>
-					<span lang="fi">Palvelimen osoite</span>
+					<span lang="en">Server address (default: https://network.ruuvi.com/record)</span>
+					<span lang="fi">Palvelimen osoite (oletus: https://network.ruuvi.com/record)</span>
 					<input id="http_url" type="text" placeholder="Ruuvi cloud server endpoint" value="">
 				</label>
 				<label class="font-bold">
@@ -1289,8 +1296,8 @@
 			</div>
 
 			<label class="control control-checkbox">
-				<span lang="en">MQTT</span>
-				<span lang="fi">MQTT</span>
+				<span lang="en">MQTT(S)</span>
+				<span lang="fi">MQTT(S)</span>
 				<input id="use_mqtt" type="checkbox">
 				<span class="control_indicator"></span>
 			</label>
@@ -1460,15 +1467,15 @@
 
 				<div id="conf-settings-http_stat" class="indent hidden">
 					<p>
-						<span lang="en">Use Ruuvi (default: https://network.ruuvi.com/status) or configure your own HTTP-server to send statistics</span>
-						<span lang="fi">Käytä Ruuvi (oletus: https://network.ruuvi.com/status) tai määritä oma HTTP-palvelimesi lähettämään tilastoja</span>
+						<span lang="en">Use Ruuvi (default: https://network.ruuvi.com/status) or configure your own HTTP server where to send statistics</span>
+						<span lang="fi">Käytä Ruuvi (oletus: https://network.ruuvi.com/status) tai määritä oma HTTP-palvelimesi, jonne statistiikkatiedot lähetetään</span>
 					</p>
 
 					<div class="border"></div>
 
 					<label class="font-bold">
-						<span lang="en">HTTP-server for sending statistics</span>
-						<span lang="fi">HTTP-palvelin tilastojen lähettämiseen</span>
+						<span lang="en">HTTP server where to send statistics</span>
+						<span lang="fi">HTTP-palvelin, jonne statistiikkatiedot lähetetään</span>
 						<input id="http_stat_url" type="text" placeholder="" value="">
 					</label>
 					<label class="font-bold">
@@ -1500,7 +1507,7 @@
 		<!-- NTP CONFIGURATION -->
 		<section id="page-ntp_config" class="hidden">
 			<h1>
-				<span lang="en">Time Synchronization Options</span>
+				<span lang="en">Time Synchronisation Options</span>
 				<span lang="fi">Ajan Synkronointiasetukset</span>
 			</h1>
 
@@ -1521,13 +1528,13 @@
 			</div>
 
 			<label class="control control-radio">
-				<span lang="en">Use default set of NTP-servers for time synchronization</span>
+				<span lang="en">Use default set of NTP servers for time synchronisation</span>
 				<span lang="fi">Käytä oletusarvoisia NTP-palvelimia ajan synkronointiin</span>
 				<input id="ntp_sync_default" name="ntp_sync" value="ntp_sync_default" type="radio"/>
 				<span class="control_indicator"></span>
 			</label>
 			<label class="control control-radio">
-				<span lang="en">Use custom set of NTP-servers for time synchronization</span>
+				<span lang="en">Use custom set of NTP servers for time synchronisation</span>
 				<span lang="fi">Käytä mukautettuja NTP-palvelimia ajan synkronointiin</span>
 				<input id="ntp_sync_custom" name="ntp_sync" value="ntp_sync_custom" type="radio"/>
 				<span class="control_indicator"></span>
@@ -1555,13 +1562,13 @@
 				</label>
 			</div>
 			<label class="control control-radio">
-				<span lang="en">Use DHCP to get a set of NTP-servers for time synchronization</span>
+				<span lang="en">Use DHCP to get a set of NTP servers for time synchronisation</span>
 				<span lang="fi">Käytä DHCP:tä saadaksesi joukon NTP-palvelimia ajan synkronointia varten</span>
 				<input id="ntp_sync_dhcp" name="ntp_sync" value="ntp_sync_dhcp" type="radio"/>
 				<span class="control_indicator"></span>
 			</label>
 			<label class="control control-radio">
-				<span lang="en">Do not use time synchronization</span>
+				<span lang="en">Do not use time synchronisation</span>
 				<span lang="fi">Älä käytä ajan synkronointia</span>
 				<input id="ntp_sync_disabled" name="ntp_sync" value="ntp_sync_disabled" type="radio"/>
 				<span class="control_indicator"></span>
@@ -1843,6 +1850,7 @@
 	C261.9,6.7,266.7,11.4,266.7,17.3L266.7,17.3z"/>
 		</svg>
 		<p>ruuvi.com</p>
+		<p id="app-footer-fw_ver"></p>
 	</footer>
 
 </div>

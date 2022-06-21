@@ -605,8 +605,8 @@ body {
 }
 @media (min-width: 576px) {
   body {
-    padding-top: 10vh;
-    padding-bottom: 75px;
+    padding-top: 5vh;
+    padding-bottom: 1vh;
   }
 }
 body.is-loading:before {
@@ -632,6 +632,15 @@ body.is-loading:after {
   top: calc(50% - 30px);
   left: calc(50% - 30px);
   z-index: 999;
+}
+
+#page-ethernet_connection-ask_user {
+  position: fixed;
+  top: calc(50% - 70px);
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  color: blue;
 }
 
 @-webkit-keyframes pulse {
@@ -704,6 +713,9 @@ body.is-loading:after {
 }
 #app-footer p {
   margin: 0;
+}
+#app-footer-fw_ver {
+  font-size: smaller;
 }
 
 #logo {
@@ -1025,6 +1037,10 @@ progress[value]::-webkit-progress-value {
 
 .wifi-list {
   margin: 10px 0 70px 0;
+}
+
+.mouse-cursor-default {
+  cursor: default;
 }
 
 .block-centered {

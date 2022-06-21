@@ -8,8 +8,8 @@ body {
 	padding: 100px 30px 30px;
 
 	@include min(sm) {
-		padding-top: 10vh;
-		padding-bottom: 75px;
+		padding-top: 5vh;
+		padding-bottom: 1vh;
 	}
 
 	&.is-loading {
@@ -38,6 +38,15 @@ body {
 			z-index: 999;
 		}
 	}
+}
+
+#page-ethernet_connection-ask_user {
+	position: fixed;
+	top: calc(50% - 70px);
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+	color: blue;
 }
 
 @keyframes pulse {
@@ -87,6 +96,10 @@ body {
 		p {
 			margin: 0;
 		}
+	}
+
+	&-footer-fw_ver {
+		font-size: smaller;
 	}
 }
 
@@ -408,6 +421,10 @@ progress {
 
 .wifi-list {
 	margin: 10px 0 70px 0;
+}
+
+.mouse-cursor-default {
+	cursor: default;
 }
 
 .block-centered {

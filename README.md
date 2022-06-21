@@ -27,26 +27,26 @@ You can choose any WiFi from the list, the valid password is `12345678`
 
 ======================================
 
-## Testing HTTP-requests from the Gateway
+## Testing HTTP requests from the Gateway
 
-To test connection from the Gateway to HTTP-server you need to run an HTTP-server on your PC.
+To test connection from the Gateway to HTTP server you need to run an HTTP server on your PC.
 
-You can use `http_server_auth.py` script to run HTTP-server. 
+You can use `http_server_auth.py` script to run HTTP server. 
 
 ### Pre-requisites:
 * python 3.8
 
-To test connection from the Gateway to HTTP-server, use `http_server_auth.py`
+To test connection from the Gateway to HTTP server, use `http_server_auth.py`
 
-To run HTTP-server without auth:
+To run HTTP server without auth:
 
 `python http_server_auth.py --bind <IP>`
 
-To run HTTP-server with auth:
+To run HTTP server with auth:
 
 `python http_server_auth.py --bind <IP> -u <username> -p <password>`
 
-To run HTTPS-server with auth:
+To run HTTPS server with auth:
 
 `python http_server_auth.py --bind <IP> --ssl_cert=./server.pem -u <username> -p <password>`
 
@@ -87,7 +87,7 @@ To generate certificate for HTTPS (`server.pem`):
   
 * Check that your PC can communicate with the Gateway via WiFi - use `ping <gateway-IP>`
   
-* Run HTTP-server on your PC:
+* Run HTTP server on your PC:
   `python http_server_auth.py --port 8000 --bind <IP>`
   
   in this example: `python http_server_auth.py --port 8000 --bind 192.168.1.38`
@@ -127,7 +127,7 @@ To generate certificate for HTTPS (`server.pem`):
   
 * Check that your PC can communicate with the Gateway via WiFi - use `ping <gateway-IP>`
   
-* Run HTTPS-server on your PC:
+* Run HTTPS server on your PC:
   `python http_server_auth.py --port 8000 --bind <IP> --ssl_cert=./server.pem -u user -p pass`
   
   in this example: `python http_server_auth.py --port 8000 --bind 192.168.1.38`
