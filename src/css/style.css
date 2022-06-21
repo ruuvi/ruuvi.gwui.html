@@ -1027,6 +1027,10 @@ progress[value]::-webkit-progress-value {
   margin: 10px 0 70px 0;
 }
 
+.mouse-cursor-default {
+  cursor: default;
+}
+
 .block-centered {
   display: -webkit-box;
   display: -ms-flexbox;
