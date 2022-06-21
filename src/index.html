@@ -635,8 +635,8 @@
 				<p lang="en">If you are an advanced user, then you can configure getting
 					the Ruuvi Gateway configuration from a remote server by HTTP(S),
 					in this case, you do not need to configure the Gateway manually.</p>
-				<p lang="fi">Jos olet kokenut käyttäjä, voit määrittää Ruuvi Gatewayn määritysten hakemisen
-					etäpalvelimelta HTTP(S:n) kautta, tässä tapauksessa sinun ei tarvitse määrittää yhdyskäytävää
+				<p lang="fi">Jos olet edistynyt käyttäjä, voit määrittää Ruuvi Gatewayn määritysten hakemisen
+					etäpalvelimelta HTTP(S):n kautta, tässä tapauksessa sinun ei tarvitse määrittää Gatewaytä
 					manuaalisesti.</p>
 			</div>
 
@@ -663,7 +663,7 @@
 				<div id="remote_cfg-options" class="indent hidden">
 					<label for="remote_cfg-base_url">
 						<span lang="en">Base URL:</span>
-						<span lang="fi">Perus-URL-osoite:</span>
+						<span lang="fi">URL-kanta:</span>
 						<input id="remote_cfg-base_url" type="text" value="">
 					</label>
 					<label class="font-bold">
@@ -677,7 +677,7 @@
 
 					<label class="control control-checkbox">
 						<span lang="en">Use authentication</span>
-						<span lang="fi">Käytä todennusta</span>
+						<span lang="fi">Käytä pääsynhallintaa</span>
 						<input type="checkbox" id="remote_cfg-use_auth">
 						<span class="control_indicator"></span>
 					</label>
@@ -685,7 +685,7 @@
 					<div id="conf-remote_cfg-auth-options" class="hidden indent">
 						<label class="control control-radio">
 							<span lang="en">Basic authentication</span>
-							<span lang="fi">Perustodennus</span>
+							<span lang="fi">Käyttäjätunnus ja salasana</span>
 							<input id="remote_cfg_auth_type_basic" name="remote_cfg_auth_type"
 								   value="remote_cfg_auth_type_basic" type="radio"/>
 							<span class="control_indicator"></span>
@@ -704,7 +704,7 @@
 						</div>
 						<label class="control control-radio">
 							<span lang="en">Bearer authentication</span>
-							<span lang="fi">Kuljettajan todennus</span>
+							<span lang="fi">Bearer-token</span>
 							<input id="remote_cfg_auth_type_bearer" name="remote_cfg_auth_type"
 								   value="remote_cfg_auth_type_bearer" type="radio"/>
 							<span class="control_indicator"></span>
