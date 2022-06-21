@@ -197,6 +197,13 @@ function on_show_software_update() {
         $('#page-software_update-in_progress').hide();
         $('#software_update-version-latest').text(latest_release_version);
         $('#page-software_update-latest_fw_ver').show();
+        if (latest_release_version !== $('#software_update-version-current').text()) {
+            $('#page-software_update-button-continue_no_update').addClass('hidden');
+            $('#page-software_update-button-continue_without_update').removeClass('hidden');
+        } else {
+            $('#page-software_update-button-continue_no_update').removeClass('hidden');
+            $('#page-software_update-button-continue_without_update').addClass('hidden');
+        }
 
         let software_update_url = firmwareUpdatingBaseURL + latest_release_version;
         $("#software_update-url").val(software_update_url);
