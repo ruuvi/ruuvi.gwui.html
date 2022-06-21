@@ -40,6 +40,15 @@ body {
 	}
 }
 
+#page-ethernet_connection-ask_user {
+	position: fixed;
+	top: calc(50% - 70px);
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+	color: blue;
+}
+
 @keyframes pulse {
 	0% {
 		transform: scale(1);
