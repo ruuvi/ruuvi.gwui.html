@@ -8,8 +8,8 @@ body {
 	padding: 100px 30px 30px;
 
 	@include min(sm) {
-		padding-top: 10vh;
-		padding-bottom: 75px;
+		padding-top: 5vh;
+		padding-bottom: 1vh;
 	}
 
 	&.is-loading {
@@ -87,6 +87,10 @@ body {
 		p {
 			margin: 0;
 		}
+	}
+
+	&-footer-fw_ver {
+		font-size: smaller;
 	}
 }
 
