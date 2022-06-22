@@ -201,6 +201,13 @@ function on_show_software_update() {
         $('#page-software_update-in_progress').hide();
         $('#software_update-version-latest').text(latest_release_version);
         $('#page-software_update-latest_fw_ver').show();
+        if (latest_release_version !== $('#software_update-version-current').text()) {
+            $('#page-software_update-button-continue_no_update').addClass('hidden');
+            $('#page-software_update-button-continue_without_update').removeClass('hidden');
+        } else {
+            $('#page-software_update-button-continue_no_update').removeClass('hidden');
+            $('#page-software_update-button-continue_without_update').addClass('hidden');
+        }
 
         let software_update_url = firmwareUpdatingBaseURL + latest_release_version;
         $("#software_update-url").val(software_update_url);
@@ -610,6 +617,36 @@ $(document).ready(function () {
     // Set initial hash to help back button navigation
     window.location.hash = 'page-welcome';
 
+    function on_switch_language(lang) {
+        $("p[lang], span[lang]").each(function () {
+            if ($(this).attr("lang") === lang)
+                $(this).fadeIn();
+            else
+                $(this).hide();
+            if (lang === 'en') {
+                $('input#pwd').attr('placeholder', "Password");
+                $('input#mqtt_pass').attr('placeholder', "Password");
+                $('input#mqtt_client_id').attr('placeholder', "MAC-address is used if empty");
+            } else if (lang === 'fi') {
+                $('input#pwd').attr('placeholder', "Salasana");
+                $('input#mqtt_pass').attr('placeholder', "Salasana");
+                $('input#mqtt_client_id').attr('placeholder', "MAC-osoitetta käytetään, jos se on tyhjä");
+            }
+        })
+    }
+
+    $('#language-switcher-en').click(function (e) {
+        $('div#language-switcher > ul > li > a').removeClass('language-switcher-active');
+        $(this).addClass('language-switcher-active');
+        on_switch_language('en');
+    });
+
+    $('#language-switcher-fi').click(function (e) {
+        $('div#language-switcher > ul > li > a').removeClass('language-switcher-active');
+        $(this).addClass('language-switcher-active');
+        on_switch_language('fi');
+    });
+
     // ==== page-welcome ===============================================================================================
     $('section#page-welcome').bind('onShow', function () {
         console.log("section#page-welcome: onShow");
@@ -724,6 +761,7 @@ $(document).ready(function () {
         $('body').addClass('is-loading');
         checkAndUpdatePageWiFiListButtonNext();
         flagUseSavedWiFiPassword = true;
+        $('#wifi-show-password').prop("disabled", true);
         $('#page-wifi_connection-ssid_password').hide();
         networkDisconnect();
         startRefreshAP();
@@ -750,10 +788,6 @@ $(document).ready(function () {
 
     $('section#page-wifi_connection input#wifi-show-password').click(function (e) {
         let pwd = $('#pwd');
-        if (flagUseSavedWiFiPassword) {
-            flagUseSavedWiFiPassword = false;
-            pwd.val("");
-        }
         if (pwd.prop("type") === "password") {
             pwd.prop("type", "text");
         } else {
@@ -777,6 +811,8 @@ $(document).ready(function () {
         $('#pwd').val("");
         updatePositionOfWiFiPasswordInput();
         checkAndUpdatePageWiFiListButtonNext();
+        $("input[name='wifi-name']").parent().removeClass('mouse-cursor-default');
+        $('#page-wifi_connection-radio-connect_manually').parent().addClass('mouse-cursor-default');
     });
 
     $('#page-wifi_connection-advanced-button').click(function (e) {
@@ -1172,10 +1208,12 @@ $(document).ready(function () {
             dropdownHide('#page-custom_server-advanced-button');
         }
         if ($("#use_http_stat")[0].checked) {
+            $('#conf-settings-http_stat').removeClass('hidden')
             $('#http_stat_url').prop('disabled', false);
             $('#http_stat_user').prop('disabled', false);
             $('#http_stat_pass').prop('disabled', false);
         } else {
+            $('#conf-settings-http_stat').addClass('hidden')
             $('#http_stat_url').prop('disabled', true);
             $('#http_stat_user').prop('disabled', true);
             $('#http_stat_pass').prop('disabled', true);
@@ -1207,10 +1245,12 @@ $(document).ready(function () {
 
     $("section#page-custom_server input#use_http_stat").change(function (e) {
         if ($("#use_http_stat")[0].checked) {
+            $('#conf-settings-http_stat').removeClass('hidden')
             $('#http_stat_url').prop('disabled', false);
             $('#http_stat_user').prop('disabled', false);
             $('#http_stat_pass').prop('disabled', false);
         } else {
+            $('#conf-settings-http_stat').addClass('hidden')
             $('#http_stat_url').prop('disabled', true);
             $('#http_stat_user').prop('disabled', true);
             $('#http_stat_pass').prop('disabled', true);
@@ -1353,26 +1393,6 @@ $(document).ready(function () {
         window.history.back();
     });
 
-    // Language switcher
-    $(".lang_select").change(function () {
-        const lang = $(this).val();
-        $("p[lang], span[lang]").each(function () {
-            if ($(this).attr("lang") === lang)
-                $(this).fadeIn();
-            else
-                $(this).hide();
-            if (lang === 'en') {
-                $('input#pwd').attr('placeholder', "Password");
-                $('input#mqtt_pass').attr('placeholder', "Password");
-                $('input#mqtt_client_id').attr('placeholder', "MAC-address is used if empty");
-            } else if (lang === 'fi') {
-                $('input#pwd').attr('placeholder', "Salasana");
-                $('input#mqtt_pass').attr('placeholder', "Salasana");
-                $('input#mqtt_client_id').attr('placeholder', "MAC-osoitetta käytetään, jos se on tyhjä");
-            }
-        })
-    });
-
     // first time the page loads: attempt get the connection status
     startCheckStatus();
 });
@@ -1462,6 +1482,9 @@ function rssiToIcon(rssi) {
     }
 }
 
+let g_refresh_ap_timeout_default = 10000;
+let g_refresh_ap_timeout = g_refresh_ap_timeout_default;
+
 // Load wifi list
 function refreshAP() {
     g_refreshAPTimer = null;
@@ -1481,9 +1504,10 @@ function refreshAP() {
     $.ajax({
         dataType: "json",
         url: "/ap.json",
-        timeout: 10000,
+        timeout: g_refresh_ap_timeout,
         success: function (data, text) {
             g_refreshAPInProgress = false;
+            g_refresh_ap_timeout = g_refresh_ap_timeout_default;
             if (data.length > 0) {
                 //sort by signal strength
                 data.sort(function (a, b) {
@@ -1499,22 +1523,40 @@ function refreshAP() {
                 startCheckStatus();
             }
             if (g_refreshAPActive) {
-                startRefreshAP(2000);
+                let timestamp2 = new Date();
+                let delta_ms = timestamp2 - timestamp1;
+                if (delta_ms < 5000) {
+                    startRefreshAP(5000 - delta_ms);
+                } else {
+                    startRefreshAP(2000);
+                }
             }
         },
         error: function (request, status, error) {
+            console.log("ajax: refreshAP: error, status=" + status + ", error=" + error + ", timeout=" + g_refresh_ap_timeout);
+            if (status === 'timeout') {
+                if (g_refresh_ap_timeout <= 20000) {
+                    g_refresh_ap_timeout += 5000;
+                }
+                let body = $('body');
+                if (body.hasClass('is-loading')) {
+                    if (g_refresh_ap_timeout > 20000) {
+                        console.log("Timeout for ap.json request, try to reload page");
+                        window.location.reload();
+                    }
+                }
+            }
             g_refreshAPInProgress = false;
             let timestamp2 = new Date();
-            console.log("ajax: refreshAP: error, status=" + status + ", error=" + error);
             if (prevCheckStatusActive) {
                 startCheckStatus();
             }
             if (g_refreshAPActive) {
                 let delta_ms = timestamp2 - timestamp1;
-                if (delta_ms < 2000) {
-                    startRefreshAP(2000 - delta_ms);
+                if (delta_ms < 5000) {
+                    startRefreshAP(5000 - delta_ms);
                 } else {
-                    startRefreshAP();
+                    startRefreshAP(5000);
                 }
             }
         }
@@ -1562,9 +1604,13 @@ function onChangeWiFiName() {
     $('#wifi-connection-status-block').hide();
 
     flagUseSavedWiFiPassword = false;
+    $('#wifi-show-password').prop("disabled", false);
 
     updatePositionOfWiFiPasswordInput();
     checkAndUpdatePageWiFiListButtonNext();
+    $('#page-wifi_connection-radio-connect_manually').parent().removeClass('mouse-cursor-default');
+    $("input[name='wifi-name']").parent().removeClass('mouse-cursor-default');
+    selected_wifi.parent().addClass('mouse-cursor-default');
 }
 
 function refreshAPHTML(data) {
@@ -1643,6 +1689,7 @@ function refreshAPHTML(data) {
             }
             if (input_id) {
                 input_id.prop('checked', true);
+                input_id.parent().addClass('mouse-cursor-default');
             }
 
             if (selected_wifi_ssid) {
@@ -1663,6 +1710,7 @@ function refreshAPHTML(data) {
                 input_pwd.focus(function () {
                     if (flagUseSavedWiFiPassword) {
                         flagUseSavedWiFiPassword = false;
+                        $('#wifi-show-password').prop("disabled", false);
                         $('input#pwd').val("");
                     }
                 });

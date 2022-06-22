@@ -21,9 +21,17 @@
 <body>
 
 <div id="app">
-	<header id="app-header">
-		<span lang="en">Ruuvi Gateway</span>
-		<span lang="fi">Ruuvi Gateway</span>
+	<header>
+		<div id="app-header">
+			<span lang="en">Ruuvi Gateway</span>
+			<span lang="fi">Ruuvi Gateway</span>
+		</div>
+		<div id="language-switcher" class="language-switcher">
+			<ul>
+				<li><a id="language-switcher-en" class="language-switcher-active"><span>En</span></a></li>
+				<li><a id="language-switcher-fi"><span>Fi</span></a></li>
+			</ul>
+		</div>
 	</header>
 
 	<div id="app-wrap">
@@ -58,19 +66,6 @@
 				<p lang="fi">Huomaathan, että internet-yhteys saattaa olla poissa käytöstä asetusten määrityksen ajan.</p>
 			</div>
 
-			<h2>Select language</h2>
-
-			<label class="control control-radio">
-				English
-				<input class="lang_select" name="lang_select" type="radio" checked="checked" value="en"/>
-				<span class="control_indicator"></span>
-			</label>
-			<label class="control control-radio">
-				Suomi
-				<input class="lang_select" name="lang_select" type="radio" value="fi"/>
-				<span class="control_indicator"></span>
-			</label>
-
 			<div id="button-container_page-welcome-button-get-started" class="button-container">
 				<a href="" id="page-welcome-button-get-started" class="btn disable-click">
 					<span lang="en">LET'S GET STARTED!</span>
@@ -78,7 +73,6 @@
 				</a>
 			</div>
 		</section>
-
 
 		<!-- NETWORK TYPE -->
 		<section id="page-network_type" class="hidden">
@@ -376,6 +370,7 @@
 						<span lang="fi">Yhteyden muodostaminen epäonnistui. Yritä uudelleen.</span>
 					</div>
 				</div>
+				<div>&nbsp;</div>
 			</div>
 
 			<div class="button-container">
@@ -533,8 +528,14 @@
 					<span lang="fi">Edellinen</span>
 				</a>
 				<a href="" id="page-software_update-button-continue" class="btn">
-					<span lang="en">NEXT</span>
-					<span lang="fi">SEURAAVA</span>
+					<div id="page-software_update-button-continue_no_update">
+						<span lang="en">NEXT</span>
+						<span lang="fi">SEURAAVA</span>
+					</div>
+					<div id="page-software_update-button-continue_without_update" class="hidden">
+						<span lang="en">Continue without updating</span>
+						<span lang="fi">Jatka päivittämättä</span>
+					</div>
 				</a>
 			</div>
 		</section>
@@ -663,87 +664,109 @@
 				</ul>
 			</div>
 
-			<div>
-				<label class="control control-checkbox">
-					<span lang="en">Use automatic configuration downloading from a remote server (HTTP/HTTPS)</span>
-					<span lang="fi">Käytä automaattista asetusten latausta etäpalvelimelta (HTTP/HTTPS)</span>
-					<input type="checkbox" id="remote_cfg-use">
-					<span class="control_indicator"></span>
-				</label>
+			<div class="ingress">
+				<p lang="en">If you are an advanced user, then you can configure getting
+					the Ruuvi Gateway configuration from a remote server by HTTP(S),
+					in this case, you do not need to configure the Gateway manually.</p>
+				<p lang="fi">Jos olet edistynyt käyttäjä, voit määrittää Ruuvi Gatewayn määritysten hakemisen
+					etäpalvelimelta HTTP(S):n kautta, tässä tapauksessa sinun ei tarvitse määrittää Gatewaytä
+					manuaalisesti.</p>
 			</div>
-			<div id="remote_cfg-options" class="indent hidden">
-				<label for="remote_cfg-base_url">
-					<span lang="en">Base URL:</span>
-					<span lang="fi">Perus-URL-osoite:</span>
-					<input id="remote_cfg-base_url" type="text" value="">
-				</label>
-				<label class="font-bold">
-					<span lang="en">URL:</span>
-					<span lang="fi">URL:</span>
-				</label>
-				<label id="remote_cfg-url" class="input-primary">
-				</label>
 
-				<div>&nbsp;</div>
+			<div class="border"></div>
+			<div id="page-remote_cfg-advanced-button" class="btn-dropdown">
+				<h2>
+					<span lang="en">Advanced settings</span>
+					<span lang="fi">Edistyneet asetukset</span>
+				</h2>
+				<div class="btn-dropdown-arrow-down"></div>
+				<div class="btn-dropdown-arrow-up hidden"></div>
+			</div>
+			<div class="border"></div>
 
-				<label class="control control-checkbox">
-					<span lang="en">Use authentication</span>
-					<span lang="fi">Käytä todennusta</span>
-					<input type="checkbox" id="remote_cfg-use_auth">
-					<span class="control_indicator"></span>
-				</label>
-
-				<div id="conf-remote_cfg-auth-options" class="hidden indent">
-					<label class="control control-radio">
-						<span lang="en">Basic authentication</span>
-						<span lang="fi">Perustodennus</span>
-						<input id="remote_cfg_auth_type_basic" name="remote_cfg_auth_type"
-							   value="remote_cfg_auth_type_basic" type="radio"/>
+			<div id="page-remote_cfg-advanced-dropdown" class="hidden">
+				<div>
+					<label class="control control-checkbox">
+						<span lang="en">Use automatic configuration downloading from a remote server (HTTP/HTTPS)</span>
+						<span lang="fi">Käytä automaattista asetusten latausta etäpalvelimelta (HTTP/HTTPS)</span>
+						<input type="checkbox" id="remote_cfg-use">
 						<span class="control_indicator"></span>
 					</label>
-					<div id="conf-remote_cfg-auth_basic-options" class="hidden indent">
-						<label>
-							<span lang="en">User:</span>
-							<span lang="fi">Käyttäjä:</span>
-							<input id="remote_cfg-auth_basic-user" type="text" placeholder="" value="">
-						</label>
-						<label>
-							<span lang="en">Password:</span>
-							<span lang="fi">Salasana:</span>
-							<input id="remote_cfg-auth_basic-password" type="password" placeholder="" value="">
-						</label>
-					</div>
-					<label class="control control-radio">
-						<span lang="en">Bearer authentication</span>
-						<span lang="fi">Kuljettajan todennus</span>
-						<input id="remote_cfg_auth_type_bearer" name="remote_cfg_auth_type"
-							   value="remote_cfg_auth_type_bearer" type="radio"/>
+				</div>
+				<div id="remote_cfg-options" class="indent hidden">
+					<label for="remote_cfg-base_url">
+						<span lang="en">Base URL:</span>
+						<span lang="fi">URL-kanta:</span>
+						<input id="remote_cfg-base_url" type="text" value="">
+					</label>
+					<label class="font-bold">
+						<span lang="en">URL:</span>
+						<span lang="fi">URL:</span>
+					</label>
+					<label id="remote_cfg-url" class="input-primary">
+					</label>
+
+					<div>&nbsp;</div>
+
+					<label class="control control-checkbox">
+						<span lang="en">Use authentication</span>
+						<span lang="fi">Käytä pääsynhallintaa</span>
+						<input type="checkbox" id="remote_cfg-use_auth">
 						<span class="control_indicator"></span>
 					</label>
-					<div id="conf-remote_cfg-auth_bearer-options" class="hidden indent">
-						<label>
-							<span lang="en">Token:</span>
-							<span lang="fi">Token:</span>
-							<input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
+
+					<div id="conf-remote_cfg-auth-options" class="hidden indent">
+						<label class="control control-radio">
+							<span lang="en">Basic authentication</span>
+							<span lang="fi">Käyttäjätunnus ja salasana</span>
+							<input id="remote_cfg_auth_type_basic" name="remote_cfg_auth_type"
+								   value="remote_cfg_auth_type_basic" type="radio"/>
+							<span class="control_indicator"></span>
 						</label>
+						<div id="conf-remote_cfg-auth_basic-options" class="hidden indent">
+							<label>
+								<span lang="en">User:</span>
+								<span lang="fi">Käyttäjä:</span>
+								<input id="remote_cfg-auth_basic-user" type="text" placeholder="" value="">
+							</label>
+							<label>
+								<span lang="en">Password:</span>
+								<span lang="fi">Salasana:</span>
+								<input id="remote_cfg-auth_basic-password" type="password" placeholder="" value="">
+							</label>
+						</div>
+						<label class="control control-radio">
+							<span lang="en">Bearer authentication</span>
+							<span lang="fi">Bearer-token</span>
+							<input id="remote_cfg_auth_type_bearer" name="remote_cfg_auth_type"
+								   value="remote_cfg_auth_type_bearer" type="radio"/>
+							<span class="control_indicator"></span>
+						</label>
+						<div id="conf-remote_cfg-auth_bearer-options" class="hidden indent">
+							<label>
+								<span lang="en">Token:</span>
+								<span lang="fi">Token:</span>
+								<input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
+							</label>
+						</div>
 					</div>
-				</div>
 
-				<div class="block-centered">
-					<button class="btn" id="remote_cfg-button-download" type="button">
-						<span lang="en">DOWNLOAD</span>
-						<span lang="fi">LATAA</span>
-					</button>
-				</div>
-
-				<div>&nbsp;</div>
-
-				<div id="page-remote_cfg-status-error" class="rd hidden">
 					<div class="block-centered">
-						<span lang="en">Failed to get gw_cfg.json from the remote server.</span>
-						<span lang="fi">gw_cfg.json-tiedoston hakeminen palvelimelta epäonnistui.</span>
+						<button class="btn" id="remote_cfg-button-download" type="button">
+							<span lang="en">DOWNLOAD</span>
+							<span lang="fi">LATAA</span>
+						</button>
 					</div>
-					<div id="page-remote_cfg-status-error-desc" class="block-centered">
+
+					<div>&nbsp;</div>
+
+					<div id="page-remote_cfg-status-error" class="rd hidden">
+						<div class="block-centered">
+							<span lang="en">Failed to get gw_cfg.json from the remote server.</span>
+							<span lang="fi">gw_cfg.json-tiedoston hakeminen palvelimelta epäonnistui.</span>
+						</div>
+						<div id="page-remote_cfg-status-error-desc" class="block-centered">
+						</div>
 					</div>
 				</div>
 			</div>
@@ -1246,8 +1269,8 @@
 				</p>
 
 				<label class="control control-radio">
-					<span lang="en">Use a custom server and configure more settings</span>
-					<span lang="fi">Käytä omaa palvelinta ja säädä muita lisäasetuksia</span>
+					<span lang="en">Use Ruuvi Cloud or/and a custom server and configure more settings</span>
+					<span lang="fi">Käytä Ruuvi Cloudia ja/tai muuta palvelinta sekä säädä muita lisäasetuksia</span>
 					<input id="use_custom" value="custom" name="connection_type" type="radio" class="conf-checkbox">
 					<span class="control_indicator"></span>
 				</label>
@@ -1295,16 +1318,16 @@
 			</div>
 
 			<label class="control control-checkbox">
-				<span lang="en">HTTP</span>
-				<span lang="fi">HTTP</span>
+				<span lang="en">HTTP(S)</span>
+				<span lang="fi">HTTP(S)</span>
 				<input id="use_http" type="checkbox">
 				<span class="control_indicator"></span>
 			</label>
 			<div>&nbsp;</div>
 			<div id="conf-settings-http" class="indent hidden">
 				<label class="font-bold">
-					<span lang="en">Server address</span>
-					<span lang="fi">Palvelimen osoite</span>
+					<span lang="en">Server address (default: https://network.ruuvi.com/record)</span>
+					<span lang="fi">Palvelimen osoite (oletus: https://network.ruuvi.com/record)</span>
 					<input id="http_url" type="text" placeholder="Ruuvi cloud server endpoint" value="">
 				</label>
 				<label class="font-bold">
@@ -1321,8 +1344,8 @@
 			</div>
 
 			<label class="control control-checkbox">
-				<span lang="en">MQTT</span>
-				<span lang="fi">MQTT</span>
+				<span lang="en">MQTT(S)</span>
+				<span lang="fi">MQTT(S)</span>
 				<input id="use_mqtt" type="checkbox">
 				<span class="control_indicator"></span>
 			</label>
@@ -1467,13 +1490,6 @@
 				</div>
 			</div>
 
-			<label class="control control-checkbox">
-				<span lang="en">Allow sending statistics</span>
-				<span lang="fi">Salli tilastojen lähettäminen</span>
-				<input id="use_http_stat" type="checkbox">
-				<span class="control_indicator"></span>
-			</label>
-
 			<div>&nbsp;</div>
 			<div class="border"></div>
 			<div id="page-custom_server-advanced-button" class="btn-dropdown">
@@ -1488,15 +1504,26 @@
 			<div>&nbsp;</div>
 
 			<div id="page-custom_server-advanced-dropdown" class="hidden">
-				<p>
-					<span lang="en">Configure your own HTTP-server to send statistics</span>
-					<span lang="fi">Määritä oma HTTP-palvelimesi lähettämään tilastoja</span>
-				</p>
+				<label class="control control-checkbox">
+					<span lang="en">Allow sending statistics</span>
+					<span lang="fi">Salli tilastojen lähettäminen</span>
+					<input id="use_http_stat" type="checkbox">
+					<span class="control_indicator"></span>
+				</label>
 
-				<div id="conf-settings-http_stat" class="indent">
+				<div>&nbsp;</div>
+
+				<div id="conf-settings-http_stat" class="indent hidden">
+					<p>
+						<span lang="en">Use Ruuvi (default: https://network.ruuvi.com/status) or configure your own HTTP server where to send statistics</span>
+						<span lang="fi">Käytä Ruuvi (oletus: https://network.ruuvi.com/status) tai määritä oma HTTP-palvelimesi, jonne statistiikkatiedot lähetetään</span>
+					</p>
+
+					<div class="border"></div>
+
 					<label class="font-bold">
-						<span lang="en">HTTP-server for sending statistics</span>
-						<span lang="fi">HTTP-palvelin tilastojen lähettämiseen</span>
+						<span lang="en">HTTP server where to send statistics</span>
+						<span lang="fi">HTTP-palvelin, jonne statistiikkatiedot lähetetään</span>
 						<input id="http_stat_url" type="text" placeholder="" value="">
 					</label>
 					<label class="font-bold">
@@ -1528,7 +1555,7 @@
 		<!-- NTP CONFIGURATION -->
 		<section id="page-ntp_config" class="hidden">
 			<h1>
-				<span lang="en">Time Synchronization Options</span>
+				<span lang="en">Time Synchronisation Options</span>
 				<span lang="fi">Ajan Synkronointiasetukset</span>
 			</h1>
 
@@ -1549,13 +1576,13 @@
 			</div>
 
 			<label class="control control-radio">
-				<span lang="en">Use default set of NTP-servers for time synchronization</span>
+				<span lang="en">Use default set of NTP servers for time synchronisation</span>
 				<span lang="fi">Käytä oletusarvoisia NTP-palvelimia ajan synkronointiin</span>
 				<input id="ntp_sync_default" name="ntp_sync" value="ntp_sync_default" type="radio"/>
 				<span class="control_indicator"></span>
 			</label>
 			<label class="control control-radio">
-				<span lang="en">Use custom set of NTP-servers for time synchronization</span>
+				<span lang="en">Use custom set of NTP servers for time synchronisation</span>
 				<span lang="fi">Käytä mukautettuja NTP-palvelimia ajan synkronointiin</span>
 				<input id="ntp_sync_custom" name="ntp_sync" value="ntp_sync_custom" type="radio"/>
 				<span class="control_indicator"></span>
@@ -1583,13 +1610,13 @@
 				</label>
 			</div>
 			<label class="control control-radio">
-				<span lang="en">Use DHCP to get a set of NTP-servers for time synchronization</span>
+				<span lang="en">Use DHCP to get a set of NTP servers for time synchronisation</span>
 				<span lang="fi">Käytä DHCP:tä saadaksesi joukon NTP-palvelimia ajan synkronointia varten</span>
 				<input id="ntp_sync_dhcp" name="ntp_sync" value="ntp_sync_dhcp" type="radio"/>
 				<span class="control_indicator"></span>
 			</label>
 			<label class="control control-radio">
-				<span lang="en">Do not use time synchronization</span>
+				<span lang="en">Do not use time synchronisation</span>
 				<span lang="fi">Älä käytä ajan synkronointia</span>
 				<input id="ntp_sync_disabled" name="ntp_sync" value="ntp_sync_disabled" type="radio"/>
 				<span class="control_indicator"></span>
@@ -1871,6 +1898,7 @@
 	C261.9,6.7,266.7,11.4,266.7,17.3L266.7,17.3z"/>
 		</svg>
 		<p>ruuvi.com</p>
+		<p id="app-footer-fw_ver"></p>
 	</footer>
 
 </div>
