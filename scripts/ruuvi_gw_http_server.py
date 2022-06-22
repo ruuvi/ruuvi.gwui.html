@@ -108,7 +108,7 @@ g_ruuvi_dict = {
     'mqtt_user': '',
     'lan_auth_type': LAN_AUTH_TYPE_DEFAULT,
     'lan_auth_user': LAN_AUTH_DEFAULT_USER,
-    'lan_auth_pass': '',
+    'lan_auth_pass': g_lan_auth_default_password_hashed,
     'lan_auth_api_key': '',
     'auto_update_cycle': AUTO_UPDATE_CYCLE_TYPE_REGULAR,
     'auto_update_weekdays_bitmask': 0x40,
@@ -513,9 +513,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
     def _on_post_resp_401(self, message=None):
         cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
-        if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI:
+        if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI or \
+                g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DEFAULT:
             message = message if message is not None else ''
-            resp_content = f'{{"message":"{message}"}}'
+            resp_content = self._gen_auth_resp_content(False, message=message)
             resp_content_encoded = resp_content.encode('utf-8')
             resp = b''
             resp += f'HTTP/1.1 401 Unauthorized\r\n'.encode('ascii')
@@ -635,10 +636,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_timestamp
         global g_ruuvi_dict
         global g_login_session
+        global g_authorized_sessions
         global g_simulation_mode
         print('POST %s' % self.path)
         if self.path == '/auth':
-            if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI:
+            if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI and g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_DEFAULT:
                 self._on_post_resp_401()
                 return
             cookie_str = self._get_value_from_headers('Cookie: ')
@@ -684,7 +686,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             password_sha256 = hashlib.sha256(f'{session.challenge}:{encrypted_password}'.encode('ascii')).hexdigest()
             if password != password_sha256:
                 print(f'User "{login}" password mismatch: expected {password_sha256}, got {password}')
-                self._on_post_resp_401('Incorrect username or password')
+                self._on_post_resp_401(message='Incorrect username or password')
                 return
 
             g_authorized_sessions[session.session_id] = AuthorizedSession(login, session.session_id)
@@ -769,7 +771,9 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += f'\r\n'.encode('ascii')
                 self.wfile.write(resp)
                 return
-            flag_use_default_lan_auth = False
+            lan_auth_type = None
+            lan_auth_user = None
+            lan_auth_pass = None
             for key, value in req_dict.items():
                 if key == 'http_pass':
                     continue
@@ -777,21 +781,30 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     continue
                 if key == 'mqtt_pass':
                     continue
-                if key == 'lan_auth_type' and value == LAN_AUTH_TYPE_DEFAULT:
-                    flag_use_default_lan_auth = True
-                    g_ruuvi_dict['lan_auth_type'] = LAN_AUTH_TYPE_RUUVI
-                    g_ruuvi_dict['lan_auth_user'] = LAN_AUTH_DEFAULT_USER
-                    g_ruuvi_dict['lan_auth_pass'] = g_lan_auth_default_password_hashed
+                if key == 'lan_auth_type':
+                    lan_auth_type = value
+                    if value == LAN_AUTH_TYPE_DEFAULT:
+                        lan_auth_user = LAN_AUTH_DEFAULT_USER
+                        lan_auth_pass = g_lan_auth_default_password_hashed
                     continue
-                if key == 'lan_auth_user' and flag_use_default_lan_auth:
+                if key == 'lan_auth_user':
+                    if lan_auth_type != LAN_AUTH_TYPE_DEFAULT:
+                        lan_auth_user = value
                     continue
-                if key == 'lan_auth_pass' and flag_use_default_lan_auth:
+                if key == 'lan_auth_pass':
+                    if lan_auth_type != LAN_AUTH_TYPE_DEFAULT:
+                        lan_auth_pass = value
                     continue
                 g_ruuvi_dict[key] = value
-                # if key == 'use_eth':
-                #     g_ssid = None
-                #     g_password = None
-                #     g_timestamp = time.time()
+
+            if lan_auth_type is not None:
+                if g_ruuvi_dict['lan_auth_type'] != lan_auth_type or g_ruuvi_dict['lan_auth_user'] != lan_auth_user or \
+                        g_ruuvi_dict['lan_auth_pass'] != lan_auth_pass:
+                    g_ruuvi_dict['lan_auth_type'] = lan_auth_type
+                    g_ruuvi_dict['lan_auth_user'] = lan_auth_user
+                    g_ruuvi_dict['lan_auth_pass'] = lan_auth_pass
+                    g_authorized_sessions = dict()
+
             content = '{}'
             content_encoded = content.encode('utf-8')
             resp = b''
@@ -868,7 +881,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_login_session
         print('DELETE %s' % self.path)
         if self.path == '/auth':
-            if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI:
+            if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI and g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_DEFAULT:
                 self._on_post_resp_401()
                 return
             cookie_str = self._get_value_from_headers('Cookie: ')
@@ -1005,6 +1018,14 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         else:
             raise RuntimeError("Unsupported Auth")
 
+    def _gen_auth_resp_content(self, flag_success, message=None):
+        lan_auth_type = g_ruuvi_dict['lan_auth_type']
+        if message is None:
+            resp_content = f'{{"success": {"true" if flag_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
+        else:
+            resp_content = f'{{"success": {"true" if flag_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}", "message": "{message}"}}'
+        return resp_content
+
     def _do_get_auth(self):
         global g_ruuvi_dict
         global g_login_session
@@ -1029,15 +1050,14 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 with open(file_path, 'rb') as fd:
                     resp += fd.read()
             else:
-                lan_auth_type = g_ruuvi_dict['lan_auth_type']
-                resp_content = f'{{"success": {"false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
+                resp_content = self._gen_auth_resp_content(False)
                 resp_content_encoded = resp_content.encode('utf-8')
                 resp += f'Content-type: application/json\r\n'.encode('ascii')
                 resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
                 resp += resp_content_encoded
             self.wfile.write(resp)
-        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI:
+        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI or g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DEFAULT:
             cookie_str = self._get_value_from_headers('Cookie: ')
             session_id = None
             if cookie_str is not None:
@@ -1072,8 +1092,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     resp += fd.read()
             else:
                 is_success = True if session_id is not None else False
-                lan_auth_type = g_ruuvi_dict['lan_auth_type']
-                resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
+                resp_content = self._gen_auth_resp_content(is_success)
                 resp_content_encoded = resp_content.encode('utf-8')
                 resp += f'Content-type: application/json\r\n'.encode('ascii')
                 resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1120,8 +1139,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     resp += fd.read()
             else:
                 is_success = True
-                lan_auth_type = g_ruuvi_dict['lan_auth_type']
-                resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
+                resp_content = self._gen_auth_resp_content(is_success)
                 resp_content_encoded = resp_content.encode('utf-8')
                 resp += f'Content-type: application/json\r\n'.encode('ascii')
                 resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1162,8 +1180,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     resp += fd.read()
             else:
                 is_success = True
-                lan_auth_type = g_ruuvi_dict['lan_auth_type']
-                resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
+                resp_content = self._gen_auth_resp_content(is_success)
                 resp_content_encoded = resp_content.encode('utf-8')
                 resp += f'Content-type: application/json\r\n'.encode('ascii')
                 resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1189,8 +1206,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     resp += fd.read()
             else:
                 is_success = True
-                lan_auth_type = g_ruuvi_dict['lan_auth_type']
-                resp_content = f'{{"success": {"true" if is_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "lan_auth_type": "{lan_auth_type}"}}'
+                resp_content = self._gen_auth_resp_content(is_success)
                 resp_content_encoded = resp_content.encode('utf-8')
                 resp += f'Content-type: application/json\r\n'.encode('ascii')
                 resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
