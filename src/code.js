@@ -610,6 +610,36 @@ $(document).ready(function () {
     // Set initial hash to help back button navigation
     window.location.hash = 'page-welcome';
 
+    function on_switch_language(lang) {
+        $("p[lang], span[lang]").each(function () {
+            if ($(this).attr("lang") === lang)
+                $(this).fadeIn();
+            else
+                $(this).hide();
+            if (lang === 'en') {
+                $('input#pwd').attr('placeholder', "Password");
+                $('input#mqtt_pass').attr('placeholder', "Password");
+                $('input#mqtt_client_id').attr('placeholder', "MAC-address is used if empty");
+            } else if (lang === 'fi') {
+                $('input#pwd').attr('placeholder', "Salasana");
+                $('input#mqtt_pass').attr('placeholder', "Salasana");
+                $('input#mqtt_client_id').attr('placeholder', "MAC-osoitetta käytetään, jos se on tyhjä");
+            }
+        })
+    }
+
+    $('#language-switcher-en').click(function (e) {
+        $('div#language-switcher > ul > li > a').removeClass('language-switcher-active');
+        $(this).addClass('language-switcher-active');
+        on_switch_language('en');
+    });
+
+    $('#language-switcher-fi').click(function (e) {
+        $('div#language-switcher > ul > li > a').removeClass('language-switcher-active');
+        $(this).addClass('language-switcher-active');
+        on_switch_language('fi');
+    });
+
     // ==== page-welcome ===============================================================================================
     $('section#page-welcome').bind('onShow', function () {
         console.log("section#page-welcome: onShow");
@@ -1355,26 +1385,6 @@ $(document).ready(function () {
     $('.btn-back').click(function (e) {
         e.preventDefault();
         window.history.back();
-    });
-
-    // Language switcher
-    $(".lang_select").change(function () {
-        const lang = $(this).val();
-        $("p[lang], span[lang]").each(function () {
-            if ($(this).attr("lang") === lang)
-                $(this).fadeIn();
-            else
-                $(this).hide();
-            if (lang === 'en') {
-                $('input#pwd').attr('placeholder', "Password");
-                $('input#mqtt_pass').attr('placeholder', "Password");
-                $('input#mqtt_client_id').attr('placeholder', "MAC-address is used if empty");
-            } else if (lang === 'fi') {
-                $('input#pwd').attr('placeholder', "Salasana");
-                $('input#mqtt_pass').attr('placeholder', "Salasana");
-                $('input#mqtt_client_id').attr('placeholder', "MAC-osoitetta käytetään, jos se on tyhjä");
-            }
-        })
     });
 
     // first time the page loads: attempt get the connection status
