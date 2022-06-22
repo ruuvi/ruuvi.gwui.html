@@ -61,6 +61,10 @@ body {
 	}
 }
 
+header {
+	position: relative;
+}
+
 #app {
 	width: 100%;
 	max-width: 650px;
@@ -108,6 +112,54 @@ body {
 	height: 24px;
 	fill: var(--color-primary);
 	margin-bottom: 10px;
+}
+
+#language-switcher {
+	position: absolute;
+	right: 0;
+	top: 1em;
+}
+
+.language-switcher > ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.language-switcher > ul > li {
+	margin: 0;
+	list-style-type: none;
+	display: inline-block;
+	color: #0c3c3d;
+	border: 0;
+}
+
+.language-switcher > ul > li:last-child {
+	border-right: 0;
+}
+
+.language-switcher > ul > li > a {
+	cursor: default;
+	color: var(--color-primary);
+	padding: 0 0.3em 0 0;
+	margin: 0;
+	border: 0;
+	border-right: 1px solid rgb(29, 180, 167);
+}
+
+.language-switcher > ul > li > a.language-switcher-active {
+	color: var(--color-text);
+}
+
+.language-switcher > ul > li:last-child > a {
+	border-right: 0;
+}
+
+.language-switcher > ul > li > a:hover {
+	cursor: pointer;
+}
+.language-switcher > ul > li > a.language-switcher-active:hover {
+	cursor: default;
 }
 
 section {

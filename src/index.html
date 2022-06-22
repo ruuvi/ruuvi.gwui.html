@@ -21,9 +21,17 @@
 <body>
 
 <div id="app">
-	<header id="app-header">
-		<span lang="en">Ruuvi Gateway</span>
-		<span lang="fi">Ruuvi Gateway</span>
+	<header>
+		<div id="app-header">
+			<span lang="en">Ruuvi Gateway</span>
+			<span lang="fi">Ruuvi Gateway</span>
+		</div>
+		<div id="language-switcher" class="language-switcher">
+			<ul>
+				<li><a id="language-switcher-en" class="language-switcher-active"><span>En</span></a></li>
+				<li><a id="language-switcher-fi"><span>Fi</span></a></li>
+			</ul>
+		</div>
 	</header>
 
 	<div id="app-wrap">
@@ -58,19 +66,6 @@
 				<p lang="fi">Huomaathan, että internet-yhteys saattaa olla poissa käytöstä asetusten määrityksen ajan.</p>
 			</div>
 
-			<h2>Select language</h2>
-
-			<label class="control control-radio">
-				English
-				<input class="lang_select" name="lang_select" type="radio" checked="checked" value="en"/>
-				<span class="control_indicator"></span>
-			</label>
-			<label class="control control-radio">
-				Suomi
-				<input class="lang_select" name="lang_select" type="radio" value="fi"/>
-				<span class="control_indicator"></span>
-			</label>
-
 			<div id="button-container_page-welcome-button-get-started" class="button-container">
 				<a href="" id="page-welcome-button-get-started" class="btn disable-click">
 					<span lang="en">LET'S GET STARTED!</span>
@@ -78,7 +73,6 @@
 				</a>
 			</div>
 		</section>
-
 
 		<!-- NETWORK TYPE -->
 		<section id="page-network_type" class="hidden">
