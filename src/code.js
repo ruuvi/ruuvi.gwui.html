@@ -919,6 +919,11 @@ $(document).ready(function () {
     // ==== page-remote_cfg ============================================================================================
     $('section#page-remote_cfg').bind('onShow', function () {
         $("#remote_cfg-base_url").val($("#remote_cfg-url").text());
+        if ($('#remote_cfg-use').prop('checked')) {
+            dropdownShow('#page-remote_cfg-advanced-dropdown');
+        } else {
+            dropdownHide('#page-remote_cfg-advanced-dropdown');
+        }
         on_remote_cfg_changed();
     });
 
