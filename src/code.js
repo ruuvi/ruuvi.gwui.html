@@ -281,24 +281,14 @@ function on_remote_cfg_changed() {
     }
     let remote_cfg_base_url = $("#remote_cfg-base_url");
     let base_url = remote_cfg_base_url.val();
-    let full_url = "";
+    if ((base_url !== "") && (!base_url.startsWith("http://") && !base_url.startsWith("https://")))
+    {
+        base_url = "https://" + base_url;
+        remote_cfg_base_url.val(base_url);
+    }
 
     let flag_valid = true;
-    if (base_url !== "") {
-        let gw_cfg_json_name = "gw_cfg.json";
-        if (base_url.endsWith(gw_cfg_json_name)) {
-            base_url = base_url.slice(0, -1 * gw_cfg_json_name.length);
-        }
-        full_url = ''
-        if (!base_url.startsWith("http://") && !base_url.startsWith("https://")) {
-            full_url += "http://";
-        }
-        full_url += base_url;
-        if (!full_url.endsWith("/")) {
-            full_url += "/";
-        }
-        full_url += gw_cfg_json_name
-    } else {
+    if (base_url === "") {
         flag_valid = false;
     }
     if ($('#remote_cfg-use_auth').prop('checked')) {
@@ -315,7 +305,6 @@ function on_remote_cfg_changed() {
     if (remote_cfg_base_url.val() !== base_url) {
         remote_cfg_base_url.val(base_url);
     }
-    $("#remote_cfg-url").text(full_url);
     if (flag_valid) {
         $("#remote_cfg-button-download").removeClass("disable-click");
     } else {
@@ -918,7 +907,6 @@ $(document).ready(function () {
 
     // ==== page-remote_cfg ============================================================================================
     $('section#page-remote_cfg').bind('onShow', function () {
-        $("#remote_cfg-base_url").val($("#remote_cfg-url").text());
         if ($('#remote_cfg-use').prop('checked')) {
             dropdownShow('#page-remote_cfg-advanced-dropdown');
         } else {
