@@ -731,7 +731,7 @@ header {
 #language-switcher {
   position: absolute;
   right: 0;
-  top: 1em;
+  top: -1em;
 }
 
 .language-switcher > ul {
