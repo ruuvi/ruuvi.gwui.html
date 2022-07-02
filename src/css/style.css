@@ -601,12 +601,13 @@ body {
   color: var(--color-text);
   font-family: "Mulish", sans-serif;
   line-height: 1.5;
-  padding: 100px 30px 30px;
+  padding: 10vh 5vw 3vh;
 }
-@media (min-width: 576px) {
+@media (max-width: 576px) {
   body {
-    padding-top: 5vh;
+    padding-top: 1vh;
     padding-bottom: 1vh;
+    min-height: 90vh;
   }
 }
 body.is-loading:before {
@@ -691,7 +692,7 @@ header {
 }
 #app-header {
   -ms-flex-negative: 0;
-      flex-shrink: 0;
+  flex-shrink: 0;
   color: var(--color-primary);
   font-size: 36px;
   font-family: "Montserrat", sans-serif;
@@ -701,14 +702,14 @@ header {
 }
 #app-wrap {
   -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
   padding-bottom: 95px;
   position: relative;
 }
 #app-footer {
   -ms-flex-negative: 0;
-      flex-shrink: 0;
+  flex-shrink: 0;
   color: var(--color-primary);
   text-align: center;
   padding: 45px 0 25px;
