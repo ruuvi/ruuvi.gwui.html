@@ -113,7 +113,12 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         }
     } else {
         data.remote_cfg_use = $("#remote_cfg-use").prop('checked');
-        data.remote_cfg_url = $("#remote_cfg-url").text();
+        let remote_cfg_base_url = $("#remote_cfg-base_url").val();
+        if (remote_cfg_base_url.length < 10) {  // Min URL: "http://a.b"
+            data.remote_cfg_url = "";
+        } else {
+            data.remote_cfg_url = remote_cfg_base_url;
+        }
         if ($('#remote_cfg-use_auth').prop('checked')) {
             let remote_cfg_auth_type = $("input[name='remote_cfg_auth_type']:checked").val();
             if (remote_cfg_auth_type === "remote_cfg_auth_type_basic") {
@@ -531,7 +536,7 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                     remote_cfg_use = key_value;
                     break;
                 case "remote_cfg_url":
-                    $('#remote_cfg-url').text(key_value);
+                    $('#remote_cfg-base_url').val(key_value);
                     break;
                 case "remote_cfg_auth_type":
                     remote_cfg_auth_type = key_value;

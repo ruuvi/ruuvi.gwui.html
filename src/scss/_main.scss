@@ -117,7 +117,7 @@ header {
 #language-switcher {
 	position: absolute;
 	right: 0;
-	top: 1em;
+	top: -1em;
 }
 
 .language-switcher > ul {
@@ -296,7 +296,7 @@ progress {
 	border: none;
 	border-radius: 30px;
 	padding: 14px 30px;
-	white-space: nowrap;
+	white-space: normal;
 	cursor: pointer;
 	text-align: center;
 	text-decoration: none;

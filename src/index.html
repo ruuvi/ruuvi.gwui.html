@@ -693,18 +693,43 @@
 						<span class="control_indicator"></span>
 					</label>
 				</div>
+				<div>&nbsp;</div>
 				<div id="remote_cfg-options" class="indent hidden">
 					<label for="remote_cfg-base_url">
-						<span lang="en">Base URL:</span>
-						<span lang="fi">URL-kanta:</span>
+						<span lang="en">Specify URL of json file with the configuration or URL of the folder with the set of json files for each Gateway:</span>
+						<span lang="fi">Määritä json-tiedoston URL-osoite kokoonpanon kanssa tai sen kansion URL-osoite, jossa on json-tiedostot jokaiselle yhdyskäytävälle:</span>
 						<input id="remote_cfg-base_url" type="text" value="">
 					</label>
-					<label class="font-bold">
-						<span lang="en">URL:</span>
-						<span lang="fi">URL:</span>
-					</label>
-					<label id="remote_cfg-url" class="input-primary">
-					</label>
+
+					<div style="opacity: 50%;">
+						<small>
+							<span lang="en">
+								If you specify a folder name, it will first attempt to read the configuration file
+								for this Gateway from &lt;GW_MAC&gt;.json (for example, AABBCCDDEEFF.json).
+								If that file fails, an attempt will be made to read the overall configuration
+								from gw_cfg.json.
+							</span>
+							<span lang="fi">
+								Jos määrität kansion nimen, se yrittää ensin lukea tämän yhdyskäytävän
+								määritystiedoston &lt;GW_MAC&gt;.json-tiedostosta (esimerkiksi AABBCCDDEEFF.json).
+								Jos tiedosto epäonnistuu, koko kokoonpano yritetään lukea tiedostosta gw_cfg.json.
+							</span>
+						</small>
+					</div>
+					<div style="opacity: 50%;">
+						<small>
+							<span lang="en">
+								Also, the configuration file can be generated dynamically by the server,
+								for this the server must analyze the HTTP header 'ruuvi_gw_mac',
+								which contains MAC address in the format XX:XX:XX:XX:XX:XX.
+							</span>
+							<span lang="fi">
+								Lisäksi palvelin voi luoda konfigurointitiedoston dynaamisesti,
+								tätä varten palvelimen tulee analysoida HTTP-otsikko 'ruuvi_gw_mac',
+								joka sisältää MAC-osoitteen muodossa XX:XX:XX:XX:XX:XX.
+							</span>
+						</small>
+					</div>
 
 					<div>&nbsp;</div>
 
