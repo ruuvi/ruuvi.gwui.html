@@ -543,8 +543,9 @@ function on_edit_automatic_update_settings() {
 
 
 $(document).ready(function () {
+    console.log("Ready");
     window.onpopstate = function (event) {
-        console.log("window.onpopstate: " + document.location.hash);
+        console.log("window.onpopstate: " + document.location.hash + ", current_page: " + g_current_page);
         let url = window.location.hash.substring(1);
         if (g_current_page) {
             $(g_current_page).hide();
@@ -597,6 +598,8 @@ $(document).ready(function () {
     }, false);
 
     // Set initial hash to help back button navigation
+    console.log("Open: page-welcome");
+    window.location.hash = null;
     window.location.hash = 'page-welcome';
 
     function on_switch_language(lang) {
