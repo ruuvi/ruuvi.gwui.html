@@ -519,6 +519,10 @@ textarea,
   --color-notification: #0808dd;
   --color-border: #d6eee9;
   --color-divider: rgba(75, 201, 186, 0.4);
+  --info-border-width: 0.75em;
+  --info-size: 1.3em;
+  --info-margin-top: 0.35em;
+  --info-margin-bottom: 0.95em;
 }
 
 @font-face {
@@ -1032,6 +1036,10 @@ progress[value]::-webkit-progress-value {
 .control-float-left {
   float: left;
 }
+.control-float-left-with_info {
+  float: left;
+  width: calc(100% - 3em);
+}
 .control + .control {
   margin-top: 5px;
 }
@@ -1211,22 +1219,29 @@ select::-ms-expand {
 .button-info {
   position: relative;
   border-radius: 50%;
+  border: 0;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  width: 2em;
-  height: 2em;
-  line-height: 2em;
-  font-style: italic;
+  width: var(--info-size);
+  height: var(--info-size);
+  line-height: 1.6em;
   font-family: "Montserrat", sans-serif;
-  color: var(--color-notification);
-  background-color: var(--color-primary);
-  border-width: 0;
+  color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(68, 201, 185, 0.6);
   float: right;
+  margin-top: var(--info-margin-top);
+  margin-bottom: var(--info-margin-bottom);
+  margin-right: var(--info-border-width);
 }
 
 .button-info:hover {
-  background-color: var(--color-primary-hover);
+  width: calc(var(--info-size) + 2 * var(--info-border-width));
+  height: calc(var(--info-size) + 2 * var(--info-border-width));
+  border: var(--info-border-width) solid #EDF2F7;
+  margin-top: calc(var(--info-margin-top) - var(--info-border-width));
+  margin-bottom: calc(var(--info-margin-bottom) - var(--info-border-width));
+  margin-right: 0;
   cursor: pointer;
 }
 
@@ -1272,38 +1287,6 @@ select::-ms-expand {
 }
 .button-info-popup-close:hover {
   color: var(--color-primary-hover);
-}
-
-.button-info .button-info-tooltip-text {
-  visibility: hidden;
-  width: 120px;
-  color: var(--color-notification);
-  background-color: var(--color-primary);
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 110%;
-  left: -250%;
-  margin-left: 0;
-  transition: opacity 0.3s;
-}
-
-.button-info .button-info-tooltip-text::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 75%;
-  margin-left: 0;
-  border-width: 5px;
-  border-style: solid;
-  border-color: var(--color-primary) transparent transparent transparent;
-}
-
-.button-info:hover .button-info-tooltip-text {
-  visibility: visible;
-  opacity: 1;
 }
 
 table {
