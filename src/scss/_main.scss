@@ -412,11 +412,6 @@ progress {
 		float: left;
 	}
 
-	&-float-left-with_info {
-		float: left;
-		width: calc(100% - 3em);
-	}
-
 	+ .control {
 		margin-top: 5px;
 	}
@@ -568,7 +563,17 @@ select {
 	filter: blur(2px);
 }
 
-.button-info {
+.info-icon-container {
+	min-height: calc(var(--info-size) + 2 * var(--info-border-width));
+}
+
+.info-icon-left-column {
+	float: left;
+	width: calc(100% - 3em);
+	min-height: calc(var(--info-size) + 2 * var(--info-border-width));
+}
+
+.info-icon-button {
 	position: relative;
 	border-radius: 50%;
 	border: 0;
@@ -587,7 +592,7 @@ select {
 	margin-right: var(--info-border-width);
 }
 
-.button-info:hover {
+.info-icon-button:hover {
 	width: calc(var(--info-size) + 2 * var(--info-border-width));
 	height: calc(var(--info-size) + 2 * var(--info-border-width));
 	border: var(--info-border-width) solid #EDF2F7;
@@ -597,7 +602,7 @@ select {
 	cursor: pointer;
 }
 
-.button-info-overlay {
+.info-icon-overlay {
 	position: fixed;
 	top: 0;
 	bottom: 0;
@@ -609,11 +614,11 @@ select {
 	opacity: 0;
 	z-index: 999;
 }
-.button-info-overlay:target {
+.info-icon-overlay:target {
 	visibility: visible;
 	opacity: 1;
 }
-.button-info-popup {
+.info-icon-popup {
 	margin: 70px auto;
 	padding: 20px 30px 20px 20px;
 	background: var(--color-background);
@@ -622,11 +627,11 @@ select {
 	position: relative;
 	transition: all 5s ease-in-out;
 }
-.button-info-content {
+.info-icon-content {
 	color: var(--color-text);
 	text-align: left;
 }
-.button-info-popup-close {
+.info-icon-popup-close {
 	position: absolute;
 	top: 0;
 	right: 10px;
@@ -637,7 +642,7 @@ select {
 	color: var(--color-primary);
 	cursor: pointer;
 }
-.button-info-popup-close:hover {
+.info-icon-popup-close:hover {
 	color: var(--color-primary-hover);
 }
 
