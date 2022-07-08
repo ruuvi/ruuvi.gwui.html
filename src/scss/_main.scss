@@ -7,9 +7,10 @@ body {
 	line-height: 1.5;
 	padding: 100px 30px 30px;
 
-	@include min(sm) {
-		padding-top: 5vh;
+	@include max(sm) {
+		padding-top: 2.5vh;
 		padding-bottom: 1vh;
+		min-height: 90vh;
 	}
 
 	&.is-loading {

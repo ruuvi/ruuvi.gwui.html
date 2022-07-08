@@ -609,7 +609,7 @@ body {
 }
 @media (max-width: 576px) {
   body {
-    padding-top: 1vh;
+    padding-top: 2.5vh;
     padding-bottom: 1vh;
     min-height: 90vh;
   }
