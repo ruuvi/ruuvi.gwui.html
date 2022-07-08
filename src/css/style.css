@@ -1272,7 +1272,7 @@ select::-ms-expand {
 }
 .button-info-content {
   color: var(--color-text);
-  text-align: justify;
+  text-align: left;
 }
 .button-info-popup-close {
   position: absolute;
