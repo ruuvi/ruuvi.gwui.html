@@ -519,6 +519,10 @@ textarea,
   --color-notification: #0808dd;
   --color-border: #d6eee9;
   --color-divider: rgba(75, 201, 186, 0.4);
+  --info-border-width: 0.75em;
+  --info-size: 1.3em;
+  --info-margin-top: 0.35em;
+  --info-margin-bottom: 0.95em;
 }
 
 @font-face {
@@ -1029,6 +1033,9 @@ progress[value]::-webkit-progress-value {
   margin-top: 0;
   cursor: pointer;
 }
+.control-float-left {
+  float: left;
+}
 .control + .control {
   margin-top: 5px;
 }
@@ -1203,6 +1210,90 @@ select::-ms-expand {
 .blur {
   -webkit-filter: blur(2px);
           filter: blur(2px);
+}
+
+.info-icon-container {
+  min-height: calc(var(--info-size) + 2 * var(--info-border-width));
+}
+
+.info-icon-left-column {
+  float: left;
+  width: calc(100% - 3em);
+  min-height: calc(var(--info-size) + 2 * var(--info-border-width));
+}
+
+.info-icon-button {
+  position: relative;
+  border-radius: 50%;
+  border: 0;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: var(--info-size);
+  height: var(--info-size);
+  line-height: 1.6em;
+  font-family: "Montserrat", sans-serif;
+  color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(68, 201, 185, 0.6);
+  float: right;
+  margin-top: var(--info-margin-top);
+  margin-bottom: var(--info-margin-bottom);
+  margin-right: var(--info-border-width);
+}
+
+.info-icon-button:hover {
+  width: calc(var(--info-size) + 2 * var(--info-border-width));
+  height: calc(var(--info-size) + 2 * var(--info-border-width));
+  border: var(--info-border-width) solid #EDF2F7;
+  margin-top: calc(var(--info-margin-top) - var(--info-border-width));
+  margin-bottom: calc(var(--info-margin-bottom) - var(--info-border-width));
+  margin-right: 0;
+  cursor: pointer;
+}
+
+.info-icon-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 999;
+}
+.info-icon-overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+.info-icon-popup {
+  margin: 70px auto;
+  padding: 20px 30px 20px 20px;
+  background: var(--color-background);
+  border-radius: 10px;
+  width: 70%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.info-icon-content {
+  color: var(--color-text);
+  text-align: left;
+}
+.info-icon-popup-close {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  transition: all 200ms;
+  font-size: 28px;
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+.info-icon-popup-close:hover {
+  color: var(--color-primary-hover);
 }
 
 table {

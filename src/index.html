@@ -478,16 +478,45 @@
 
 			<div id="page-software_update-advanced-dropdown" class="hidden">
 				<div>
-					<label class="control control-checkbox">
-						<span lang="en">Specify a URL that contains required firmware update binaries.</span>
-						<span lang="fi">Anna URL-osoite, josta löytyy tarvittavat laiteohjelmistotiedostot.</span>
-						<input type="checkbox" id="software_update-set-url-manually">
-						<span class="control_indicator"></span>
+					<label class="control control-checkbox info-icon-container">
+						<div class="info-icon-left-column">
+							<span lang="en">Specify a URL that contains required firmware update binaries.</span>
+							<span lang="fi">Anna URL-osoite, josta löytyy tarvittavat laiteohjelmistotiedostot.</span>
+							<input type="checkbox" id="software_update-set-url-manually">
+							<span class="control_indicator"></span>
+						</div>
+						<a class="info-icon-button" href="#popup-info-icon-software_update">i</a>
 					</label>
 				</div>
 				<label for="software_update-url">
 					<input id="software_update-url" type="text" value="" class="hidden">
 				</label>
+			</div>
+
+			<div id="popup-info-icon-software_update" class="info-icon-overlay">
+				<div class="info-icon-popup">
+					<h1>How to install custom firmware</h1>
+					<a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
+					<div class="info-icon-content">
+						<p>
+							<span lang="en">You need to prepare firmware binaries (ruuvi_gateway_esp.bin,
+								fatfs_gwui.bin and fatfs_nrf52.bin) and put them on your HTTP server.
+							</span>
+							<span lang="fi">Sinun on valmistettava laiteohjelmiston binäärit
+								(ruuvi_gateway_esp.bin, fatfs_gwui.bin ja fatfs_nrf52.bin)
+								ja ladata ne HTTP-palvelimellesi.
+							</span>
+						</p>
+						<p>
+							<span lang="en">You can find more detailed instructions here:
+								https://docs.ruuvi.com/ruuvi-gateway-firmware/gw-install-custom-firmware
+							</span>
+							<span lang="fi">Tarkemmat ohjeet löydät täältä:
+								https://docs.ruuvi.com/ruuvi-gateway-firmware/gw-install-custom-firmware
+							</span>
+						</p>
+					</div>
+				</div>
 			</div>
 
 			<div class="button-container">
@@ -663,84 +692,61 @@
 				</div>
 				<div>&nbsp;</div>
 				<div id="remote_cfg-options" class="indent hidden">
-					<label for="remote_cfg-base_url">
-						<span lang="en">Specify URL of json file with the configuration or URL of the folder with the set of json files for each Gateway:</span>
-						<span lang="fi">Määritä json-tiedoston URL-osoite kokoonpanon kanssa tai sen kansion URL-osoite, jossa on json-tiedostot jokaiselle yhdyskäytävälle:</span>
+					<label for="remote_cfg-base_url" class="info-icon-container">
+						<div class="info-icon-left-column">
+							<span lang="en">Specify URL of json file with the configuration or
+								URL of the folder with the set of json files for each Gateway:</span>
+							<span lang="fi">Määritä json-tiedoston URL-osoite kokoonpanon kanssa tai sen kansion
+								URL-osoite, jossa on json-tiedostot jokaiselle Gatewaylle:</span>
+						</div>
+						<a class="info-icon-button" href="#popup-info-icon-button-remote_cfg">i</a>
 						<input id="remote_cfg-base_url" type="text" value="">
 					</label>
 
-					<div style="opacity: 50%;">
-						<small>
-							<span lang="en">
-								If you specify a folder name, it will first attempt to read the configuration file
-								for this Gateway from &lt;GW_MAC&gt;.json (for example, AABBCCDDEEFF.json).
-								If that file fails, an attempt will be made to read the overall configuration
-								from gw_cfg.json.
-							</span>
-							<span lang="fi">
-								Jos määrität kansion nimen, se yrittää ensin lukea tämän yhdyskäytävän
-								määritystiedoston &lt;GW_MAC&gt;.json-tiedostosta (esimerkiksi AABBCCDDEEFF.json).
-								Jos tiedosto epäonnistuu, koko kokoonpano yritetään lukea tiedostosta gw_cfg.json.
-							</span>
-						</small>
-					</div>
-					<div style="opacity: 50%;">
-						<small>
-							<span lang="en">
-								Also, the configuration file can be generated dynamically by the server,
-								for this the server must analyze the HTTP header 'ruuvi_gw_mac',
-								which contains MAC address in the format XX:XX:XX:XX:XX:XX.
-							</span>
-							<span lang="fi">
-								Lisäksi palvelin voi luoda konfigurointitiedoston dynaamisesti,
-								tätä varten palvelimen tulee analysoida HTTP-otsikko 'ruuvi_gw_mac',
-								joka sisältää MAC-osoitteen muodossa XX:XX:XX:XX:XX:XX.
-							</span>
-						</small>
-					</div>
-
 					<div>&nbsp;</div>
 
-					<label class="control control-checkbox">
-						<span lang="en">Use authentication</span>
-						<span lang="fi">Käytä pääsynhallintaa</span>
-						<input type="checkbox" id="remote_cfg-use_auth">
-						<span class="control_indicator"></span>
-					</label>
+					<div>
+						<label class="control control-checkbox">
+							<span lang="en">Use authentication</span>
+							<span lang="fi">Käytä pääsynhallintaa</span>
+							<input type="checkbox" id="remote_cfg-use_auth">
+							<span class="control_indicator"></span>
+						</label>
 
-					<div id="conf-remote_cfg-auth-options" class="hidden indent">
-						<label class="control control-radio">
-							<span lang="en">Basic authentication</span>
-							<span lang="fi">Käyttäjätunnus ja salasana</span>
-							<input id="remote_cfg_auth_type_basic" name="remote_cfg_auth_type"
-								   value="remote_cfg_auth_type_basic" type="radio"/>
-							<span class="control_indicator"></span>
-						</label>
-						<div id="conf-remote_cfg-auth_basic-options" class="hidden indent">
-							<label>
-								<span lang="en">User:</span>
-								<span lang="fi">Käyttäjä:</span>
-								<input id="remote_cfg-auth_basic-user" type="text" placeholder="" value="">
+						<div id="conf-remote_cfg-auth-options" class="hidden indent">
+							<label class="control control-radio">
+								<span lang="en">Basic authentication</span>
+								<span lang="fi">Käyttäjätunnus ja salasana</span>
+								<input id="remote_cfg_auth_type_basic" name="remote_cfg_auth_type"
+									   value="remote_cfg_auth_type_basic" type="radio"/>
+								<span class="control_indicator"></span>
 							</label>
-							<label>
-								<span lang="en">Password:</span>
-								<span lang="fi">Salasana:</span>
-								<input id="remote_cfg-auth_basic-password" type="password" placeholder="" value="">
+							<div id="conf-remote_cfg-auth_basic-options" class="hidden indent">
+								<label>
+									<span lang="en">User:</span>
+									<span lang="fi">Käyttäjä:</span>
+									<input id="remote_cfg-auth_basic-user" type="text" placeholder="" value="">
+								</label>
+								<label>
+									<span lang="en">Password:</span>
+									<span lang="fi">Salasana:</span>
+									<input id="remote_cfg-auth_basic-password" type="password" placeholder="" value="">
+								</label>
+							</div>
+							<label class="control control-radio">
+								<span lang="en">Bearer authentication</span>
+								<span lang="fi">Bearer-token</span>
+								<input id="remote_cfg_auth_type_bearer" name="remote_cfg_auth_type"
+									   value="remote_cfg_auth_type_bearer" type="radio"/>
+								<span class="control_indicator"></span>
 							</label>
-						</div>
-						<label class="control control-radio">
-							<span lang="en">Bearer authentication</span>
-							<span lang="fi">Bearer-token</span>
-							<input id="remote_cfg_auth_type_bearer" name="remote_cfg_auth_type"
-								   value="remote_cfg_auth_type_bearer" type="radio"/>
-							<span class="control_indicator"></span>
-						</label>
-						<div id="conf-remote_cfg-auth_bearer-options" class="hidden indent">
-							<label>
-								<span lang="en">Token:</span>
-								<span lang="fi">Token:</span>
-								<input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
-							</label>
+							<div id="conf-remote_cfg-auth_bearer-options" class="hidden indent">
+								<label>
+									<span lang="en">Token:</span>
+									<span lang="fi">Token:</span>
+									<input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
+								</label>
+							</div>
 						</div>
 					</div>
 
@@ -760,6 +766,39 @@
 						</div>
 						<div id="page-remote_cfg-status-error-desc" class="block-centered">
 						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="popup-info-icon-button-remote_cfg" class="info-icon-overlay">
+				<div class="info-icon-popup">
+					<a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
+					<div class="info-icon-content">
+						<p>
+							<span lang="en">
+								If you specify a folder name, it will first attempt to read the configuration file
+								for this Gateway from &lt;GW_MAC&gt;.json (for example, AABBCCDDEEFF.json).
+								If that file fails, an attempt will be made to read the overall configuration
+								from gw_cfg.json.
+							</span>
+							<span lang="fi">
+								Jos määrität kansion nimen, se yrittää ensin lukea tämän Gatewayn
+								määritystiedoston &lt;GW_MAC&gt;.json-tiedostosta (esimerkiksi AABBCCDDEEFF.json).
+								Jos tiedosto epäonnistuu, koko kokoonpano yritetään lukea tiedostosta gw_cfg.json.
+							</span>
+						</p>
+						<p>
+							<span lang="en">
+								Also, the configuration file can be generated dynamically by the server,
+								for this the server must analyze the HTTP header 'ruuvi_gw_mac',
+								which contains MAC address in the format XX:XX:XX:XX:XX:XX.
+							</span>
+							<span lang="fi">
+								Lisäksi palvelin voi luoda konfigurointitiedoston dynaamisesti,
+								tätä varten palvelimen tulee analysoida HTTP-otsikko 'ruuvi_gw_mac',
+								joka sisältää MAC-osoitteen muodossa XX:XX:XX:XX:XX:XX.
+							</span>
+						</p>
 					</div>
 				</div>
 			</div>
@@ -1681,27 +1720,24 @@
 
 			<div id="page-scanning-advanced-dropdown" class="hidden">
 				<div>&nbsp;</div>
-				<label class="control control-radio">
-					<span lang="en">Ruuvi sensors (experimental long range sensors included)</span>
-					<span lang="fi">Ruuvi-anturit (myös kokeelliset pitkän kantaman anturit)</span>
-					<input type="radio" name="company_use_filtering" value="2" checked="checked" placeholder="Scan only Ruuvitags">
-					<span class="control_indicator"></span>
+				<label class="control control-radio info-icon-container">
+					<div class="info-icon-left-column">
+						<span lang="en">Ruuvi sensors (experimental long range sensors included)</span>
+						<span lang="fi">Ruuvi-anturit (myös kokeelliset pitkän kantaman anturit)</span>
+						<input type="radio" name="company_use_filtering" value="2" checked="checked" placeholder="Scan only Ruuvitags">
+						<span class="control_indicator"></span>
+					</div>
+					<a class="info-icon-button" href="#popup-info-icon-scanning">i</a>
 				</label>
-				<div style="opacity: 50%;" class="indent">
-					<small>
-						<span lang="en">If you also enable long range reception, the Gateway will continuously switch
-							between the modes (normal mode 50& / long range mode 50%)</span>
-						<span lang="fi">Jos otat pitkän kantaman käyttöön, Ruuvi Gateway vaihtaa toimintatilaa lyhyen
-							ja pitkän kantaman välillä (normaali tila 50% / pitkän kantaman tila 50%)</span>
-					</small>
-				</div>
 
 				<div>&nbsp;</div>
 				<label class="control control-radio">
-					<span lang="en">All (including third party beacons)</span>
-					<span lang="fi">Kaikki (mukaan lukien kolmansien osapuolten majakat)</span>
-					<input type="radio" name="company_use_filtering" value="0" placeholder="Scan all beacons">
-					<span class="control_indicator"></span>
+					<div>
+						<span lang="en">All (including third party beacons)</span>
+						<span lang="fi">Kaikki (mukaan lukien kolmansien osapuolten majakat)</span>
+						<input type="radio" name="company_use_filtering" value="0" placeholder="Scan all beacons">
+						<span class="control_indicator"></span>
+					</div>
 				</label>
 				<div id="page-scanning-all_nearby_beacons-scanning_options" class="indent hidden">
 					<label class="control control-checkbox">
@@ -1740,6 +1776,20 @@
 						<input id="scan_channel_39" type="checkbox">
 						<span class="control_indicator"></span>
 					</label>
+				</div>
+			</div>
+
+			<div id="popup-info-icon-scanning" class="info-icon-overlay">
+				<div class="info-icon-popup">
+					<a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
+					<div class="info-icon-content">
+						<p>
+							<span lang="en">If you also enable long range reception, the Gateway will continuously switch
+								between the modes (normal mode 50% / long range mode 50%)</span>
+							<span lang="fi">Jos otat pitkän kantaman käyttöön, Ruuvi Gateway vaihtaa toimintatilaa lyhyen
+								ja pitkän kantaman välillä (normaali tila 50% / pitkän kantaman tila 50%)</span>
+						</p>
+					</div>
 				</div>
 			</div>
 
