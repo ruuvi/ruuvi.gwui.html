@@ -37,6 +37,7 @@ let flagWaitingNetworkConnection = false;
 let flagNetworkConnected = false;
 let g_page_ethernet_connection_timer = null;
 let g_current_page = null;
+let g_refresh_ap_timeout = 15000;
 
 const CONNECTION_STATE = {
     NOT_CONNECTED: "NOT_CONNECTED",
@@ -1478,9 +1479,6 @@ function rssiToIcon(rssi) {
     }
 }
 
-let g_refresh_ap_timeout_default = 10000;
-let g_refresh_ap_timeout = g_refresh_ap_timeout_default;
-
 // Load wifi list
 function refreshAP() {
     g_refreshAPTimer = null;
@@ -1503,7 +1501,6 @@ function refreshAP() {
         timeout: g_refresh_ap_timeout,
         success: function (data, text) {
             g_refreshAPInProgress = false;
-            g_refresh_ap_timeout = g_refresh_ap_timeout_default;
             if (data.length > 0) {
                 //sort by signal strength
                 data.sort(function (a, b) {
@@ -1514,6 +1511,10 @@ function refreshAP() {
             }
             apList = data;
             refreshAPHTML(apList);
+            let body = $('body');
+            if (body.hasClass('is-loading')) {
+                body.removeClass('is-loading');
+            }
 
             if (prevCheckStatusActive) {
                 startCheckStatus();
@@ -1530,17 +1531,9 @@ function refreshAP() {
         },
         error: function (request, status, error) {
             console.log("ajax: refreshAP: error, status=" + status + ", error=" + error + ", timeout=" + g_refresh_ap_timeout);
-            if (status === 'timeout') {
-                if (g_refresh_ap_timeout <= 20000) {
-                    g_refresh_ap_timeout += 5000;
-                }
-                let body = $('body');
-                if (body.hasClass('is-loading')) {
-                    if (g_refresh_ap_timeout > 20000) {
-                        console.log("Timeout for ap.json request, try to reload page");
-                        window.location.reload();
-                    }
-                }
+            let body = $('body');
+            if (body.hasClass('is-loading')) {
+                body.removeClass('is-loading');
             }
             g_refreshAPInProgress = false;
             let timestamp2 = new Date();
@@ -1722,7 +1715,6 @@ function refreshAPHTML(data) {
         updatePositionOfWiFiPasswordInput($('#page-wifi_connection-ssid_password-wrap'));
     }
     checkAndUpdatePageWiFiListButtonNext();
-    $('body').removeClass('is-loading');
 }
 
 function onGetStatusJson(data) {
