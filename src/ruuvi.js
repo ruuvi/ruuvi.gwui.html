@@ -93,7 +93,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         return;
     }
 
-    console.log("save_config");
+    console.log(log_wrap("save_config"));
     let network_type = $("input[name='network_type']:checked").val();
     let auto_update_cycle = $("input[name='auto_update_cycle']:checked").val();
 
@@ -233,7 +233,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         } else if (auto_update_cycle === "auto_update_cycle-manual") {
             data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.MANUAL;
         } else {
-            console.log("Unknown auto_update_cycle: " + auto_update_cycle);
+            console.log(log_wrap("Unknown auto_update_cycle: " + auto_update_cycle));
             data.auto_update_cycle = AUTO_UPDATE_CYCLE_TYPE.REGULAR;
         }
         data.auto_update_weekdays_bitmask = 0;
@@ -283,7 +283,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         }
     }
 
-    console.log(data);
+    console.log(log_wrap(data));
 
     let data_encrypted = ruuvi_edch_encrypt(JSON.stringify(data));
 
@@ -296,7 +296,6 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         headers: {'ruuvi_ecdh_encrypted': true},
         data: data_encrypted,
         success: function (data, text) {
-            let tmp = data;
             startCheckStatus();
             if (cb_on_success) {
                 cb_on_success();
@@ -461,12 +460,12 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
         let ecdh_pub_key_srv = crypto_browserify.createECDH('secp256r1');
         ecdh_pub_key_srv.generateKeys();
         let ecdh_pub_key_srv_buf = arrayBufferFromBase64(ecdh_pub_key_srv_b64);
-        console.log(`ECDH PubKey(Srv): ${buf2hex(ecdh_pub_key_srv_buf)}`);
+        console.log(log_wrap(`ECDH PubKey(Srv): ${buf2hex(ecdh_pub_key_srv_buf)}`));
         ecdh_pub_key_srv.setPublicKey(ecdh_pub_key_srv_buf)
         let shared_secret = g_ecdh.computeSecret(ecdh_pub_key_srv.getPublicKey());
-        // console.log(`Shared secret: ${buf2hex(shared_secret)}`);
+        // console.log(log_wrap(`Shared secret: ${buf2hex(shared_secret)}`));
         g_aes_key = crypto_browserify.createHash('sha256').update(shared_secret).digest();
-        // console.log(`AES key: ${buf2hex(g_aes_key)}`);
+        // console.log(log_wrap(`AES key: ${buf2hex(g_aes_key)}`));
     }
 
     if (data != null) {
@@ -900,7 +899,7 @@ function arrayBufferFromBase64(base64_string) {
 function get_config() {
     g_ecdh = crypto_browserify.createECDH('secp256r1');
     let pub_key = g_ecdh.generateKeys();
-    console.log(`ECDH PubKey(Cli): ${buf2hex(pub_key)}`);
+    console.log(log_wrap(`ECDH PubKey(Cli): ${buf2hex(pub_key)}`));
     $.ajax({
             method: 'GET',
             url: '/ruuvi.json',
@@ -916,32 +915,6 @@ function get_config() {
         }
     );
 }
-
-function showError(error) {
-    switch (error.code) {
-        case error.PERMISSION_DENIED:
-            msg = "Error: Geolocation not allowed."
-            console.log(msg)
-            alert(msg)
-            break;
-        case error.POSITION_UNAVAILABLE:
-            msg = "Location information is unavailable."
-            console.log(msg)
-            alert(msg)
-            break;
-        case error.TIMEOUT:
-            msg = "The request to get user location timed out."
-            console.log(msg)
-            alert(msg)
-            break;
-        case error.UNKNOWN_ERROR:
-            msg = "An unknown error occurred."
-            console.log(msg)
-            alert(msg)
-            break;
-    }
-}
-
 
 $(document).ready(function () {
     //get configuration from flash and fill the web page

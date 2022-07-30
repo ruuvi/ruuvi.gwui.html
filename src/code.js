@@ -55,9 +55,13 @@ const URC_CODE = {
 
 let connectionState = CONNECTION_STATE.NOT_CONNECTED;
 
+function log_wrap(msg) {
+    return '[' + new Date().toISOString() + '] ' + msg;
+}
+
 function startCheckStatus(timeout = 0) {
     if (g_checkStatusTimer !== null) {
-        console.log('Warning: startCheckStatus is called while the previous timer is not stopped');
+        console.log(log_wrap('Warning: startCheckStatus is called while the previous timer is not stopped'));
         stopCheckStatus();
     }
     g_checkStatusActive = true;
@@ -74,18 +78,18 @@ function stopCheckStatus() {
 
 function startRefreshAP(timeout = 0) {
     if (g_refreshAPTimer !== null) {
-        console.log('Warning: startRefreshAP is called while the previous timer is not stopped');
+        console.log(log_wrap('Warning: startRefreshAP is called while the previous timer is not stopped'));
         stopRefreshAP();
     }
     if (!g_refreshAPActive) {
-        console.log("Start refreshing Wi-Fi APs");
+        console.log(log_wrap("Start refreshing Wi-Fi APs"));
     }
     g_refreshAPActive = true;
     g_refreshAPTimer = setTimeout(refreshAP, timeout);
 }
 
 function stopRefreshAP() {
-    console.log("Stop refreshing Wi-Fi APs");
+    console.log(log_wrap("Stop refreshing Wi-Fi APs"));
     if (g_refreshAPTimer != null) {
         clearTimeout(g_refreshAPTimer);
         g_refreshAPTimer = null;
@@ -548,9 +552,9 @@ function on_edit_automatic_update_settings() {
 
 
 $(document).ready(function () {
-    console.log("Ready");
+    console.log(log_wrap("Ready"));
     window.onpopstate = function (event) {
-        console.log("window.onpopstate: " + document.location.hash + ", current_page: " + g_current_page);
+        console.log(log_wrap("window.onpopstate: " + document.location.hash + ", current_page: " + g_current_page));
         let url = window.location.hash.substring(1);
         if (url.startsWith('popup-')) {
             return;
@@ -598,15 +602,15 @@ $(document).ready(function () {
     });
 
     window.addEventListener('online', function (event) {
-        console.log('Became online, is_online=' + window.navigator.onLine);
+        console.log(log_wrap('Became online, is_online=' + window.navigator.onLine));
     }, false);
 
     window.addEventListener('offline', function (event) {
-        console.log('Became offline, is_online=' + window.navigator.onLine);
+        console.log(log_wrap('Became offline, is_online=' + window.navigator.onLine));
     }, false);
 
     // Set initial hash to help back button navigation
-    console.log("Open: page-welcome");
+    console.log(log_wrap("Open: page-welcome"));
     window.location.hash = null;
     window.location.hash = 'page-welcome';
 
@@ -642,14 +646,14 @@ $(document).ready(function () {
 
     // ==== page-welcome ===============================================================================================
     $('section#page-welcome').bind('onShow', function () {
-        console.log("section#page-welcome: onShow");
+        console.log(log_wrap("section#page-welcome: onShow"));
         let progressbar = $('#progressbar');
         progressbar.css('top', $('section#page-welcome div.progressbar-container').position().top);
         progressbar.show();
     });
 
     $('section#page-welcome').bind('onHide', function () {
-        console.log("section#page-welcome: onHide");
+        console.log(log_wrap("section#page-welcome: onHide"));
     });
 
     $('#page-welcome-button-get-started').click(function (e) {
@@ -659,7 +663,7 @@ $(document).ready(function () {
 
     // ==== page-network_type ==========================================================================================
     $('section#page-network_type').bind('onShow', function () {
-        console.log("section#page-network_type: onShow");
+        console.log(log_wrap("section#page-network_type: onShow"));
         if (g_flagAccessFromLAN) {
             $('section#page-network_type input[type=radio][name=network_type]').prop('disabled', true);
             $('#page-network_type-access_from_lan').show();
@@ -674,7 +678,7 @@ $(document).ready(function () {
     });
 
     $('section#page-network_type').bind('onHide', function () {
-        console.log("section#page-network_type: onHide");
+        console.log(log_wrap("section#page-network_type: onHide"));
     });
 
     $('section#page-network_type #page-network_type-button-continue').click(function (e) {
@@ -729,6 +733,7 @@ $(document).ready(function () {
             if (document.location.hash === "#page-ethernet_connection") {
                 let body = $('body');
                 if (body.hasClass('is-loading')) {
+                    flagWaitingNetworkConnection = false;
                     $('#page-ethernet_connection-ask_user').hide();
                     $('#page-ethernet_connection-no_cable').show();
                     body.removeClass('is-loading');
@@ -860,7 +865,7 @@ $(document).ready(function () {
     });
 
     $('section#page-software_update').bind('onHide', function () {
-        console.log("section#page-software_update: onHide");
+        console.log(log_wrap("section#page-software_update: onHide"));
     });
 
     $('section#page-software_update #software_update-button-upgrade').click(function (e) {
@@ -1351,7 +1356,7 @@ $(document).ready(function () {
     // ==== page-finished ==============================================================================================
 
     $('#page-finished').bind('onShow', function () {
-        console.log("onShow: #page-finished");
+        console.log(log_wrap("onShow: #page-finished"));
     });
 
     // =================================================================================================================
@@ -1484,7 +1489,7 @@ function refreshAP() {
     g_refreshAPTimer = null;
 
     if (g_checkStatusInProgress) {
-        console.log("refreshAP: checkStatus is active, postpone refreshAP");
+        console.log(log_wrap("refreshAP: checkStatus is active, postpone refreshAP"));
         startRefreshAP(500);
         return;
     }
@@ -1495,11 +1500,13 @@ function refreshAP() {
     stopCheckStatus();
 
     g_refreshAPInProgress = true;
+    console.log(log_wrap("GET /ap.json"));
     $.ajax({
         dataType: "json",
         url: "/ap.json",
         timeout: g_refresh_ap_timeout,
         success: function (data, text) {
+            console.log(log_wrap("GET /ap.json: success, data.length=" + data.length));
             g_refreshAPInProgress = false;
             if (data.length > 0) {
                 //sort by signal strength
@@ -1530,7 +1537,7 @@ function refreshAP() {
             }
         },
         error: function (request, status, error) {
-            console.log("ajax: refreshAP: error, status=" + status + ", error=" + error + ", timeout=" + g_refresh_ap_timeout);
+            console.log(log_wrap("GET /ap.json: failure, status=" + status + ", error=" + error + ", timeout=" + g_refresh_ap_timeout));
             let body = $('body');
             if (body.hasClass('is-loading')) {
                 body.removeClass('is-loading');
@@ -1912,14 +1919,14 @@ function checkStatus() {
     g_checkStatusTimer = null;
 
     if (g_refreshAPInProgress) {
-        console.log("checkStatus: refreshAP is active, postpone checkStatus");
+        console.log(log_wrap("checkStatus: refreshAP is active, postpone checkStatus"));
         startCheckStatus(500);
         return;
     }
 
     let timestamp1 = new Date();
     if (counterStatusJsonTimeout !== 0) {
-        console.log('GET status.json: cnt=' + counterStatusJsonTimeout + ', time: ' + timestamp1.toISOString());
+        console.log(log_wrap('GET status.json: cnt=' + counterStatusJsonTimeout + ', time: ' + timestamp1.toISOString()));
     }
 
     g_checkStatusInProgress = true;
@@ -1938,11 +1945,11 @@ function checkStatus() {
         error: function (request, status, error) {
             g_checkStatusInProgress = false;
             let timestamp2 = new Date();
-            console.log("ajax: checkStatus: error, time: " + timestamp2.toISOString() +
+            console.log(log_wrap("ajax: checkStatus: error, time: " + timestamp2.toISOString() +
                 "status=" + status +
                 ", error=" + error +
                 ", cnt=" + counterStatusJsonTimeout +
-                ", delta=" + (timestamp2 - timestamp1));
+                ", delta=" + (timestamp2 - timestamp1)));
 
             counterStatusJsonTimeout += 1;
             if (counterStatusJsonTimeout >= 4) {
