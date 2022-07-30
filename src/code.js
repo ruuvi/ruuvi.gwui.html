@@ -733,6 +733,7 @@ $(document).ready(function () {
             if (document.location.hash === "#page-ethernet_connection") {
                 let body = $('body');
                 if (body.hasClass('is-loading')) {
+                    flagWaitingNetworkConnection = false;
                     $('#page-ethernet_connection-ask_user').hide();
                     $('#page-ethernet_connection-no_cable').show();
                     body.removeClass('is-loading');
