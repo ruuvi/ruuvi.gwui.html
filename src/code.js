@@ -38,6 +38,7 @@ let flagNetworkConnected = false;
 let g_page_ethernet_connection_timer = null;
 let g_current_page = null;
 let g_refresh_ap_timeout = 15000;
+let g_refresh_ap_flag_initial = false;
 
 const CONNECTION_STATE = {
     NOT_CONNECTED: "NOT_CONNECTED",
@@ -60,7 +61,6 @@ function log_wrap(msg) {
 }
 
 function startCheckStatus(timeout = 0) {
-    console.log(log_wrap('Start periodic status check'));
     if (g_checkStatusTimer !== null) {
         console.log(log_wrap('Warning: startCheckStatus is called while the previous timer is not stopped'));
         stopCheckStatus();
@@ -83,8 +83,10 @@ function startRefreshAP(timeout = 0) {
         console.log(log_wrap('Warning: startRefreshAP is called while the previous timer is not stopped'));
         stopRefreshAP();
     }
-    if (!g_refreshAPActive) {
+    if (timeout === 0) {
         console.log(log_wrap("Start refreshing Wi-Fi APs"));
+    } else {
+        console.log(log_wrap("Start refreshing Wi-Fi APs after timeout=" + timeout));
     }
     g_refreshAPActive = true;
     g_refreshAPTimer = setTimeout(refreshAP, timeout);
@@ -97,6 +99,16 @@ function stopRefreshAP() {
         g_refreshAPTimer = null;
     }
     g_refreshAPActive = false;
+}
+
+function bodyClassLoadingAdd() {
+    console.log(log_wrap("Add class 'is-loading'"));
+    $('body').addClass('is-loading');
+}
+
+function bodyClassLoadingRemove() {
+    console.log(log_wrap("Remove class 'is-loading'"));
+    $('body').removeClass('is-loading');
 }
 
 // Navigation
@@ -130,7 +142,7 @@ function change_page_to_ethernet_connection() {
 }
 
 function change_page_to_software_update() {
-    $('body').removeClass('is-loading');
+    bodyClassLoadingRemove();
     change_url('page-software_update');
 }
 
@@ -193,7 +205,7 @@ function on_show_software_update() {
 
     $("#page-software_update-advanced-button").addClass("disable-click");
 
-    $('body').addClass('is-loading');
+    bodyClassLoadingAdd();
     $.getJSON("/github_latest_release.json", function (data) {
         let latest_release_version = data.tag_name;
         let m = latest_release_version.match(/v(\d+)\.(\d+)\.(\d+)/);
@@ -234,14 +246,14 @@ function on_show_software_update() {
                 $("#software_update-button-upgrade").removeClass("disable-click");
             }
         }
-        $('body').removeClass('is-loading');
+        bodyClassLoadingRemove();
     }).fail(function ($xhr) {
         $('#page-software_update-in_progress').hide();
         $("#page-software_update-advanced-button").removeClass("disable-click");
         let data = $xhr.responseJSON;
         $('.software_update-status').hide();
         $("#software_update-status-error").show();
-        $('body').removeClass('is-loading');
+        bodyClassLoadingRemove();
     });
 }
 
@@ -489,10 +501,17 @@ function checkAndUpdatePageWiFiListButtonNext() {
     if (flagWaitingNetworkConnection) {
         return;
     }
+    let wifi_conn_button_continue = $('#page-wifi_connection-button-continue');
     if (checkWiFiSSIDAndPassword()) {
-        $('#page-wifi_connection-button-continue').removeClass("disable-click");
+        if (wifi_conn_button_continue.hasClass('disable-click')) {
+            console.log(log_wrap("page-wifi_connection-button-continue: add class 'disable-click'"));
+            wifi_conn_button_continue.removeClass('disable-click');
+        }
     } else {
-        $('#page-wifi_connection-button-continue').addClass("disable-click");
+        if (!wifi_conn_button_continue.hasClass('disable-click')) {
+            console.log(log_wrap("page-wifi_connection-button-continue: remove class 'disable-click'"));
+            wifi_conn_button_continue.addClass("disable-click");
+        }
     }
 }
 
@@ -728,7 +747,7 @@ $(document).ready(function () {
         e.preventDefault();
         $('#page-ethernet_connection-ask_user').show();
         $('#page-ethernet_connection-button-continue').addClass("disable-click");
-        $('body').addClass('is-loading');
+        bodyClassLoadingAdd();
         flagWaitingNetworkConnection = true;
         g_page_ethernet_connection_timer = setTimeout(function () {
             g_page_ethernet_connection_timer = null;
@@ -738,7 +757,7 @@ $(document).ready(function () {
                     flagWaitingNetworkConnection = false;
                     $('#page-ethernet_connection-ask_user').hide();
                     $('#page-ethernet_connection-no_cable').show();
-                    body.removeClass('is-loading');
+                    bodyClassLoadingRemove();
                 }
             }
         }, 15 * 1000);
@@ -747,7 +766,8 @@ $(document).ready(function () {
                 networkConnect(null, null);
             },
             function () {
-                $('body').removeClass('is-loading');
+                bodyClassLoadingRemove();
+                console.log(log_wrap('Start periodic status check'));
                 startCheckStatus();
             });
     });
@@ -758,16 +778,19 @@ $(document).ready(function () {
 
     // ==== page-wifi_connection =======================================================================================
     $('section#page-wifi_connection').bind('onShow', function () {
-        $('body').addClass('is-loading');
+        console.log(log_wrap("page-wifi_connection: onShow"));
+        bodyClassLoadingAdd();
         checkAndUpdatePageWiFiListButtonNext();
         flagUseSavedWiFiPassword = true;
         $('#wifi-show-password').prop("disabled", true);
         $('#page-wifi_connection-ssid_password').hide();
         networkDisconnect();
+        g_refresh_ap_flag_initial = true;
         startRefreshAP();
     });
 
     $('section#page-wifi_connection').bind('onHide', function () {
+        console.log(log_wrap("page-wifi_connection: onHide"));
         $('#page-wifi_connection-button-continue').removeClass("disable-click");
         $('#page-wifi_connection-ssid_password').hide();
         $("#page-wifi_connection-list_of_ssid").html("");
@@ -837,7 +860,7 @@ $(document).ready(function () {
         let pwd = $('#pwd').val();
         let password = ((flagUseSavedWiFiPassword && pwd === WIFI_USE_SAVED_PASSWORD) || !isAuthNeeded) ? null : pwd;
         $('#page-wifi_connection-button-continue').addClass('disable-click');
-        $('body').addClass('is-loading');
+        bodyClassLoadingAdd();
         $("#wifi-connection-status-block").hide();
         updatePositionOfWiFiPasswordInput();
         flagWaitingNetworkConnection = true;
@@ -846,11 +869,13 @@ $(document).ready(function () {
                 networkConnect(ssid, password);
             },
             function () {
+                console.log(log_wrap("save_network_config: failure"));
                 flagWaitingNetworkConnection = false;
                 $("#wifi-connection-status-block").show();
                 updatePositionOfWiFiPasswordInput();
-                $('body').removeClass('is-loading');
+                bodyClassLoadingRemove();
                 $('#page-wifi_connection-button-continue').removeClass("disable-click");
+                console.log(log_wrap('Start periodic status check'));
                 startCheckStatus();
                 startRefreshAP();
             }
@@ -885,6 +910,9 @@ $(document).ready(function () {
                 },
                 error: function (request, status, error) {
                     // ('HTTP error: ' + status + ', ' + 'Status: ' + request.status + '(' + request.statusText + ')' + ', ' + request.responseText);
+                    console.log(log_wrap("POST /fw_update.json: failure" +
+                      ", status=" + status +
+                      ", error=" + error));
                 }
             }
         );
@@ -1015,6 +1043,9 @@ $(document).ready(function () {
                     change_page_to_finished(5);
                 },
                 error: function (request, status, error) {
+                    console.log(log_wrap("POST /gw_cfg_download: failure" +
+                      ", status=" + status +
+                      ", error=" + error));
                     let desc = 'Status: ' + request.status + ' (' + request.statusText + ')';
                     if (request.responseText) {
                         desc += "\nResponse: " + request.responseText;
@@ -1424,6 +1455,7 @@ function networkConnect(ssid, password) {
     }
     let json_content_encrypted = ruuvi_edch_encrypt(json_content);
 
+    console.log(log_wrap("POST /connect.json"));
     $.ajax({
             method: 'POST',
             url: '/connect.json',
@@ -1432,15 +1464,20 @@ function networkConnect(ssid, password) {
             cache: false,
             data: json_content_encrypted,
             success: function (data, text) {
+                console.log(log_wrap("POST /connect.json: successful"));
                 connectionState = CONNECTION_STATE.CONNECTING;
                 //now we can re-set the intervals regardless of result
-                $('#page-wifi_connection-button-continue').removeClass("disable-click");
+                console.log(log_wrap('Start periodic status check'));
                 startCheckStatus();
             },
             error: function (request, status, error) {
-                $('body').removeClass('is-loading');
+                console.log(log_wrap("POST /connect.json: failure" +
+                  ", status=" + status +
+                  ", error=" + error));
+                bodyClassLoadingRemove();
                 //now we can re-set the intervals regardless of result
                 $('#page-wifi_connection-button-continue').removeClass("disable-click");
+                console.log(log_wrap('Start periodic status check'));
                 startCheckStatus();
                 if (ssid != null) {
                     $("#wifi-connection-status-block").show();
@@ -1456,6 +1493,7 @@ function networkDisconnect() {
     stopRefreshAP();
     stopCheckStatus();
     selectedSSID = "";
+    console.log(log_wrap("DELETE /connect.json"));
     $.ajax({
         url: '/connect.json',
         dataType: 'json',
@@ -1463,9 +1501,15 @@ function networkDisconnect() {
         cache: false,
         data: {'timestamp': Date.now()},
         success: function (data, text) {
+            console.log(log_wrap("DELETE /connect.json: success"));
+            console.log(log_wrap('Start periodic status check'));
             startCheckStatus();
         },
         error: function (request, status, error) {
+            console.log(log_wrap("DELETE /connect.json: failure" +
+              ", status=" + status +
+              ", error=" + error));
+            console.log(log_wrap('Start periodic status check'));
             startCheckStatus();
         }
     });
@@ -1517,12 +1561,13 @@ function refreshAP() {
             }
             apList = data;
             refreshAPHTML(apList);
-            let body = $('body');
-            if (body.hasClass('is-loading')) {
-                body.removeClass('is-loading');
+            if (g_refresh_ap_flag_initial) {
+                g_refresh_ap_flag_initial = false;
+                bodyClassLoadingRemove();
             }
 
             if (prevCheckStatusActive) {
+                console.log(log_wrap('Start periodic status check'));
                 startCheckStatus();
             }
             if (g_refreshAPActive) {
@@ -1536,14 +1581,18 @@ function refreshAP() {
             }
         },
         error: function (request, status, error) {
-            console.log(log_wrap("GET /ap.json: failure, status=" + status + ", error=" + error + ", timeout=" + g_refresh_ap_timeout));
-            let body = $('body');
-            if (body.hasClass('is-loading')) {
-                body.removeClass('is-loading');
+            console.log(log_wrap("GET /ap.json: failure" +
+              ", status=" + status +
+              ", error=" + error +
+              ", timeout=" + g_refresh_ap_timeout));
+            if (g_refresh_ap_flag_initial) {
+                g_refresh_ap_flag_initial = false;
+                bodyClassLoadingRemove();
             }
             g_refreshAPInProgress = false;
             let timestamp2 = new Date();
             if (prevCheckStatusActive) {
+                console.log(log_wrap('Start periodic status check'));
                 startCheckStatus();
             }
             if (g_refreshAPActive) {
@@ -1615,6 +1664,7 @@ function refreshAPHTML(data) {
     if (document.location.hash !== "#page-wifi_connection") {
         return;
     }
+    console.log(log_wrap("refreshAPHTML"));
     let is_manual_wifi = false;
     let prev_selected_wifi_radio_button = $('input[name="wifi-name"]:checked');
     let prev_selected_wifi_radio_button_has_auth = prev_selected_wifi_radio_button.hasClass('auth');
@@ -1816,17 +1866,21 @@ function onGetStatusJson(data) {
 
                 switch (connectionState) {
                     case CONNECTION_STATE.NOT_CONNECTED:
+                        console.log(log_wrap("onGetStatusJson: URC_CODE.FAILED, CONNECTION_STATE.NOT_CONNECTED"));
                         break;
                     case CONNECTION_STATE.CONNECTING:
+                        console.log(log_wrap("onGetStatusJson: URC_CODE.FAILED, CONNECTION_STATE.CONNECTING"));
                         flagWaitingNetworkConnection = false;
                         $("#wifi-connection-status-block").show();
                         updatePositionOfWiFiPasswordInput();
-                        $('body').removeClass('is-loading');
+                        bodyClassLoadingAdd();
                         startRefreshAP();
                         break;
                     case CONNECTION_STATE.CONNECTED:
+                        console.log(log_wrap("onGetStatusJson: URC_CODE.FAILED, CONNECTION_STATE.CONNECTED"));
                         break;
                     case CONNECTION_STATE.FAILED:
+                        console.log(log_wrap("onGetStatusJson: URC_CODE.FAILED, CONNECTION_STATE.FAILED"));
                         break;
                 }
                 connectionState = CONNECTION_STATE.FAILED
@@ -1924,9 +1978,7 @@ function checkStatus() {
     }
 
     let timestamp1 = new Date();
-    if (counterStatusJsonTimeout !== 0) {
-        console.log(log_wrap('GET status.json: cnt=' + counterStatusJsonTimeout + ', time: ' + timestamp1.toISOString()));
-    }
+    console.log(log_wrap('GET /status.json: cnt=' + counterStatusJsonTimeout + ', time: ' + timestamp1.toISOString()));
 
     g_checkStatusInProgress = true;
     $.ajax({
@@ -1934,18 +1986,21 @@ function checkStatus() {
         url: "/status.json",
         timeout: 3000,
         success: function (data, text) {
+            console.log(log_wrap("GET /status.json: success"));
             g_checkStatusInProgress = false;
             counterStatusJsonTimeout = 0;
             onGetStatusJson(data);
             if (g_checkStatusActive) {
+                console.log(log_wrap('Start periodic status check'));
                 startCheckStatus(1000);
             }
         },
         error: function (request, status, error) {
+            // It's a normal situation after "POST /connect.json", the Gateway will not answer for 5-7 seconds.
             g_checkStatusInProgress = false;
             let timestamp2 = new Date();
-            console.log(log_wrap("ajax: checkStatus: error, time: " + timestamp2.toISOString() +
-                "status=" + status +
+            console.log(log_wrap("GET /status.json: failure" +
+                ", status=" + status +
                 ", error=" + error +
                 ", cnt=" + counterStatusJsonTimeout +
                 ", delta=" + (timestamp2 - timestamp1)));
@@ -1953,15 +2008,17 @@ function checkStatus() {
             counterStatusJsonTimeout += 1;
             if (counterStatusJsonTimeout >= 4) {
                 $('#overlay-no_gateway_connection').fadeIn();
-                $('body').removeClass('is-loading');
+                bodyClassLoadingRemove();
                 stopRefreshAP();
                 stopCheckStatus();
             } else {
                 if (g_checkStatusActive) {
                     let delta_ms = timestamp2 - timestamp1;
                     if (delta_ms < 1000) {
+                        console.log(log_wrap('Start periodic status check'));
                         startCheckStatus(1000 - delta_ms);
                     } else {
+                        console.log(log_wrap('Start periodic status check'));
                         startCheckStatus();
                     }
                 }
