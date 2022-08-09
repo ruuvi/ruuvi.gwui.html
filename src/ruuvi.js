@@ -283,10 +283,9 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         }
     }
 
-    console.log(log_wrap(data));
-
     let data_encrypted = ruuvi_edch_encrypt(JSON.stringify(data));
 
+    console.log(log_wrap("ajax: POST /ruuvi.json"));
     $.ajax({
         url: '/ruuvi.json',
         dataType: 'json',
@@ -296,12 +295,16 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         headers: {'ruuvi_ecdh_encrypted': true},
         data: data_encrypted,
         success: function (data, text) {
+            console.log(log_wrap("ajax: POST /ruuvi.json: success"));
             startCheckStatus();
             if (cb_on_success) {
                 cb_on_success();
             }
         },
         error: function (request, status, error) {
+            console.log(log_wrap("ajax: POST /ruuvi.json: failure" +
+              ", status=" + status +
+              ", error=" + error));
             let request_status = request.status;
             let statusText = request.statusText;
             let responseText = request.responseText;
@@ -900,6 +903,7 @@ function get_config() {
     g_ecdh = crypto_browserify.createECDH('secp256r1');
     let pub_key = g_ecdh.generateKeys();
     console.log(log_wrap(`ECDH PubKey(Cli): ${buf2hex(pub_key)}`));
+    console.log(log_wrap("GET /ruuvi.json"));
     $.ajax({
             method: 'GET',
             url: '/ruuvi.json',
@@ -908,15 +912,27 @@ function get_config() {
             cache: false,
             headers: {'ruuvi_ecdh_pub_key': arrayBufferToBase64(pub_key)},
             success: function (data, textStatus, request) {
+                console.log(log_wrap("GET /ruuvi.json: success"));
                 on_get_config(data, request.getResponseHeader('ruuvi_ecdh_pub_key'));
+
+                // first time the page loads: attempt get the connection status
+                startCheckStatus();
             },
             error: function (request, status, error) {
+                console.log(log_wrap("ajax: GET /ruuvi.json: failure" +
+                  ", status=" + status +
+                  ", error=" + error));
             }
         }
     );
 }
 
 $(document).ready(function () {
+    console.log("ruuvi.js: Ready");
+});
+
+$(window).on('load', function () {
+    console.log(log_wrap("ruuvi.js: Loaded"));
     //get configuration from flash and fill the web page
     get_config();
 });
