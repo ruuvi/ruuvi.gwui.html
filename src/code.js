@@ -60,6 +60,7 @@ function log_wrap(msg) {
 }
 
 function startCheckStatus(timeout = 0) {
+    console.log(log_wrap('Start periodic status check'));
     if (g_checkStatusTimer !== null) {
         console.log(log_wrap('Warning: startCheckStatus is called while the previous timer is not stopped'));
         stopCheckStatus();
@@ -69,6 +70,7 @@ function startCheckStatus(timeout = 0) {
 }
 
 function stopCheckStatus() {
+    console.log(log_wrap('Start periodic status check'));
     if (g_checkStatusTimer != null) {
         clearTimeout(g_checkStatusTimer);
         g_checkStatusTimer = null;
@@ -552,7 +554,7 @@ function on_edit_automatic_update_settings() {
 
 
 $(document).ready(function () {
-    console.log(log_wrap("Ready"));
+    console.log(log_wrap("code.js: Ready"));
     window.onpopstate = function (event) {
         console.log(log_wrap("window.onpopstate: " + document.location.hash + ", current_page: " + g_current_page));
         let url = window.location.hash.substring(1);
@@ -1394,9 +1396,6 @@ $(document).ready(function () {
         e.preventDefault();
         window.history.back();
     });
-
-    // first time the page loads: attempt get the connection status
-    startCheckStatus();
 });
 
 // Check if need for auth screen
