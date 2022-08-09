@@ -296,6 +296,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
         data: data_encrypted,
         success: function (data, text) {
             console.log(log_wrap("ajax: POST /ruuvi.json: success"));
+            console.log(log_wrap('Start periodic status check'));
             startCheckStatus();
             if (cb_on_success) {
                 cb_on_success();
@@ -308,6 +309,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
             let request_status = request.status;
             let statusText = request.statusText;
             let responseText = request.responseText;
+            console.log(log_wrap('Start periodic status check'));
             startCheckStatus();
             if (cb_on_error) {
                 cb_on_error();
@@ -916,6 +918,7 @@ function get_config() {
                 on_get_config(data, request.getResponseHeader('ruuvi_ecdh_pub_key'));
 
                 // first time the page loads: attempt get the connection status
+                console.log(log_wrap('Start periodic status check'));
                 startCheckStatus();
             },
             error: function (request, status, error) {
