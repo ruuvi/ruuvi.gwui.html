@@ -80,15 +80,19 @@ function stopCheckStatus() {
 
 function startRefreshAP(timeout = 0) {
     if (g_refreshAPTimer !== null) {
-        console.log(log_wrap('Warning: startRefreshAP is called while the previous timer is not stopped'));
+        console.log(log_wrap('startRefreshAP: Warning: previous timer has not stopped yet'));
         stopRefreshAP();
     }
-    if (timeout === 0) {
-        console.log(log_wrap("Start refreshing Wi-Fi APs"));
-    } else {
-        console.log(log_wrap("Start refreshing Wi-Fi APs after timeout=" + timeout));
-    }
     g_refreshAPActive = true;
+    if (g_refreshAPInProgress) {
+        console.log(log_wrap("startRefreshAP: Warning: previous query /ap.json is still running"));
+        return;
+    }
+    if (timeout === 0) {
+        console.log(log_wrap("startRefreshAP: Start refreshing Wi-Fi APs"));
+    } else {
+        console.log(log_wrap("startRefreshAP: Start refreshing Wi-Fi APs after timeout=" + timeout));
+    }
     g_refreshAPTimer = setTimeout(refreshAP, timeout);
 }
 
