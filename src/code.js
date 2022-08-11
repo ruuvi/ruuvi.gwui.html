@@ -765,7 +765,10 @@ $(document).ready(function () {
                 }
             }
         }, 15 * 1000);
+
+        let wifi_channel = 1;
         save_network_config(
+            wifi_channel,
             function () {
                 networkConnect(null, null);
             },
@@ -854,11 +857,41 @@ $(document).ready(function () {
         let selected_wifi_radio_button = $('input[name="wifi-name"]:checked');
         let ssid = "";
         let isAuthNeeded = true;
+        let wifi_channel = 1;
         if (selected_wifi_radio_button[0] && (selected_wifi_radio_button[0].id === "page-wifi_connection-radio-connect_manually")) {
             ssid = $('#manual_ssid').val();
         } else {
             ssid = selected_wifi_radio_button.val();
             isAuthNeeded = !selected_wifi_radio_button.hasClass('no_auth');
+            if (selected_wifi_radio_button.hasClass('wifi_chan_1')) {
+                wifi_channel = 1;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_2')) {
+                wifi_channel = 2;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_3')) {
+                wifi_channel = 3;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_4')) {
+                wifi_channel = 4;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_5')) {
+                wifi_channel = 5;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_6')) {
+                wifi_channel = 6;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_7')) {
+                wifi_channel = 7;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_8')) {
+                wifi_channel = 8;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_9')) {
+                wifi_channel = 9;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_10')) {
+                wifi_channel = 10;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_11')) {
+                wifi_channel = 11;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_12')) {
+                wifi_channel = 12;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_13')) {
+                wifi_channel = 13;
+            } else if (selected_wifi_radio_button.hasClass('wifi_chan_14')) {
+                wifi_channel = 14;
+            }
         }
 
         let pwd = $('#pwd').val();
@@ -869,6 +902,7 @@ $(document).ready(function () {
         updatePositionOfWiFiPasswordInput();
         flagWaitingNetworkConnection = true;
         save_network_config(
+            wifi_channel,
             function () {
                 networkConnect(ssid, password);
             },
@@ -1707,9 +1741,10 @@ function refreshAPHTML(data) {
         h += '        <div style="margin-left: auto;" class="{0}"></div>'.format(e.auth === 0 ? '' : 'pw');
         h += '        <div class="{0}"></div>'.format(rssiToIcon(e.rssi));
         h += '    </div>';
-        h += '    <input value="{0}" name="wifi-name" type="radio" class="{1}">'.format(
+        h += '    <input value="{0}" name="wifi-name" type="radio" class="{1} wifi_chan_{2}">'.format(
             e.ssid,
-            (e.auth === 0) ? 'no_auth' : 'auth');
+            (e.auth === 0) ? 'no_auth' : 'auth',
+            e.chan);
         h += '    <span class="control_indicator"></span>';
         h += '</label>';
         h += '<div class="wifi_password"></div>';
