@@ -78,7 +78,7 @@ function get_mqtt_topic_prefix() {
     return mqtt_topic;
 }
 
-function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error) {
+function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_success, cb_on_error) {
     //stop the status refresh. This prevents a race condition where a status
     //request would be refreshed with wrong ip info from a previous connection
     //and the request would automatically shows as successful.
@@ -89,7 +89,7 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
 
     if (g_checkStatusInProgress || g_refreshAPInProgress) {
         // postpone sending the ajax requests until "GET /status.json" and "GET /ap.json" are completed
-        setTimeout(save_config_internal, 500, flag_save_network_cfg, cb_on_success, cb_on_error);
+        setTimeout(save_config_internal, 500, flag_save_network_cfg, ap_wifi_channel, cb_on_success, cb_on_error);
         return;
     }
 
@@ -110,6 +110,9 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
                 data.eth_dns1 = $("#eth_dns1").val()
                 data.eth_dns2 = $("#eth_dns2").val()
             }
+        } else {
+            data.wifi_ap_config = {};
+            data.wifi_ap_config.channel = ap_wifi_channel;
         }
     } else {
         data.remote_cfg_use = $("#remote_cfg-use").prop('checked');
@@ -319,11 +322,11 @@ function save_config_internal(flag_save_network_cfg, cb_on_success, cb_on_error)
 }
 
 function save_config(cb_on_success, cb_on_error) {
-    save_config_internal(false, cb_on_success, cb_on_error);
+    save_config_internal(false, 1, cb_on_success, cb_on_error);
 }
 
-function save_network_config(cb_on_success, cb_on_error) {
-    save_config_internal(true, cb_on_success, cb_on_error);
+function save_network_config(ap_wifi_channel, cb_on_success, cb_on_error) {
+    save_config_internal(true, ap_wifi_channel, cb_on_success, cb_on_error);
 }
 
 function on_edit_mqtt_settings() {
@@ -734,6 +737,10 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                     break;
                 case "coordinates":
                     $("#coordinates").val(key_value);
+                    break;
+                case "wifi_ap_config":
+                    break;
+                case "wifi_sta_config":
                     break;
                 default:
                     alert('get_config: unhandled key: ' + key);
