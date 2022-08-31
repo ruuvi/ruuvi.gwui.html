@@ -1912,7 +1912,7 @@ function onGetStatusJson(data) {
                         flagWaitingNetworkConnection = false;
                         $("#wifi-connection-status-block").show();
                         updatePositionOfWiFiPasswordInput();
-                        bodyClassLoadingAdd();
+                        bodyClassLoadingRemove();
                         startRefreshAP();
                         break;
                     case CONNECTION_STATE.CONNECTED:
