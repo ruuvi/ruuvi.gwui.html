@@ -217,7 +217,11 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
         }
         if (!flagUseSavedLanAuthApiKey)
         {
-            data.lan_auth_api_key = $("#lan_auth-api_key").val();
+            if ($('#settings_lan_auth-use_api_key')[0].checked) {
+                data.lan_auth_api_key = $("#lan_auth-api_key").val();
+            } else {
+                data.lan_auth_api_key = "";
+            }
         }
 
         data.company_use_filtering = ($("input[name='company_use_filtering']:checked").val() !== "0");
