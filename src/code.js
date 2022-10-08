@@ -808,7 +808,12 @@ $(document).ready(function () {
         bodyClassLoadingAdd();
         checkAndUpdatePageWiFiListButtonNext();
         flagUseSavedWiFiPassword = true;
-        $('#wifi-show-password').prop("disabled", true);
+        let input_pwd = $('input#pwd');
+        input_pwd.attr("type", "password");
+        let input_password_eye = input_pwd.parent().children('.input-password-eye');
+        input_password_eye.addClass('disabled');
+        input_password_eye.children('.eye').removeClass('hidden');
+        input_password_eye.children('.eye-slash').addClass('hidden');
         $('#page-wifi_connection-ssid_password').hide();
         networkDisconnect();
         g_refresh_ap_flag_initial = true;
@@ -833,15 +838,6 @@ $(document).ready(function () {
         $('#wifi-connection-status-block').hide();
         updatePositionOfWiFiPasswordInput();
         checkAndUpdatePageWiFiListButtonNext();
-    });
-
-    $('section#page-wifi_connection input#wifi-show-password').click(function (e) {
-        let pwd = $('#pwd');
-        if (pwd.prop("type") === "password") {
-            pwd.prop("type", "text");
-        } else {
-            pwd.prop("type", "password");
-        }
     });
 
     $('section#page-wifi_connection input#page-wifi_connection-radio-connect_manually').change(function (e) {
@@ -1714,7 +1710,7 @@ function onChangeWiFiName() {
     $('#wifi-connection-status-block').hide();
 
     flagUseSavedWiFiPassword = false;
-    $('#wifi-show-password').prop("disabled", false);
+    $('#pwd').parent().children('.input-password-eye').removeClass('disabled');
 
     updatePositionOfWiFiPasswordInput();
     checkAndUpdatePageWiFiListButtonNext();
@@ -1822,7 +1818,7 @@ function refreshAPHTML(data) {
                 input_pwd.focus(function () {
                     if (flagUseSavedWiFiPassword) {
                         flagUseSavedWiFiPassword = false;
-                        $('#wifi-show-password').prop("disabled", false);
+                        $('input#pwd').parent().children('.input-password-eye').removeClass('disabled');
                         $('input#pwd').val("");
                     }
                 });
