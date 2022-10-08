@@ -632,15 +632,18 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                 case "lan_auth_user": {
                     let lan_auth_user = $("#lan_auth-user");
                     let lan_auth_pass = $("#lan_auth-pass");
+                    let input_password_eye = lan_auth_pass.parent().children('.input-password-eye');
                     if (key_value) {
                         lan_auth_user.val(key_value);
                         lan_auth_pass.val('');
                         lan_auth_pass.attr('placeholder', '********');
+                        input_password_eye.addClass('disabled');
                         g_flag_lan_auth_pass_changed = false;
                     } else {
                         lan_auth_user.val('');
                         lan_auth_pass.val('');
                         lan_auth_pass.removeAttr('placeholder');
+                        input_password_eye.removeClass('disabled');
                         g_flag_lan_auth_pass_changed = true;
                     }
                     break;

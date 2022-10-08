@@ -614,7 +614,9 @@ $(document).ready(function () {
             if (rx.test(e.target.tagName)) {
                 if (e.target.id === 'lan_auth-user' || e.target.id === 'lan_auth-pass') {
                     g_flag_lan_auth_pass_changed = true;
-                    $("#lan_auth-pass").removeAttr('placeholder');
+                    let lan_auth_pass = $("#lan_auth-pass");
+                    lan_auth_pass.removeAttr('placeholder');
+                    lan_auth_pass.parent().children('.input-password-eye').removeClass('disabled');
                     on_lan_auth_user_pass_changed();
                 }
                 if (e.target.id === 'lan_auth-api_key') {
@@ -667,6 +669,23 @@ $(document).ready(function () {
         $('div#language-switcher > ul > li > a').removeClass('language-switcher-active');
         $(this).addClass('language-switcher-active');
         on_switch_language('fi');
+    });
+
+    $('.input-password-eye').click(function (e) {
+        if ($(this).hasClass('disabled')) {
+            return;
+        }
+        let password_field = $(this).parent().children('input')
+        const flag_hidden = password_field.attr("type") === "password";
+        if (flag_hidden) {
+            $(this).children('.eye').addClass('hidden');
+            $(this).children('.eye-slash').removeClass('hidden');
+            password_field.attr("type", "text");
+        } else {
+            $(this).children('.eye-slash').addClass('hidden');
+            $(this).children('.eye').removeClass('hidden');
+            password_field.attr("type", "password");
+        }
     });
 
     // ==== page-welcome ===============================================================================================
@@ -1153,6 +1172,12 @@ $(document).ready(function () {
 
     // ==== page-settings_lan_auth =====================================================================================
     $('section#page-settings_lan_auth').bind('onShow', function () {
+        let lan_auth_pass = $("#lan_auth-pass");
+        lan_auth_pass.attr("type", "password");
+        let lan_auth_pass_eye = lan_auth_pass.parent().children('.input-password-eye');
+        lan_auth_pass_eye.children('.eye').removeClass('hidden');
+        lan_auth_pass_eye.children('.eye-slash').addClass('hidden');
+
         if ($("#lan_auth-api_key").val() === '') {
             $('#settings_lan_auth-use_api_key').prop('checked', false);
             $('#settings_lan_auth-api_key').hide();
@@ -1167,18 +1192,21 @@ $(document).ready(function () {
 
     $('section#page-settings_lan_auth #lan_auth-user').on("keyup change", function (e) {
         g_flag_lan_auth_pass_changed = true;
-        $("#lan_auth-pass").removeAttr('placeholder');
+        let lan_auth_pass = $("#lan_auth-pass");
+        lan_auth_pass.removeAttr('placeholder');
+        lan_auth_pass.parent().children('.input-password-eye').removeClass('disabled');
         on_lan_auth_user_pass_changed();
     });
 
     $('section#page-settings_lan_auth #lan_auth-pass').on("keyup change", function (e) {
         g_flag_lan_auth_pass_changed = true;
-        $("#lan_auth-pass").removeAttr('placeholder');
+        let lan_auth_pass = $("#lan_auth-pass");
+        lan_auth_pass.removeAttr('placeholder');
+        lan_auth_pass.parent().children('.input-password-eye').removeClass('disabled');
         on_lan_auth_user_pass_changed();
     });
 
     $("section#page-settings_lan_auth input[name='lan_auth_type']").change(function (e) {
-        g_flag_lan_auth_pass_changed = true;
         on_lan_auth_type_changed();
     });
 
