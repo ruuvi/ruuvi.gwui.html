@@ -765,7 +765,9 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
             $("#remote_cfg-use_auth").prop('checked', true);
             $("#remote_cfg_auth_type_basic").prop('checked', true);
             flagUseSavedRemoteCfgAuthBasicPassword = true;
-            $("#remote_cfg-auth_basic-password").val("********");
+            let remote_cfg_auth_basic_password = $("#remote_cfg-auth_basic-password");
+            remote_cfg_auth_basic_password.val("");
+            remote_cfg_auth_basic_password.attr('placeholder', "********");
         } else if (remote_cfg_auth_type === REMOTE_CFG_AUTH_TYPE.BEARER) {
             $("#remote_cfg-use_auth").prop('checked', true);
             $("#remote_cfg_auth_type_bearer").prop('checked', true);

@@ -339,6 +339,16 @@ function on_remote_cfg_changed() {
     }
 }
 
+function on_remote_cfg_auth_basic_user_pass_changed() {
+    if (flagUseSavedRemoteCfgAuthBasicPassword) {
+        flagUseSavedRemoteCfgAuthBasicPassword = false;
+        let remote_cfg_auth_basic_password = $("#remote_cfg-auth_basic-password");
+        remote_cfg_auth_basic_password.removeAttr('placeholder');
+        remote_cfg_auth_basic_password.parent().children('.input-password-eye').removeClass('disabled');
+    }
+    on_remote_cfg_changed();
+}
+
 function on_custom_connection_type_changed() {
     if ($("#use_http")[0].checked) {
         $('#conf-settings-http').removeClass('hidden');
@@ -1010,6 +1020,16 @@ $(document).ready(function () {
         } else {
             dropdownHide('#page-remote_cfg-advanced-dropdown');
         }
+
+        let remote_cfg_auth_basic_password = $("input#remote_cfg-auth_basic-password");
+        remote_cfg_auth_basic_password.attr("type", "password");
+        let remote_cfg_auth_basic_password_eye = remote_cfg_auth_basic_password.parent().children('.input-password-eye');
+        if (flagUseSavedRemoteCfgAuthBasicPassword) {
+            remote_cfg_auth_basic_password_eye.addClass('disabled');
+        }
+        remote_cfg_auth_basic_password_eye.children('.eye').removeClass('hidden');
+        remote_cfg_auth_basic_password_eye.children('.eye-slash').addClass('hidden');
+
         on_remote_cfg_changed();
     });
 
@@ -1022,19 +1042,19 @@ $(document).ready(function () {
     });
 
     $('#remote_cfg-auth_basic-user').on("input", function () {
-        on_remote_cfg_changed();
+        on_remote_cfg_auth_basic_user_pass_changed();
     });
 
     $('#remote_cfg-auth_basic-user').change(function () {
-        on_remote_cfg_changed();
+        on_remote_cfg_auth_basic_user_pass_changed();
     });
 
     $('#remote_cfg-auth_basic-password').on("input", function () {
-        on_remote_cfg_changed();
+        on_remote_cfg_auth_basic_user_pass_changed();
     });
 
     $('#remote_cfg-auth_basic-password').change(function () {
-        on_remote_cfg_changed();
+        on_remote_cfg_auth_basic_user_pass_changed();
     });
 
     $('#remote_cfg-auth_bearer-token').on("input", function () {
@@ -1059,22 +1079,6 @@ $(document).ready(function () {
 
     $("section#page-remote_cfg input#remote_cfg_auth_type_bearer").change(function (e) {
         on_remote_cfg_changed();
-    });
-
-    $('#remote_cfg-auth_basic-password').on("focus", function () {
-        if (flagUseSavedRemoteCfgAuthBasicPassword) {
-            flagUseSavedRemoteCfgAuthBasicPassword = false;
-            $('#remote_cfg-auth_basic-password').val("");
-            on_remote_cfg_changed();
-        }
-    });
-
-    $('#remote_cfg-auth_bearer-token').on("focus", function () {
-        if (flagUseSavedRemoteCfgAuthBearerToken) {
-            flagUseSavedRemoteCfgAuthBearerToken = false;
-            $('#remote_cfg-auth_bearer-token').val("");
-            on_remote_cfg_changed();
-        }
     });
 
     $('section#page-remote_cfg #page-remote_cfg-button-continue').click(function (e) {
