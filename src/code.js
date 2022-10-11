@@ -383,15 +383,41 @@ function on_custom_connection_type_changed() {
     }
 }
 
+function on_lan_auth_use_api_key_changed() {
+    let lan_auth_api_key = $("#lan_auth-api_key");
+    if ($('#settings_lan_auth-use_api_key')[0].checked) {
+        $('#settings_lan_auth-api_key').show();
+        if (lan_auth_api_key.val() === "") {
+            lan_auth_api_key.val(CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(CryptoJS.lib.WordArray.random(32))));
+        }
+    } else {
+        $('#settings_lan_auth-api_key').hide();
+        flagUseSavedLanAuthApiKey = false;
+    }
+}
+
 function on_lan_auth_type_changed() {
     let lan_auth_type = $("input[name='lan_auth_type']:checked").val();
     if (lan_auth_type === undefined) {
         $(`input:radio[name='lan_auth_type'][value='lan_auth_deny']`).prop('checked', true);
         lan_auth_type = $("input[name='lan_auth_type']:checked").val();
     }
+    $("#settings_lan_auth-use_api_key").attr('disabled', lan_auth_type === LAN_AUTH_TYPE.ALLOW);
+    if (lan_auth_type === LAN_AUTH_TYPE.ALLOW)
+    {
+        $("#page-settings_lan_auth-advanced").hide();
+    } else {
+        $("#page-settings_lan_auth-advanced").show();
+    }
+
     switch (lan_auth_type)
     {
         case LAN_AUTH_TYPE.ALLOW:
+            $('#conf-lan_auth-login-password').slideUp();
+            $('#conf-lan_auth-default').slideUp();
+            $("#settings_lan_auth-use_api_key").prop('checked', false);
+            on_lan_auth_use_api_key_changed();
+            break;
         case LAN_AUTH_TYPE.DENY:
             $('#conf-lan_auth-login-password').slideUp();
             $('#conf-lan_auth-default').slideUp();
@@ -1232,17 +1258,7 @@ $(document).ready(function () {
     });
 
     $('section#page-settings_lan_auth #settings_lan_auth-use_api_key').change(function (e) {
-        let lan_auth_api_key = $("#lan_auth-api_key");
-        if ($('#settings_lan_auth-use_api_key')[0].checked) {
-            $('#settings_lan_auth-api_key').show();
-            if (lan_auth_api_key.val() === "") {
-                lan_auth_api_key.val(CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(CryptoJS.lib.WordArray.random(32))));
-            }
-        } else {
-            $('#settings_lan_auth-api_key').hide();
-            lan_auth_api_key.val('');
-            flagUseSavedLanAuthApiKey = false;
-        }
+        on_lan_auth_use_api_key_changed();
         on_lan_auth_user_pass_changed();
     });
 

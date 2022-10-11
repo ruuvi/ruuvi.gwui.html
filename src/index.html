@@ -1216,44 +1216,46 @@
 				<span class="control_indicator"></span>
 			</label>
 
-			<div>&nbsp;</div>
-			<div class="border"></div>
-			<div id="page-settings_lan_auth-advanced-button" class="btn-dropdown">
-				<h2>
-					<span lang="en">Advanced settings</span>
-					<span lang="fi">Edistyneet asetukset</span>
-				</h2>
-				<div class="btn-dropdown-arrow-down"></div>
-				<div class="btn-dropdown-arrow-up hidden"></div>
-			</div>
-			<div class="border"></div>
-			<div>&nbsp;</div>
+            <div id="page-settings_lan_auth-advanced">
+                <div>&nbsp;</div>
+                <div class="border"></div>
+                <div id="page-settings_lan_auth-advanced-button" class="btn-dropdown">
+                    <h2>
+                        <span lang="en">Advanced settings</span>
+                        <span lang="fi">Edistyneet asetukset</span>
+                    </h2>
+                    <div class="btn-dropdown-arrow-down"></div>
+                    <div class="btn-dropdown-arrow-up hidden"></div>
+                </div>
+                <div class="border"></div>
+                <div>&nbsp;</div>
 
-			<div id="page-settings_lan_auth-advanced-dropdown" class="hidden">
-				<div>
-					<label class="control control-checkbox">
-						<span lang="en">Enable bearer authentication</span>
-						<span lang="fi">Ota käyttöön API-avain</span>
-						<input type="checkbox" id="settings_lan_auth-use_api_key">
-						<span class="control_indicator"></span>
-					</label>
-				</div>
-				<div id="settings_lan_auth-api_key" class="indent hidden">
-					<label for="settings_lan_auth-api_key">
-						<span lang="en">API key (bearer token):</span>
-						<span lang="fi">API-avain (bearer token):</span>
-						<input id="lan_auth-api_key" type="text" value="">
-					</label>
-					<div class="ingress">
-						<p lang="en">
-							Store this token securely if you want to use the configuration interface programmatically.
-						</p>
-						<p lang="fi">
-							Tallenna tämä avain turvallisesti, jos haluat käyttää hallintaliittymää ohjelmallisesti.
-						</p>
-					</div>
-				</div>
-			</div>
+                <div id="page-settings_lan_auth-advanced-dropdown" class="hidden">
+                    <div>
+                        <label class="control control-checkbox">
+                            <span lang="en">Enable read-only access to "/history" using API-key</span>
+                            <span lang="fi">Ota käyttöön "/history" vain luku -käyttö API-avain avulla</span>
+                            <input type="checkbox" id="settings_lan_auth-use_api_key">
+                            <span class="control_indicator"></span>
+                        </label>
+                    </div>
+                    <div id="settings_lan_auth-api_key" class="indent hidden">
+                        <label for="settings_lan_auth-api_key">
+                            <span lang="en">API key (bearer token):</span>
+                            <span lang="fi">API-avain (bearer token):</span>
+                            <input id="lan_auth-api_key" type="text" value="">
+                        </label>
+                        <div class="ingress">
+                            <p lang="en">
+                                Store this token securely if you want to use the configuration interface programmatically.
+                            </p>
+                            <p lang="fi">
+                                Tallenna tämä avain turvallisesti, jos haluat käyttää hallintaliittymää ohjelmallisesti.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 			<div class="button-container">
 				<a href="" id="page-lan_auth_type-button-back" class="btn-back">
