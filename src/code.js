@@ -17,12 +17,9 @@ let apList = null;
 let selectedSSID = "";
 let connectedSSID = "";
 let flagUseSavedWiFiPassword = false;
-let flagUseSavedHTTPPassword = false;
 let flagUseSavedRemoteCfgAuthBasicPassword = false;
 let flagUseSavedRemoteCfgAuthBearerToken = false;
 let flagUseSavedLanAuthApiKey = false;
-let flagUseSavedHTTPStatPassword = false;
-let flagUseSavedMQTTPassword = false;
 let g_flagAccessFromLAN = false;
 let g_refreshAPActive = false;
 let g_refreshAPTimer = null;
@@ -121,6 +118,34 @@ function change_url(url) {
         return;
     }
     window.location.hash = url;
+}
+
+function input_password_on_open_page(input_password) {
+    input_password.attr("type", "password");
+    let input_password_eye = input_password.parent().children('.input-password-eye');
+    if (input_password_is_saved(input_password)) {
+        input_password_eye.addClass('disabled');
+    }
+    input_password_eye.children('.eye').removeClass('hidden');
+    input_password_eye.children('.eye-slash').addClass('hidden');}
+
+function input_password_set_use_saved(input_password) {
+    input_password.attr('placeholder', "********");
+    input_password.val("");
+}
+
+function input_password_is_saved(input_password) {
+    return input_password.attr('placeholder') === "********";
+}
+
+function input_password_clear_saved(input_password) {
+    input_password.removeAttr('placeholder');
+    input_password.parent().children('.input-password-eye').removeClass('disabled');
+}
+
+function input_password_clear(input_password) {
+    input_password.val("");
+    input_password_clear_saved();
 }
 
 function on_network_connected_wifi() {
@@ -438,15 +463,23 @@ function on_cloud_options_connection_type_changed() {
             h += '<li class="active"></li>';
         }
         h += '<li></li>';
+
         $('#use_http').prop('checked', true);
         $('#http_url').val(HTTP_URL_DEFAULT);
         $('#http_user').val("");
-        $('#http_pass').val("");
+        input_password_clear($("#http_pass"));
+
         $('#use_http_stat').prop('checked', true);
         $('#http_stat_url').val(HTTP_STAT_URL_DEFAULT);
         $('#http_stat_user').val("");
-        $('#http_stat_pass').val("");
+        input_password_clear($("#http_stat_pass"));
+
         $('#use_mqtt').prop('checked', false);
+        $('#mqtt_server').val(MQTT_SERVER_DEFAULT);
+        $('#mqtt_port').val(MQTT_PORT_DEFAULT);
+        $('#mqtt_user').val("");
+        input_password_clear($("#mqtt_pass"));
+
         $(`input:radio[name='company_use_filtering'][value='1']`).prop('checked', true);
         on_settings_scan_filtering_changed();
     } else {
@@ -1297,6 +1330,9 @@ $(document).ready(function () {
 
     // ==== page-custom_server =========================================================================================
     $('section#page-custom_server').bind('onShow', function () {
+        input_password_on_open_page($('#http_pass'));
+        input_password_on_open_page($('#http_stat_pass'));
+        input_password_on_open_page($('#mqtt_pass'));
         on_custom_connection_type_changed();
         if ($('#use_mqtt_prefix_custom').prop('checked')) {
             $('#mqtt_prefix_custom').removeClass('hidden');
@@ -1330,20 +1366,6 @@ $(document).ready(function () {
         on_custom_connection_type_changed();
     });
 
-    $('#http_pass').on("focus", function () {
-        if (flagUseSavedHTTPPassword) {
-            flagUseSavedHTTPPassword = false;
-            $('#http_pass').val("");
-        }
-    });
-
-    $('#http_stat_pass').on("focus", function () {
-        if (flagUseSavedHTTPStatPassword) {
-            flagUseSavedHTTPStatPassword = false;
-            $('#http_stat_pass').val("");
-        }
-    });
-
     $("section#page-custom_server input#use_http_stat").change(function (e) {
         if ($("#use_http_stat")[0].checked) {
             $('#conf-settings-http_stat').removeClass('hidden')
@@ -1356,6 +1378,20 @@ $(document).ready(function () {
             $('#http_stat_user').prop('disabled', true);
             $('#http_stat_pass').prop('disabled', true);
         }
+    });
+
+    $('#http_user').on("input", function () {
+        input_password_clear_saved($('#http_pass'));
+    });
+    $('#http_pass').on("input", function () {
+        input_password_clear_saved($('#http_pass'));
+    });
+
+    $('#http_stat_user').on("input", function () {
+        input_password_clear_saved($('#http_stat_pass'));
+    });
+    $('#http_stat_pass').on("input", function () {
+        input_password_clear_saved($('#http_stat_pass'));
     });
 
     $("section#page-custom_server input#use_mqtt").change(function (e) {
@@ -1386,15 +1422,11 @@ $(document).ready(function () {
         on_edit_mqtt_settings();
     });
     $('#mqtt_user').on("input", function () {
+        input_password_clear_saved($('#mqtt_pass'));
         on_edit_mqtt_settings();
     });
-    $('#mqtt_pass').on("focus", function () {
-        if (flagUseSavedMQTTPassword) {
-            flagUseSavedMQTTPassword = false;
-            $('#mqtt_pass').val("");
-        }
-    });
     $('#mqtt_pass').on("input", function () {
+        input_password_clear_saved($('#mqtt_pass'));
         on_edit_mqtt_settings();
     });
     $('#use_mqtt_prefix_ruuvi').change(function () {

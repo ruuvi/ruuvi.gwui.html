@@ -5,6 +5,8 @@ let g_flag_lan_auth_pass_changed = false;
 const MQTT_PREFIX_MAX_LENGTH = 256;
 const HTTP_URL_DEFAULT = "https://network.ruuvi.com/record";
 const HTTP_STAT_URL_DEFAULT = "https://network.ruuvi.com/status";
+const MQTT_SERVER_DEFAULT = "test.mosquitto.org";
+const MQTT_PORT_DEFAULT = 1883;
 
 const REMOTE_CFG_AUTH_TYPE = Object.freeze({
     'NO': 'no',
@@ -145,15 +147,17 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
         data.use_http = $("#use_http")[0].checked;
         data.http_url = $("#http_url").val();
         data.http_user = $("#http_user").val();
-        if (!flagUseSavedHTTPPassword) {
-            data.http_pass = $("#http_pass").val();
+        let http_pass = $("#http_pass");
+        if (!input_password_is_saved(http_pass)) {
+            data.http_pass = http_pass.val();
         }
 
         data.use_http_stat = $("#use_http_stat")[0].checked;
         data.http_stat_url = $("#http_stat_url").val();
         data.http_stat_user = $("#http_stat_user").val();
-        if (!flagUseSavedHTTPStatPassword) {
-            data.http_stat_pass = $("#http_stat_pass").val();
+        let http_stat_pass = $("#http_stat_pass");
+        if (!input_password_is_saved(http_stat_pass)) {
+            data.http_stat_pass = http_stat_pass.val();
         }
 
         data.use_mqtt = $("#use_mqtt")[0].checked;
@@ -183,8 +187,9 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
             data.mqtt_client_id = gw_mac;
         }
         data.mqtt_user = $("#mqtt_user").val();
-        if (!flagUseSavedMQTTPassword) {
-            data.mqtt_pass = $("#mqtt_pass").val();
+        let mqtt_pass = $("#mqtt_pass");
+        if (!input_password_is_saved(mqtt_pass)) {
+            data.mqtt_pass = mqtt_pass.val();
         }
 
         if (g_flag_lan_auth_pass_changed) {
@@ -825,16 +830,13 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
         }
 
         if (http_user) {
-            flagUseSavedHTTPPassword = true;
-            $("#http_pass").val("********");
+            input_password_set_use_saved($("#http_pass"));
         }
         if (http_stat_user) {
-            flagUseSavedHTTPStatPassword = true;
-            $("#http_stat_pass").val("********");
+            input_password_set_use_saved($("#http_stat_pass"));
         }
         if (mqtt_user) {
-            flagUseSavedMQTTPassword = true;
-            $("#mqtt_pass").val("********");
+            input_password_set_use_saved($("#mqtt_pass"));
         }
 
         $("#scan_coded_phy").prop('checked', scan_coded_phy);
