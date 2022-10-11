@@ -129,9 +129,10 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
             if (remote_cfg_auth_type === "remote_cfg_auth_type_basic") {
                 data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.BASIC;
                 data.remote_cfg_auth_basic_user = $("#remote_cfg-auth_basic-user").val();
-                if (!flagUseSavedRemoteCfgAuthBasicPassword)
+                let remote_cfg_auth_basic_password = $("#remote_cfg-auth_basic-password");
+                if (!input_password_is_saved(remote_cfg_auth_basic_password))
                 {
-                    data.remote_cfg_auth_basic_pass = $("#remote_cfg-auth_basic-password").val();
+                    data.remote_cfg_auth_basic_pass = remote_cfg_auth_basic_password.val();
                 }
             } else if (remote_cfg_auth_type === "remote_cfg_auth_type_bearer") {
                 data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.BEARER;
@@ -769,10 +770,7 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
         } else if (remote_cfg_auth_type === REMOTE_CFG_AUTH_TYPE.BASIC) {
             $("#remote_cfg-use_auth").prop('checked', true);
             $("#remote_cfg_auth_type_basic").prop('checked', true);
-            flagUseSavedRemoteCfgAuthBasicPassword = true;
-            let remote_cfg_auth_basic_password = $("#remote_cfg-auth_basic-password");
-            remote_cfg_auth_basic_password.val("");
-            remote_cfg_auth_basic_password.attr('placeholder', "********");
+            input_password_set_use_saved($("#remote_cfg-auth_basic-password"));
         } else if (remote_cfg_auth_type === REMOTE_CFG_AUTH_TYPE.BEARER) {
             $("#remote_cfg-use_auth").prop('checked', true);
             $("#remote_cfg_auth_type_bearer").prop('checked', true);

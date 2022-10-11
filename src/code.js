@@ -11,12 +11,9 @@ if (!String.prototype.format) {
     };
 }
 
-const WIFI_USE_SAVED_PASSWORD = "\xff\xff\xff\xff\xff\xff\xff\xff";
-
 let apList = null;
 let selectedSSID = "";
 let connectedSSID = "";
-let flagUseSavedRemoteCfgAuthBasicPassword = false;
 let flagUseSavedRemoteCfgAuthBearerToken = false;
 let flagUseSavedLanAuthApiKey = false;
 let g_flagAccessFromLAN = false;
@@ -369,12 +366,7 @@ function on_remote_cfg_changed() {
 }
 
 function on_remote_cfg_auth_basic_user_pass_changed() {
-    if (flagUseSavedRemoteCfgAuthBasicPassword) {
-        flagUseSavedRemoteCfgAuthBasicPassword = false;
-        let remote_cfg_auth_basic_password = $("#remote_cfg-auth_basic-password");
-        remote_cfg_auth_basic_password.removeAttr('placeholder');
-        remote_cfg_auth_basic_password.parent().children('.input-password-eye').removeClass('disabled');
-    }
+    input_password_clear_saved($("#remote_cfg-auth_basic-password"));
     on_remote_cfg_changed();
 }
 
@@ -1052,14 +1044,7 @@ $(document).ready(function () {
             dropdownHide('#page-remote_cfg-advanced-dropdown');
         }
 
-        let remote_cfg_auth_basic_password = $("input#remote_cfg-auth_basic-password");
-        remote_cfg_auth_basic_password.attr("type", "password");
-        let remote_cfg_auth_basic_password_eye = remote_cfg_auth_basic_password.parent().children('.input-password-eye');
-        if (flagUseSavedRemoteCfgAuthBasicPassword) {
-            remote_cfg_auth_basic_password_eye.addClass('disabled');
-        }
-        remote_cfg_auth_basic_password_eye.children('.eye').removeClass('hidden');
-        remote_cfg_auth_basic_password_eye.children('.eye-slash').addClass('hidden');
+        input_password_on_open_page($("input#remote_cfg-auth_basic-password"));
 
         on_remote_cfg_changed();
     });
