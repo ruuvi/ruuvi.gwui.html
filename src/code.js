@@ -16,7 +16,6 @@ const WIFI_USE_SAVED_PASSWORD = "\xff\xff\xff\xff\xff\xff\xff\xff";
 let apList = null;
 let selectedSSID = "";
 let connectedSSID = "";
-let flagUseSavedWiFiPassword = false;
 let flagUseSavedRemoteCfgAuthBasicPassword = false;
 let flagUseSavedRemoteCfgAuthBearerToken = false;
 let flagUseSavedLanAuthApiKey = false;
@@ -127,11 +126,16 @@ function input_password_on_open_page(input_password) {
         input_password_eye.addClass('disabled');
     }
     input_password_eye.children('.eye').removeClass('hidden');
-    input_password_eye.children('.eye-slash').addClass('hidden');}
+    input_password_eye.children('.eye-slash').addClass('hidden');
+}
 
 function input_password_set_use_saved(input_password) {
     input_password.attr('placeholder', "********");
+    input_password.parent().children('.input-password-eye').addClass('disabled');
     input_password.val("");
+    let input_password_eye = input_password.parent().children('.input-password-eye');
+    input_password_eye.children('.eye').removeClass('hidden');
+    input_password_eye.children('.eye-slash').addClass('hidden');
 }
 
 function input_password_is_saved(input_password) {
@@ -145,7 +149,7 @@ function input_password_clear_saved(input_password) {
 
 function input_password_clear(input_password) {
     input_password.val("");
-    input_password_clear_saved();
+    input_password_clear_saved(input_password);
 }
 
 function on_network_connected_wifi() {
@@ -520,7 +524,8 @@ function on_settings_scan_filtering_changed() {
 
 function checkWiFiSSIDAndPassword() {
     let ssid = $('#manual_ssid').val();
-    let pwd = $('#pwd').val();
+    let input_pwd = $('input#pwd');
+    let pwd = input_pwd.val();
     let selected_wifi_radio_button = $('input[name="wifi-name"]:checked');
     if (!selected_wifi_radio_button || !selected_wifi_radio_button[0]) {
         return false;
@@ -531,7 +536,7 @@ function checkWiFiSSIDAndPassword() {
     if (selected_wifi_radio_button[0].id === "page-wifi_connection-radio-connect_manually") {
         return true;
     } else {
-        if (flagUseSavedWiFiPassword && pwd === WIFI_USE_SAVED_PASSWORD) {
+        if (input_password_is_saved(input_pwd)) {
             return true;
         }
         if (selected_wifi_radio_button.hasClass('no_auth')) {
@@ -691,12 +696,8 @@ $(document).ready(function () {
             else
                 $(this).hide();
             if (lang === 'en') {
-                $('input#pwd').attr('placeholder', "Password");
-                $('input#mqtt_pass').attr('placeholder', "Password");
                 $('input#mqtt_client_id').attr('placeholder', "MAC-address is used if empty");
             } else if (lang === 'fi') {
-                $('input#pwd').attr('placeholder', "Salasana");
-                $('input#mqtt_pass').attr('placeholder', "Salasana");
                 $('input#mqtt_client_id').attr('placeholder', "MAC-osoitetta käytetään, jos se on tyhjä");
             }
         })
@@ -850,13 +851,9 @@ $(document).ready(function () {
         console.log(log_wrap("page-wifi_connection: onShow"));
         bodyClassLoadingAdd();
         checkAndUpdatePageWiFiListButtonNext();
-        flagUseSavedWiFiPassword = true;
         let input_pwd = $('input#pwd');
-        input_pwd.attr("type", "password");
-        let input_password_eye = input_pwd.parent().children('.input-password-eye');
-        input_password_eye.addClass('disabled');
-        input_password_eye.children('.eye').removeClass('hidden');
-        input_password_eye.children('.eye-slash').addClass('hidden');
+        input_password_set_use_saved(input_pwd);
+        input_password_on_open_page(input_pwd);
         $('#page-wifi_connection-ssid_password').hide();
         networkDisconnect();
         g_refresh_ap_flag_initial = true;
@@ -878,6 +875,7 @@ $(document).ready(function () {
     });
 
     $('section#page-wifi_connection input#pwd').on('keyup click', function () {
+        input_password_clear_saved($('input#pwd'));
         $('#wifi-connection-status-block').hide();
         updatePositionOfWiFiPasswordInput();
         checkAndUpdatePageWiFiListButtonNext();
@@ -952,8 +950,8 @@ $(document).ready(function () {
             }
         }
 
-        let pwd = $('#pwd').val();
-        let password = ((flagUseSavedWiFiPassword && pwd === WIFI_USE_SAVED_PASSWORD) || !isAuthNeeded) ? null : pwd;
+        let input_pwd = $('#pwd');
+        let password = (input_password_is_saved(input_pwd) || !isAuthNeeded) ? null : input_pwd.val();
         $('#page-wifi_connection-button-continue').addClass('disable-click');
         bodyClassLoadingAdd();
         $("#wifi-connection-status-block").hide();
@@ -1735,7 +1733,7 @@ function onChangeWiFiName() {
     let isAuthNeeded = !selected_wifi.hasClass('no_auth');
 
     $('#manual_ssid').val(ssid);
-    $('#pwd').val("");
+    input_password_clear($('input#pwd'));
 
     $('#input_ssid_block').hide();
     if (isAuthNeeded) {
@@ -1745,8 +1743,9 @@ function onChangeWiFiName() {
     }
     $('#wifi-connection-status-block').hide();
 
-    flagUseSavedWiFiPassword = false;
-    $('#pwd').parent().children('.input-password-eye').removeClass('disabled');
+    if (ssid === connectedSSID) {
+        input_password_set_use_saved($('input#pwd'));
+    }
 
     updatePositionOfWiFiPasswordInput();
     checkAndUpdatePageWiFiListButtonNext();
@@ -1848,17 +1847,6 @@ function refreshAPHTML(data) {
                 div_page_wifi_list_ssid_password.hide();
             }
 
-            if (flagUseSavedWiFiPassword) {
-                let input_pwd = $('input#pwd');
-                input_pwd.val(WIFI_USE_SAVED_PASSWORD);
-                input_pwd.focus(function () {
-                    if (flagUseSavedWiFiPassword) {
-                        flagUseSavedWiFiPassword = false;
-                        $('input#pwd').parent().children('.input-password-eye').removeClass('disabled');
-                        $('input#pwd').val("");
-                    }
-                });
-            }
             $('#manual_ssid').val(selected_wifi_ssid);
 
             updatePositionOfWiFiPasswordInput(input_id.parent().parent().children(".wifi_password"));
