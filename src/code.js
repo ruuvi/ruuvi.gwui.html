@@ -11,18 +11,11 @@ if (!String.prototype.format) {
     };
 }
 
-const WIFI_USE_SAVED_PASSWORD = "\xff\xff\xff\xff\xff\xff\xff\xff";
-
 let apList = null;
 let selectedSSID = "";
 let connectedSSID = "";
-let flagUseSavedWiFiPassword = false;
-let flagUseSavedHTTPPassword = false;
-let flagUseSavedRemoteCfgAuthBasicPassword = false;
 let flagUseSavedRemoteCfgAuthBearerToken = false;
 let flagUseSavedLanAuthApiKey = false;
-let flagUseSavedHTTPStatPassword = false;
-let flagUseSavedMQTTPassword = false;
 let g_flagAccessFromLAN = false;
 let g_refreshAPActive = false;
 let g_refreshAPTimer = null;
@@ -121,6 +114,39 @@ function change_url(url) {
         return;
     }
     window.location.hash = url;
+}
+
+function input_password_on_open_page(input_password) {
+    input_password.attr("type", "password");
+    let input_password_eye = input_password.parent().children('.input-password-eye');
+    if (input_password_is_saved(input_password)) {
+        input_password_eye.addClass('disabled');
+    }
+    input_password_eye.children('.eye').removeClass('hidden');
+    input_password_eye.children('.eye-slash').addClass('hidden');
+}
+
+function input_password_set_use_saved(input_password) {
+    input_password.attr('placeholder', "********");
+    input_password.parent().children('.input-password-eye').addClass('disabled');
+    input_password.val("");
+    let input_password_eye = input_password.parent().children('.input-password-eye');
+    input_password_eye.children('.eye').removeClass('hidden');
+    input_password_eye.children('.eye-slash').addClass('hidden');
+}
+
+function input_password_is_saved(input_password) {
+    return input_password.attr('placeholder') === "********";
+}
+
+function input_password_clear_saved(input_password) {
+    input_password.removeAttr('placeholder');
+    input_password.parent().children('.input-password-eye').removeClass('disabled');
+}
+
+function input_password_clear(input_password) {
+    input_password.val("");
+    input_password_clear_saved(input_password);
 }
 
 function on_network_connected_wifi() {
@@ -339,6 +365,11 @@ function on_remote_cfg_changed() {
     }
 }
 
+function on_remote_cfg_auth_basic_user_pass_changed() {
+    input_password_clear_saved($("#remote_cfg-auth_basic-password"));
+    on_remote_cfg_changed();
+}
+
 function on_custom_connection_type_changed() {
     if ($("#use_http")[0].checked) {
         $('#conf-settings-http').removeClass('hidden');
@@ -454,15 +485,23 @@ function on_cloud_options_connection_type_changed() {
             h += '<li class="active"></li>';
         }
         h += '<li></li>';
+
         $('#use_http').prop('checked', true);
         $('#http_url').val(HTTP_URL_DEFAULT);
         $('#http_user').val("");
-        $('#http_pass').val("");
+        input_password_clear($("#http_pass"));
+
         $('#use_http_stat').prop('checked', true);
         $('#http_stat_url').val(HTTP_STAT_URL_DEFAULT);
         $('#http_stat_user').val("");
-        $('#http_stat_pass').val("");
+        input_password_clear($("#http_stat_pass"));
+
         $('#use_mqtt').prop('checked', false);
+        $('#mqtt_server').val(MQTT_SERVER_DEFAULT);
+        $('#mqtt_port').val(MQTT_PORT_DEFAULT);
+        $('#mqtt_user').val("");
+        input_password_clear($("#mqtt_pass"));
+
         $(`input:radio[name='company_use_filtering'][value='1']`).prop('checked', true);
         on_settings_scan_filtering_changed();
     } else {
@@ -503,7 +542,8 @@ function on_settings_scan_filtering_changed() {
 
 function checkWiFiSSIDAndPassword() {
     let ssid = $('#manual_ssid').val();
-    let pwd = $('#pwd').val();
+    let input_pwd = $('input#pwd');
+    let pwd = input_pwd.val();
     let selected_wifi_radio_button = $('input[name="wifi-name"]:checked');
     if (!selected_wifi_radio_button || !selected_wifi_radio_button[0]) {
         return false;
@@ -514,7 +554,7 @@ function checkWiFiSSIDAndPassword() {
     if (selected_wifi_radio_button[0].id === "page-wifi_connection-radio-connect_manually") {
         return true;
     } else {
-        if (flagUseSavedWiFiPassword && pwd === WIFI_USE_SAVED_PASSWORD) {
+        if (input_password_is_saved(input_pwd)) {
             return true;
         }
         if (selected_wifi_radio_button.hasClass('no_auth')) {
@@ -640,7 +680,9 @@ $(document).ready(function () {
             if (rx.test(e.target.tagName)) {
                 if (e.target.id === 'lan_auth-user' || e.target.id === 'lan_auth-pass') {
                     g_flag_lan_auth_pass_changed = true;
-                    $("#lan_auth-pass").removeAttr('placeholder');
+                    let lan_auth_pass = $("#lan_auth-pass");
+                    lan_auth_pass.removeAttr('placeholder');
+                    lan_auth_pass.parent().children('.input-password-eye').removeClass('disabled');
                     on_lan_auth_user_pass_changed();
                 }
                 if (e.target.id === 'lan_auth-api_key') {
@@ -672,12 +714,8 @@ $(document).ready(function () {
             else
                 $(this).hide();
             if (lang === 'en') {
-                $('input#pwd').attr('placeholder', "Password");
-                $('input#mqtt_pass').attr('placeholder', "Password");
                 $('input#mqtt_client_id').attr('placeholder', "MAC-address is used if empty");
             } else if (lang === 'fi') {
-                $('input#pwd').attr('placeholder', "Salasana");
-                $('input#mqtt_pass').attr('placeholder', "Salasana");
                 $('input#mqtt_client_id').attr('placeholder', "MAC-osoitetta käytetään, jos se on tyhjä");
             }
         })
@@ -693,6 +731,23 @@ $(document).ready(function () {
         $('div#language-switcher > ul > li > a').removeClass('language-switcher-active');
         $(this).addClass('language-switcher-active');
         on_switch_language('fi');
+    });
+
+    $('.input-password-eye').click(function (e) {
+        if ($(this).hasClass('disabled')) {
+            return;
+        }
+        let password_field = $(this).parent().children('input')
+        const flag_hidden = password_field.attr("type") === "password";
+        if (flag_hidden) {
+            $(this).children('.eye').addClass('hidden');
+            $(this).children('.eye-slash').removeClass('hidden');
+            password_field.attr("type", "text");
+        } else {
+            $(this).children('.eye-slash').addClass('hidden');
+            $(this).children('.eye').removeClass('hidden');
+            password_field.attr("type", "password");
+        }
     });
 
     // ==== page-welcome ===============================================================================================
@@ -814,8 +869,9 @@ $(document).ready(function () {
         console.log(log_wrap("page-wifi_connection: onShow"));
         bodyClassLoadingAdd();
         checkAndUpdatePageWiFiListButtonNext();
-        flagUseSavedWiFiPassword = true;
-        $('#wifi-show-password').prop("disabled", true);
+        let input_pwd = $('input#pwd');
+        input_password_set_use_saved(input_pwd);
+        input_password_on_open_page(input_pwd);
         $('#page-wifi_connection-ssid_password').hide();
         networkDisconnect();
         g_refresh_ap_flag_initial = true;
@@ -837,18 +893,10 @@ $(document).ready(function () {
     });
 
     $('section#page-wifi_connection input#pwd').on('keyup click', function () {
+        input_password_clear_saved($('input#pwd'));
         $('#wifi-connection-status-block').hide();
         updatePositionOfWiFiPasswordInput();
         checkAndUpdatePageWiFiListButtonNext();
-    });
-
-    $('section#page-wifi_connection input#wifi-show-password').click(function (e) {
-        let pwd = $('#pwd');
-        if (pwd.prop("type") === "password") {
-            pwd.prop("type", "text");
-        } else {
-            pwd.prop("type", "password");
-        }
     });
 
     $('section#page-wifi_connection input#page-wifi_connection-radio-connect_manually').change(function (e) {
@@ -920,8 +968,8 @@ $(document).ready(function () {
             }
         }
 
-        let pwd = $('#pwd').val();
-        let password = ((flagUseSavedWiFiPassword && pwd === WIFI_USE_SAVED_PASSWORD) || !isAuthNeeded) ? null : pwd;
+        let input_pwd = $('#pwd');
+        let password = (input_password_is_saved(input_pwd) || !isAuthNeeded) ? null : input_pwd.val();
         $('#page-wifi_connection-button-continue').addClass('disable-click');
         bodyClassLoadingAdd();
         $("#wifi-connection-status-block").hide();
@@ -1021,6 +1069,9 @@ $(document).ready(function () {
         } else {
             dropdownHide('#page-remote_cfg-advanced-dropdown');
         }
+
+        input_password_on_open_page($("input#remote_cfg-auth_basic-password"));
+
         on_remote_cfg_changed();
     });
 
@@ -1033,19 +1084,19 @@ $(document).ready(function () {
     });
 
     $('#remote_cfg-auth_basic-user').on("input", function () {
-        on_remote_cfg_changed();
+        on_remote_cfg_auth_basic_user_pass_changed();
     });
 
     $('#remote_cfg-auth_basic-user').change(function () {
-        on_remote_cfg_changed();
+        on_remote_cfg_auth_basic_user_pass_changed();
     });
 
     $('#remote_cfg-auth_basic-password').on("input", function () {
-        on_remote_cfg_changed();
+        on_remote_cfg_auth_basic_user_pass_changed();
     });
 
     $('#remote_cfg-auth_basic-password').change(function () {
-        on_remote_cfg_changed();
+        on_remote_cfg_auth_basic_user_pass_changed();
     });
 
     $('#remote_cfg-auth_bearer-token').on("input", function () {
@@ -1070,22 +1121,6 @@ $(document).ready(function () {
 
     $("section#page-remote_cfg input#remote_cfg_auth_type_bearer").change(function (e) {
         on_remote_cfg_changed();
-    });
-
-    $('#remote_cfg-auth_basic-password').on("focus", function () {
-        if (flagUseSavedRemoteCfgAuthBasicPassword) {
-            flagUseSavedRemoteCfgAuthBasicPassword = false;
-            $('#remote_cfg-auth_basic-password').val("");
-            on_remote_cfg_changed();
-        }
-    });
-
-    $('#remote_cfg-auth_bearer-token').on("focus", function () {
-        if (flagUseSavedRemoteCfgAuthBearerToken) {
-            flagUseSavedRemoteCfgAuthBearerToken = false;
-            $('#remote_cfg-auth_bearer-token').val("");
-            on_remote_cfg_changed();
-        }
     });
 
     $('section#page-remote_cfg #page-remote_cfg-button-continue').click(function (e) {
@@ -1179,6 +1214,12 @@ $(document).ready(function () {
 
     // ==== page-settings_lan_auth =====================================================================================
     $('section#page-settings_lan_auth').bind('onShow', function () {
+        let lan_auth_pass = $("#lan_auth-pass");
+        lan_auth_pass.attr("type", "password");
+        let lan_auth_pass_eye = lan_auth_pass.parent().children('.input-password-eye');
+        lan_auth_pass_eye.children('.eye').removeClass('hidden');
+        lan_auth_pass_eye.children('.eye-slash').addClass('hidden');
+
         if ($("#lan_auth-api_key").val() === '') {
             $('#settings_lan_auth-use_api_key').prop('checked', false);
             $('#settings_lan_auth-api_key').hide();
@@ -1193,18 +1234,21 @@ $(document).ready(function () {
 
     $('section#page-settings_lan_auth #lan_auth-user').on("keyup change", function (e) {
         g_flag_lan_auth_pass_changed = true;
-        $("#lan_auth-pass").removeAttr('placeholder');
+        let lan_auth_pass = $("#lan_auth-pass");
+        lan_auth_pass.removeAttr('placeholder');
+        lan_auth_pass.parent().children('.input-password-eye').removeClass('disabled');
         on_lan_auth_user_pass_changed();
     });
 
     $('section#page-settings_lan_auth #lan_auth-pass').on("keyup change", function (e) {
         g_flag_lan_auth_pass_changed = true;
-        $("#lan_auth-pass").removeAttr('placeholder');
+        let lan_auth_pass = $("#lan_auth-pass");
+        lan_auth_pass.removeAttr('placeholder');
+        lan_auth_pass.parent().children('.input-password-eye').removeClass('disabled');
         on_lan_auth_user_pass_changed();
     });
 
     $("section#page-settings_lan_auth input[name='lan_auth_type']").change(function (e) {
-        g_flag_lan_auth_pass_changed = true;
         on_lan_auth_type_changed();
     });
 
@@ -1285,6 +1329,9 @@ $(document).ready(function () {
 
     // ==== page-custom_server =========================================================================================
     $('section#page-custom_server').bind('onShow', function () {
+        input_password_on_open_page($('#http_pass'));
+        input_password_on_open_page($('#http_stat_pass'));
+        input_password_on_open_page($('#mqtt_pass'));
         on_custom_connection_type_changed();
         if ($('#use_mqtt_prefix_custom').prop('checked')) {
             $('#mqtt_prefix_custom').removeClass('hidden');
@@ -1318,20 +1365,6 @@ $(document).ready(function () {
         on_custom_connection_type_changed();
     });
 
-    $('#http_pass').on("focus", function () {
-        if (flagUseSavedHTTPPassword) {
-            flagUseSavedHTTPPassword = false;
-            $('#http_pass').val("");
-        }
-    });
-
-    $('#http_stat_pass').on("focus", function () {
-        if (flagUseSavedHTTPStatPassword) {
-            flagUseSavedHTTPStatPassword = false;
-            $('#http_stat_pass').val("");
-        }
-    });
-
     $("section#page-custom_server input#use_http_stat").change(function (e) {
         if ($("#use_http_stat")[0].checked) {
             $('#conf-settings-http_stat').removeClass('hidden')
@@ -1344,6 +1377,20 @@ $(document).ready(function () {
             $('#http_stat_user').prop('disabled', true);
             $('#http_stat_pass').prop('disabled', true);
         }
+    });
+
+    $('#http_user').on("input", function () {
+        input_password_clear_saved($('#http_pass'));
+    });
+    $('#http_pass').on("input", function () {
+        input_password_clear_saved($('#http_pass'));
+    });
+
+    $('#http_stat_user').on("input", function () {
+        input_password_clear_saved($('#http_stat_pass'));
+    });
+    $('#http_stat_pass').on("input", function () {
+        input_password_clear_saved($('#http_stat_pass'));
     });
 
     $("section#page-custom_server input#use_mqtt").change(function (e) {
@@ -1374,15 +1421,11 @@ $(document).ready(function () {
         on_edit_mqtt_settings();
     });
     $('#mqtt_user').on("input", function () {
+        input_password_clear_saved($('#mqtt_pass'));
         on_edit_mqtt_settings();
     });
-    $('#mqtt_pass').on("focus", function () {
-        if (flagUseSavedMQTTPassword) {
-            flagUseSavedMQTTPassword = false;
-            $('#mqtt_pass').val("");
-        }
-    });
     $('#mqtt_pass').on("input", function () {
+        input_password_clear_saved($('#mqtt_pass'));
         on_edit_mqtt_settings();
     });
     $('#use_mqtt_prefix_ruuvi').change(function () {
@@ -1691,7 +1734,7 @@ function onChangeWiFiName() {
     let isAuthNeeded = !selected_wifi.hasClass('no_auth');
 
     $('#manual_ssid').val(ssid);
-    $('#pwd').val("");
+    input_password_clear($('input#pwd'));
 
     $('#input_ssid_block').hide();
     if (isAuthNeeded) {
@@ -1701,8 +1744,9 @@ function onChangeWiFiName() {
     }
     $('#wifi-connection-status-block').hide();
 
-    flagUseSavedWiFiPassword = false;
-    $('#wifi-show-password').prop("disabled", false);
+    if (ssid === connectedSSID) {
+        input_password_set_use_saved($('input#pwd'));
+    }
 
     updatePositionOfWiFiPasswordInput();
     checkAndUpdatePageWiFiListButtonNext();
@@ -1804,17 +1848,6 @@ function refreshAPHTML(data) {
                 div_page_wifi_list_ssid_password.hide();
             }
 
-            if (flagUseSavedWiFiPassword) {
-                let input_pwd = $('input#pwd');
-                input_pwd.val(WIFI_USE_SAVED_PASSWORD);
-                input_pwd.focus(function () {
-                    if (flagUseSavedWiFiPassword) {
-                        flagUseSavedWiFiPassword = false;
-                        $('#wifi-show-password').prop("disabled", false);
-                        $('input#pwd').val("");
-                    }
-                });
-            }
             $('#manual_ssid').val(selected_wifi_ssid);
 
             updatePositionOfWiFiPasswordInput(input_id.parent().parent().children(".wifi_password"));

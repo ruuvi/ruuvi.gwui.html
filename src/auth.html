@@ -45,20 +45,28 @@
                     $(this).fadeIn();
                 else
                     $(this).hide();
-                if (lang === 'en') {
-                    $('input#pwd').attr('placeholder', "Password");
-                    $('input#mqtt_pass').attr('placeholder', "Password");
-                    $('input#mqtt_client_id').attr('placeholder', "MAC-address is used if empty");
-                } else if (lang === 'fi') {
-                    $('input#pwd').attr('placeholder', "Salasana");
-                    $('input#mqtt_pass').attr('placeholder', "Salasana");
-                    $('input#mqtt_client_id').attr('placeholder', "MAC-osoitetta käytetään, jos se on tyhjä");
-                }
             })
         }
 
         $(document).ready(function () {
             checkAuth();
+
+            $('.input-password-eye').click(function (e) {
+                if ($(this).hasClass('disabled')) {
+                    return;
+                }
+                let password_field = $(this).parent().children('input')
+                const flag_hidden = password_field.attr('type') === 'password'
+                if (flag_hidden) {
+                    $(this).children('.eye').addClass('hidden')
+                    $(this).children('.eye-slash').removeClass('hidden')
+                    password_field.attr('type', 'text')
+                } else {
+                    $(this).children('.eye-slash').addClass('hidden')
+                    $(this).children('.eye').removeClass('hidden')
+                    password_field.attr('type', 'password')
+                }
+            });
 
             $('#language-switcher-en').click(function (e) {
                 $('div#language-switcher > ul > li > a').removeClass('language-switcher-active');
@@ -301,7 +309,15 @@
                 <label class="bold">
                     <span lang="en">Password:</span>
                     <span lang="fi">Salasana:</span>
-                    <input id="lan_auth-pass" type="password" placeholder="" value="">
+                    <div class="input-password">
+                        <input id="lan_auth-pass" type="password" placeholder="" value="">
+                        <div class="input-password-eye">
+                            <div class="eye">
+                            </div>
+                            <div class="eye-slash hidden">
+                            </div>
+                        </div>
+                    </div>
                 </label>
                 <div style="height: 30px">
                     <div id="auth-err-message" class="auth-err-message hidden">

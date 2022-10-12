@@ -5,6 +5,8 @@ let g_flag_lan_auth_pass_changed = false;
 const MQTT_PREFIX_MAX_LENGTH = 256;
 const HTTP_URL_DEFAULT = "https://network.ruuvi.com/record";
 const HTTP_STAT_URL_DEFAULT = "https://network.ruuvi.com/status";
+const MQTT_SERVER_DEFAULT = "test.mosquitto.org";
+const MQTT_PORT_DEFAULT = 1883;
 
 const REMOTE_CFG_AUTH_TYPE = Object.freeze({
     'NO': 'no',
@@ -127,9 +129,10 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
             if (remote_cfg_auth_type === "remote_cfg_auth_type_basic") {
                 data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.BASIC;
                 data.remote_cfg_auth_basic_user = $("#remote_cfg-auth_basic-user").val();
-                if (!flagUseSavedRemoteCfgAuthBasicPassword)
+                let remote_cfg_auth_basic_password = $("#remote_cfg-auth_basic-password");
+                if (!input_password_is_saved(remote_cfg_auth_basic_password))
                 {
-                    data.remote_cfg_auth_basic_pass = $("#remote_cfg-auth_basic-password").val();
+                    data.remote_cfg_auth_basic_pass = remote_cfg_auth_basic_password.val();
                 }
             } else if (remote_cfg_auth_type === "remote_cfg_auth_type_bearer") {
                 data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.BEARER;
@@ -145,15 +148,17 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
         data.use_http = $("#use_http")[0].checked;
         data.http_url = $("#http_url").val();
         data.http_user = $("#http_user").val();
-        if (!flagUseSavedHTTPPassword) {
-            data.http_pass = $("#http_pass").val();
+        let http_pass = $("#http_pass");
+        if (!input_password_is_saved(http_pass)) {
+            data.http_pass = http_pass.val();
         }
 
         data.use_http_stat = $("#use_http_stat")[0].checked;
         data.http_stat_url = $("#http_stat_url").val();
         data.http_stat_user = $("#http_stat_user").val();
-        if (!flagUseSavedHTTPStatPassword) {
-            data.http_stat_pass = $("#http_stat_pass").val();
+        let http_stat_pass = $("#http_stat_pass");
+        if (!input_password_is_saved(http_stat_pass)) {
+            data.http_stat_pass = http_stat_pass.val();
         }
 
         data.use_mqtt = $("#use_mqtt")[0].checked;
@@ -183,8 +188,9 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
             data.mqtt_client_id = gw_mac;
         }
         data.mqtt_user = $("#mqtt_user").val();
-        if (!flagUseSavedMQTTPassword) {
-            data.mqtt_pass = $("#mqtt_pass").val();
+        let mqtt_pass = $("#mqtt_pass");
+        if (!input_password_is_saved(mqtt_pass)) {
+            data.mqtt_pass = mqtt_pass.val();
         }
 
         if (g_flag_lan_auth_pass_changed) {
@@ -636,15 +642,18 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                 case "lan_auth_user": {
                     let lan_auth_user = $("#lan_auth-user");
                     let lan_auth_pass = $("#lan_auth-pass");
+                    let input_password_eye = lan_auth_pass.parent().children('.input-password-eye');
                     if (key_value) {
                         lan_auth_user.val(key_value);
                         lan_auth_pass.val('');
                         lan_auth_pass.attr('placeholder', '********');
+                        input_password_eye.addClass('disabled');
                         g_flag_lan_auth_pass_changed = false;
                     } else {
                         lan_auth_user.val('');
                         lan_auth_pass.val('');
                         lan_auth_pass.removeAttr('placeholder');
+                        input_password_eye.removeClass('disabled');
                         g_flag_lan_auth_pass_changed = true;
                     }
                     break;
@@ -765,8 +774,7 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
         } else if (remote_cfg_auth_type === REMOTE_CFG_AUTH_TYPE.BASIC) {
             $("#remote_cfg-use_auth").prop('checked', true);
             $("#remote_cfg_auth_type_basic").prop('checked', true);
-            flagUseSavedRemoteCfgAuthBasicPassword = true;
-            $("#remote_cfg-auth_basic-password").val("********");
+            input_password_set_use_saved($("#remote_cfg-auth_basic-password"));
         } else if (remote_cfg_auth_type === REMOTE_CFG_AUTH_TYPE.BEARER) {
             $("#remote_cfg-use_auth").prop('checked', true);
             $("#remote_cfg_auth_type_bearer").prop('checked', true);
@@ -824,16 +832,13 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
         }
 
         if (http_user) {
-            flagUseSavedHTTPPassword = true;
-            $("#http_pass").val("********");
+            input_password_set_use_saved($("#http_pass"));
         }
         if (http_stat_user) {
-            flagUseSavedHTTPStatPassword = true;
-            $("#http_stat_pass").val("********");
+            input_password_set_use_saved($("#http_stat_pass"));
         }
         if (mqtt_user) {
-            flagUseSavedMQTTPassword = true;
-            $("#mqtt_pass").val("********");
+            input_password_set_use_saved($("#mqtt_pass"));
         }
 
         $("#scan_coded_phy").prop('checked', scan_coded_phy);
