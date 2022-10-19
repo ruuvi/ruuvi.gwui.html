@@ -641,6 +641,48 @@ function on_edit_automatic_update_settings() {
     }
 }
 
+function input_check_validity(input_elem, reg_ex, flag_allow_empty) {
+    let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon');
+    if (reg_ex.test(input_elem.val()) || (flag_allow_empty && input_elem.val() === "")) {
+        input_with_validity_check_icon.removeClass('input-invalid');
+        input_with_validity_check_icon.addClass('input-valid');
+        return true;
+    } else {
+        input_with_validity_check_icon.removeClass('input-valid');
+        input_with_validity_check_icon.addClass('input-invalid');
+        return false;
+    }
+}
+
+function ethernet_connection_check_validity() {
+    let flag_all_fields_valid = true;
+    if (!$('#eth_dhcp')[0].checked) {
+        const ip_addr_check = /^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$/;
+        {
+            if (!input_check_validity($('#eth_static_ip'), ip_addr_check, false)) {
+                flag_all_fields_valid = false;
+            }
+            if (!input_check_validity($('#eth_netmask'), ip_addr_check, false)) {
+                flag_all_fields_valid = false;
+            }
+            if (!input_check_validity($('#eth_gw'), ip_addr_check, false)) {
+                flag_all_fields_valid = false;
+            }
+            if (!input_check_validity($('#eth_dns1'), ip_addr_check, false)) {
+                flag_all_fields_valid = false;
+            }
+            if (!input_check_validity($('#eth_dns2'), ip_addr_check, true)) {
+                flag_all_fields_valid = false;
+            }
+        }
+    }
+    let button_continue = $('#page-ethernet_connection-button-continue');
+    if (flag_all_fields_valid) {
+        button_continue.removeClass('disable-click');
+    } else {
+        button_continue.addClass('disable-click');
+    }
+}
 
 $(document).ready(function () {
     console.log(log_wrap("code.js: Ready"));
@@ -807,6 +849,7 @@ $(document).ready(function () {
         if (!$('#eth_dhcp')[0].checked) {
             $('#page-ethernet_connection-section-manual_settings').slideDown();
         }
+        ethernet_connection_check_validity();
         networkDisconnect();
     });
 
@@ -826,6 +869,27 @@ $(document).ready(function () {
         } else {
             $('#page-ethernet_connection-section-manual_settings').slideDown();
         }
+        ethernet_connection_check_validity();
+    });
+
+    $('#eth_static_ip').on("input change", function () {
+        ethernet_connection_check_validity();
+    });
+
+    $('#eth_netmask').on("input change", function () {
+        ethernet_connection_check_validity();
+    });
+
+    $('#eth_gw').on("input change", function () {
+        ethernet_connection_check_validity();
+    });
+
+    $('#eth_dns1').on("input change", function () {
+        ethernet_connection_check_validity();
+    });
+
+    $('#eth_dns2').on("input change", function () {
+        ethernet_connection_check_validity();
     });
 
     $('section#page-ethernet_connection #page-ethernet_connection-button-continue').click(function (e) {
