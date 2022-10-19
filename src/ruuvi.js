@@ -767,6 +767,9 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
             $("#network_type_cable").prop('checked', false);
             $("#network_type_wifi").prop('checked', true);
         }
+        if ($("#eth_netmask").val() === "") {
+            $("#eth_netmask").val("255.255.255.0");
+        }
 
         $("#remote_cfg-use").prop('checked', remote_cfg_use);
         if (remote_cfg_auth_type === REMOTE_CFG_AUTH_TYPE.NO) {
