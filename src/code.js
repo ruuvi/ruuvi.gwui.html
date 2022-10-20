@@ -711,31 +711,6 @@ $(document).ready(function () {
         }
     };
 
-    $(document).keyup(function (e) {
-        // Use jquery's constants rather than an unintuitive magic number.
-        // $.ui.keyCode.DELETE is also available. <- See how constants are better than '46'?
-        if (e.keyCode === 8 || e.keyCode === 46) {
-
-            // Filters out events coming from any of the following tags so Backspace
-            // will work when typing text, but not take the page back otherwise.
-            let rx = /INPUT|SELECT|TEXTAREA/i;
-            if (rx.test(e.target.tagName)) {
-                if (e.target.id === 'lan_auth-user' || e.target.id === 'lan_auth-pass') {
-                    g_flag_lan_auth_pass_changed = true;
-                    let lan_auth_pass = $("#lan_auth-pass");
-                    lan_auth_pass.removeAttr('placeholder');
-                    lan_auth_pass.parent().children('.input-password-eye').removeClass('disabled');
-                    on_lan_auth_user_pass_changed();
-                }
-                if (e.target.id === 'lan_auth-api_key') {
-                    on_lan_auth_user_pass_changed();
-                }
-            }
-
-            // Add your code here.
-        }
-    });
-
     window.addEventListener('online', function (event) {
         console.log(log_wrap('Became online, is_online=' + window.navigator.onLine));
     }, false);
@@ -1313,6 +1288,7 @@ $(document).ready(function () {
     });
 
     $("section#page-settings_lan_auth input[name='lan_auth_type']").change(function (e) {
+        g_flag_lan_auth_pass_changed = true;
         on_lan_auth_type_changed();
     });
 
