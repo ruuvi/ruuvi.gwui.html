@@ -101,6 +101,7 @@ g_ruuvi_dict = {
     'http_stat_url': 'https://network.ruuvi.com/status',
     'http_stat_user': '',
     'use_mqtt': False,
+    'mqtt_disable_retained_messages': False,
     'mqtt_transport': 'TCP',
     'mqtt_server': '',
     'mqtt_port': 0,
