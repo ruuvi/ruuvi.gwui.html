@@ -163,6 +163,7 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
 
         data.use_mqtt = $("#use_mqtt")[0].checked;
 
+        data.mqtt_disable_retained_messages = $("#mqtt_disable_retained_messages")[0].checked;
         let mqtt_transport = $("input[name='mqtt_transport']:checked").val();
         if (mqtt_transport === "mqtt_transport_TCP") {
             data.mqtt_transport = MQTT_TRANSPORT_TYPE.TCP;
@@ -591,6 +592,9 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                 case "use_mqtt":
                     $("#use_mqtt").prop('checked', key_value);
                     use_mqtt = key_value
+                    break;
+                case "mqtt_disable_retained_messages":
+                    $("#mqtt_disable_retained_messages").prop('checked', key_value);
                     break;
                 case "mqtt_transport":
                     if (key_value === MQTT_TRANSPORT_TYPE.TCP) {
