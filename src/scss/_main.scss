@@ -42,11 +42,6 @@ body {
 }
 
 #page-ethernet_connection-ask_user {
-	position: fixed;
-	top: calc(50% - 70px);
-	left: 0;
-	width: 100%;
-	z-index: 1000;
 	color: blue;
 }
 
@@ -220,6 +215,10 @@ table {
 
 .font-bold {
 	font-weight: 600;
+}
+
+.font-bold-wifi-ssid-password {
+	font-weight: bold;
 }
 
 .indent {
