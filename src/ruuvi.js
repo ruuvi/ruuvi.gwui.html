@@ -145,7 +145,7 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
             data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.NO;
         }
 
-        data.use_http = $("#use_http")[0].checked;
+        data.use_http = $("#use_http_ruuvi").prop('checked') || $("#use_http").prop('checked');
         data.http_url = $("#http_url").val();
         data.http_user = $("#http_user").val();
         let http_pass = $("#http_pass");
@@ -153,7 +153,7 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
             data.http_pass = http_pass.val();
         }
 
-        data.use_http_stat = $("#use_http_stat")[0].checked;
+        data.use_http_stat = $("#use_http_stat_ruuvi").prop('checked') || $("#use_http_stat").prop('checked');
         data.http_stat_url = $("#http_stat_url").val();
         data.http_stat_user = $("#http_stat_user").val();
         let http_stat_pass = $("#http_stat_pass");
@@ -566,7 +566,6 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                     // this parameter is not used in UI
                     break;
                 case "use_http":
-                    $("#use_http").prop('checked', key_value);
                     use_http = key_value;
                     break;
                 case "http_url":
@@ -578,7 +577,6 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                     http_user = key_value;
                     break;
                 case "use_http_stat":
-                    $("#use_http_stat").prop('checked', key_value);
                     use_http_stat = key_value;
                     break;
                 case "http_stat_url":
@@ -820,16 +818,56 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
             $("#ntp_sync_disabled").prop('checked', true);
         }
 
+        let flag_use_http_ruuvi_cloud = (use_http && (http_url === HTTP_URL_DEFAULT) && (http_user === ""));
+
+        if (use_http)
+        {
+            if (flag_use_http_ruuvi_cloud)
+            {
+                $("#use_http_ruuvi").prop('checked', true);
+                $("#use_http").prop('checked', false);
+                $('#use_http').prop('disabled', true);
+            }
+            else
+            {
+                $("#use_http").prop('checked', true);
+                $("#use_http_ruuvi").prop('checked', false);
+                $("#use_http_ruuvi").prop('disabled', true);
+            }
+        }
+        else
+        {
+            $("#use_http_ruuvi").prop('checked', false);
+            $("#use_http").prop('checked', false);
+        }
+
+        let flag_use_http_stat_ruuvi = (use_http_stat && (http_stat_url === HTTP_STAT_URL_DEFAULT) && (http_user === ''))
+        if (use_http_stat)
+        {
+            if (flag_use_http_stat_ruuvi)
+            {
+                $("#use_http_stat_ruuvi").prop('checked', true);
+            }
+            else
+            {
+                $("#use_http_stat").prop('checked', true);
+            }
+        }
+        else
+        {
+            $("#use_http_stat_no").prop('checked', true);
+        }
+
         let flag_use_ruuvi_cloud_with_default_options = !use_mqtt &&
-            (use_http && (http_url === HTTP_URL_DEFAULT) && (http_user === "")) &&
-            (use_http_stat && (http_stat_url === HTTP_STAT_URL_DEFAULT) && (http_stat_user === "")) &&
-            (ntp_use && !ntp_use_dhcp && (ntp_server1 === NTP_DEFAULT.SERVER1 &&
-                ntp_server2 === NTP_DEFAULT.SERVER2 &&
-                ntp_server3 === NTP_DEFAULT.SERVER3 &&
-                ntp_server4 === NTP_DEFAULT.SERVER4)) &&
-            (company_use_filtering && (company_id === 0x0499) &&
-                !scan_coded_phy && scan_1mbit_phy && scan_extended_payload &&
-                scan_channel_37 && scan_channel_38 && scan_channel_39);
+          (use_http && flag_use_http_ruuvi_cloud) &&
+          (use_http_stat && flag_use_http_stat_ruuvi) &&
+          (ntp_use && !ntp_use_dhcp && (ntp_server1 === NTP_DEFAULT.SERVER1 &&
+            ntp_server2 === NTP_DEFAULT.SERVER2 &&
+            ntp_server3 === NTP_DEFAULT.SERVER3 &&
+            ntp_server4 === NTP_DEFAULT.SERVER4)) &&
+          (company_use_filtering && (company_id === 0x0499) &&
+            !scan_coded_phy && scan_1mbit_phy && scan_extended_payload &&
+            scan_channel_37 && scan_channel_38 && scan_channel_39)
         if (flag_use_ruuvi_cloud_with_default_options) {
             $("#use_custom").prop('checked', false);
             $("#use_ruuvi").prop('checked', true);

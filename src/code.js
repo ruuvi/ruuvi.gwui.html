@@ -371,12 +371,36 @@ function on_remote_cfg_auth_basic_user_pass_changed() {
 }
 
 function on_custom_connection_type_changed() {
-    if ($("#use_http")[0].checked) {
+    if ($("#use_http_ruuvi").prop('checked')) {
+        $('#use_http').prop('disabled', true);
+        $('#conf-settings-http').addClass('hidden');
+        $('#http_url').val(HTTP_URL_DEFAULT);
+        $('#http_user').val("");
+        input_password_clear($("#http_pass"));
+    } else {
+        $('#use_http').prop('disabled', false);
+    }
+    if ($("#use_http").prop('checked')) {
         $('#conf-settings-http').removeClass('hidden');
+        $('#use_http_ruuvi').prop('disabled', true);
     } else {
         $('#conf-settings-http').addClass('hidden');
+        $('#use_http_ruuvi').prop('disabled', false);
     }
-    if ($("#use_mqtt")[0].checked) {
+
+    if ($("#use_http_stat").prop('checked')) {
+        $('#conf-settings-http_stat').removeClass('hidden')
+        $('#http_stat_url').prop('disabled', false);
+        $('#http_stat_user').prop('disabled', false);
+        $('#http_stat_pass').prop('disabled', false);
+    } else {
+        $('#conf-settings-http_stat').addClass('hidden')
+        $('#http_stat_url').prop('disabled', true);
+        $('#http_stat_user').prop('disabled', true);
+        $('#http_stat_pass').prop('disabled', true);
+    }
+
+    if ($("#use_mqtt").prop('checked')) {
         $('#conf-settings-mqtt').removeClass('hidden');
     } else {
         $('#conf-settings-mqtt').addClass('hidden');
@@ -486,12 +510,14 @@ function on_cloud_options_connection_type_changed() {
         }
         h += '<li></li>';
 
-        $('#use_http').prop('checked', true);
+        $('#use_http_ruuvi').prop('checked', true);
+        $('#use_http').prop('checked', false);
+        $('#use_http').prop('disabled', true);
         $('#http_url').val(HTTP_URL_DEFAULT);
         $('#http_user').val("");
         input_password_clear($("#http_pass"));
 
-        $('#use_http_stat').prop('checked', true);
+        $('#use_http_stat_ruuvi').prop('checked', true);
         $('#http_stat_url').val(HTTP_STAT_URL_DEFAULT);
         $('#http_stat_user').val("");
         input_password_clear($("#http_stat_pass"));
@@ -1378,21 +1404,10 @@ $(document).ready(function () {
         } else {
             $('#mqtt_prefix_custom').addClass('hidden');
         }
-        if ($("#use_http_stat")[0].checked && $("#http_stat_url").val() !== "https://network.ruuvi.com/status") {
-            dropdownShow('#page-custom_server-advanced-button');
-        } else {
+        if ($("#use_http_stat_ruuvi").prop('checked')) {
             dropdownHide('#page-custom_server-advanced-button');
-        }
-        if ($("#use_http_stat")[0].checked) {
-            $('#conf-settings-http_stat').removeClass('hidden')
-            $('#http_stat_url').prop('disabled', false);
-            $('#http_stat_user').prop('disabled', false);
-            $('#http_stat_pass').prop('disabled', false);
         } else {
-            $('#conf-settings-http_stat').addClass('hidden')
-            $('#http_stat_url').prop('disabled', true);
-            $('#http_stat_user').prop('disabled', true);
-            $('#http_stat_pass').prop('disabled', true);
+            dropdownShow('#page-custom_server-advanced-button');
         }
     });
 
@@ -1401,12 +1416,19 @@ $(document).ready(function () {
         $("#conf-settings-mqtt").addClass('hidden');
     });
 
-    $("section#page-custom_server input#use_http").change(function (e) {
+    $("section#page-custom_server input#use_http_ruuvi").change(function (e) {
         on_custom_connection_type_changed();
     });
 
-    $("section#page-custom_server input#use_http_stat").change(function (e) {
-        if ($("#use_http_stat")[0].checked) {
+    $("section#page-custom_server input#use_http").change(function (e) {
+        if ($("#use_http").prop('checked')) {
+            $('#http_url').val("");
+        }
+        on_custom_connection_type_changed();
+    });
+
+    $("section#page-custom_server input[name='use_statistics']").change(function (e) {
+        if ($("#use_http_stat").prop('checked')) {
             $('#conf-settings-http_stat').removeClass('hidden')
             $('#http_stat_url').prop('disabled', false);
             $('#http_stat_user').prop('disabled', false);
@@ -1416,6 +1438,15 @@ $(document).ready(function () {
             $('#http_stat_url').prop('disabled', true);
             $('#http_stat_user').prop('disabled', true);
             $('#http_stat_pass').prop('disabled', true);
+        }
+        if ($("#use_http_stat_ruuvi").prop('checked')) {
+            $('#http_stat_url').val(HTTP_STAT_URL_DEFAULT);
+            $('#http_stat_user').val("");
+            input_password_clear($("#http_stat_pass"));
+        } else if ($("#use_http_stat").prop('checked')) {
+            $('#http_stat_url').val("");
+            $('#http_stat_user').val("");
+            input_password_clear($("#http_stat_pass"));
         }
     });
 
