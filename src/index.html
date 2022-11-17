@@ -1390,9 +1390,19 @@
 			</div>
 
 			<div class="ingress">
-				<p lang="en">Use your own and/or a third party server.</p>
-				<p lang="fi">Käytä omaa ja/tai kolmannen osapuolen palvelinta.</p>
+				<p lang="en">You're able to relay data to multiple target.
+					If Ruuvi Cloud is selected you won't be able to select HTTP(S) target simultaneously.</p>
+				<p lang="fi">Voit lähettää tiedot useampaan kohteeseen.
+					Et voi valita HTTP(S) kohdetta mikäli Ruuvi Cloud on valittuna.</p>
 			</div>
+
+			<label class="control control-checkbox">
+				<span lang="en">Ruuvi Cloud</span>
+				<span lang="fi">Ruuvi Cloud</span>
+				<input id="use_http_ruuvi" type="checkbox">
+				<span class="control_indicator"></span>
+			</label>
+			<div>&nbsp;</div>
 
 			<label class="control control-checkbox">
 				<span lang="en">HTTP(S)</span>
@@ -1401,11 +1411,12 @@
 				<span class="control_indicator"></span>
 			</label>
 			<div>&nbsp;</div>
+
 			<div id="conf-settings-http" class="indent hidden">
 				<label class="font-bold">
-					<span lang="en">Server address (default: https://network.ruuvi.com/record)</span>
-					<span lang="fi">Palvelimen osoite (oletus: https://network.ruuvi.com/record)</span>
-					<input id="http_url" type="text" placeholder="Ruuvi cloud server endpoint" value="">
+					<span lang="en">Server address</span>
+					<span lang="fi">Palvelimen osoite</span>
+					<input id="http_url" type="text" placeholder="" value="">
 				</label>
 				<label class="font-bold">
 					<span lang="en">User name (optional)</span>
@@ -1596,30 +1607,31 @@
 			<div class="border"></div>
 			<div id="page-custom_server-advanced-button" class="btn-dropdown">
 				<h2>
-					<span lang="en">Advanced settings</span>
-					<span lang="fi">Edistyneet asetukset</span>
+					<span lang="en">Statistics</span>
+					<span lang="fi">Statistiikka</span>
 				</h2>
 				<div class="btn-dropdown-arrow-down"></div>
 				<div class="btn-dropdown-arrow-up hidden"></div>
 			</div>
 			<div class="border"></div>
-			<div>&nbsp;</div>
 
 			<div id="page-custom_server-advanced-dropdown" class="hidden">
-				<label class="control control-checkbox">
-					<span lang="en">Allow sending statistics</span>
-					<span lang="fi">Salli tilastojen lähettäminen</span>
-					<input id="use_http_stat" type="checkbox">
+				<label class="control control-radio">
+					<span lang="en">Send statistics to Ruuvi (default)</span>
+					<span lang="fi">Lähetä statistiikka Ruuville (oletus)</span>
+					<input id="use_http_stat_ruuvi" value="statistics_use_ruuvi" name="use_statistics" type="radio" class="conf-checkbox">
 					<span class="control_indicator"></span>
 				</label>
 
-				<div>&nbsp;</div>
+				<label class="control control-radio">
+					<span lang="en">Send to custom server</span>
+					<span lang="fi">Lähetä omalle palvelimelle</span>
+					<input id="use_http_stat" value="statistics_use_custom" name="use_statistics" type="radio" class="conf-checkbox">
+					<span class="control_indicator"></span>
+				</label>
 
 				<div id="conf-settings-http_stat" class="indent hidden">
-					<p>
-						<span lang="en">Use Ruuvi (default: https://network.ruuvi.com/status) or configure your own HTTP server where to send statistics</span>
-						<span lang="fi">Käytä Ruuvi (oletus: https://network.ruuvi.com/status) tai määritä oma HTTP-palvelimesi, jonne statistiikkatiedot lähetetään</span>
-					</p>
+					<div>&nbsp;</div>
 
 					<div class="border"></div>
 
@@ -1646,7 +1658,16 @@
 							</div>
 						</div>
 					</label>
+					<div class="border"></div>
+					<div>&nbsp;</div>
 				</div>
+
+				<label class="control control-radio">
+					<span lang="en">Don't send statistics</span>
+					<span lang="fi">Älä lähetä statistiikkaa</span>
+					<input id="use_http_stat_no" value="statistics_no" name="use_statistics" type="radio" class="conf-checkbox">
+					<span class="control_indicator"></span>
+				</label>
 			</div>
 
 			<div class="button-container">
