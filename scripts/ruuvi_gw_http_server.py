@@ -62,8 +62,19 @@ COOKIE_RUUVISESSION = 'RUUVISESSION'
 COOKIE_RUUVILOGIN = 'RUUVILOGIN'
 COOKIE_RUUVI_PREV_URL = 'RUUVI_PREV_URL'
 
+SOFTWARE_UPDATE_STAGE_0_NONE = 0
+SOFTWARE_UPDATE_STAGE_1_DOWNLOAD_MAIN_FW = 1
+SOFTWARE_UPDATE_STAGE_2_DOWNLOAD_UI = 2
+SOFTWARE_UPDATE_STAGE_3_DOWNLOAD_NRF52 = 3
+SOFTWARE_UPDATE_STAGE_4_FLASH_NRF52 = 4
+SOFTWARE_UPDATE_STAGE_5_COMPLETED_SUCCESSFULLY = 5
+SOFTWARE_UPDATE_STAGE_6_DOWNLOADING_FAILED = 6
+SOFTWARE_UPDATE_STAGE_7_FLASHING_NRF52_FAILED = 7
+
 g_simulation_mode = SIMULATION_MODE_NO_CONNECTION
-g_software_update_stage = 0
+# g_simulation_mode = SIMULATION_MODE_ETH_CONNECTED
+g_software_update_stage = SOFTWARE_UPDATE_STAGE_0_NONE
+# g_software_update_stage = SOFTWARE_UPDATE_STAGE_4_FLASH_NRF52
 g_software_update_percentage = 0
 g_software_update_url = None
 g_ssid = None
@@ -639,6 +650,9 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_login_session
         global g_authorized_sessions
         global g_simulation_mode
+        global g_software_update_url
+        global g_software_update_stage
+        global g_software_update_percentage
         print('POST %s' % self.path)
         if self.path == '/auth':
             if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI and g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_DEFAULT:
@@ -847,11 +861,22 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length).decode('ascii')
             new_dict = json.loads(post_data)
-            global g_software_update_url
-            global g_software_update_stage
-            global g_software_update_percentage
             g_software_update_url = new_dict['url']
-            g_software_update_stage = 1
+            g_software_update_stage = SOFTWARE_UPDATE_STAGE_1_DOWNLOAD_MAIN_FW
+            g_software_update_percentage = 0
+            content = '{}'
+            content_encoded = content.encode('utf-8')
+            resp = b''
+            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            resp += content_encoded
+            self.wfile.write(resp)
+        elif self.path == '/fw_update_reset':
+            g_software_update_stage = SOFTWARE_UPDATE_STAGE_0_NONE
             g_software_update_percentage = 0
             content = '{}'
             content_encoded = content.encode('utf-8')
@@ -961,12 +986,15 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
     @staticmethod
     def _generate_status_json(urc, flag_access_from_lan, ssid, ip='0', netmask='0', gw='0', fw_updating_stage=0,
-                              percentage=0):
+                              percentage=0, fw_updating_msg=None):
         flag_access_from_lan = 1 if flag_access_from_lan else 0
         if fw_updating_stage == 0:
             return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"lan":{flag_access_from_lan}}}'
         else:
-            return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"lan":{flag_access_from_lan},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}}}}}'
+            if fw_updating_msg is None:
+                return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"lan":{flag_access_from_lan},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}}}}}'
+            else:
+                return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"lan":{flag_access_from_lan},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}, "message":"{fw_updating_msg}"}}}}'
 
     def _check_auth(self):
         global g_ruuvi_dict
@@ -1329,14 +1357,28 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         netmask = '255.255.255.0'
                         gw = '192.168.1.1'
 
-                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED, g_flag_access_from_lan,
-                                                         ssid_key_with_val, ip, netmask, gw, g_software_update_stage,
-                                                         g_software_update_percentage)
-                    if 0 < g_software_update_stage < 5:
+                    fw_updating_msg = None
+                    if SOFTWARE_UPDATE_STAGE_0_NONE < g_software_update_stage <= SOFTWARE_UPDATE_STAGE_3_DOWNLOAD_NRF52:
                         g_software_update_percentage += 10
                         if g_software_update_percentage >= 100:
                             g_software_update_percentage = 0
                             g_software_update_stage += 1
+                            if g_software_update_stage == SOFTWARE_UPDATE_STAGE_4_FLASH_NRF52:
+                                g_software_update_stage = SOFTWARE_UPDATE_STAGE_5_COMPLETED_SUCCESSFULLY
+                    elif g_software_update_stage == SOFTWARE_UPDATE_STAGE_4_FLASH_NRF52:
+                        g_software_update_percentage += 10
+                        if g_software_update_percentage >= 100:
+                            g_software_update_percentage = 0
+                            g_software_update_stage = SOFTWARE_UPDATE_STAGE_7_FLASHING_NRF52_FAILED
+                    if g_software_update_stage == SOFTWARE_UPDATE_STAGE_6_DOWNLOADING_FAILED:
+                        fw_updating_msg = "Failed to download firmware"
+                    elif g_software_update_stage == SOFTWARE_UPDATE_STAGE_7_FLASHING_NRF52_FAILED:
+                        fw_updating_msg = "Failed to update nRF52 firmware"
+
+                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED, g_flag_access_from_lan,
+                                                         ssid_key_with_val, ip, netmask, gw, g_software_update_stage,
+                                                         g_software_update_percentage, fw_updating_msg=fw_updating_msg)
+
                 elif g_simulation_mode == SIMULATION_MODE_WIFI_FAILED_ATTEMPT:
                     content = self._generate_status_json(STATUS_JSON_URC_WIFI_FAILED_ATTEMPT, g_flag_access_from_lan,
                                                          ssid_key_with_val)
