@@ -1938,6 +1938,7 @@ function refreshAPHTML(data) {
 }
 
 function onGetStatusJson(data) {
+    g_flagAccessFromLAN = data.hasOwnProperty('lan') && (data["lan"] === 1);
     if (data.hasOwnProperty('extra')) {
         let data_extra = data['extra'];
         let fw_updating_stage = data_extra['fw_updating'];
@@ -2126,7 +2127,6 @@ function onGetStatusJson(data) {
             }
         }
     }
-    g_flagAccessFromLAN = data.hasOwnProperty('lan') && (data["lan"] === 1);
     if (window.location.hash === '#page-welcome') {
         $('#page-welcome-button-get-started').removeClass("disable-click");
     }
