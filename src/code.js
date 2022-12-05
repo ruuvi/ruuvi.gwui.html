@@ -1125,6 +1125,32 @@ $(document).ready(function () {
     // ==== page-software_update_progress ==============================================================================
 
     $('section#page-software_update_progress').bind('onShow', function () {
+        $('#page-software_update_progress-info').removeClass("hidden");
+        $("#software_update_progress-status-completed_successfully").addClass("hidden");
+        $("#software_update_progress-status-completed_unsuccessfully").addClass("hidden");
+        $('#page-software_update_progress-button_container-configure').addClass("hidden");
+    });
+
+    $('section#page-software_update_progress #page-software_update_progress-button-configure').click(function (e) {
+        e.preventDefault();
+        $.ajax({
+              method: 'POST',
+              url: '/fw_update_reset',
+              dataType: 'json',
+              contentType: "application/json; charset=utf-8",
+              cache: false,
+              data: JSON.stringify({}),
+              success: function (data, text) {
+                  change_page_to_network_type();
+              },
+              error: function (request, status, error) {
+                  // ('HTTP error: ' + status + ', ' + 'Status: ' + request.status + '(' + request.statusText + ')' + ', ' + request.responseText);
+                  console.log(log_wrap("POST /fw_update_reset: failure" +
+                    ", status=" + status +
+                    ", error=" + error));
+              }
+          }
+        );
     });
 
     // ==== page-remote_cfg ============================================================================================
@@ -1975,12 +2001,20 @@ function onGetStatusJson(data) {
                     progressbar_stage2.val(100);
                     progressbar_stage3.val(100);
                     progressbar_stage4.val(100);
+                    $('#page-software_update_progress-info').addClass("hidden");
                     $("#software_update_progress-status-completed_successfully").removeClass("hidden");
                     stopCheckStatus();
                     break;
                 case 6: // completed unsuccessfully
+                    $('#page-software_update_progress-info').addClass("hidden");
                     $("#software_update_progress-status-completed_unsuccessfully").removeClass("hidden");
                     $('#software_update_progress-status-completed_unsuccessfully-message').text(data_extra['message']);
+                    break;
+                case 7: // nRF52 firmware updating on reboot completed unsuccessfully
+                    $('#page-software_update_progress-info').addClass("hidden");
+                    $("#software_update_progress-status-completed_unsuccessfully").removeClass("hidden");
+                    $('#software_update_progress-status-completed_unsuccessfully-message').text(data_extra['message']);
+                    $('#page-software_update_progress-button_container-configure').removeClass("hidden");
                     break;
             }
             return;

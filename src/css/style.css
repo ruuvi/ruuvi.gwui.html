@@ -915,6 +915,13 @@ progress[value]::-webkit-progress-value {
   left: 0;
 }
 
+.button-container-centered {
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  margin-top: 70px;
+}
+
 .btn {
   min-width: 155px;
   display: inline-block;
@@ -1004,9 +1011,6 @@ progress[value]::-webkit-progress-value {
 }
 
 #button-container_page-welcome-button-get-started {
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
   margin-top: 70px;
 }
 

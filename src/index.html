@@ -66,7 +66,7 @@
 				<p lang="fi">Huomaathan, että internet-yhteys saattaa olla poissa käytöstä asetusten määrityksen ajan.</p>
 			</div>
 
-			<div id="button-container_page-welcome-button-get-started" class="button-container">
+			<div id="button-container_page-welcome-button-get-started" class="button-container button-container-centered">
 				<a href="" id="page-welcome-button-get-started" class="btn disable-click">
 					<span lang="en">LET'S GET STARTED!</span>
 					<span lang="fi">ALOITETAAN!</span>
@@ -585,46 +585,48 @@
 				</ul>
 			</div>
 
-			<div class="block-centered">
-				<span lang="en">Please wait. Do not power off the Gateway!</span>
-				<span lang="fi">Odota päivityksen valmistumista! Älä sammuta laitetta päivityksen aikana.</span>
-			</div>
+			<div id="page-software_update_progress-info" class="hidden">
+				<div class="block-centered">
+					<span lang="en">Please wait. Do not power off the Gateway!</span>
+					<span lang="fi">Odota päivityksen valmistumista! Älä sammuta laitetta päivityksen aikana.</span>
+				</div>
 
-			<div>&nbsp;</div>
-			<div>&nbsp;</div>
-			<div class="block-centered font-bold">
-				<span lang="en">Downloading main processor software</span>
-				<span lang="fi">Ladataan pääsuoritinohjelmistoa</span>
-			</div>
-			<div class="block-centered">
-				<progress id="software_update_progress-stage1" max="100" value="0"></progress>
-			</div>
+				<div>&nbsp;</div>
+				<div>&nbsp;</div>
+				<div class="block-centered font-bold">
+					<span lang="en">Downloading main processor software</span>
+					<span lang="fi">Ladataan pääsuoritinohjelmistoa</span>
+				</div>
+				<div class="block-centered">
+					<progress id="software_update_progress-stage1" max="100" value="0"></progress>
+				</div>
 
-			<div>&nbsp;</div>
-			<div class="block-centered font-bold">
-				<span lang="en">Downloading user interface</span>
-				<span lang="fi">Ladataan käyttöliittymätiedostoja</span>
-			</div>
-			<div class="block-centered">
-				<progress id="software_update_progress-stage2" max="100" value="0"></progress>
-			</div>
+				<div>&nbsp;</div>
+				<div class="block-centered font-bold">
+					<span lang="en">Downloading user interface</span>
+					<span lang="fi">Ladataan käyttöliittymätiedostoja</span>
+				</div>
+				<div class="block-centered">
+					<progress id="software_update_progress-stage2" max="100" value="0"></progress>
+				</div>
 
-			<div>&nbsp;</div>
-			<div class="block-centered font-bold">
-				<span lang="en">Downloading co-processor software</span>
-				<span lang="fi">Ladataan apusuoritinohjelmistoa</span>
-			</div>
-			<div class="block-centered">
-				<progress id="software_update_progress-stage3" max="100" value="0"></progress>
-			</div>
+				<div>&nbsp;</div>
+				<div class="block-centered font-bold">
+					<span lang="en">Downloading co-processor software</span>
+					<span lang="fi">Ladataan apusuoritinohjelmistoa</span>
+				</div>
+				<div class="block-centered">
+					<progress id="software_update_progress-stage3" max="100" value="0"></progress>
+				</div>
 
-			<div>&nbsp;</div>
-			<div class="block-centered font-bold">
-				<span lang="en">Finishing the setup</span>
-				<span lang="fi">Viimeistellään asennusta</span>
-			</div>
-			<div class="block-centered">
-				<progress id="software_update_progress-stage4" max="100" value="0"></progress>
+				<div>&nbsp;</div>
+				<div class="block-centered font-bold">
+					<span lang="en">Finishing the setup</span>
+					<span lang="fi">Viimeistellään asennusta</span>
+				</div>
+				<div class="block-centered">
+					<progress id="software_update_progress-stage4" max="100" value="0"></progress>
+				</div>
 			</div>
 
 			<div>&nbsp;</div>
@@ -663,6 +665,15 @@
 						button, located under the power socket.</span>
 					<span lang="fi">Käynnistä laite uudelleen painamalla paperiliittimellä lyhyesti virtaliittimen
 						alla olevaa painiketta.</span>
+				</div>
+			</div>
+			<div>&nbsp;</div>
+			<div id="page-software_update_progress-button_container-configure" class="hidden">
+				<div class="button-container button-container-centered">
+					<a href="" id="page-software_update_progress-button-configure" class="btn">
+						<span lang="en">CONFIGURE</span>
+						<span lang="fi">mÄÄRITTÄÄ</span>
+					</a>
 				</div>
 			</div>
 		</section>
