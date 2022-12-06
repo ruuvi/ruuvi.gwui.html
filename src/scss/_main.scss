@@ -283,6 +283,13 @@ progress {
 	left: 0;
 }
 
+.button-container-centered {
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	margin-top: 70px;
+}
+
 .btn {
 	min-width: 155px;
 	display: inline-block;
@@ -374,7 +381,6 @@ progress {
 }
 
 #button-container_page-welcome-button-get-started {
-	justify-content: center;
 	margin-top: 70px;
 }
 
