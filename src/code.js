@@ -32,6 +32,7 @@ let g_page_ethernet_connection_timer = null;
 let g_current_page = null;
 let g_refresh_ap_timeout = 15000;
 let g_refresh_ap_flag_initial = false;
+let g_wifi_sort_by_rssi = false;
 
 const CONNECTION_STATE = {
     NOT_CONNECTED: "NOT_CONNECTED",
@@ -943,6 +944,20 @@ $(document).ready(function () {
         startRefreshAP();
     });
 
+    $('#wifi_connection-sort_order-by_name').click(function (e) {
+        $('div#wifi_connection-sort_order > ul > li > a').removeClass('language-switcher-active');
+        $(this).addClass('language-switcher-active');
+        g_wifi_sort_by_rssi = false;
+        refreshAPHTML(apList);
+    });
+
+    $('#wifi_connection-sort_order-by_rssi').click(function (e) {
+        $('div#wifi_connection-sort_order > ul > li > a').removeClass('language-switcher-active');
+        $(this).addClass('language-switcher-active');
+        g_wifi_sort_by_rssi = true;
+        refreshAPHTML(apList);
+    });
+
     $('section#page-wifi_connection').bind('onHide', function () {
         console.log(log_wrap("page-wifi_connection: onHide"));
         $('#page-wifi_connection-button-continue').removeClass("disable-click");
@@ -1623,17 +1638,6 @@ $(document).ready(function () {
     });
 });
 
-// Check if need for auth screen
-function selected_wifi_auth_required(ssid) {
-    let selectedItem = jQuery.grep(apList, function (item) {
-        return (item.ssid === ssid);
-    });
-    if (selectedItem.length) {
-        return (selectedItem[0].auth !== 0);
-    }
-    return true;
-}
-
 function networkConnect(ssid, password) {
     selectedSSID = ssid;
     $(".wifi-network-name").text(ssid);
@@ -1745,16 +1749,7 @@ function refreshAP() {
         success: function (data, text) {
             console.log(log_wrap("GET /ap.json: success, data.length=" + data.length));
             g_refreshAPInProgress = false;
-            if (data.length > 0) {
-                //sort by signal strength
-                data.sort(function (a, b) {
-                    let x = a["rssi"];
-                    let y = b["rssi"];
-                    return ((x < y) ? 1 : ((x > y) ? -1 : 0));
-                });
-            }
-            apList = data;
-            refreshAPHTML(apList);
+            refreshAPHTML(data);
             if (g_refresh_ap_flag_initial) {
                 g_refresh_ap_flag_initial = false;
                 bodyClassLoadingRemove();
@@ -1857,6 +1852,9 @@ function onChangeWiFiName() {
 }
 
 function refreshAPHTML(data) {
+    if (data === null) {
+        return;
+    }
     if (flagWaitingNetworkConnection) {
         return;
     }
@@ -1864,6 +1862,25 @@ function refreshAPHTML(data) {
         return;
     }
     console.log(log_wrap("refreshAPHTML"));
+
+    if (data.length > 0) {
+        if (g_wifi_sort_by_rssi) {
+            //sort by signal strength
+            data.sort(function (a, b) {
+                let x = a["rssi"];
+                let y = b["rssi"];
+                return ((x < y) ? 1 : ((x > y) ? -1 : 0));
+            });
+        } else {
+            data.sort(function (a, b) {
+                let x = a["ssid"];
+                let y = b["ssid"];
+                return ((x < y) ? 1 : ((x > y) ? -1 : 0));
+            });
+        }
+    }
+    apList = data;
+
     let is_manual_wifi = false;
     let prev_selected_wifi_radio_button = $('input[name="wifi-name"]:checked');
     let prev_selected_wifi_radio_button_has_auth = prev_selected_wifi_radio_button.hasClass('auth');
