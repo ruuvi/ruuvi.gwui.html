@@ -1873,9 +1873,9 @@ function refreshAPHTML(data) {
             });
         } else {
             data.sort(function (a, b) {
-                let x = a["ssid"];
-                let y = b["ssid"];
-                return ((x < y) ? 1 : ((x > y) ? -1 : 0));
+                let x = a["ssid"].toUpperCase();
+                let y = b["ssid"].toUpperCase();
+                return ((x < y) ? -1 : ((x > y) ? 1 : 0));
             });
         }
     }
