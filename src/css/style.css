@@ -749,10 +749,12 @@ header {
 
 .language-switcher > ul > li {
   margin: 0;
+  padding: 0 0.3em 0 0;
   list-style-type: none;
   display: inline-block;
   color: #0c3c3d;
   border: 0;
+  border-right: 1px solid rgb(29, 180, 167);
 }
 
 .language-switcher > ul > li:last-child {
@@ -762,10 +764,9 @@ header {
 .language-switcher > ul > li > a {
   cursor: default;
   color: var(--color-primary);
-  padding: 0 0.3em 0 0;
+  padding: 0;
   margin: 0;
   border: 0;
-  border-right: 1px solid rgb(29, 180, 167);
 }
 
 .language-switcher > ul > li > a.language-switcher-active {
