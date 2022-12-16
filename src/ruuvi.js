@@ -671,7 +671,7 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                 case "lan_auth_api_key_use": {
                     $('#settings_lan_auth-use_api_key').prop('checked', key_value);
                     if (key_value) {
-                        $("#lan_auth-api_key").val("********");
+                        $("#lan_auth-api_key").attr('placeholder', "********");
                         flagUseSavedLanAuthApiKey = true;
                     }
                     break;
@@ -679,7 +679,7 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                 case "lan_auth_api_key_rw_use": {
                     $('#settings_lan_auth-use_api_key_rw').prop('checked', key_value);
                     if (key_value) {
-                        $("#lan_auth-api_key_rw").val("********");
+                        $("#lan_auth-api_key_rw").attr('placeholder', "********");
                         flagUseSavedLanAuthApiKeyRW = true;
                     }
                     break;
