@@ -16,6 +16,7 @@ let selectedSSID = "";
 let connectedSSID = "";
 let flagUseSavedRemoteCfgAuthBearerToken = false;
 let flagUseSavedLanAuthApiKey = false;
+let flagUseSavedLanAuthApiKeyRW = false;
 let g_flagAccessFromLAN = false;
 let g_refreshAPActive = false;
 let g_refreshAPTimer = null;
@@ -409,15 +410,28 @@ function on_custom_connection_type_changed() {
 }
 
 function on_lan_auth_use_api_key_changed() {
-    let lan_auth_api_key = $("#lan_auth-api_key");
-    if ($('#settings_lan_auth-use_api_key')[0].checked) {
-        $('#settings_lan_auth-api_key').show();
-        if (lan_auth_api_key.val() === "") {
-            lan_auth_api_key.val(CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(CryptoJS.lib.WordArray.random(32))));
+  let lan_auth_api_key = $("#lan_auth-api_key");
+  if ($('#settings_lan_auth-use_api_key')[0].checked) {
+    $('#settings_lan_auth-api_key').show();
+    if (lan_auth_api_key.val() === "") {
+      lan_auth_api_key.val(CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(CryptoJS.lib.WordArray.random(32))));
+    }
+  } else {
+    $('#settings_lan_auth-api_key').hide();
+    flagUseSavedLanAuthApiKey = false;
+  }
+}
+
+function on_lan_auth_use_api_key_rw_changed() {
+    let lan_auth_api_key_rw = $("#lan_auth-api_key_rw");
+    if ($('#settings_lan_auth-use_api_key_rw')[0].checked) {
+        $('#settings_lan_auth-api_key_rw').show();
+        if (lan_auth_api_key_rw.val() === "") {
+            lan_auth_api_key_rw.val(CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(CryptoJS.lib.WordArray.random(32))));
         }
     } else {
-        $('#settings_lan_auth-api_key').hide();
-        flagUseSavedLanAuthApiKey = false;
+        $('#settings_lan_auth-api_key_rw').hide();
+        flagUseSavedLanAuthApiKeyRW = false;
     }
 }
 
@@ -441,7 +455,9 @@ function on_lan_auth_type_changed() {
             $('#conf-lan_auth-login-password').slideUp();
             $('#conf-lan_auth-default').slideUp();
             $("#settings_lan_auth-use_api_key").prop('checked', false);
+            $("#settings_lan_auth-use_api_key_rw").prop('checked', false);
             on_lan_auth_use_api_key_changed();
+            on_lan_auth_use_api_key_rw_changed();
             break;
         case LAN_AUTH_TYPE.DENY:
             $('#conf-lan_auth-login-password').slideUp();
@@ -472,6 +488,11 @@ function on_lan_auth_user_pass_changed() {
     }
     if ($('#settings_lan_auth-use_api_key')[0].checked) {
         if ($("#lan_auth-api_key").val() === '') {
+            flag_need_to_disable = true;
+        }
+    }
+    if ($('#settings_lan_auth-use_api_key_rw')[0].checked) {
+        if ($("#lan_auth-api_key_rw").val() === '') {
             flag_need_to_disable = true;
         }
     }
@@ -1326,14 +1347,27 @@ $(document).ready(function () {
         lan_auth_pass_eye.children('.eye').removeClass('hidden');
         lan_auth_pass_eye.children('.eye-slash').addClass('hidden');
 
+        let flag_show_advanced_dropdown = false;
         if ($("#lan_auth-api_key").val() === '') {
             $('#settings_lan_auth-use_api_key').prop('checked', false);
             $('#settings_lan_auth-api_key').hide();
-            dropdownHide('#page-settings_lan_auth-advanced-dropdown');
         } else {
             $('#settings_lan_auth-use_api_key').prop('checked', true);
             $('#settings_lan_auth-api_key').show();
+            flag_show_advanced_dropdown = true;
+        }
+        if ($("#lan_auth-api_key_rw").val() === '') {
+            $('#settings_lan_auth-use_api_key_rw').prop('checked', false);
+            $('#settings_lan_auth-api_key_rw').hide();
+        } else {
+            $('#settings_lan_auth-use_api_key_rw').prop('checked', true);
+            $('#settings_lan_auth-api_key_rw').show();
+            flag_show_advanced_dropdown = true;
+        }
+        if (flag_show_advanced_dropdown) {
             dropdownShow('#page-settings_lan_auth-advanced-dropdown');
+        } else {
+            dropdownHide('#page-settings_lan_auth-advanced-dropdown');
         }
         on_lan_auth_type_changed();
     });
@@ -1365,7 +1399,12 @@ $(document).ready(function () {
     });
 
     $('section#page-settings_lan_auth #settings_lan_auth-use_api_key').change(function (e) {
-        on_lan_auth_use_api_key_changed();
+      on_lan_auth_use_api_key_changed();
+      on_lan_auth_user_pass_changed();
+    });
+
+    $('section#page-settings_lan_auth #settings_lan_auth-use_api_key_rw').change(function (e) {
+        on_lan_auth_use_api_key_rw_changed();
         on_lan_auth_user_pass_changed();
     });
 
@@ -1378,6 +1417,18 @@ $(document).ready(function () {
     });
 
     $('section#page-settings_lan_auth #lan_auth-api_key').on("input", function () {
+        on_lan_auth_user_pass_changed();
+    });
+
+    $('section#page-settings_lan_auth #lan_auth-api_key_rw').on("focus", function () {
+        if (flagUseSavedLanAuthApiKeyRW) {
+            flagUseSavedLanAuthApiKeyRW = false;
+            $('#lan_auth-api_key_rw').val("");
+            on_lan_auth_user_pass_changed();
+        }
+    });
+
+    $('section#page-settings_lan_auth #lan_auth-api_key_rw').on("input", function () {
         on_lan_auth_user_pass_changed();
     });
 

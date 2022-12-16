@@ -122,6 +122,7 @@ g_ruuvi_dict = {
     'lan_auth_user': LAN_AUTH_DEFAULT_USER,
     'lan_auth_pass': g_lan_auth_default_password_hashed,
     'lan_auth_api_key': '',
+    'lan_auth_api_key_rw': '',
     'auto_update_cycle': AUTO_UPDATE_CYCLE_TYPE_REGULAR,
     'auto_update_weekdays_bitmask': 0x40,
     'auto_update_interval_from': 20,
@@ -1286,6 +1287,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     else:
                         ruuvi_dict['lan_auth_api_key_use'] = False
                     del ruuvi_dict['lan_auth_api_key']
+                if 'lan_auth_api_key_rw' in ruuvi_dict:
+                    if ruuvi_dict['lan_auth_api_key_rw'] != "":
+                        ruuvi_dict['lan_auth_api_key_rw_use'] = True
+                    else:
+                        ruuvi_dict['lan_auth_api_key_rw_use'] = False
+                    del ruuvi_dict['lan_auth_api_key_rw']
 
                 content = json.dumps(ruuvi_dict)
                 print(f'Resp: {content}')
