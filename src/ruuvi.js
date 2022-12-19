@@ -311,7 +311,10 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
         success: function (data, text) {
             console.log(log_wrap("ajax: POST /ruuvi.json: success"));
             console.log(log_wrap('Start periodic status check'));
-            startCheckStatus();
+            if (flag_save_network_cfg)
+            {
+                startCheckStatus();
+            }
             if (cb_on_success) {
                 cb_on_success();
             }
