@@ -230,6 +230,14 @@ function save_config_internal(flag_save_network_cfg, ap_wifi_channel, cb_on_succ
                 data.lan_auth_api_key = "";
             }
         }
+        if (!flagUseSavedLanAuthApiKeyRW)
+        {
+            if ($('#settings_lan_auth-use_api_key_rw')[0].checked) {
+                data.lan_auth_api_key_rw = $("#lan_auth-api_key_rw").val();
+            } else {
+                data.lan_auth_api_key_rw = "";
+            }
+        }
 
         data.company_use_filtering = ($("input[name='company_use_filtering']:checked").val() !== "0");
 
@@ -666,8 +674,16 @@ function on_get_config(data, ecdh_pub_key_srv_b64)
                 case "lan_auth_api_key_use": {
                     $('#settings_lan_auth-use_api_key').prop('checked', key_value);
                     if (key_value) {
-                        $("#lan_auth-api_key").val("********");
+                        $("#lan_auth-api_key").attr('placeholder', "********");
                         flagUseSavedLanAuthApiKey = true;
+                    }
+                    break;
+                }
+                case "lan_auth_api_key_rw_use": {
+                    $('#settings_lan_auth-use_api_key_rw').prop('checked', key_value);
+                    if (key_value) {
+                        $("#lan_auth-api_key_rw").attr('placeholder', "********");
+                        flagUseSavedLanAuthApiKeyRW = true;
                     }
                     break;
                 }
