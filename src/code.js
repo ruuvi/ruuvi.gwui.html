@@ -372,6 +372,7 @@ function on_remote_cfg_auth_basic_user_pass_changed () {
 }
 
 function on_custom_connection_type_changed () {
+  let flag_need_to_check = false
   if ($('#use_http_ruuvi').prop('checked')) {
     $('#use_http').prop('disabled', true)
     $('#conf-settings-http').addClass('hidden')
@@ -405,6 +406,39 @@ function on_custom_connection_type_changed () {
     $('#conf-settings-mqtt').removeClass('hidden')
   } else {
     $('#conf-settings-mqtt').addClass('hidden')
+  }
+}
+
+function on_custom_server_url_changed () {
+  let flag_url_modified = false
+  let http_url = $('#http_url')
+  if ($('#use_http').prop('checked') && input_validity_is_validation_required(http_url)) {
+    flag_url_modified = true
+    input_validity_clear_icon(http_url)
+    input_validity_clear_icon($('#http_user'))
+    input_validity_clear_icon($('#http_pass'))
+  }
+  let http_stat_url = $('#http_stat_url')
+  if ($('#use_http_stat').prop('checked') && input_validity_is_validation_required(http_stat_url)) {
+    flag_url_modified = true
+    input_validity_clear_icon(http_stat_url)
+    input_validity_clear_icon($('#http_stat_user'))
+    input_validity_clear_icon($('#http_stat_pass'))
+  }
+  let mqtt_server = $('#mqtt_server')
+  if ($('#use_mqtt').prop('checked') && input_validity_is_validation_required(mqtt_server)) {
+    flag_url_modified = true
+    input_validity_clear_icon(mqtt_server)
+    input_validity_clear_icon($('#mqtt_user'))
+    input_validity_clear_icon($('#mqtt_pass'))
+  }
+  if (flag_url_modified || input_validity_is_invalid(http_url) || input_validity_is_invalid(http_stat_url) ||
+    input_validity_is_invalid(mqtt_server)) {
+    $('#page-custom_server-button-continue').addClass('hidden')
+    $('#page-custom_server-button-check').removeClass('hidden')
+  } else {
+    $('#page-custom_server-button-check').addClass('hidden')
+    $('#page-custom_server-button-continue').removeClass('hidden')
   }
 }
 
@@ -690,15 +724,74 @@ function on_edit_automatic_update_settings () {
   }
 }
 
-function input_check_validity (input_elem, reg_ex, flag_allow_empty) {
+function input_validity_is_invalid (input_elem) {
+  let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
+  if (input_with_validity_check_icon.hasClass('input-invalid')) {
+    return true
+  }
+  return false
+}
+
+function input_validity_has_checked (input_elem) {
+  let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
+  if (input_with_validity_check_icon.hasClass('input-invalid')) {
+    return true
+  }
+  if (input_with_validity_check_icon.hasClass('input-valid')) {
+    return true
+  }
+  return false
+}
+
+function input_validity_clear_icon (input_elem) {
+  let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
+  input_with_validity_check_icon.removeClass('input-checking')
+  input_with_validity_check_icon.removeClass('input-valid')
+  input_with_validity_check_icon.removeClass('input-invalid')
+}
+
+function input_validity_is_validation_required (input_elem) {
+  let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
+  return input_with_validity_check_icon.hasClass('input-validation_required')
+}
+
+function input_validity_set_validation_required (input_elem) {
+  let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
+  input_with_validity_check_icon.addClass('input-validation_required')
+}
+
+function input_validity_clear_validation_required (input_elem) {
+  let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
+  input_with_validity_check_icon.removeClass('input-validation_required')
+}
+
+function input_validity_set_valid (input_elem) {
+  let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
+  input_validity_clear_icon(input_elem)
+  input_with_validity_check_icon.removeClass('input-validation_required')
+  input_with_validity_check_icon.addClass('input-valid')
+}
+
+function input_validity_set_invalid (input_elem) {
+  let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
+  input_validity_clear_icon(input_elem)
+  input_with_validity_check_icon.removeClass('input-validation_required')
+  input_with_validity_check_icon.addClass('input-invalid')
+}
+
+function input_validity_set_checking (input_elem) {
+  let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
+  input_validity_clear_icon(input_elem)
+  input_with_validity_check_icon.addClass('input-checking')
+}
+
+function input_validity_check_by_regex (input_elem, reg_ex, flag_allow_empty) {
   let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
   if (reg_ex.test(input_elem.val()) || (flag_allow_empty && input_elem.val() === '')) {
-    input_with_validity_check_icon.removeClass('input-invalid')
-    input_with_validity_check_icon.addClass('input-valid')
+    input_validity_set_valid(input_elem)
     return true
   } else {
-    input_with_validity_check_icon.removeClass('input-valid')
-    input_with_validity_check_icon.addClass('input-invalid')
+    input_validity_set_invalid(input_elem)
     return false
   }
 }
@@ -708,19 +801,19 @@ function ethernet_connection_check_validity () {
   if (!$('#eth_dhcp')[0].checked) {
     const ip_addr_check = /^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$/
     {
-      if (!input_check_validity($('#eth_static_ip'), ip_addr_check, false)) {
+      if (!input_validity_check_by_regex($('#eth_static_ip'), ip_addr_check, false)) {
         flag_all_fields_valid = false
       }
-      if (!input_check_validity($('#eth_netmask'), ip_addr_check, false)) {
+      if (!input_validity_check_by_regex($('#eth_netmask'), ip_addr_check, false)) {
         flag_all_fields_valid = false
       }
-      if (!input_check_validity($('#eth_gw'), ip_addr_check, false)) {
+      if (!input_validity_check_by_regex($('#eth_gw'), ip_addr_check, false)) {
         flag_all_fields_valid = false
       }
-      if (!input_check_validity($('#eth_dns1'), ip_addr_check, false)) {
+      if (!input_validity_check_by_regex($('#eth_dns1'), ip_addr_check, false)) {
         flag_all_fields_valid = false
       }
-      if (!input_check_validity($('#eth_dns2'), ip_addr_check, true)) {
+      if (!input_validity_check_by_regex($('#eth_dns2'), ip_addr_check, true)) {
         flag_all_fields_valid = false
       }
     }
@@ -1504,6 +1597,7 @@ $(document).ready(function () {
     } else {
       dropdownShow('#page-custom_server-advanced-button')
     }
+    on_custom_server_url_changed()
   })
 
   $('section#page-custom_server').bind('onHide', function () {
@@ -1513,13 +1607,17 @@ $(document).ready(function () {
 
   $('section#page-custom_server input#use_http_ruuvi').change(function (e) {
     on_custom_connection_type_changed()
+    on_custom_server_url_changed()
   })
 
   $('section#page-custom_server input#use_http').change(function (e) {
     if ($('#use_http').prop('checked')) {
-      $('#http_url').val('')
+      let http_url = $('#http_url')
+      http_url.val('')
+      input_validity_set_validation_required(http_url)
     }
     on_custom_connection_type_changed()
+    on_custom_server_url_changed()
   })
 
   $('section#page-custom_server input[name=\'use_statistics\']').change(function (e) {
@@ -1539,65 +1637,122 @@ $(document).ready(function () {
       $('#http_stat_user').val('')
       input_password_clear($('#http_stat_pass'))
     } else if ($('#use_http_stat').prop('checked')) {
-      $('#http_stat_url').val('')
+      let http_stat_url = $('#http_stat_url')
+      http_stat_url.val('')
       $('#http_stat_user').val('')
       input_password_clear($('#http_stat_pass'))
+      input_validity_set_validation_required(http_stat_url)
     }
+    on_custom_server_url_changed()
   })
 
-  $('#http_user').on('input', function () {
-    input_password_clear_saved($('#http_pass'))
+  $('#http_url').on('input change', function () {
+    input_validity_set_validation_required($(this))
+    on_custom_server_url_changed()
   })
-  $('#http_pass').on('input', function () {
+  $('#http_user').on('input change', function () {
     input_password_clear_saved($('#http_pass'))
+    input_validity_set_validation_required($('#http_url'))
+    on_custom_server_url_changed()
+  })
+  $('#http_pass').on('input change', function () {
+    input_password_clear_saved($('#http_pass'))
+    input_validity_set_validation_required($('#http_url'))
+    on_custom_server_url_changed()
   })
 
-  $('#http_stat_user').on('input', function () {
-    input_password_clear_saved($('#http_stat_pass'))
+  $('#http_stat_url').on('input change', function () {
+    input_validity_set_validation_required($(this))
+    on_custom_server_url_changed()
   })
-  $('#http_stat_pass').on('input', function () {
+  $('#http_stat_user').on('input change', function () {
     input_password_clear_saved($('#http_stat_pass'))
+    input_validity_set_validation_required($('#http_stat_url'))
+    on_custom_server_url_changed()
+  })
+  $('#http_stat_pass').on('input change', function () {
+    input_password_clear_saved($('#http_stat_pass'))
+    input_validity_set_validation_required($('#http_stat_url'))
+    on_custom_server_url_changed()
   })
 
   $('section#page-custom_server input#use_mqtt').change(function (e) {
+    if ($('#use_mqtt').prop('checked')) {
+      input_validity_set_validation_required($('#mqtt_server'))
+    } else {
+      input_validity_clear_validation_required($('#mqtt_server'))
+    }
     on_custom_connection_type_changed()
+    on_custom_server_url_changed()
   })
 
   $('section#page-custom_server input[type=radio][name=mqtt_transport]').change(function () {
     let mqtt_transport = $('input[name=\'mqtt_transport\']:checked').val()
+    let is_mqtt_authentication_used = $('#mqtt_user').val() !== ''
     let default_port = 1883
     if (mqtt_transport === 'mqtt_transport_TCP') {
-      default_port = 1883
+      if (is_mqtt_authentication_used) {
+        default_port = 1884
+      } else {
+        default_port = 1883
+      }
     } else if (mqtt_transport === 'mqtt_transport_SSL') {
-      default_port = 8886
+      if (is_mqtt_authentication_used) {
+        default_port = 8885
+      } else {
+        default_port = 8886
+      }
     } else if (mqtt_transport === 'mqtt_transport_WS') {
-      default_port = 8080
+      if (is_mqtt_authentication_used) {
+        default_port = 8090
+      } else {
+        default_port = 8080
+      }
     } else if (mqtt_transport === 'mqtt_transport_WSS') {
-      default_port = 8081
+      if (is_mqtt_authentication_used) {
+        default_port = 8091
+      } else {
+        default_port = 8081
+      }
     }
     if ($('#mqtt_server').val() === 'test.mosquitto.org') {
       $('#mqtt_port').val(default_port)
+      if (is_mqtt_authentication_used) {
+        $('#mqtt_user').val('rw')
+        $('#mqtt_pass').val('readwrite')
+      } else {
+        $('#mqtt_pass').val('')
+      }
     }
+    on_custom_server_url_changed()
   })
 
-  $('#mqtt_server').on('input', function () {
+  $('#mqtt_server').on('input change', function () {
     on_edit_mqtt_settings()
+    input_validity_set_validation_required($(this))
+    on_custom_server_url_changed()
   })
-  $('#mqtt_port').on('input', function () {
+  $('#mqtt_port').on('input change', function () {
     on_edit_mqtt_settings()
+    input_validity_set_validation_required($('#mqtt_server'))
+    on_custom_server_url_changed()
   })
-  $('#mqtt_user').on('input', function () {
+  $('#mqtt_user').on('input change', function () {
     input_password_clear_saved($('#mqtt_pass'))
     on_edit_mqtt_settings()
+    input_validity_set_validation_required($('#mqtt_server'))
+    on_custom_server_url_changed()
   })
-  $('#mqtt_pass').on('input', function () {
+  $('#mqtt_pass').on('input change', function () {
     input_password_clear_saved($('#mqtt_pass'))
     on_edit_mqtt_settings()
+    input_validity_set_validation_required($('#mqtt_server'))
+    on_custom_server_url_changed()
   })
-  $('#use_mqtt_prefix_ruuvi').change(function () {
+  $('#use_mqtt_prefix_ruuvi').on('input change', function () {
     on_edit_mqtt_settings()
   })
-  $('#use_mqtt_prefix_gw_mac').change(function () {
+  $('#use_mqtt_prefix_gw_mac').on('input change', function () {
     on_edit_mqtt_settings()
   })
   $('#use_mqtt_prefix_custom').change(function () {
@@ -1608,7 +1763,7 @@ $(document).ready(function () {
     }
     on_edit_mqtt_settings()
   })
-  $('#mqtt_prefix_custom').on('input', function () {
+  $('#mqtt_prefix_custom').on('input change', function () {
     on_edit_mqtt_settings()
   })
 
@@ -1618,6 +1773,146 @@ $(document).ready(function () {
     } else {
       $('#mqtt_examples').slideUp()
     }
+  })
+
+  function validate_url (input_url, url_val, input_user, input_pass, validate_type, aux_param, aux_param2) {
+    if (!input_validity_is_validation_required(input_url) || input_validity_has_checked(input_url)) {
+      return false
+    }
+    console.log('custom_server_validate_urls: validate URL: ' + url_val)
+    let url = '/validate_url?url='
+    url += encodeURIComponent(url_val)
+    url += '&validate_type=' + validate_type
+    let user_val = input_user.val()
+    let pass_val = input_pass.val()
+    if (user_val) {
+      let json_encrypted_password = JSON.parse(ruuvi_edch_encrypt(pass_val))
+      url += '&user='
+      url += encodeURIComponent(user_val)
+      url += '&encrypted_password='
+      url += encodeURIComponent(json_encrypted_password['encrypted'])
+      url += '&encrypted_password_iv='
+      url += encodeURIComponent(json_encrypted_password['iv'])
+      url += '&encrypted_password_hash='
+      url += encodeURIComponent(json_encrypted_password['hash'])
+    }
+    if (aux_param) {
+      url += '&aux_param='
+      url += encodeURIComponent(aux_param)
+    }
+    if (aux_param2) {
+      url += '&aux_param2='
+      url += encodeURIComponent(aux_param2)
+    }
+    input_validity_set_checking(input_url)
+    if (user_val) {
+      input_validity_set_checking(input_user)
+      input_validity_set_checking(input_pass)
+    }
+    $.getJSON(url, function (data) {
+      let validation_status = data['status']
+      if (validation_status === 200) {
+        input_validity_set_valid(input_url)
+        if (user_val) {
+          input_validity_set_valid(input_user)
+          input_validity_set_valid(input_pass)
+        }
+      } else if (validation_status === 401) {
+        input_validity_set_invalid(input_url)
+        input_validity_set_invalid(input_user)
+        input_validity_set_invalid(input_pass)
+      } else {
+        input_validity_set_invalid(input_url)
+        if (user_val) {
+          input_validity_clear_icon(input_user)
+          input_validity_clear_icon(input_pass)
+        }
+      }
+      custom_server_validate_urls()
+    }).fail(function (jqXHR) {
+      input_validity_set_invalid(input_url)
+      input_validity_set_invalid(input_user)
+      input_validity_set_invalid(input_pass)
+      custom_server_validate_urls()
+    })
+    return true
+  }
+
+  function custom_server_validate_urls () {
+    console.log('custom_server_validate_urls')
+    bodyClassLoadingAdd()
+    let http_url = $('#http_url')
+    if (validate_url(http_url, http_url.val(), $('#http_user'), $('#http_pass'),
+      'check_post_advs')) {
+      return
+    }
+    let http_stat_url = $('#http_stat_url')
+    if (validate_url(http_stat_url, http_stat_url.val(), $('#http_stat_user'), $('#http_stat_pass'),
+      'check_post_stat')) {
+      return
+    }
+
+    if ($('#use_mqtt').prop('checked')) {
+      let mqtt_server = $('#mqtt_server')
+      let mqtt_transport = $('input[name=\'mqtt_transport\']:checked').val()
+      let mqtt_url_prefix = ''
+      if (mqtt_transport === 'mqtt_transport_TCP') {
+        mqtt_url_prefix = 'mqtt://'
+      } else if (mqtt_transport === 'mqtt_transport_SSL') {
+        mqtt_url_prefix = 'mqtts://'
+      } else if (mqtt_transport === 'mqtt_transport_WS') {
+        mqtt_url_prefix = 'mqttws://'
+      } else if (mqtt_transport === 'mqtt_transport_WSS') {
+        mqtt_url_prefix = 'mqttwss://'
+      }
+      let mqtt_topic_prefix = get_mqtt_topic_prefix()
+      let mqtt_url = mqtt_url_prefix + mqtt_server.val() + ':' + $('#mqtt_port').val()
+      if (validate_url(mqtt_server, mqtt_url, $('#mqtt_user'), $('#mqtt_pass'),
+        'check_mqtt', mqtt_topic_prefix, $('#mqtt_client_id').val())) {
+        return
+      }
+    }
+
+    on_custom_server_url_changed()
+    bodyClassLoadingRemove()
+  }
+
+  $('section#page-custom_server #page-custom_server-button-check').click(function (e) {
+    e.preventDefault()
+
+    let http_url = $('#http_url')
+    if (!http_url.val().startsWith('http://') && !http_url.val().startsWith('https://')) {
+      http_url.val('http://' + http_url.val())
+      input_validity_set_validation_required(http_url)
+    }
+    if (input_validity_is_invalid(http_url) || input_validity_is_validation_required(http_url)) {
+      input_validity_clear_icon(http_url)
+      input_validity_set_validation_required(http_url)
+      input_validity_clear_icon($('#http_user'))
+      input_validity_clear_icon($('#http_pass'))
+    }
+
+    let http_stat_url = $('#http_stat_url')
+    if (!http_stat_url.val().startsWith('http://') && !http_stat_url.val().startsWith('https://')) {
+      http_stat_url.val('http://' + http_stat_url.val())
+      input_validity_set_validation_required(http_stat_url)
+    }
+    if (input_validity_is_invalid(http_stat_url) || input_validity_is_validation_required(http_stat_url)) {
+      input_validity_clear_icon(http_stat_url)
+      input_validity_set_validation_required(http_stat_url)
+      input_validity_clear_icon($('#http_stat_user'))
+      input_validity_clear_icon($('#http_stat_pass'))
+    }
+
+    let mqtt_server = $('#mqtt_server')
+    if (input_validity_is_invalid(mqtt_server) || input_validity_is_validation_required(mqtt_server)) {
+      input_validity_clear_icon(mqtt_server)
+      input_validity_set_validation_required(mqtt_server)
+      input_validity_clear_icon($('#mqtt_user'))
+      input_validity_clear_icon($('#mqtt_pass'))
+    }
+
+    custom_server_validate_urls()
   })
 
   $('section#page-custom_server #page-custom_server-button-continue').click(function (e) {

@@ -28,10 +28,12 @@ import Crypto.Util.Padding
 from Crypto.PublicKey import ECC
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
+from urllib.parse import urlparse
+from urllib.parse import parse_qs
 
-GET_AP_JSON_TIMEOUT = 3.0
-NETWORK_CONNECTION_TIMEOUT = 3.0
-GET_LATEST_RELEASE_TIMEOUT = 10.0
+GET_AP_JSON_TIMEOUT = 1.0
+NETWORK_CONNECTION_TIMEOUT = 1.0
+GET_LATEST_RELEASE_TIMEOUT = 1.0
 
 LAN_AUTH_TYPE_DEFAULT = 'lan_auth_default'
 LAN_AUTH_TYPE_DENY = 'lan_auth_deny'
@@ -114,9 +116,10 @@ g_ruuvi_dict = {
     'use_mqtt': False,
     'mqtt_disable_retained_messages': False,
     'mqtt_transport': 'TCP',
-    'mqtt_server': '',
-    'mqtt_port': 0,
-    'mqtt_prefix': '',
+    'mqtt_server': 'test.mosquitto.org',
+    'mqtt_port': 1883,
+    'mqtt_prefix': 'ruuvi/AA:BB:CC:DD:EE:FF/',
+    'mqtt_client_id': 'AA:BB:CC:DD:EE:FF',
     'mqtt_user': '',
     'lan_auth_type': LAN_AUTH_TYPE_DEFAULT,
     'lan_auth_user': LAN_AUTH_DEFAULT_USER,
@@ -605,6 +608,23 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         srv_pub_key_b64 = base64.b64encode(ecdh_keys.public_key().export_key(format='SEC1')).decode('utf-8')
         return srv_pub_key_b64
 
+    def _ecdh_decrypt(self, aes_key, req_encrypted, req_iv, req_hash):
+        cipher = AES.new(aes_key, AES.MODE_CBC, iv=base64.b64decode(req_iv))
+        try:
+            req_decrypted = Crypto.Util.Padding.unpad(cipher.decrypt(base64.b64decode(req_encrypted)), AES.block_size)
+        except ValueError as ex:
+            print(f'Error: Bad padding: {ex}')
+            return None
+
+        hash_actual = SHA256.new(req_decrypted).digest().hex()
+        hash_expected = base64.b64decode(req_hash).hex()
+        if hash_actual != hash_expected:
+            print(f'Error: Verification failed')
+            return None
+
+        return req_decrypted.decode('utf-8')
+
+
     def _ecdh_decrypt_request(self, aes_key):
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length).decode('ascii')
@@ -621,20 +641,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             print(f'Error: Bad encrypted json: {ex}')
             return None
 
-        cipher = AES.new(aes_key, AES.MODE_CBC, iv=base64.b64decode(req_iv))
-        try:
-            req_decrypted = Crypto.Util.Padding.unpad(cipher.decrypt(base64.b64decode(req_encrypted)), AES.block_size)
-        except ValueError as ex:
-            print(f'Error: Bad padding: {ex}')
-            return None
-
-        hash_actual = SHA256.new(req_decrypted).digest().hex()
-        hash_expected = base64.b64decode(req_hash).hex()
-        if hash_actual != hash_expected:
-            print(f'Error: Verification failed')
-            return None
-
-        req_decrypted = req_decrypted.decode('utf-8')
+        req_decrypted = self._ecdh_decrypt(aes_key, req_encrypted, req_iv, req_hash)
 
         try:
             req_dict = json.loads(req_decrypted)
@@ -1246,6 +1253,153 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         else:
             raise RuntimeError("Unsupported Auth")
 
+    def _resp_200_json_empty(self):
+        resp = b''
+        resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+        resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+        cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+        resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        content_type = 'application/json'
+        resp += f'Content-type: {content_type}\r\n'.encode('ascii')
+        content = '{}'
+        resp += f'Content-Length: {len(content)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        print(f'Resp: {content}')
+        resp += content.encode('utf-8')
+        self.wfile.write(resp)
+
+    def _resp_200_json_validate_url_status(self, status):
+        resp = b''
+        resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+        resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+        cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+        resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        content_type = 'application/json'
+        resp += f'Content-type: {content_type}\r\n'.encode('ascii')
+        content = f'{{"status": {status}}}'
+        resp += f'Content-Length: {len(content)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        print(f'Resp: {content}')
+        resp += content.encode('utf-8')
+        self.wfile.write(resp)
+
+    def _resp_400(self):
+        resp = b''
+        resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+        resp += f'Content-Length: 0\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        print(f'Response: {resp}')
+        self.wfile.write(resp)
+
+    def _resp_401(self):
+        resp = b''
+        resp += f'HTTP/1.0 401 Unauthorized\r\n'.encode('ascii')
+        resp += f'WWW-Authenticate: Basic realm="Test"'.encode('ascii')
+        resp += f'Content-Length: 0\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        print(f'Response: {resp}')
+        self.wfile.write(resp)
+
+    def _validate_url_check_post_advs(self, url, user, password):
+        if url == 'https://network.ruuvi.com/record':
+            return self._resp_200_json_validate_url_status(200)
+        elif url == 'https://network.ruuvi.com/record1':
+            if user is None or password is None:
+                return self._resp_200_json_validate_url_status(401)
+            elif user == 'user1' and password == 'pass1':
+                return self._resp_200_json_validate_url_status(200)
+            return self._resp_200_json_validate_url_status(401)
+        return self._resp_200_json_validate_url_status(400)
+
+    def _validate_url_check_post_stat(self, url, user, password):
+        if url == 'https://network.ruuvi.com/status':
+            return self._resp_200_json_validate_url_status(200)
+        elif url == 'https://network.ruuvi.com/status1':
+            if user is None or password is None:
+                return self._resp_200_json_validate_url_status(401)
+            elif user == 'user1' and password == 'pass1':
+                return self._resp_200_json_validate_url_status(200)
+            return self._resp_200_json_validate_url_status(401)
+        return self._resp_200_json_validate_url_status(400)
+
+    def _validate_url_check_mqtt(self, url, user, password, topic_prefix, client_id):
+        if url == 'mqtt://test.mosquitto.org:1883':
+            if user is None and password is None:
+                return self._resp_200_json_validate_url_status(200)
+            else:
+                return self._resp_200_json_validate_url_status(401)
+        elif url == 'mqtt://test.mosquitto.org:1884':
+            if user == 'rw' and password == 'readwrite':
+                return self._resp_200_json_validate_url_status(200)
+            else:
+                return self._resp_200_json_validate_url_status(401)
+
+        elif url == 'mqtts://test.mosquitto.org:8886':
+            if user is None and password is None:
+                return self._resp_200_json_validate_url_status(200)
+            else:
+                return self._resp_200_json_validate_url_status(401)
+        elif url == 'mqtts://test.mosquitto.org:1885':
+            if user == 'rw' and password == 'readwrite':
+                return self._resp_200_json_validate_url_status(200)
+            else:
+                return self._resp_200_json_validate_url_status(401)
+
+        elif url == 'mqttws://test.mosquitto.org:8080':
+            if user is None and password is None:
+                return self._resp_200_json_validate_url_status(200)
+            else:
+                return self._resp_200_json_validate_url_status(401)
+        elif url == 'mqttws://test.mosquitto.org:8090':
+            if user == 'rw' and password == 'readwrite':
+                return self._resp_200_json_validate_url_status(200)
+            else:
+                return self._resp_200_json_validate_url_status(401)
+
+        elif url == 'mqttwss://test.mosquitto.org:8081':
+            if user is None and password is None:
+                return self._resp_200_json_validate_url_status(200)
+            else:
+                return self._resp_200_json_validate_url_status(401)
+        elif url == 'mqttwss://test.mosquitto.org:8091':
+            if user == 'rw' and password == 'readwrite':
+                return self._resp_200_json_validate_url_status(200)
+            else:
+                return self._resp_200_json_validate_url_status(401)
+
+        return self._resp_200_json_validate_url_status(400)
+
+    def _validate_url(self, url_with_params):
+        parsed_url = urlparse(url_with_params)
+        url = parse_qs(parsed_url.query)['url'][0]
+        validate_type = parse_qs(parsed_url.query)['validate_type'][0]
+        try:
+            user = parse_qs(parsed_url.query)['user'][0]
+        except KeyError:
+            user = None
+        password = None
+        if user is not None:
+            encrypted_password = parse_qs(parsed_url.query)['encrypted_password'][0]
+            encrypted_password_iv = parse_qs(parsed_url.query)['encrypted_password_iv'][0]
+            encrypted_password_hash = parse_qs(parsed_url.query)['encrypted_password_hash'][0]
+            if user != '':
+                password = self._ecdh_decrypt(g_aes_key, encrypted_password, encrypted_password_iv, encrypted_password_hash)
+                if password is None:
+                    return self._resp_400()
+
+        if validate_type == 'check_post_advs':
+            return self._validate_url_check_post_advs(url, user, password)
+        elif validate_type == 'check_post_stat':
+            return self._validate_url_check_post_stat(url, user, password)
+        elif validate_type == 'check_mqtt':
+            return self._validate_url_check_mqtt(url, user, password, parse_qs(parsed_url.query)['aux_param'][0],
+                                                 parse_qs(parsed_url.query)['aux_param2'][0])
+        return self._resp_400()
+
     def do_GET(self):
         global g_ruuvi_dict
         global g_login_session
@@ -1462,7 +1616,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += f'Content-Length: {0}\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
                 self.wfile.write(resp)
-            pass
+        elif file_path == '/validate_url':
+            self._validate_url(self.path)
         elif file_path == '/metrics':
             if not self._check_auth():
                 lan_auth_type = g_ruuvi_dict['lan_auth_type']
