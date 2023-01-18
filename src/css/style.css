@@ -832,10 +832,6 @@ p {
   display: none;
 }
 
-.hidden {
-  display: none;
-}
-
 table {
   width: 100%;
 }
@@ -1204,6 +1200,10 @@ select:focus {
   position: relative
 }
 
+.input-with_validity_check .input-password-eye {
+  right: calc(5px + var(--fontawesome-icon-width) + 5px);
+}
+
 .input-with_validity_check input {
   margin-right: calc(var(--fontawesome-icon-width) + 5px);
   width: calc(100% - var(--fontawesome-icon-width) - 5px);
@@ -1223,6 +1223,45 @@ select:focus {
 
 .input-invalid {
   background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgRnJlZSA2LjIuMCBieSBAZm9udGF3ZXNvbWUgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbSBMaWNlbnNlIC0gaHR0cHM6Ly9mb250YXdlc29tZS5jb20vbGljZW5zZS9mcmVlIChJY29uczogQ0MgQlkgNC4wLCBGb250czogU0lMIE9GTCAxLjEsIENvZGU6IE1JVCBMaWNlbnNlKSBDb3B5cmlnaHQgMjAyMiBGb250aWNvbnMsIEluYy4gLS0+PHBhdGggZmlsbD0icmVkIiBkPSJNMTc1IDE3NUMxODQuNCAxNjUuNyAxOTkuNiAxNjUuNyAyMDguMSAxNzVMMjU1LjEgMjIyLjFMMzAzIDE3NUMzMTIuNCAxNjUuNyAzMjcuNiAxNjUuNyAzMzYuMSAxNzVDMzQ2LjMgMTg0LjQgMzQ2LjMgMTk5LjYgMzM2LjEgMjA4LjFMMjg5LjkgMjU1LjFMMzM2LjEgMzAzQzM0Ni4zIDMxMi40IDM0Ni4zIDMyNy42IDMzNi4xIDMzNi4xQzMyNy42IDM0Ni4zIDMxMi40IDM0Ni4zIDMwMyAzMzYuMUwyNTUuMSAyODkuOUwyMDguMSAzMzYuMUMxOTkuNiAzNDYuMyAxODQuNCAzNDYuMyAxNzUgMzM2LjFDMTY1LjcgMzI3LjYgMTY1LjcgMzEyLjQgMTc1IDMwM0wyMjIuMSAyNTUuMUwxNzUgMjA4LjFDMTY1LjcgMTk5LjYgMTY1LjcgMTg0LjQgMTc1IDE3NVYxNzV6TTUxMiAyNTZDNTEyIDM5Ny40IDM5Ny40IDUxMiAyNTYgNTEyQzExNC42IDUxMiAwIDM5Ny40IDAgMjU2QzAgMTE0LjYgMTE0LjYgMCAyNTYgMEMzOTcuNCAwIDUxMiAxMTQuNiA1MTIgMjU2ek0yNTYgNDhDMTQxLjEgNDggNDggMTQxLjEgNDggMjU2QzQ4IDM3MC45IDE0MS4xIDQ2NCAyNTYgNDY0QzM3MC45IDQ2NCA0NjQgMzcwLjkgNDY0IDI1NkM0NjQgMTQxLjEgMzcwLjkgNDggMjU2IDQ4eiIvPjwvc3ZnPg==");
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes rotate {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+.input-checking {
+  width: var(--fontawesome-icon-width);
+  height: var(--fontawesome-icon-width);
+  /*margin: 10px auto 0;*/
+  border:solid 4px black;
+  border-radius: 50%;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  -webkit-transition: all 0.5s ease-in;
+  -webkit-animation-name:             rotate;
+  -webkit-animation-duration:         1.0s;
+  -webkit-animation-iteration-count:  infinite;
+  -webkit-animation-timing-function: linear;
+
+  transition: all 0.5s ease-in;
+  animation-name:             rotate;
+  animation-duration:         1.0s;
+  animation-iteration-count:  infinite;
+  animation-timing-function: linear;
 }
 
 select {
@@ -1466,4 +1505,8 @@ table {
 
 #gateway_name {
   margin: 20px 0;
+}
+
+.hidden {
+  display: none;
 }

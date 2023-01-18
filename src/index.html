@@ -1474,23 +1474,33 @@
 				<label class="font-bold">
 					<span lang="en">Server address</span>
 					<span lang="fi">Palvelimen osoite</span>
-					<input id="http_url" type="text" placeholder="" value="">
+					<div class="input-with_validity_check">
+						<input id="http_url" type="text" placeholder="" value="">
+						<div class="input-with_validity_check-icon">
+						</div>
+					</div>
 				</label>
 				<label class="font-bold">
 					<span lang="en">User name (optional)</span>
 					<span lang="fi">Käyttäjänimi (valinnainen)</span>
-					<input id="http_user" type="text" placeholder="" value="">
+					<div class="input-with_validity_check">
+						<input id="http_user" type="text" placeholder="" value="">
+						<div class="input-with_validity_check-icon">
+						</div>
+					</div>
 				</label>
 				<label class="font-bold">
 					<span lang="en">Password (optional)</span>
 					<span lang="fi">Salasana (valinnainen)</span>
-					<div class="input-password">
+					<div class="input-password input-with_validity_check">
 						<input id="http_pass" type="password" placeholder="" value="">
 						<div class="input-password-eye">
 							<div class="eye">
 							</div>
 							<div class="eye-slash hidden">
 							</div>
+						</div>
+						<div class="input-with_validity_check-icon">
 						</div>
 					</div>
 				</label>
@@ -1541,23 +1551,35 @@
 				<label class="font-bold">
 					<span lang="en">Server</span>
 					<span lang="fi">Palvelin</span>
-					<input id="mqtt_server" type="text" value="test.mosquitto.org">
+					<div class="input-with_validity_check">
+						<input id="mqtt_server" type="text" value="test.mosquitto.org">
+						<div class="input-with_validity_check-icon">
+						</div>
+					</div>
 				</label>
 				<label class="font-bold">
 					<span lang="en">Port</span>
 					<span lang="fi">Portti</span>
-					<input id="mqtt_port" type="text" placeholder="" value="1883">
+					<div class="input-with_validity_check">
+						<input id="mqtt_port" type="text" placeholder="" value="1883">
+						<div class="input-with_validity_check-icon">
+						</div>
+					</div>
 				</label>
 
 				<label class="font-bold">
 					<span lang="en">User name</span>
 					<span lang="fi">Käyttäjänimi</span>
-					<input id="mqtt_user" type="text" placeholder="User" value="">
+					<div class="input-with_validity_check">
+						<input id="mqtt_user" type="text" placeholder="User" value="">
+						<div class="input-with_validity_check-icon">
+						</div>
+					</div>
 				</label>
 				<label class="font-bold">
 					<span lang="en">Password</span>
 					<span lang="fi">Salasana</span>
-					<div class="input-password">
+					<div class="input-password input-with_validity_check">
 						<input id="mqtt_pass" type="password" placeholder="Password" value="">
 						<div class="input-password-eye">
 							<div class="eye">
@@ -1565,12 +1587,18 @@
 							<div class="eye-slash hidden">
 							</div>
 						</div>
+						<div class="input-with_validity_check-icon">
+						</div>
 					</div>
 				</label>
 				<label class="font-bold">
 					<span lang="en">Client name</span>
 					<span lang="fi">Asiakastunnus</span>
-					<input id="mqtt_client_id" type="text" placeholder="MAC-address is used if empty" value="">
+					<div class="input-with_validity_check">
+						<input id="mqtt_client_id" type="text" placeholder="MAC-address is used if empty" value="">
+						<div class="input-with_validity_check-icon">
+						</div>
+					</div>
 				</label>
 
 				<label class="conf-settings-checkbox control control-checkbox">
@@ -1696,23 +1724,33 @@
 					<label class="font-bold">
 						<span lang="en">HTTP server where to send statistics</span>
 						<span lang="fi">HTTP-palvelin, jonne statistiikkatiedot lähetetään</span>
-						<input id="http_stat_url" type="text" placeholder="" value="">
+						<div class="input-with_validity_check">
+							<input id="http_stat_url" type="text" placeholder="" value="">
+							<div class="input-with_validity_check-icon">
+							</div>
+						</div>
 					</label>
 					<label class="font-bold">
 						<span lang="en">User name (optional)</span>
 						<span lang="fi">Käyttäjänimi (valinnainen)</span>
-						<input id="http_stat_user" type="text" placeholder="" value="">
+						<div class="input-with_validity_check">
+							<input id="http_stat_user" type="text" placeholder="" value="">
+							<div class="input-with_validity_check-icon">
+							</div>
+						</div>
 					</label>
 					<label class="font-bold">
 						<span lang="en">Password (optional)</span>
 						<span lang="fi">Salasana (valinnainen)</span>
-						<div class="input-password">
+						<div class="input-password input-with_validity_check">
 							<input id="http_stat_pass" type="password" placeholder="" value="">
 							<div class="input-password-eye">
 								<div class="eye">
 								</div>
 								<div class="eye-slash hidden">
 								</div>
+							</div>
+							<div class="input-with_validity_check-icon">
 							</div>
 						</div>
 					</label>
@@ -1736,6 +1774,10 @@
 				<a href="" id="page-custom_server-button-continue" class="btn">
 					<span lang="en">NEXT</span>
 					<span lang="fi">SEURAAVA</span>
+				</a>
+				<a href="" id="page-custom_server-button-check" class="btn hidden">
+					<span lang="en">CHECK</span>
+					<span lang="fi">TARKISTAA</span>
 				</a>
 			</div>
 		</section>
