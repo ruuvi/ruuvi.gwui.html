@@ -1310,7 +1310,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         elif url == 'https://network.ruuvi.com/record1':
             if user is None or password is None:
                 return self._resp_200_json_validate_url_status(401)
-            elif user == 'user1' and password == 'pass1':
+            elif user == 'user1' and (password is None or password == 'pass1'):
                 return self._resp_200_json_validate_url_status(200)
             return self._resp_200_json_validate_url_status(401)
         return self._resp_200_json_validate_url_status(400)
@@ -1321,7 +1321,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         elif url == 'https://network.ruuvi.com/status1':
             if user is None or password is None:
                 return self._resp_200_json_validate_url_status(401)
-            elif user == 'user1' and password == 'pass1':
+            elif user == 'user1' and (password is None or password == 'pass1'):
                 return self._resp_200_json_validate_url_status(200)
             return self._resp_200_json_validate_url_status(401)
         return self._resp_200_json_validate_url_status(400)
@@ -1333,7 +1333,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             else:
                 return self._resp_200_json_validate_url_status(401)
         elif url == 'mqtt://test.mosquitto.org:1884':
-            if user == 'rw' and password == 'readwrite':
+            if user == 'rw' and (password is None or password == 'readwrite'):
                 return self._resp_200_json_validate_url_status(200)
             else:
                 return self._resp_200_json_validate_url_status(401)
@@ -1344,7 +1344,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             else:
                 return self._resp_200_json_validate_url_status(401)
         elif url == 'mqtts://test.mosquitto.org:1885':
-            if user == 'rw' and password == 'readwrite':
+            if user == 'rw' and (password is None or password == 'readwrite'):
                 return self._resp_200_json_validate_url_status(200)
             else:
                 return self._resp_200_json_validate_url_status(401)
@@ -1355,7 +1355,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             else:
                 return self._resp_200_json_validate_url_status(401)
         elif url == 'mqttws://test.mosquitto.org:8090':
-            if user == 'rw' and password == 'readwrite':
+            if user == 'rw' and (password is None or password == 'readwrite'):
                 return self._resp_200_json_validate_url_status(200)
             else:
                 return self._resp_200_json_validate_url_status(401)
@@ -1366,7 +1366,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             else:
                 return self._resp_200_json_validate_url_status(401)
         elif url == 'mqttwss://test.mosquitto.org:8091':
-            if user == 'rw' and password == 'readwrite':
+            if user == 'rw' and (password is None or password == 'readwrite'):
                 return self._resp_200_json_validate_url_status(200)
             else:
                 return self._resp_200_json_validate_url_status(401)
@@ -1383,13 +1383,21 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             user = None
         password = None
         if user is not None:
-            encrypted_password = parse_qs(parsed_url.query)['encrypted_password'][0]
-            encrypted_password_iv = parse_qs(parsed_url.query)['encrypted_password_iv'][0]
-            encrypted_password_hash = parse_qs(parsed_url.query)['encrypted_password_hash'][0]
-            if user != '':
-                password = self._ecdh_decrypt(g_aes_key, encrypted_password, encrypted_password_iv, encrypted_password_hash)
-                if password is None:
+            try:
+                encrypted_password = parse_qs(parsed_url.query)['encrypted_password'][0]
+            except KeyError:
+                pass
+            else:
+                try:
+                    encrypted_password_iv = parse_qs(parsed_url.query)['encrypted_password_iv'][0]
+                    encrypted_password_hash = parse_qs(parsed_url.query)['encrypted_password_hash'][0]
+                except KeyError:
                     return self._resp_400()
+
+                if user != '':
+                    password = self._ecdh_decrypt(g_aes_key, encrypted_password, encrypted_password_iv, encrypted_password_hash)
+                    if password is None:
+                        return self._resp_400()
 
         if validate_type == 'check_post_advs':
             return self._validate_url_check_post_advs(url, user, password)

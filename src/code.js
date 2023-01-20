@@ -1784,17 +1784,19 @@ $(document).ready(function () {
     url += encodeURIComponent(url_val)
     url += '&validate_type=' + validate_type
     let user_val = input_user.val()
-    let pass_val = input_pass.val()
     if (user_val) {
-      let json_encrypted_password = JSON.parse(ruuvi_edch_encrypt(pass_val))
       url += '&user='
       url += encodeURIComponent(user_val)
-      url += '&encrypted_password='
-      url += encodeURIComponent(json_encrypted_password['encrypted'])
-      url += '&encrypted_password_iv='
-      url += encodeURIComponent(json_encrypted_password['iv'])
-      url += '&encrypted_password_hash='
-      url += encodeURIComponent(json_encrypted_password['hash'])
+      if (!input_password_is_saved(input_pass)) {
+        let pass_val = input_pass.val()
+        let json_encrypted_password = JSON.parse(ruuvi_edch_encrypt(pass_val))
+        url += '&encrypted_password='
+        url += encodeURIComponent(json_encrypted_password['encrypted'])
+        url += '&encrypted_password_iv='
+        url += encodeURIComponent(json_encrypted_password['iv'])
+        url += '&encrypted_password_hash='
+        url += encodeURIComponent(json_encrypted_password['hash'])
+      }
     }
     if (aux_param) {
       url += '&aux_param='
