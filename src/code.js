@@ -65,7 +65,7 @@ function startCheckStatus (timeout = 0) {
 }
 
 function stopCheckStatus () {
-  console.log(log_wrap('Start periodic status check'))
+  console.log(log_wrap('Stop periodic status check'))
   if (g_checkStatusTimer != null) {
     clearTimeout(g_checkStatusTimer)
     g_checkStatusTimer = null
@@ -238,6 +238,7 @@ function on_show_software_update () {
   $('#page-software_update-advanced-button').addClass('disable-click')
 
   bodyClassLoadingAdd()
+  stopCheckStatus()
   $.getJSON('/github_latest_release.json', function (data) {
     let latest_release_version = data.tag_name
     let m = latest_release_version.match(/v(\d+)\.(\d+)\.(\d+)/)
@@ -279,6 +280,7 @@ function on_show_software_update () {
       }
     }
     bodyClassLoadingRemove()
+    startCheckStatus()
   }).fail(function ($xhr) {
     $('#page-software_update-in_progress').hide()
     $('#page-software_update-advanced-button').removeClass('disable-click')
@@ -286,6 +288,7 @@ function on_show_software_update () {
     $('.software_update-status').hide()
     $('#software_update-status-error').show()
     bodyClassLoadingRemove()
+    startCheckStatus()
   })
 }
 
@@ -1840,6 +1843,7 @@ $(document).ready(function () {
   function custom_server_validate_urls () {
     console.log('custom_server_validate_urls')
     bodyClassLoadingAdd()
+    stopCheckStatus()
     let http_url = $('#http_url')
     if (validate_url(http_url, http_url.val(), $('#http_user'), $('#http_pass'),
       'check_post_advs')) {
@@ -1878,6 +1882,7 @@ $(document).ready(function () {
 
     on_custom_server_url_changed()
     bodyClassLoadingRemove()
+    startCheckStatus()
   }
 
   $('section#page-custom_server #page-custom_server-button-check').click(function (e) {
