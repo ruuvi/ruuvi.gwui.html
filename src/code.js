@@ -1723,13 +1723,15 @@ $(document).ready(function () {
       } else {
         $('#mqtt_pass').val('')
       }
+      input_password_clear_saved($('#mqtt_pass'))
     }
+    input_validity_set_validation_required($('#mqtt_server'))
     on_custom_server_url_changed()
   })
 
   $('#mqtt_server').on('input change', function () {
     on_edit_mqtt_settings()
-    input_validity_set_validation_required($(this))
+    input_validity_set_validation_required($('#mqtt_server'))
     on_custom_server_url_changed()
   })
   $('#mqtt_port').on('input change', function () {
@@ -1775,7 +1777,7 @@ $(document).ready(function () {
     }
   })
 
-  function validate_url (input_url, url_val, input_user, input_pass, validate_type, aux_param, aux_param2) {
+  function validate_url (input_url, url_val, input_user, input_pass, validate_type, aux_param) {
     if (!input_validity_is_validation_required(input_url) || input_validity_has_checked(input_url)) {
       return false
     }
@@ -1799,12 +1801,7 @@ $(document).ready(function () {
       }
     }
     if (aux_param) {
-      url += '&aux_param='
-      url += encodeURIComponent(aux_param)
-    }
-    if (aux_param2) {
-      url += '&aux_param2='
-      url += encodeURIComponent(aux_param2)
+      url += aux_param
     }
     input_validity_set_checking(input_url)
     if (user_val) {
@@ -1869,8 +1866,12 @@ $(document).ready(function () {
       }
       let mqtt_topic_prefix = get_mqtt_topic_prefix()
       let mqtt_url = mqtt_url_prefix + mqtt_server.val() + ':' + $('#mqtt_port').val()
-      if (validate_url(mqtt_server, mqtt_url, $('#mqtt_user'), $('#mqtt_pass'),
-        'check_mqtt', mqtt_topic_prefix, $('#mqtt_client_id').val())) {
+      let aux_params = ''
+      aux_params += '&mqtt_topic_prefix='
+      aux_params += encodeURIComponent(mqtt_topic_prefix)
+      aux_params += '&mqtt_client_id='
+      aux_params += encodeURIComponent($('#mqtt_client_id').val())
+      if (validate_url(mqtt_server, mqtt_url, $('#mqtt_user'), $('#mqtt_pass'), 'check_mqtt', aux_params)) {
         return
       }
     }

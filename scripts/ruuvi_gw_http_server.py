@@ -1404,8 +1404,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         elif validate_type == 'check_post_stat':
             return self._validate_url_check_post_stat(url, user, password)
         elif validate_type == 'check_mqtt':
-            return self._validate_url_check_mqtt(url, user, password, parse_qs(parsed_url.query)['aux_param'][0],
-                                                 parse_qs(parsed_url.query)['aux_param2'][0])
+            return self._validate_url_check_mqtt(url, user, password, parse_qs(parsed_url.query)['mqtt_topic_prefix'][0],
+                                                 parse_qs(parsed_url.query)['mqtt_client_id'][0])
         return self._resp_400()
 
     def do_GET(self):
