@@ -34,6 +34,7 @@ let g_current_page = null
 let g_refresh_ap_timeout = 15000
 let g_refresh_ap_flag_initial = false
 let g_wifi_sort_by_rssi = false
+let g_fw_updating_stage
 
 const CONNECTION_STATE = {
   NOT_CONNECTED: 'NOT_CONNECTED',
@@ -223,6 +224,9 @@ function change_page_to_finished (num_steps) {
 
 function on_show_software_update () {
   if ($('#software_update-version-latest').text() !== '') {
+    let latest_release_version = $('#software_update-version-latest').text()
+    let software_update_url = firmwareUpdatingBaseURL + latest_release_version
+    $('#software_update-url').val(software_update_url)
     return
   }
   $('#page-software_update-latest_fw_ver').hide()
@@ -1264,52 +1268,125 @@ $(document).ready(function () {
 
   // ==== page-software_update =======================================================================================
   $('section#page-software_update').bind('onShow', function () {
+    $('#software_update-set-url-manually').prop('checked', false)
+    software_update_on_change_url()
     on_show_software_update()
   })
 
   $('section#page-software_update').bind('onHide', function () {
+    software_update_on_change_url()
     console.log(log_wrap('section#page-software_update: onHide'))
+  })
+
+  function is_valid_http_url (str_val) {
+    let url
+    if (str_val.indexOf('://') === -1) {
+      str_val = 'http://' + str_val
+    }
+    try {
+      url = new URL(str_val)
+    } catch (_) {
+      return false
+    }
+    return url.protocol === 'http:' || url.protocol === 'https:'
+  }
+
+  function software_update_on_change_url () {
+    let software_update_url = $('#software_update-url')
+    let software_update_button_upgrade = $('#software_update-button-upgrade')
+    $('#page-software_update-status-error').addClass('hidden')
+    if ($('#software_update-set-url-manually')[0].checked) {
+      if (is_valid_http_url(software_update_url.val())) {
+        input_validity_clear_icon(software_update_url)
+        software_update_button_upgrade.removeClass('disable-click')
+      } else {
+        input_validity_set_invalid(software_update_url)
+        software_update_button_upgrade.addClass('disable-click')
+      }
+      $('#page-software_update-version_info').hide()
+      $('#page-software_update-status').hide()
+      software_update_url.show()
+      $('#page-software_update-button-continue').addClass('hidden')
+    } else {
+      if ($('#software_update-version-latest').text() !== '') {
+        let latest_release_version = $('#software_update-version-latest').text()
+        software_update_url.val(firmwareUpdatingBaseURL + latest_release_version)
+      }
+      input_validity_clear_icon(software_update_url)
+      software_update_url.hide()
+      $('#page-software_update-version_info').show()
+      $('#page-software_update-status').show()
+      $('#page-software_update-button-continue').removeClass('hidden')
+      if (!flagLatestFirmwareVersionSupported) {
+        software_update_button_upgrade.addClass('disable-click')
+      }
+    }
+  }
+
+  $('section#page-software_update #software_update-url').on('input change', function () {
+    software_update_on_change_url()
   })
 
   $('section#page-software_update #software_update-button-upgrade').click(function (e) {
     e.preventDefault()
-    let software_update_url = $('#software_update-url').val()
+    $('#page-software_update-status-error').addClass('hidden')
+    let input_software_update_url = $('#software_update-url')
+    let software_update_button_upgrade = $('#software_update-button-upgrade')
+
+    let software_update_url_val = input_software_update_url.val()
+    if (software_update_url_val.indexOf('://') === -1) {
+      software_update_url_val = 'http://' + software_update_url_val
+    }
+    if (!software_update_url_val.endsWith('/')) {
+      software_update_url_val += '/'
+    }
+    if (software_update_url_val !== input_software_update_url.val()) {
+      input_software_update_url.val(software_update_url_val)
+    }
+    if (!is_valid_http_url(software_update_url_val)) {
+      input_validity_set_invalid(software_update_url_val)
+      software_update_button_upgrade.addClass('disable-click')
+      return
+    }
+    bodyClassLoadingAdd()
+    stopCheckStatus()
     $.ajax({
         method: 'POST',
         url: '/fw_update.json',
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
         cache: false,
-        data: JSON.stringify({ 'url': software_update_url }),
+        data: JSON.stringify({ 'url': software_update_url_val }),
         success: function (data, text) {
-          change_url_software_update_progress()
+          let status = data['status']
+          let message = data['message']
+          if (message === undefined) {
+            message = ''
+          }
+          if (status === 200) {
+            change_url_software_update_progress()
+          } else {
+            $('#page-software_update-status-error-desc').text('Status: ' + status + ', Message: ' + message)
+            $('#page-software_update-status-error').removeClass('hidden')
+          }
+          bodyClassLoadingRemove()
+          startCheckStatus()
         },
         error: function (request, status, error) {
-          // ('HTTP error: ' + status + ', ' + 'Status: ' + request.status + '(' + request.statusText + ')' + ', ' + request.responseText);
           console.log(log_wrap('POST /fw_update.json: failure' +
             ', status=' + status +
             ', error=' + error))
+          $('#page-software_update-status-error-desc').text('Status: ' + status + ', Error: ' + error)
+          $('#page-software_update-status-error').removeClass('hidden')
+          bodyClassLoadingRemove()
+          startCheckStatus()
         }
       }
     )
   })
 
   $('section#page-software_update #software_update-set-url-manually').change(function (e) {
-    if ($('#software_update-set-url-manually')[0].checked) {
-      $('#page-software_update-version_info').hide()
-      $('#page-software_update-status').hide()
-      $('#software_update-url').show()
-      $('#software_update-button-upgrade').removeClass('disable-click')
-      $('#page-software_update-button-continue').addClass('disable-click')
-    } else {
-      $('#software_update-url').hide()
-      $('#page-software_update-version_info').show()
-      $('#page-software_update-status').show()
-      $('#page-software_update-button-continue').removeClass('disable-click')
-      if (!flagLatestFirmwareVersionSupported) {
-        $('#software_update-button-upgrade').addClass('disable-click')
-      }
-    }
+    software_update_on_change_url()
   })
 
   $('section#page-software_update #page-software_update-button-continue').click(function (e) {
@@ -1522,8 +1599,11 @@ $(document).ready(function () {
           if (request.responseText) {
             desc += '\nResponse: ' + request.responseText
           }
+          $('#remote_cfg-button-download').removeClass('disable-click')
           $('#page-remote_cfg-status-error-desc').text(desc)
           $('#page-remote_cfg-status-error').removeClass('hidden')
+          startCheckStatus()
+          bodyClassLoadingRemove()
         }
       }
     )
@@ -2125,6 +2205,7 @@ $(document).ready(function () {
 
   $('#page-finished').bind('onShow', function () {
     console.log(log_wrap('onShow: #page-finished'))
+    stopCheckStatus()
   })
 
   // =================================================================================================================
@@ -2510,9 +2591,9 @@ function onGetStatusJson (data) {
   g_flagAccessFromLAN = data.hasOwnProperty('lan') && (data['lan'] === 1)
   if (data.hasOwnProperty('extra')) {
     let data_extra = data['extra']
-    let fw_updating_stage = data_extra['fw_updating']
+    g_fw_updating_stage = data_extra['fw_updating']
     let fw_updating_percentage = data_extra['percentage']
-    if (fw_updating_stage > 0) {
+    if (g_fw_updating_stage > 0) {
       if (!$('#page-software_update_progress').is(':visible')) {
         change_url_software_update_progress()
       }
@@ -2520,7 +2601,7 @@ function onGetStatusJson (data) {
       let progressbar_stage2 = $('#software_update_progress-stage2')
       let progressbar_stage3 = $('#software_update_progress-stage3')
       let progressbar_stage4 = $('#software_update_progress-stage4')
-      switch (fw_updating_stage) {
+      switch (g_fw_updating_stage) {
         case 1:
           progressbar_stage1.val(fw_updating_percentage)
           break
@@ -2562,6 +2643,13 @@ function onGetStatusJson (data) {
       }
       return
     }
+  }
+  if (g_fw_updating_stage > 0) {
+    $('#page-software_update_progress-info').addClass('hidden')
+    $('#software_update_progress-status-completed_unsuccessfully').removeClass('hidden')
+    $('#software_update_progress-status-completed_unsuccessfully-because_of_gateway_reboot').removeClass('hidden')
+    stopCheckStatus()
+    return
   }
   if (data.hasOwnProperty('ssid') && !!data['ssid'] && data['ssid'] !== '') {
     connectedSSID = data['ssid']
