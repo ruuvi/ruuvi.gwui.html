@@ -870,9 +870,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             post_data = self.rfile.read(content_length).decode('ascii')
             new_dict = json.loads(post_data)
             g_software_update_url = new_dict['url']
-            g_software_update_stage = SOFTWARE_UPDATE_STAGE_1_DOWNLOAD_MAIN_FW
-            g_software_update_percentage = 0
-            content = '{}'
+            if g_software_update_url.startswith('http://'):
+                content = '{"status": 400, "message": "Invalid URL"}'
+            else:
+                g_software_update_stage = SOFTWARE_UPDATE_STAGE_1_DOWNLOAD_MAIN_FW
+                g_software_update_percentage = 0
+                content = '{"status": 200, "message": "OK"}'
             content_encoded = content.encode('utf-8')
             resp = b''
             resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
