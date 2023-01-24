@@ -750,7 +750,7 @@
 				</div>
 				<div>&nbsp;</div>
 				<div id="remote_cfg-options" class="indent hidden">
-					<label for="remote_cfg-base_url" class="info-icon-container">
+					<div id="remote_cfg-options_url_title">
 						<div class="info-icon-left-column">
 							<span lang="en">Specify URL of json file with the configuration or
 								URL of the folder with the set of json files for each Gateway:</span>
@@ -758,8 +758,17 @@
 								URL-osoite, jossa on json-tiedostot jokaiselle Gatewaylle:</span>
 						</div>
 						<a class="info-icon-button" href="#popup-info-icon-button-remote_cfg">i</a>
-						<input id="remote_cfg-base_url" type="text" value="">
-					</label>
+					</div>
+
+					<div>
+						<label for="remote_cfg-base_url" class="info-icon-container">
+							<div class="input-with_validity_check">
+								<input id="remote_cfg-base_url" type="text" value="">
+								<div class="input-with_validity_check-icon">
+								</div>
+							</div>
+						</label>
+					</div>
 
 					<div>&nbsp;</div>
 
@@ -783,18 +792,24 @@
 								<label>
 									<span lang="en">User:</span>
 									<span lang="fi">Käyttäjä:</span>
-									<input id="remote_cfg-auth_basic-user" type="text" placeholder="" value="">
+									<div class="input-with_validity_check">
+										<input id="remote_cfg-auth_basic-user" type="text" placeholder="" value="">
+										<div class="input-with_validity_check-icon">
+										</div>
+									</div>
 								</label>
 								<label>
 									<span lang="en">Password:</span>
 									<span lang="fi">Salasana:</span>
-									<div class="input-password">
+									<div class="input-password input-with_validity_check">
 										<input id="remote_cfg-auth_basic-password" type="password" placeholder="" value="">
 										<div class="input-password-eye">
 											<div class="eye">
 											</div>
 											<div class="eye-slash hidden">
 											</div>
+										</div>
+										<div class="input-with_validity_check-icon">
 										</div>
 									</div>
 								</label>
@@ -810,7 +825,11 @@
 								<label>
 									<span lang="en">Token:</span>
 									<span lang="fi">Token:</span>
-									<input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
+									<div class="input-password input-with_validity_check">
+										<input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
+										<div class="input-with_validity_check-icon">
+										</div>
+									</div>
 								</label>
 							</div>
 						</div>
@@ -821,14 +840,18 @@
 							<span lang="en">DOWNLOAD</span>
 							<span lang="fi">LATAA</span>
 						</button>
+						<button class="btn" id="remote_cfg-button-check" type="button">
+							<span lang="en">CHECK</span>
+							<span lang="fi">TARKISTAA</span>
+						</button>
 					</div>
 
 					<div>&nbsp;</div>
 
 					<div id="page-remote_cfg-status-error" class="rd hidden">
 						<div class="block-centered">
-							<span lang="en">Failed to get gw_cfg.json from the remote server.</span>
-							<span lang="fi">gw_cfg.json-tiedoston hakeminen palvelimelta epäonnistui.</span>
+							<span lang="en">Failed to get the configuration file from the remote server.</span>
+							<span lang="fi">Määritystiedoston hakeminen etäpalvelimelta epäonnistui.</span>
 						</div>
 						<div id="page-remote_cfg-status-error-desc" class="block-centered">
 						</div>

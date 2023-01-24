@@ -18,10 +18,13 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         username = kwargs.pop("username")
         password = kwargs.pop("password")
+        bearer_token = kwargs.pop("bearer_token")
         if username is None or password is None:
             self._auth = None
         else:
             self._auth = base64.b64encode(f"{username}:{password}".encode()).decode()
+        self._bearer_token = bearer_token
+
         self.close_connection = False
         super().__init__(*args, **kwargs)
 
@@ -66,6 +69,8 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(b"no auth header received")
             elif self.headers.get("Authorization") == "Basic " + self._auth:
                 self._do_POST(True)
+            elif self.headers.get("Authorization") == "Bearer " + self._bearer_token:
+                self._do_POST(True)
             else:
                 self.do_AUTHHEAD()
                 self.wfile.write(self.headers.get("Authorization").encode())
@@ -96,6 +101,8 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
                 self.do_AUTHHEAD()
                 self.wfile.write(b"no auth header received")
             elif self.headers.get("Authorization") == "Basic " + self._auth:
+                self._do_GET(True)
+            elif self.headers.get("Authorization") == "Bearer " + self._bearer_token:
                 self._do_GET(True)
             else:
                 self.do_AUTHHEAD()
@@ -161,11 +168,13 @@ if __name__ == "__main__":
     )
     parser.add_argument("--username", "-u", metavar="USERNAME")
     parser.add_argument("--password", "-p", metavar="PASSWORD")
+    parser.add_argument("--bearer_token", "-t", metavar="BEARER_TOKEN")
     args = parser.parse_args()
     handler_class = partial(
         AuthHTTPRequestHandler,
         username=args.username,
         password=args.password,
+        bearer_token=args.bearer_token,
         directory=args.directory,
     )
     httpd_run(HandlerClass=handler_class, port=args.port, bind=args.bind, ssl_cert=args.ssl_cert)

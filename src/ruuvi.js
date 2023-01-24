@@ -791,7 +791,7 @@ function on_get_config (data, ecdh_pub_key_srv_b64) {
       $('#remote_cfg-use_auth').prop('checked', true)
       $('#remote_cfg_auth_type_bearer').prop('checked', true)
       flagUseSavedRemoteCfgAuthBearerToken = true
-      $('#remote_cfg-auth_bearer-token').val('********')
+      $('#remote_cfg-auth_bearer-token').attr('placeholder', '********')
     }
 
     $('#ntp_server1').val(ntp_server1)

@@ -1373,6 +1373,27 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
         return self._resp_200_json_validate_url_status(400)
 
+    def _validate_url_check_remote_cfg(self, url, user, password, auth_type):
+        if url == 'http://192.168.1.100':
+            if auth_type == 'none' and user is None and password is None:
+                return self._resp_200_json_validate_url_status(200)
+            else:
+                return self._resp_200_json_validate_url_status(401)
+
+        elif url == 'http://192.168.1.101':
+            if auth_type == 'basic' and user is not None and user == 'user1' and password is not None and password == 'pass1':
+                return self._resp_200_json_validate_url_status(200)
+            else:
+                return self._resp_200_json_validate_url_status(401)
+
+        elif url == 'http://192.168.1.102':
+            if auth_type == 'bearer' and user is None and password is not None and password == 'token123':
+                return self._resp_200_json_validate_url_status(200)
+            else:
+                return self._resp_200_json_validate_url_status(401)
+
+        return self._resp_200_json_validate_url_status(400)
+
     def _validate_url(self, url_with_params):
         parsed_url = urlparse(url_with_params)
         url = parse_qs(parsed_url.query)['url'][0]
@@ -1381,23 +1402,21 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             user = parse_qs(parsed_url.query)['user'][0]
         except KeyError:
             user = None
-        password = None
-        if user is not None:
-            try:
-                encrypted_password = parse_qs(parsed_url.query)['encrypted_password'][0]
-            except KeyError:
-                pass
-            else:
-                try:
-                    encrypted_password_iv = parse_qs(parsed_url.query)['encrypted_password_iv'][0]
-                    encrypted_password_hash = parse_qs(parsed_url.query)['encrypted_password_hash'][0]
-                except KeyError:
-                    return self._resp_400()
+        try:
+            encrypted_password = parse_qs(parsed_url.query)['encrypted_password'][0]
+        except KeyError:
+            encrypted_password = None
 
-                if user != '':
-                    password = self._ecdh_decrypt(g_aes_key, encrypted_password, encrypted_password_iv, encrypted_password_hash)
-                    if password is None:
-                        return self._resp_400()
+        password = None
+        if encrypted_password is not None:
+            try:
+                encrypted_password_iv = parse_qs(parsed_url.query)['encrypted_password_iv'][0]
+                encrypted_password_hash = parse_qs(parsed_url.query)['encrypted_password_hash'][0]
+            except KeyError:
+                return self._resp_400()
+            password = self._ecdh_decrypt(g_aes_key, encrypted_password, encrypted_password_iv, encrypted_password_hash)
+            if password is None:
+                return self._resp_400()
 
         if validate_type == 'check_post_advs':
             return self._validate_url_check_post_advs(url, user, password)
@@ -1406,6 +1425,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         elif validate_type == 'check_mqtt':
             return self._validate_url_check_mqtt(url, user, password, parse_qs(parsed_url.query)['mqtt_topic_prefix'][0],
                                                  parse_qs(parsed_url.query)['mqtt_client_id'][0])
+        elif validate_type == 'check_remote_cfg':
+            return self._validate_url_check_remote_cfg(url, user, password, parse_qs(parsed_url.query)['auth_type'][0])
         return self._resp_400()
 
     def do_GET(self):
@@ -1437,6 +1458,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     del ruuvi_dict['mqtt_pass']
                 if 'lan_auth_pass' in ruuvi_dict:
                     del ruuvi_dict['lan_auth_pass']
+                if 'remote_cfg_auth_basic_pass' in ruuvi_dict:
+                    del ruuvi_dict['remote_cfg_auth_basic_pass']
+                if 'remote_cfg_auth_bearer_token' in ruuvi_dict:
+                    del ruuvi_dict['remote_cfg_auth_bearer_token']
 
                 if 'lan_auth_type' in ruuvi_dict:
                     if ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI and \
