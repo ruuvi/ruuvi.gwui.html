@@ -1510,3 +1510,9 @@ table {
 .hidden {
   display: none;
 }
+
+#remote_cfg-options_url_title:after {
+  content: " ";
+  display: block;
+  clear: both;
+}

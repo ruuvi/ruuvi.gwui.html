@@ -293,9 +293,24 @@ function on_show_software_update () {
 }
 
 function on_remote_cfg_changed () {
+  let input_base_url = $('#remote_cfg-base_url')
+  let base_url_val = input_base_url.val()
+  let remote_cfg_use = $('#remote_cfg-use').prop('checked')
+  let remote_cfg_use_auth = $('#remote_cfg-use_auth').prop('checked')
+
+  let remote_cfg_auth_basic_user = $('#remote_cfg-auth_basic-user')
+  let remote_cfg_auth_basic_pass = $('#remote_cfg-auth_basic-password')
+  let remote_cfg_auth_bearer_token = $('#remote_cfg-auth_bearer-token')
+  if (input_validity_is_validation_required(input_base_url)) {
+    input_validity_clear_icon(input_base_url)
+    input_validity_clear_icon(remote_cfg_auth_basic_user)
+    input_validity_clear_icon(remote_cfg_auth_basic_pass)
+    input_validity_clear_icon(remote_cfg_auth_bearer_token)
+  }
+
   let h = ''
   h += '<ul class="progressbar">'
-  if ($('#remote_cfg-use').prop('checked')) {
+  if (remote_cfg_use) {
     $('#remote_cfg-options').removeClass('hidden')
     for (let i = 0; i < 4; ++i) {
       h += '<li class="active"></li>'
@@ -303,8 +318,7 @@ function on_remote_cfg_changed () {
     for (let i = 4; i < 5; ++i) {
       h += '<li></li>'
     }
-    $('#remote_cfg-button-download').removeClass('hidden')
-    $('#page-remote_cfg-button-continue').addClass('disable-click')
+    $('#page-remote_cfg-button-continue').addClass('hidden')
   } else {
     $('#remote_cfg-options').addClass('hidden')
     for (let i = 0; i < 4; ++i) {
@@ -313,15 +327,14 @@ function on_remote_cfg_changed () {
     for (let i = 4; i < 8; ++i) {
       h += '<li></li>'
     }
-    $('#page-remote_cfg-button-continue').removeClass('disable-click')
-    $('#remote_cfg-button-download').addClass('hidden')
+    $('#page-remote_cfg-button-continue').removeClass('hidden')
   }
   h += '</ul>'
   h += '\n'
   $('section#page-remote_cfg div.progressbar-container').html(h)
 
   let remote_cfg_auth_type = $('input[name=\'remote_cfg_auth_type\']:checked').val()
-  if ($('#remote_cfg-use_auth').prop('checked')) {
+  if (remote_cfg_use_auth) {
     $('#conf-remote_cfg-auth-options').removeClass('hidden')
     if (remote_cfg_auth_type === undefined) {
       $(`input:radio[name='remote_cfg_auth_type'][value='remote_cfg_auth_type_basic']`).prop('checked', true)
@@ -337,41 +350,77 @@ function on_remote_cfg_changed () {
   } else {
     $('#conf-remote_cfg-auth-options').addClass('hidden')
   }
-  let remote_cfg_base_url = $('#remote_cfg-base_url')
-  let base_url = remote_cfg_base_url.val()
-  if ((base_url !== '') && (!base_url.startsWith('http://') && !base_url.startsWith('https://'))) {
-    base_url = 'https://' + base_url
-    remote_cfg_base_url.val(base_url)
-  }
 
-  let flag_valid = true
-  if (base_url === '') {
-    flag_valid = false
+  let flag_valid_url = true
+  let flag_valid_user = true
+  let flag_valid_pass = true
+  let flag_valid_token = true
+  if (remote_cfg_use && base_url_val === '') {
+    flag_valid_url = false
   }
-  if ($('#remote_cfg-use_auth').prop('checked')) {
+  if (remote_cfg_use_auth) {
     if (remote_cfg_auth_type === 'remote_cfg_auth_type_bearer') {
-      if ($('#remote_cfg-auth_bearer-token').val() === '') {
-        flag_valid = false
+      if (!flagUseSavedRemoteCfgAuthBearerToken && remote_cfg_auth_bearer_token.val() === '') {
+        flag_valid_token = false
       }
     } else {
-      if (($('#remote_cfg-auth_basic-user').val() === '') || ($('#remote_cfg-auth_basic-password').val() === '')) {
-        flag_valid = false
+      if (remote_cfg_auth_basic_user.val() === '') {
+        flag_valid_user = false
+      }
+      if (!input_password_is_saved(remote_cfg_auth_basic_pass) && remote_cfg_auth_basic_pass.val() === '') {
+        flag_valid_pass = false
       }
     }
   }
-  if (remote_cfg_base_url.val() !== base_url) {
-    remote_cfg_base_url.val(base_url)
-  }
-  if (flag_valid) {
-    $('#remote_cfg-button-download').removeClass('disable-click')
-  } else {
-    $('#remote_cfg-button-download').addClass('disable-click')
-  }
-}
 
-function on_remote_cfg_auth_basic_user_pass_changed () {
-  input_password_clear_saved($('#remote_cfg-auth_basic-password'))
-  on_remote_cfg_changed()
+  let flag_base_url_modified = false
+  let flag_user_pass_modified = false
+  let flag_token_modified = false
+  if (remote_cfg_use && input_validity_is_validation_required(input_base_url)) {
+    flag_base_url_modified = true
+  }
+  if (remote_cfg_use && remote_cfg_use_auth &&
+    (input_validity_is_validation_required(remote_cfg_auth_basic_user) ||
+      input_validity_is_validation_required(remote_cfg_auth_basic_pass))) {
+    flag_user_pass_modified = true
+  }
+  if (remote_cfg_use && remote_cfg_use_auth && input_validity_is_validation_required(remote_cfg_auth_bearer_token)) {
+    flag_token_modified = true
+  }
+
+  let remote_cfg_button_download = $('#remote_cfg-button-download')
+  let remote_cfg_button_check = $('#remote_cfg-button-check')
+
+  if (flag_base_url_modified || input_validity_is_invalid(input_base_url) ||
+    flag_user_pass_modified || input_validity_is_invalid(remote_cfg_auth_basic_user) || input_validity_is_invalid(remote_cfg_auth_basic_pass) ||
+    flag_token_modified || input_validity_is_invalid(remote_cfg_auth_bearer_token) ||
+    !flag_valid_url || !flag_valid_user || !flag_valid_pass || !flag_valid_token) {
+
+    remote_cfg_button_download.addClass('hidden')
+    remote_cfg_button_check.removeClass('hidden')
+
+    if (!flag_valid_url || !flag_valid_user || !flag_valid_pass || !flag_valid_token) {
+      remote_cfg_button_check.addClass('disable-click')
+      if (!flag_valid_url) {
+        input_validity_set_invalid(input_base_url)
+      }
+      if (!flag_valid_user) {
+        input_validity_set_invalid(remote_cfg_auth_basic_user)
+      }
+      if (!flag_valid_pass) {
+        input_validity_set_invalid(remote_cfg_auth_basic_pass)
+      }
+      if (!flag_valid_token) {
+        input_validity_set_invalid(remote_cfg_auth_bearer_token)
+      }
+    } else {
+      remote_cfg_button_check.removeClass('disable-click')
+    }
+  } else {
+    remote_cfg_button_check.addClass('hidden')
+    remote_cfg_button_download.removeClass('hidden')
+    remote_cfg_button_download.removeClass('disable-click')
+  }
 }
 
 function on_custom_connection_type_changed () {
@@ -728,6 +777,9 @@ function on_edit_automatic_update_settings () {
 }
 
 function input_validity_is_invalid (input_elem) {
+  if (input_elem === undefined) {
+    return false
+  }
   let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
   if (input_with_validity_check_icon.hasClass('input-invalid')) {
     return true
@@ -747,6 +799,9 @@ function input_validity_has_checked (input_elem) {
 }
 
 function input_validity_clear_icon (input_elem) {
+  if (input_elem === undefined) {
+    return
+  }
   let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
   input_with_validity_check_icon.removeClass('input-checking')
   input_with_validity_check_icon.removeClass('input-valid')
@@ -754,6 +809,9 @@ function input_validity_clear_icon (input_elem) {
 }
 
 function input_validity_is_validation_required (input_elem) {
+  if (input_elem === undefined) {
+    return false
+  }
   let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
   return input_with_validity_check_icon.hasClass('input-validation_required')
 }
@@ -769,6 +827,9 @@ function input_validity_clear_validation_required (input_elem) {
 }
 
 function input_validity_set_valid (input_elem) {
+  if (input_elem === undefined) {
+    return
+  }
   let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
   input_validity_clear_icon(input_elem)
   input_with_validity_check_icon.removeClass('input-validation_required')
@@ -776,6 +837,9 @@ function input_validity_set_valid (input_elem) {
 }
 
 function input_validity_set_invalid (input_elem) {
+  if (input_elem === undefined) {
+    return
+  }
   let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
   input_validity_clear_icon(input_elem)
   input_with_validity_check_icon.removeClass('input-validation_required')
@@ -783,6 +847,9 @@ function input_validity_set_invalid (input_elem) {
 }
 
 function input_validity_set_checking (input_elem) {
+  if (input_elem === undefined) {
+    return
+  }
   let input_with_validity_check_icon = input_elem.parent().children('.input-with_validity_check-icon')
   input_validity_clear_icon(input_elem)
   input_with_validity_check_icon.addClass('input-checking')
@@ -1298,51 +1365,53 @@ $(document).ready(function () {
     on_remote_cfg_changed()
   })
 
-  $('#remote_cfg-base_url').on('input', function () {
+  $('#remote_cfg-base_url').on('input change', function () {
+    let remote_cfg_base_url = $('#remote_cfg-base_url')
+    input_validity_set_validation_required(remote_cfg_base_url)
+    input_validity_clear_icon(remote_cfg_base_url)
     on_remote_cfg_changed()
   })
 
-  $('#remote_cfg-base_url').change(function () {
+  $('#remote_cfg-auth_basic-user').on('input change', function () {
+    input_password_clear_saved($('#remote_cfg-auth_basic-password'))
+    input_validity_set_validation_required($('#remote_cfg-auth_basic-user'))
+    input_validity_set_validation_required($('#remote_cfg-base_url'))
     on_remote_cfg_changed()
   })
 
-  $('#remote_cfg-auth_basic-user').on('input', function () {
-    on_remote_cfg_auth_basic_user_pass_changed()
-  })
-
-  $('#remote_cfg-auth_basic-user').change(function () {
-    on_remote_cfg_auth_basic_user_pass_changed()
-  })
-
-  $('#remote_cfg-auth_basic-password').on('input', function () {
-    on_remote_cfg_auth_basic_user_pass_changed()
-  })
-
-  $('#remote_cfg-auth_basic-password').change(function () {
-    on_remote_cfg_auth_basic_user_pass_changed()
-  })
-
-  $('#remote_cfg-auth_bearer-token').on('input', function () {
+  $('#remote_cfg-auth_basic-password').on('input change', function () {
+    let input_remote_cfg_auth_basic_password = $('#remote_cfg-auth_basic-password')
+    input_password_clear_saved(input_remote_cfg_auth_basic_password)
+    input_validity_set_validation_required(input_remote_cfg_auth_basic_password)
+    input_validity_set_validation_required($('#remote_cfg-base_url'))
     on_remote_cfg_changed()
   })
 
-  $('#remote_cfg-auth_bearer-token').change(function () {
+  $('#remote_cfg-auth_bearer-token').on('input change', function () {
+    let input_bearer_token = $('#remote_cfg-auth_bearer-token')
+    input_bearer_token.removeAttr('placeholder')
+    input_validity_set_validation_required(input_bearer_token)
+    input_validity_set_validation_required($('#remote_cfg-base_url'))
     on_remote_cfg_changed()
   })
 
   $('section#page-remote_cfg input#remote_cfg-use').change(function (e) {
+    input_validity_set_validation_required($('#remote_cfg-base_url'))
     on_remote_cfg_changed()
   })
 
   $('section#page-remote_cfg input#remote_cfg-use_auth').change(function (e) {
+    input_validity_set_validation_required($('#remote_cfg-base_url'))
     on_remote_cfg_changed()
   })
 
   $('section#page-remote_cfg input#remote_cfg_auth_type_basic').change(function (e) {
+    input_validity_set_validation_required($('#remote_cfg-base_url'))
     on_remote_cfg_changed()
   })
 
   $('section#page-remote_cfg input#remote_cfg_auth_type_bearer').change(function (e) {
+    input_validity_set_validation_required($('#remote_cfg-base_url'))
     on_remote_cfg_changed()
   })
 
@@ -1351,18 +1420,99 @@ $(document).ready(function () {
     change_page_to_update_schedule()
   })
 
+  function remote_cfg_validate_url () {
+    bodyClassLoadingAdd()
+    stopCheckStatus()
+
+    let remote_cfg_base_url = $('#remote_cfg-base_url')
+    let input_user = undefined
+    let input_password = undefined
+    let aux_params = '&auth_type='
+    if ($('#remote_cfg-use_auth').prop('checked')) {
+      if ($('#remote_cfg_auth_type_basic').prop('checked')) {
+        aux_params += 'basic'
+        input_user = $('#remote_cfg-auth_basic-user')
+        input_password = $('#remote_cfg-auth_basic-password')
+      } else {
+        aux_params += 'bearer'
+        input_password = $('#remote_cfg-auth_bearer-token')
+      }
+    } else {
+      aux_params += 'none'
+    }
+    $('#page-remote_cfg-status-error').addClass('hidden')
+
+    if (!validate_url(
+      function (err_message) {
+        if (err_message) {
+          $('#page-remote_cfg-status-error-desc').text(err_message)
+          $('#page-remote_cfg-status-error').removeClass('hidden')
+        }
+        on_remote_cfg_changed()
+        bodyClassLoadingRemove()
+        startCheckStatus()
+      },
+      remote_cfg_base_url, remote_cfg_base_url.val(), input_user, input_password, 'check_remote_cfg', aux_params)) {
+      bodyClassLoadingRemove()
+      startCheckStatus()
+    }
+  }
+
+  $('section#page-remote_cfg #remote_cfg-button-check').click(function (e) {
+    e.preventDefault()
+    let input_base_url = $('#remote_cfg-base_url')
+    let remote_cfg_auth_basic_user = $('#remote_cfg-auth_basic-user')
+    let remote_cfg_auth_basic_pass = $('#remote_cfg-auth_basic-password')
+    let remote_cfg_auth_bearer_token = $('#remote_cfg-auth_bearer-token')
+
+    let base_url_val = input_base_url.val()
+    if (!base_url_val.startsWith('http://') && !base_url_val.startsWith('https://')) {
+      base_url_val = 'https://' + base_url_val
+      input_base_url.val(base_url_val)
+    }
+
+    input_validity_clear_icon(input_base_url)
+    input_validity_clear_icon(remote_cfg_auth_basic_user)
+    input_validity_clear_icon(remote_cfg_auth_basic_pass)
+    input_validity_clear_icon(remote_cfg_auth_bearer_token)
+    input_validity_set_validation_required(input_base_url)
+
+    remote_cfg_validate_url()
+  })
+
   $('section#page-remote_cfg #remote_cfg-button-download').click(function (e) {
     e.preventDefault()
-    $('#page-remote_cfg-status').addClass('hidden')
+    bodyClassLoadingAdd()
+    $('#page-remote_cfg-status-error').addClass('hidden')
+    $('#remote_cfg-button-download').addClass('disable-click')
     save_config()
+    stopCheckStatus()
     $.ajax({
         method: 'POST',
         url: '/gw_cfg_download',
-        dataType: 'text',
+        dataType: 'json',
         contentType: 'application/json; charset=utf-8',
         cache: false,
         success: function (data, text) {
-          change_page_to_finished(5)
+          let status = data['status']
+          let message = data['message']
+          if (message === undefined) {
+            message = ''
+          }
+          if (status === 200) {
+            $('#remote_cfg-button-download').removeClass('disable-click')
+            change_page_to_finished(5)
+          } else {
+            console.log(log_wrap('POST /gw_cfg_download: failure' +
+              ', status=' + status +
+              ', message=' + message))
+            let desc = 'Status=' + status + ': ' + message
+            $('#remote_cfg-button-download').removeClass('disable-click')
+            $('#page-remote_cfg-status-error-desc').text(desc)
+            $('#page-remote_cfg-status-error').removeClass('hidden')
+            startCheckStatus()
+          }
+          bodyClassLoadingRemove()
         },
         error: function (request, status, error) {
           console.log(log_wrap('POST /gw_cfg_download: failure' +
@@ -1780,7 +1930,7 @@ $(document).ready(function () {
     }
   })
 
-  function validate_url (input_url, url_val, input_user, input_pass, validate_type, aux_param) {
+  function validate_url (cb_on_finish, input_url, url_val, input_user, input_pass, validate_type, aux_param) {
     if (!input_validity_is_validation_required(input_url) || input_validity_has_checked(input_url)) {
       return false
     }
@@ -1788,11 +1938,17 @@ $(document).ready(function () {
     let url = '/validate_url?url='
     url += encodeURIComponent(url_val)
     url += '&validate_type=' + validate_type
-    let user_val = input_user.val()
-    if (user_val) {
-      url += '&user='
-      url += encodeURIComponent(user_val)
-      if (!input_password_is_saved(input_pass)) {
+    if (input_user !== undefined) {
+      let user_val = input_user.val()
+      if (user_val) {
+        url += '&user='
+        url += encodeURIComponent(user_val)
+      }
+    }
+    if (input_pass !== undefined) {
+      if (input_password_is_saved(input_pass)) {
+        url += '&use_saved_password=true'
+      } else {
         let pass_val = input_pass.val()
         let json_encrypted_password = JSON.parse(ruuvi_edch_encrypt(pass_val))
         url += '&encrypted_password='
@@ -1807,35 +1963,48 @@ $(document).ready(function () {
       url += aux_param
     }
     input_validity_set_checking(input_url)
-    if (user_val) {
-      input_validity_set_checking(input_user)
-      input_validity_set_checking(input_pass)
-    }
+    input_validity_set_checking(input_user)
+    input_validity_set_checking(input_pass)
     $.getJSON(url, function (data) {
       let validation_status = data['status']
+      let status_message = undefined
       if (validation_status === 200) {
         input_validity_set_valid(input_url)
-        if (user_val) {
-          input_validity_set_valid(input_user)
-          input_validity_set_valid(input_pass)
-        }
+        input_validity_set_valid(input_user)
+        input_validity_set_valid(input_pass)
       } else if (validation_status === 401) {
         input_validity_set_invalid(input_url)
         input_validity_set_invalid(input_user)
         input_validity_set_invalid(input_pass)
       } else {
+        if (data.hasOwnProperty('message')) {
+          status_message = data['message']
+        }
         input_validity_set_invalid(input_url)
-        if (user_val) {
-          input_validity_clear_icon(input_user)
-          input_validity_clear_icon(input_pass)
+        input_validity_clear_icon(input_user)
+        input_validity_clear_icon(input_pass)
+      }
+      if (cb_on_finish) {
+        cb_on_finish(status_message)
+      }
+    }).fail(function (jqXHR) {
+      let status_message = undefined
+      if (jqXHR.responseText) {
+        try {
+          resp = JSON.parse(jqXHR.responseText)
+          if (resp.hasOwnProperty('message')) {
+            status_message = resp['message']
+          }
+        } catch (e) {
+          log_wrap('Failed to parse response: ' + jqXHR.responseText)
         }
       }
-      custom_server_validate_urls()
-    }).fail(function (jqXHR) {
       input_validity_set_invalid(input_url)
       input_validity_set_invalid(input_user)
       input_validity_set_invalid(input_pass)
-      custom_server_validate_urls()
+      if (cb_on_finish) {
+        cb_on_finish(status_message)
+      }
     })
     return true
   }
@@ -1845,12 +2014,12 @@ $(document).ready(function () {
     bodyClassLoadingAdd()
     stopCheckStatus()
     let http_url = $('#http_url')
-    if (validate_url(http_url, http_url.val(), $('#http_user'), $('#http_pass'),
+    if (validate_url(custom_server_validate_urls, http_url, http_url.val(), $('#http_user'), $('#http_pass'),
       'check_post_advs')) {
       return
     }
     let http_stat_url = $('#http_stat_url')
-    if (validate_url(http_stat_url, http_stat_url.val(), $('#http_stat_user'), $('#http_stat_pass'),
+    if (validate_url(custom_server_validate_urls, http_stat_url, http_stat_url.val(), $('#http_stat_user'), $('#http_stat_pass'),
       'check_post_stat')) {
       return
     }
@@ -1875,7 +2044,7 @@ $(document).ready(function () {
       aux_params += encodeURIComponent(mqtt_topic_prefix)
       aux_params += '&mqtt_client_id='
       aux_params += encodeURIComponent($('#mqtt_client_id').val())
-      if (validate_url(mqtt_server, mqtt_url, $('#mqtt_user'), $('#mqtt_pass'), 'check_mqtt', aux_params)) {
+      if (validate_url(custom_server_validate_urls, mqtt_server, mqtt_url, $('#mqtt_user'), $('#mqtt_pass'), 'check_mqtt', aux_params)) {
         return
       }
     }
