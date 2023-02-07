@@ -94,8 +94,8 @@ RUUVI_AUTH_REALM = 'RuuviGateway' + g_gw_mac[-5:-3] + g_gw_mac[-2:]
 g_lan_auth_default_password_hashed = hashlib.md5(f'{LAN_AUTH_DEFAULT_USER}:{RUUVI_AUTH_REALM}:{g_gw_unique_id}'.encode('utf-8')).hexdigest()
 
 g_ruuvi_dict = {
-    'fw_ver': 'v1.6.0-dirty',
-    'nrf52_fw_ver': 'v0.7.1',
+    'fw_ver': 'v1.13.0',
+    'nrf52_fw_ver': 'v1.0.0',
     'use_eth': False,
     'eth_dhcp': True,
     'eth_static_ip': "",
@@ -176,7 +176,7 @@ g_content_github_latest_release = '''{
     "site_admin": false
   },
   "node_id": "MDc6UmVsZWFzZTQwOTgzNjUz",
-  "tag_name": "v1.7.0",
+  "tag_name": "v1.14.0",
   "target_commitish": "master",
   "name": "GW A2 beta tester release",
   "draft": false,
