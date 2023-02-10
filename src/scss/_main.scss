@@ -96,9 +96,16 @@ header {
 		p {
 			margin: 0;
 		}
+
+		div div {
+			display: inline-block;
+		}
 	}
 
 	&-footer-fw_ver {
+		font-size: smaller;
+	}
+	&-footer-fw_ver_nrf52 {
 		font-size: smaller;
 	}
 }

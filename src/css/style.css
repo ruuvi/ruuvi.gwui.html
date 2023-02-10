@@ -724,7 +724,13 @@ header {
 #app-footer p {
   margin: 0;
 }
+#app-footer div div {
+  display: inline-block;
+}
 #app-footer-fw_ver {
+  font-size: smaller;
+}
+#app-footer-fw_ver_nrf52 {
   font-size: smaller;
 }
 
