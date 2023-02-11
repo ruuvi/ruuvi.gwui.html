@@ -524,6 +524,7 @@ function on_get_config (data, ecdh_pub_key_srv_b64) {
           $('#app-footer-fw_ver').text(key_value)
           break
         case 'nrf52_fw_ver':
+          $('#app-footer-fw_ver_nrf52').text(key_value)
           break
         case 'gw_mac':
           gw_mac = key_value
