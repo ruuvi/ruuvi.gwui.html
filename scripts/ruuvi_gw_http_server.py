@@ -1273,7 +1273,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         resp += content.encode('utf-8')
         self.wfile.write(resp)
 
-    def _resp_200_json_validate_url_status(self, status):
+    def _resp_200_json_validate_url_status(self, status, message=None):
         resp = b''
         resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
         resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
@@ -1283,7 +1283,30 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         resp += f'Pragma: no-cache\r\n'.encode('ascii')
         content_type = 'application/json'
         resp += f'Content-type: {content_type}\r\n'.encode('ascii')
-        content = f'{{"status": {status}}}'
+        if message is None:
+            content = f'{{"status": {status}}}'
+        else:
+            content = f'{{"status": {status}, "message": "{message}"}}'
+        resp += f'Content-Length: {len(content)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        print(f'Resp: {content}')
+        resp += content.encode('utf-8')
+        self.wfile.write(resp)
+
+    def _resp_200_json_validate_url_status_incorrect_json(self, status, message=None):
+        resp = b''
+        resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+        resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+        cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+        resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        content_type = 'application/json'
+        resp += f'Content-type: {content_type}\r\n'.encode('ascii')
+        if message is None:
+            content = f'{{"status: {status}}}'
+        else:
+            content = f'{{"status: {status}, "message": "{message}"}}'
         resp += f'Content-Length: {len(content)}\r\n'.encode('ascii')
         resp += f'\r\n'.encode('ascii')
         print(f'Resp: {content}')
@@ -1308,7 +1331,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(resp)
 
     def _validate_url_check_post_advs(self, url, user, password):
-        if url == 'https://network.ruuvi.com/record':
+        if url == 'http://qwe':
+            return
+        elif url == 'http://asd':
+            return self._resp_200_json_validate_url_status_incorrect_json(200)
+        elif url == 'https://network.ruuvi.com/record':
             return self._resp_200_json_validate_url_status(200)
         elif url == 'https://network.ruuvi.com/record1':
             if user is None or password is None:
@@ -1316,7 +1343,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             elif user == 'user1' and (password is None or password == 'pass1'):
                 return self._resp_200_json_validate_url_status(200)
             return self._resp_200_json_validate_url_status(401)
-        return self._resp_200_json_validate_url_status(400)
+        return self._resp_200_json_validate_url_status(400, "Error description")
 
     def _validate_url_check_post_stat(self, url, user, password):
         if url == 'https://network.ruuvi.com/status':
@@ -1327,7 +1354,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             elif user == 'user1' and (password is None or password == 'pass1'):
                 return self._resp_200_json_validate_url_status(200)
             return self._resp_200_json_validate_url_status(401)
-        return self._resp_200_json_validate_url_status(400)
+        return self._resp_200_json_validate_url_status(400, "Error description")
 
     def _validate_url_check_mqtt(self, url, user, password, topic_prefix, client_id):
         if url == 'mqtt://test.mosquitto.org:1883':
@@ -1374,7 +1401,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             else:
                 return self._resp_200_json_validate_url_status(401)
 
-        return self._resp_200_json_validate_url_status(400)
+        return self._resp_200_json_validate_url_status(400, "Error description")
 
     def _validate_url_check_remote_cfg(self, url, user, password, auth_type):
         if url == 'http://192.168.1.100':
@@ -1395,7 +1422,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             else:
                 return self._resp_200_json_validate_url_status(401)
 
-        return self._resp_200_json_validate_url_status(400)
+        return self._resp_200_json_validate_url_status(400, "Error description")
 
     def _validate_url(self, url_with_params):
         parsed_url = urlparse(url_with_params)

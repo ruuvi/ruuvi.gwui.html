@@ -490,11 +490,11 @@ function on_custom_server_url_changed () {
   }
   if (flag_url_modified || input_validity_is_invalid(http_url) || input_validity_is_invalid(http_stat_url) ||
     input_validity_is_invalid(mqtt_server)) {
-    $('#page-custom_server-button-continue').addClass('hidden')
-    $('#page-custom_server-button-check').removeClass('hidden')
+    $('#page-custom_server-button-continue').addClass('disable-click')
+    $('#page-custom_server-button-check').removeClass('disable-click')
   } else {
-    $('#page-custom_server-button-check').addClass('hidden')
-    $('#page-custom_server-button-continue').removeClass('hidden')
+    $('#page-custom_server-button-check').addClass('disable-click')
+    $('#page-custom_server-button-continue').removeClass('disable-click')
   }
 }
 
@@ -1502,37 +1502,29 @@ $(document).ready(function () {
     stopCheckStatus()
 
     let remote_cfg_base_url = $('#remote_cfg-base_url')
-    let input_user = undefined
-    let input_password = undefined
-    let aux_params = '&auth_type='
+    let auth_type = 'none'
+    let params = {
+      input_url: remote_cfg_base_url,
+      error: $('#page-remote_cfg-status-error-desc'),
+    }
     if ($('#remote_cfg-use_auth').prop('checked')) {
       if ($('#remote_cfg_auth_type_basic').prop('checked')) {
-        aux_params += 'basic'
-        input_user = $('#remote_cfg-auth_basic-user')
-        input_password = $('#remote_cfg-auth_basic-password')
+        auth_type = 'basic'
+        params['input_user'] = $('#remote_cfg-auth_basic-user')
+        params['input_pass'] = $('#remote_cfg-auth_basic-password')
       } else {
-        aux_params += 'bearer'
-        input_password = $('#remote_cfg-auth_bearer-token')
+        auth_type = 'bearer'
+        params['input_token'] = $('#remote_cfg-auth_bearer-token')
       }
-    } else {
-      aux_params += 'none'
     }
     $('#page-remote_cfg-status-error').addClass('hidden')
 
-    if (!validate_url(
-      function (err_message) {
-        if (err_message) {
-          $('#page-remote_cfg-status-error-desc').text(err_message)
-          $('#page-remote_cfg-status-error').removeClass('hidden')
-        }
+    validate_url(remote_cfg_base_url.val(), 'check_remote_cfg', auth_type, params)
+      .finally(() => {
         on_remote_cfg_changed()
         bodyClassLoadingRemove()
         startCheckStatus()
-      },
-      remote_cfg_base_url, remote_cfg_base_url.val(), input_user, input_password, 'check_remote_cfg', aux_params)) {
-      bodyClassLoadingRemove()
-      startCheckStatus()
-    }
+      })
   }
 
   $('section#page-remote_cfg #remote_cfg-button-check').click(function (e) {
@@ -2010,128 +2002,290 @@ $(document).ready(function () {
     }
   })
 
-  function validate_url (cb_on_finish, input_url, url_val, input_user, input_pass, validate_type, aux_param) {
-    if (!input_validity_is_validation_required(input_url) || input_validity_has_checked(input_url)) {
-      return false
-    }
-    console.log('custom_server_validate_urls: validate URL: ' + url_val)
+  function generate_url_for_validation (url_to_validate, validate_type, auth_type, params) {
     let url = '/validate_url?url='
-    url += encodeURIComponent(url_val)
+    url += encodeURIComponent(url_to_validate)
     url += '&validate_type=' + validate_type
-    if (input_user !== undefined) {
+    url += '&auth_type=' + auth_type
+
+    if ('input_user' in params && 'input_pass' in params) {
+      let input_user = params['input_user']
+      let input_pass = params['input_pass']
       let user_val = input_user.val()
       if (user_val) {
         url += '&user='
         url += encodeURIComponent(user_val)
+        if (input_password_is_saved(input_pass)) {
+          url += '&use_saved_password=true'
+        } else {
+          let pass_val = input_pass.val()
+          let json_encrypted_password = JSON.parse(ruuvi_edch_encrypt(pass_val))
+          url += '&encrypted_password='
+          url += encodeURIComponent(json_encrypted_password['encrypted'])
+          url += '&encrypted_password_iv='
+          url += encodeURIComponent(json_encrypted_password['iv'])
+          url += '&encrypted_password_hash='
+          url += encodeURIComponent(json_encrypted_password['hash'])
+        }
       }
-    }
-    if (input_pass !== undefined) {
-      if (input_password_is_saved(input_pass)) {
+    } else if ('input_token' in params) {
+      let input_token = params['input_token']
+      if (input_password_is_saved(input_token)) {
         url += '&use_saved_password=true'
       } else {
-        let pass_val = input_pass.val()
-        let json_encrypted_password = JSON.parse(ruuvi_edch_encrypt(pass_val))
-        url += '&encrypted_password='
-        url += encodeURIComponent(json_encrypted_password['encrypted'])
-        url += '&encrypted_password_iv='
-        url += encodeURIComponent(json_encrypted_password['iv'])
-        url += '&encrypted_password_hash='
-        url += encodeURIComponent(json_encrypted_password['hash'])
-      }
-    }
-    if (aux_param) {
-      url += aux_param
-    }
-    input_validity_set_checking(input_url)
-    input_validity_set_checking(input_user)
-    input_validity_set_checking(input_pass)
-    $.getJSON(url, function (data) {
-      let validation_status = data['status']
-      let status_message = undefined
-      if (validation_status === 200) {
-        input_validity_set_valid(input_url)
-        input_validity_set_valid(input_user)
-        input_validity_set_valid(input_pass)
-      } else if (validation_status === 401) {
-        input_validity_set_invalid(input_url)
-        input_validity_set_invalid(input_user)
-        input_validity_set_invalid(input_pass)
-      } else {
-        if (data.hasOwnProperty('message')) {
-          status_message = data['message']
+        let token_val = input_token.val()
+        if (token_val) {
+          let json_encrypted_password = JSON.parse(ruuvi_edch_encrypt(token_val))
+          url += '&encrypted_password='
+          url += encodeURIComponent(json_encrypted_password['encrypted'])
+          url += '&encrypted_password_iv='
+          url += encodeURIComponent(json_encrypted_password['iv'])
+          url += '&encrypted_password_hash='
+          url += encodeURIComponent(json_encrypted_password['hash'])
         }
-        input_validity_set_invalid(input_url)
-        input_validity_clear_icon(input_user)
-        input_validity_clear_icon(input_pass)
       }
-      if (cb_on_finish) {
-        cb_on_finish(status_message)
+    }
+    if ('aux_params' in params) {
+      url += params['aux_params']
+    }
+    return url
+  }
+
+  function validate_url (url_to_validate, validate_type, auth_type, params) {
+    function validity_icons_clear (params) {
+      input_validity_clear_icon(params['input_url'])
+      if ('input_user' in params && 'input_pass' in params) {
+        input_validity_clear_icon(params['input_user'])
+        input_validity_clear_icon(params['input_pass'])
+      } else if ('input_token' in params) {
+        input_validity_clear_icon(params['input_token'])
       }
-    }).fail(function (jqXHR) {
-      let status_message = undefined
-      if (jqXHR.responseText) {
-        try {
-          resp = JSON.parse(jqXHR.responseText)
-          if (resp.hasOwnProperty('message')) {
-            status_message = resp['message']
+    }
+
+    function validity_icons_set_checking (params) {
+      input_validity_set_checking(params['input_url'])
+      if ('input_user' in params && 'input_pass' in params) {
+        if (params['input_user'].val()) {
+          input_validity_set_checking(params['input_user'])
+          input_validity_set_checking(params['input_pass'])
+        }
+      } else if ('input_token' in params) {
+        let input_token = params['input_token']
+        if (input_token.val() || input_password_is_saved(input_token)) {
+          input_validity_set_checking(params['input_token'])
+        }
+      }
+    }
+
+    function validity_icons_set_valid (params) {
+      input_validity_set_valid(params['input_url'])
+      if ('input_user' in params && 'input_pass' in params) {
+        let input_user = params['input_user']
+        let input_pass = params['input_pass']
+        if (input_user.val()) {
+          input_validity_set_valid(input_user)
+          input_validity_set_valid(input_pass)
+        }
+      } else if ('input_token' in params) {
+        let input_token = params['input_token']
+        if (input_token.val() || input_password_is_saved(input_token)) {
+          input_validity_set_valid(input_token)
+        }
+      }
+    }
+
+    function validity_icons_set_invalid (params) {
+      input_validity_set_invalid(params['input_url'])
+      if ('input_user' in params) {
+        input_validity_set_invalid(params['input_user'])
+      }
+      if ('input_pass' in params) {
+        input_validity_set_invalid(params['input_pass'])
+      }
+      if ('input_token' in params) {
+        input_validity_set_invalid(params['input_token'])
+      }
+    }
+
+    function set_error_message (params, msg) {
+      if ('error' in params) {
+        let error_text = params['error']
+        if (msg) {
+          error_text.text(msg)
+          error_text.parent().removeClass('hidden')
+        } else {
+          error_text.text('')
+          error_text.parent().addClass('hidden')
+        }
+      }
+    }
+
+    set_error_message(params, '')
+
+    return new Promise(function (resolve, reject) {
+      let input_url = params['input_url']
+      if (!input_validity_is_validation_required(input_url) || input_validity_has_checked(input_url)) {
+        console.log(log_wrap(`Skip URL validation (${validate_type}): ${url_to_validate}`))
+        resolve(true)
+        return
+      }
+      console.log(log_wrap(`Validate URL (${validate_type}): ${url_to_validate}`))
+      let url = generate_url_for_validation(url_to_validate, validate_type, auth_type, params)
+      validity_icons_set_checking(params)
+
+      fetch(url)
+        .then(response => response.json(), (error) => {
+          input_validity_set_invalid(input_url)
+          console.log(log_wrap(`Ruuvi Gateway connection failure: ${error}`))
+          set_error_message(params, 'Ruuvi Gateway connection failure')
+          resolve(false)
+        })
+        .then(function (resp) {
+          if (resp) {
+            console.log(log_wrap(`URL validation result (${validate_type}): status=${resp.status}, message=${resp.message}`))
+            validity_icons_clear(params)
+            if (resp.status === 200) {
+              validity_icons_set_valid(params)
+            } else if (resp.status === 401) {
+              validity_icons_set_invalid(params)
+            } else {
+              validity_icons_set_invalid({ input_url: params['input_url'] })
+              set_error_message(params, resp.message)
+            }
+            resolve(true)
           }
-        } catch (e) {
-          log_wrap('Failed to parse response: ' + jqXHR.responseText)
-        }
-      }
-      input_validity_set_invalid(input_url)
-      input_validity_set_invalid(input_user)
-      input_validity_set_invalid(input_pass)
-      if (cb_on_finish) {
-        cb_on_finish(status_message)
-      }
+        }, function (error) {
+          console.log(log_wrap(`Failed to parse JSON response from Ruuvi Gateway: ${error}`))
+          input_validity_set_invalid(input_url)
+          set_error_message(params, 'Failed to parse JSON response from Ruuvi Gateway')
+          resolve(false)
+        })
     })
-    return true
+  }
+
+  function custom_server_validate_url_http () {
+    if ($('#use_http_ruuvi').prop('checked')) {
+      console.log(log_wrap(`HTTP URL validation not needed (Ruuvi server is used)`))
+      return new Promise(function (resolve) {
+        resolve(true)
+      })
+    }
+    if (!$('#use_http').prop('checked')) {
+      console.log(log_wrap(`HTTP URL validation not needed (HTTP is not active)`))
+      return new Promise(function (resolve) {
+        resolve(true)
+      })
+    }
+    let http_url = $('#http_url')
+    let http_user = $('#http_user')
+    let http_pass = $('#http_pass')
+
+    let auth_type = 'none'
+    if (http_user.val()) {
+      auth_type = 'basic'
+    }
+
+    return validate_url(http_url.val(), 'check_post_advs', auth_type, {
+      input_url: http_url,
+      input_user: http_user,
+      input_pass: http_pass,
+      error: $('#page-custom_server-http_validation_error-desc')
+    })
+  }
+
+  function custom_server_validate_url_http_stat () {
+    if ($('#use_http_stat_no').prop('checked')) {
+      console.log(log_wrap(`HTTP_STAT URL validation not needed (HTTP_STAT is not used)`))
+      return new Promise(function (resolve) {
+        resolve(true)
+      })
+    }
+    if ($('#use_http_stat_ruuvi').prop('checked')) {
+      console.log(log_wrap(`HTTP_STAT URL validation not needed (Ruuvi server is used)`))
+      return new Promise(function (resolve) {
+        resolve(true)
+      })
+    }
+    if (!$('#use_http_stat').prop('checked')) {
+      console.log(log_wrap(`HTTP_STAT URL validation not needed (HTTP_STAT is not active)`))
+      return new Promise(function (resolve) {
+        resolve(true)
+      })
+    }
+    let http_stat_url = $('#http_stat_url')
+    let http_stat_user = $('#http_stat_user')
+    let http_stat_pass = $('#http_stat_pass')
+
+    let auth_type = 'none'
+    if (http_stat_user.val()) {
+      auth_type = 'basic'
+    }
+
+    return validate_url(http_stat_url.val(), 'check_post_stat', auth_type, {
+      input_url: http_stat_url,
+      input_user: http_stat_user,
+      input_pass: http_stat_pass,
+      error: $('#page-custom_server-http_stat_validation_error-desc')
+    })
+  }
+
+  function custom_server_validate_url_mqtt () {
+    if (!$('#use_mqtt').prop('checked')) {
+      console.log(log_wrap(`MQTT URL validation not needed (MQTT is not active)`))
+      return new Promise(function (resolve) {
+        resolve(true)
+      })
+    }
+    let mqtt_server = $('#mqtt_server')
+    let mqtt_transport = $('input[name=\'mqtt_transport\']:checked').val()
+    let mqtt_url_prefix = ''
+    if (mqtt_transport === 'mqtt_transport_TCP') {
+      mqtt_url_prefix = 'mqtt://'
+    } else if (mqtt_transport === 'mqtt_transport_SSL') {
+      mqtt_url_prefix = 'mqtts://'
+    } else if (mqtt_transport === 'mqtt_transport_WS') {
+      mqtt_url_prefix = 'mqttws://'
+    } else if (mqtt_transport === 'mqtt_transport_WSS') {
+      mqtt_url_prefix = 'mqttwss://'
+    }
+    let mqtt_topic_prefix = get_mqtt_topic_prefix()
+    let mqtt_url = mqtt_url_prefix + mqtt_server.val() + ':' + $('#mqtt_port').val()
+    let aux_params = ''
+    aux_params += '&mqtt_topic_prefix='
+    aux_params += encodeURIComponent(mqtt_topic_prefix)
+    aux_params += '&mqtt_client_id='
+    aux_params += encodeURIComponent($('#mqtt_client_id').val())
+
+    let mqtt_user = $('#mqtt_user')
+    let mqtt_pass = $('#mqtt_pass')
+
+    let auth_type = 'none'
+    if (mqtt_user.val()) {
+      auth_type = 'basic'
+    }
+
+    return validate_url(mqtt_url, 'check_mqtt', auth_type, {
+      input_url: mqtt_server,
+      input_user: mqtt_user,
+      input_pass: mqtt_pass,
+      aux_params: aux_params,
+      error: $('#page-custom_server-mqtt_validation_error-desc')
+    })
   }
 
   function custom_server_validate_urls () {
     console.log('custom_server_validate_urls')
     bodyClassLoadingAdd()
     stopCheckStatus()
-    let http_url = $('#http_url')
-    if (validate_url(custom_server_validate_urls, http_url, http_url.val(), $('#http_user'), $('#http_pass'),
-      'check_post_advs')) {
-      return
-    }
-    let http_stat_url = $('#http_stat_url')
-    if (validate_url(custom_server_validate_urls, http_stat_url, http_stat_url.val(), $('#http_stat_user'), $('#http_stat_pass'),
-      'check_post_stat')) {
-      return
-    }
-
-    if ($('#use_mqtt').prop('checked')) {
-      let mqtt_server = $('#mqtt_server')
-      let mqtt_transport = $('input[name=\'mqtt_transport\']:checked').val()
-      let mqtt_url_prefix = ''
-      if (mqtt_transport === 'mqtt_transport_TCP') {
-        mqtt_url_prefix = 'mqtt://'
-      } else if (mqtt_transport === 'mqtt_transport_SSL') {
-        mqtt_url_prefix = 'mqtts://'
-      } else if (mqtt_transport === 'mqtt_transport_WS') {
-        mqtt_url_prefix = 'mqttws://'
-      } else if (mqtt_transport === 'mqtt_transport_WSS') {
-        mqtt_url_prefix = 'mqttwss://'
-      }
-      let mqtt_topic_prefix = get_mqtt_topic_prefix()
-      let mqtt_url = mqtt_url_prefix + mqtt_server.val() + ':' + $('#mqtt_port').val()
-      let aux_params = ''
-      aux_params += '&mqtt_topic_prefix='
-      aux_params += encodeURIComponent(mqtt_topic_prefix)
-      aux_params += '&mqtt_client_id='
-      aux_params += encodeURIComponent($('#mqtt_client_id').val())
-      if (validate_url(custom_server_validate_urls, mqtt_server, mqtt_url, $('#mqtt_user'), $('#mqtt_pass'), 'check_mqtt', aux_params)) {
-        return
-      }
-    }
-
-    on_custom_server_url_changed()
-    bodyClassLoadingRemove()
-    startCheckStatus()
+    custom_server_validate_url_http()
+      .then(() => custom_server_validate_url_http_stat())
+      .then(() => custom_server_validate_url_mqtt())
+      .finally(() => {
+        on_custom_server_url_changed()
+        $('#page-custom_server-button-continue').removeClass('disable-click')
+        bodyClassLoadingRemove()
+        startCheckStatus()
+      })
   }
 
   $('section#page-custom_server #page-custom_server-button-check').click(function (e) {
