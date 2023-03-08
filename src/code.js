@@ -2133,8 +2133,12 @@ $(document).ready(function () {
       let url = generate_url_for_validation(url_to_validate, validate_type, auth_type, params)
       validity_icons_set_checking(params)
 
+      let response_status = 0;
       fetch(url)
-        .then(response => response.json(), (error) => {
+        .then((response) => {
+          response_status = response.status
+          return response.json()
+        }, (error) => {
           input_validity_set_invalid(input_url)
           console.log(log_wrap(`Ruuvi Gateway connection failure: ${error}`))
           set_error_message(params, 'Ruuvi Gateway connection failure')
@@ -2150,14 +2154,20 @@ $(document).ready(function () {
               validity_icons_set_invalid(params)
             } else {
               validity_icons_set_invalid({ input_url: params['input_url'] })
-              set_error_message(params, resp.message)
+              if (resp.status === 502) {
+                set_error_message(params, resp.message)
+              } else if (resp.status === 500) {
+                set_error_message(params, `Ruuvi Gateway internal error: ${resp.message}`)
+              } else {
+                set_error_message(params, `HTTP response status: ${resp.status}, Message: ${resp.message}`)
+              }
             }
             resolve(true)
           }
         }, function (error) {
           console.log(log_wrap(`Failed to parse JSON response from Ruuvi Gateway: ${error}`))
           input_validity_set_invalid(input_url)
-          set_error_message(params, 'Failed to parse JSON response from Ruuvi Gateway')
+          set_error_message(params, `HTTP response status: ${response_status}, Failed to parse JSON response from Ruuvi Gateway`)
           resolve(false)
         })
     })
