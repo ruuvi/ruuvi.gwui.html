@@ -60,7 +60,7 @@
 				<p lang="en">Setting up your Ruuvi Gateway is easy. Follow these simple steps and
 					you're ready to go.</p>
 				<p lang="en">Please note that your Internet connection may be turned off for the duration of the
-					configuration wizard.</p>
+					configuration.</p>
 
 				<p lang="fi">Ruuvi Gatewayn käyttöönotto on helppoa. Yhdistä reititin verkkoon tämän ohjatun määrityksen avulla.</p>
 				<p lang="fi">Huomaathan, että internet-yhteys saattaa olla poissa käytöstä asetusten määrityksen ajan.</p>
@@ -95,11 +95,11 @@
 			</div>
 
 			<div class="ingress">
-				<p lang="en">The Gateway needs an Internet connection.
-					You can connect using either an Ethernet cable (RJ45) or via a wireless Wi-Fi network.
-					To ensure the most reliable Internet connectivity, Ethernet is recommended.</p>
+				<p lang="en">Ruuvi Gateway requires an Internet connection in order to work correctly.
+					Connect an Ethernet (RJ45) to make a fixed network connection or connect to a local Wi-Fi network wirelessly.
+					To ensure the most reliable Internet connectivity, fixed connection is recommended.</p>
 				<p lang="fi">Ruuvi Gateway tarvitsee toimiakseen internet-yhteyden.
-					Voit yhdistää internetiin joko kiinteän (Ethernet RJ45) tai langattoman (Wi-Fi)
+					Yhdistä internetiin joko kiinteän (Ethernet RJ45) tai langattoman (Wi-Fi)
 					lähiverkkoyhteyden avulla. Häiriöttömän yhteyden takaamiseksi suosittelemme käyttämään
 					aina kiinteää yhteyttä.</p>
 			</div>
@@ -131,10 +131,10 @@
 				<div class="font-bold">
 					<span lang="en">
 						You're accessing the Ruuvi Gateway configuration wizard from your local area network.
-						For this reason, you cannot adjust the connection type.
+						You cannot adjust the connection type at this time.
 						In order to change the connection type, please reconfigure the Gateway using its Wi-Fi hotspot.
-						To start the hotspot, take a paper clip and press the pinhole button for a
-						short time, found under the power socket.
+						To restart the Wi-Fi hotspot, locate the pinhole button under the power socket and press the button 
+						down briefly using a paperclip.
 					</span>
 					<span lang="fi">
 						Olet avannut Ruuvi Gatewayn käyttöönottosivun kiinteän lähiverkkoyhteyden kautta. Tästä johtuen
@@ -149,8 +149,8 @@
 					<span lang="en">
 						Next, connect to a Wi-Fi hotspot named RuuviGatewayXXXX.
 						After connecting to the hotspot, your device may ask you to sign in to the network.
-						Next, a new web browser window with the correct configuration page will open automatically.
-						But if not, open your web browser, type 10.10.0.1 and press enter.
+						Next, a new web browser window with the correct configuration page will open.
+						If the page doesn't open automatically open your web browser, type 10.10.0.1 and press enter.
 					</span>
 					<span lang="fi">
 						Liity seuraavaksi päätelaitteellasi Wi-Fi-verkkoon RuuviGatewayXXXX.
@@ -208,13 +208,13 @@
 
 			<div id="page-ethernet_connection-ask_user" class="hidden">
 				<div class="block-centered">
-					<span lang="en">Please connect Ethernet cable if not already connected.</span>
+					<span lang="en">Please connect Ethernet cable now if not already connected.</span>
 					<span lang="fi">Liitä lähiverkkokaapeli reitittimeen ellei sitä ole vielä liitetty.</span>
 				</div>
 			</div>
 			<div id="page-ethernet_connection-no_cable" class="hidden">
 				<div class="block-centered rd">
-					<span lang="en">Ethernet cable is not connected or there's a connectivity issue.</span>
+					<span lang="en">Ethernet cable is not connected or there is some other problem with the connection.</span>
 					<span lang="fi">Lähiverkkokaapelia ei ole liitetty tai yhteydessä on jokin muu ongelma.</span>
 				</div>
 			</div>
@@ -223,7 +223,7 @@
 
 			<div>
 				<label class="control control-checkbox">
-					<span lang="en">Let DHCP server automatically assign an IP address (default)</span>
+					<span lang="en">Let the DHCP server assign an IP address automatically (default)</span>
 					<span lang="fi">Määritä IP-osoite automaattisesti DHCP-palvelimen avulla (oletus)</span>
 					<input id="eth_dhcp" type="checkbox">
 					<span class="control_indicator"></span>
@@ -314,8 +314,8 @@
 			</div>
 
 			<div class="ingress">
-				<p lang="en">Available nearby Wi-Fi networks are listed below.
-					Choose the one you want Ruuvi Gateway to use for internet connectivity.</p>
+				<p lang="en">Wi-Fi networks available near you are listed below.
+					Select the wireless network that you want Ruuvi Gateway to use to connect to the Internet.</p>
 				<p lang="fi">Lähelläsi olevat Wi-Fi-verkot on listattu alla.
 					Valitse langaton verkko, jonka kautta haluat Ruuvi Gatewayn olevan yhteydessä internetiin.</p>
 			</div>
@@ -484,12 +484,12 @@
 						<span lang="fi">Sinulla on jo uusin versio asennettuna</span>
 					</div>
 					<div id="software_update-status-ok-latest_not_supported" class="software_update-status bl hidden">
-						<span lang="en">The latest version is not supported. Try manual updating.</span>
+						<span lang="en">The latest version is not supported. Try updating manually.</span>
 						<span lang="fi">Uusinta versiota ei tueta. Kokeile päivitystä manuaalisesti.</span>
 					</div>
 					<div id="software_update-status-ok-update_available" class="software_update-status bl hidden">
-						<span lang="en">An update is available! Please update by pressing the UPDATE button.</span>
-						<span lang="fi">Päivitys on saatavilla! Päivitä painamalla ASENNA-nappia.</span>
+						<span lang="en">An update is available! Press UPDATE to start the firmware update.</span>
+						<span lang="fi">Päivitys on saatavilla! Aloita laiteohjelman päivitys valitsemalla PÄIVITÄ.</span>
 					</div>
 					<div id="software_update-status-error" class="software_update-status rd hidden">
 						<span lang="en">Unable to get the latest firmware version from the server.</span>
@@ -503,7 +503,7 @@
 			<div class="block-centered">
 				<button class="btn" id="software_update-button-upgrade" type="button">
 					<span lang="en">UPDATE</span>
-					<span lang="fi">ASENNA</span>
+					<span lang="fi">PÄIVITÄ</span>
 				</button>
 			</div>
 
@@ -524,7 +524,7 @@
 				<div id="software_update-url_title">
 					<label class="control control-checkbox info-icon-container">
 						<div class="info-icon-left-column">
-							<span lang="en">Specify a URL that contains required firmware update binaries.</span>
+							<span lang="en">Specify a URL that contains the required firmware update binaries.</span>
 							<span lang="fi">Anna URL-osoite, josta löytyy tarvittavat laiteohjelmistotiedostot.</span>
 							<input type="checkbox" id="software_update-set-url-manually">
 							<span class="control_indicator"></span>
@@ -555,14 +555,14 @@
 			<div id="popup-info-icon-software_update" class="info-icon-overlay">
 				<div class="info-icon-popup">
 					<h1>
-						<span lang="en">How to install custom firmware</span>
+						<span lang="en">How to install a custom firmware</span>
 						<span lang="fi">Mukautetun laiteohjelmiston asentaminen</span>
 					</h1>
 					<a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
 					<div class="info-icon-content">
 						<p>
-							<span lang="en">You need to prepare firmware binaries (ruuvi_gateway_esp.bin,
-								fatfs_gwui.bin and fatfs_nrf52.bin) and put them on your HTTP server.
+							<span lang="en">You need to prepare the firmware binaries (ruuvi_gateway_esp.bin,
+								fatfs_gwui.bin and fatfs_nrf52.bin) and upload them to your HTTP server.
 							</span>
 							<span lang="fi">Sinun on valmistettava laiteohjelmiston binäärit
 								(ruuvi_gateway_esp.bin, fatfs_gwui.bin ja fatfs_nrf52.bin)
@@ -592,7 +592,7 @@
 						<span lang="fi">SEURAAVA</span>
 					</div>
 					<div id="page-software_update-button-continue_without_update" class="hidden">
-						<span lang="en">Continue without updating</span>
+						<span lang="en">Continue and skip update</span>
 						<span lang="fi">Jatka päivittämättä</span>
 					</div>
 				</a>
@@ -622,14 +622,14 @@
 
 			<div id="page-software_update_progress-info" class="hidden">
 				<div class="block-centered">
-					<span lang="en">Please wait. Do not power off the Gateway!</span>
+					<span lang="en">Please wait. Do not power off the Gateway during update!</span>
 					<span lang="fi">Odota päivityksen valmistumista! Älä sammuta laitetta päivityksen aikana.</span>
 				</div>
 
 				<div>&nbsp;</div>
 				<div>&nbsp;</div>
 				<div class="block-centered font-bold">
-					<span lang="en">Downloading main processor software</span>
+					<span lang="en">Downloading the main processor software</span>
 					<span lang="fi">Ladataan pääsuoritinohjelmistoa</span>
 				</div>
 				<div class="block-centered">
@@ -638,7 +638,7 @@
 
 				<div>&nbsp;</div>
 				<div class="block-centered font-bold">
-					<span lang="en">Downloading user interface</span>
+					<span lang="en">Downloading the user interface</span>
 					<span lang="fi">Ladataan käyttöliittymätiedostoja</span>
 				</div>
 				<div class="block-centered">
@@ -647,7 +647,7 @@
 
 				<div>&nbsp;</div>
 				<div class="block-centered font-bold">
-					<span lang="en">Downloading co-processor software</span>
+					<span lang="en">Downloading the co-processor software</span>
 					<span lang="fi">Ladataan apusuoritinohjelmistoa</span>
 				</div>
 				<div class="block-centered">
@@ -668,18 +668,17 @@
 
 			<div id="software_update_progress-status-completed_successfully" class="hidden">
 				<div class="block-centered gr">
-					<span lang="en">All good! Updating is finished.</span>
+					<span lang="en">All good! Update was successful.</span>
 					<span lang="fi">Valmista! Päivitys onnistui.</span>
 				</div>
 				<div>&nbsp;</div>
 				<div class="block-centered">
-					<span lang="en">The device will restart automatically in a few seconds.</span>
-					<span lang="fi">Laite käynnistyy uudelleen automaattisesti muutaman sekunnin kuluttua.</span>
+					<span lang="en">The device will restart automatically after a few seconds.</span>
+					<span lang="fi">Laite käynnistyy automaattisesti uudelleen muutaman sekunnin kuluttua.</span>
 				</div>
 				<div class="block-centered">
-					<span lang="en">Please reconnect to the Wi-Fi hotspot in order to continue the configuration.
-						If the Wi-Fi hotspot doesn't appear automatically, take a paper clip and briefly press
-						the pinhole button located under the power socket.</span>
+					<span lang="en">Continue with the configuration by reconnecting to the device's Wi-Fi hotspot.
+						If the Wi-Fi hotspot doesn't appear automatically, locate the pinhole button under the power socket and press the button down briefly using a paperclip.</span>
 					<span lang="fi">Jatka asetusten määrittämistä muodostamalla yhteys uudelleen laitteen luomaan Wi-Fi
 						verkkoon. Mikäli verkko ei ilmesty näkyviin automaattisesti, paina paperiliittimellä
 						lyhyesti virtaliittimen alla olevaa painiketta.</span>
@@ -700,8 +699,7 @@
 				</div>
 				<div>&nbsp;</div>
 				<div class="block-centered">
-					<span lang="en">Please reboot the device by taking a paper clip and briefly pressing the pinhole
-						button, located under the power socket.</span>
+					<span lang="en">Please reboot the device. Locate the pinhole button under the power socket and press the button down briefly using a paperclip. </span>
 					<span lang="fi">Käynnistä laite uudelleen painamalla paperiliittimellä lyhyesti virtaliittimen
 						alla olevaa painiketta.</span>
 				</div>
@@ -711,7 +709,7 @@
 				<div class="button-container button-container-centered">
 					<a href="" id="page-software_update_progress-button-configure" class="btn">
 						<span lang="en">CONFIGURE</span>
-						<span lang="fi">mÄÄRITTÄÄ</span>
+						<span lang="fi"MÄÄRITÄ</span>
 					</a>
 				</div>
 			</div>
@@ -761,8 +759,8 @@
 			<div id="page-remote_cfg-advanced-dropdown" class="hidden">
 				<div>
 					<label class="control control-checkbox">
-						<span lang="en">Use automatic configuration downloading from a remote server (HTTP/HTTPS)</span>
-						<span lang="fi">Käytä automaattista asetusten latausta etäpalvelimelta (HTTP/HTTPS)</span>
+						<span lang="en">Download configuration file from a remote server automatically (HTTP/HTTPS)</span>
+						<span lang="fi">Lataa määritystiedosto automaattisesti etäpalvelimelta (HTTP/HTTPS)</span>
 						<input type="checkbox" id="remote_cfg-use">
 						<span class="control_indicator"></span>
 					</label>
@@ -771,8 +769,8 @@
 				<div id="remote_cfg-options" class="indent hidden">
 					<div id="remote_cfg-options_url_title">
 						<div class="info-icon-left-column">
-							<span lang="en">Specify URL of json file with the configuration or
-								URL of the folder with the set of json files for each Gateway:</span>
+							<span lang="en">Specify the URL of the json file containing the configuration or
+								the URL of the folder containing the json files for each Gateway:</span>
 							<span lang="fi">Anna määritykset sisältävän json-tiedoston URL-osoite tai sen kansion
 								URL-osoite, jossa on json-tiedostot jokaiselle Gatewaylle:</span>
 						</div>
@@ -809,8 +807,8 @@
 							</label>
 							<div id="conf-remote_cfg-auth_basic-options" class="hidden indent">
 								<label>
-									<span lang="en">User:</span>
-									<span lang="fi">Käyttäjä:</span>
+									<span lang="en">Username:</span>
+									<span lang="fi">Käyttäjätunnus:</span>
 									<div class="input-with_validity_check">
 										<input id="remote_cfg-auth_basic-user" type="text" placeholder="" value="">
 										<div class="input-with_validity_check-icon">
@@ -835,7 +833,7 @@
 							</div>
 							<label class="control control-radio">
 								<span lang="en">Bearer authentication</span>
-								<span lang="fi">Bearer-token</span>
+								<span lang="fi">Todennus haltijatunnuksella</span>
 								<input id="remote_cfg_auth_type_bearer" name="remote_cfg_auth_type"
 									   value="remote_cfg_auth_type_bearer" type="radio"/>
 								<span class="control_indicator"></span>
@@ -843,7 +841,7 @@
 							<div id="conf-remote_cfg-auth_bearer-options" class="hidden indent">
 								<label>
 									<span lang="en">Token:</span>
-									<span lang="fi">Token:</span>
+									<span lang="fi">Tunnus:</span>
 									<div class="input-password input-with_validity_check">
 										<input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
 										<div class="input-with_validity_check-icon">
@@ -861,7 +859,7 @@
 						</button>
 						<button class="btn" id="remote_cfg-button-check" type="button">
 							<span lang="en">CHECK</span>
-							<span lang="fi">TARKISTAA</span>
+							<span lang="fi">TARKASTA</span>
 						</button>
 					</div>
 
@@ -897,9 +895,9 @@
 						</p>
 						<p>
 							<span lang="en">
-								Also, the configuration file can be generated dynamically by the server,
-								for this the server must analyze the HTTP header 'ruuvi_gw_mac',
-								which contains MAC address in the format XX:XX:XX:XX:XX:XX.
+								Also, the configuration file can be generated dynamically by the server.
+								To do this the server must analyse the HTTP header 'ruuvi_gw_mac',
+								which contains the MAC address in the format XX:XX:XX:XX:XX:XX.
 							</span>
 							<span lang="fi">
 								Lisäksi palvelin voi luoda konfigurointitiedoston dynaamisesti.
@@ -945,10 +943,10 @@
 
 			<div class="ingress">
 				<p lang="en">
-					Please configure a convenient schedule for automatic firmware updates.
+					Set a suitable schedule for installing automatic firmware updates.
 					During the update, your Ruuvi Gateway will download the latest firmware and then will
 					automatically install it and reboot.
-					(You may notice a 1-5 minutes downtime during the installation of the update.)
+					(You may notice a 1-5 minutes downtime during the update.)
 				</p>
 				<p lang="fi">
 					Valitse sinulle sopivin aika automaattisten ohjelmistopäivitysten toteuttamiselle.
@@ -959,13 +957,13 @@
 			</div>
 
 			<h2>
-				<span lang="en">Updating Options</span>
+				<span lang="en">Update Options</span>
 				<span lang="fi">Päivitysvaihtoehdot</span>
 			</h2>
 
 			<div>
 				<label class="control control-radio">
-					<span lang="en">Auto update (recommended setting, accept releases after they're 2 weeks old)</span>
+					<span lang="en">Auto update (recommended setting, accept releases 2 weeks after they've been published)</span>
 					<span lang="fi">Automaattinen päivitys (suositeltu vaihtoehto, hyväksy päivitykset 2 viikkoa niiden julkaisun jälkeen)</span>
 					<input id="auto_update_cycle-regular" value="auto_update_cycle-regular" type="radio"
 						   name="auto_update_cycle" checked>
@@ -1007,12 +1005,12 @@
 					<div>&nbsp;</div>
 
 					<h2>
-						<span lang="en">Define update time</span>
+						<span lang="en">Define when to update</span>
 						<span lang="fi">Määritä päivitysajankohta</span>
 					</h2>
 					<div class="ingress">
-						<p lang="en">Select days and timeslot when Ruuvi Gateway is allowed to update automatically.</p>
-						<p lang="fi">Valitse päivät ja aikaväli, jolloin ohjelmistopäivitys sallitaan.</p>
+						<p lang="en">Select days and time range when Ruuvi Gateway is allowed to run updates.</p>
+						<p lang="fi">Valitse päivät ja aikaväli, jolloin ohjelmistopäivitykset sallitaan.</p>
 					</div>
 
 					<h3>
@@ -1093,7 +1091,7 @@
 					</div>
 
 					<h3>
-						<span lang="en">Timeslot</span>
+						<span lang="en">Time range</span>
 						<span lang="fi">Aikaväli</span>
 					</h3>
 
@@ -1225,7 +1223,7 @@
 		<!-- WEB AUTHENTICATION -->
 		<section id="page-settings_lan_auth" class="hidden">
 			<h1>
-				<span lang="en">Access Settings</span>
+				<span lang="en">Remote Access Settings</span>
 				<span lang="fi">Etäyhteysasetukset</span>
 			</h1>
 
@@ -1264,10 +1262,10 @@
 					<p lang="en">Username: Admin</p>
 					<p lang="fi">Käyttäjätunnus: Admin</p>
 					<p lang="en">
-						Password: Unique ID (in format XX:XX:XX:XX:XX:XX:XX:XX) which is printed on the bottom of the Ruuvi Gateway.
+						Password: Unique ID (in format XX:XX:XX:XX:XX:XX:XX:XX) as printed on the bottom of the Ruuvi Gateway enclosure.
 					</p>
 					<p lang="fi">
-						Salasana: Yksilöllinen ID (muodossa XX:XX:XX:XX:XX:XX:XX:XX), joka on painettu Ruuvi Gatewayn pohjaan.
+						Salasana: Yksilöllinen ID (muodossa XX:XX:XX:XX:XX:XX:XX:XX), jonka löydät Ruuvi Gatewayn pohjasta.
 					</p>
 				</div>
 			</div>
@@ -1300,7 +1298,7 @@
 			</div>
 
 			<label class="control control-radio">
-				<span lang="en">No remote configurable (extremely safe)</span>
+				<span lang="en">Not configurable via remote connection (extremely safe)</span>
 				<span lang="fi">Ei määritettävissä etäyhteyden kautta (erittäin turvallinen)</span>
 				<input id="lan_auth_type_deny" name="lan_auth_type" value="lan_auth_deny" type="radio"/>
 				<span class="control_indicator"></span>
@@ -1340,7 +1338,7 @@
 						<div id="settings_lan_auth-api_key" class="indent hidden">
 							<label for="settings_lan_auth-api_key">
 								<span lang="en">API key (bearer token):</span>
-								<span lang="fi">API-avain (bearer token):</span>
+								<span lang="fi">API-avain (haltijatunnus):</span>
 								<input id="lan_auth-api_key" type="text" value="">
 							</label>
 							<div class="ingress">
@@ -1365,7 +1363,7 @@
 						<div id="settings_lan_auth-api_key_rw" class="indent hidden">
 							<label for="settings_lan_auth-api_key_rw">
 								<span lang="en">API key (bearer token):</span>
-								<span lang="fi">API-avain (bearer token):</span>
+								<span lang="fi">API-avain (haltijatunnus):</span>
 								<input id="lan_auth-api_key_rw" type="text" value="">
 							</label>
 							<div class="ingress">
@@ -1407,9 +1405,9 @@
 
 			<div class="ingress">
 				<p lang="en">Almost done!</p>
-				<p lang="en">The last step is to configure where Ruuvi Gateway should send the data.
-					Default option is Ruuvi's cloud service. When using Ruuvi's secure cloud service, only you can
-					access the data of the sensors owned by you.</p>
+				<p lang="en">In the last step we define where the sensor data collected by Ruuvi Gateway is to be sent.
+					Ruuvi Cloud cloud service is used by default. Only you will be able to read the data of the sensors
+					you own when using Ruuvi's secure cloud service.</p>
 				<p lang="fi">Melkein valmista!</p>
 				<p lang="fi">Viimeisenä määrittelemme minne Ruuvi Gatewayn keräämät anturitiedot halutaan lähettää.
 					Oletuksena käytössä on Ruuvi Cloud -pilvipalvelu. Ruuvin pilvipalua käyttäessäsi vain sinä
@@ -1441,12 +1439,12 @@
 
 			<div id="page-cloud_options-advanced-dropdown" class="hidden">
 				<p>
-					<span lang="en">Configure a custom HTTP/MQTT server and adjust Bluetooth scanning settings</span>
-					<span lang="fi">Määritä oma HTTP/MQTT-palvelin ja mukauta Bluetooth-skannausasetuksia</span>
+					<span lang="en">Configure a custom HTTP(S)/MQTT(S) server and adjust Bluetooth scanning settings</span>
+					<span lang="fi">Määritä oma HTTP(S)/MQTT(S)-palvelin ja mukauta Bluetooth-skannausasetuksia</span>
 				</p>
 
 				<label class="control control-radio">
-					<span lang="en">Use Ruuvi Cloud or/and a custom server and configure more settings</span>
+					<span lang="en">Use Ruuvi Cloud and/or a custom server and configure other advanced settings</span>
 					<span lang="fi">Käytä Ruuvi Cloudia ja/tai mukautettua palvelinta, ja määritä muita lisäasetuksia</span>
 					<input id="use_custom" value="custom" name="connection_type" type="radio" class="conf-checkbox">
 					<span class="control_indicator"></span>
@@ -1493,7 +1491,7 @@
 				<p lang="en">You're able to relay data to multiple targets.
 					If Ruuvi Cloud is selected you won't be able to select HTTP(S) target simultaneously.</p>
 				<p lang="fi">Voit lähettää tiedot useampaan kohteeseen.
-					Et voi valita HTTP(S) kohdetta mikäli Ruuvi Cloud on valittuna.</p>
+					Et voi valita HTTP(S)-kohdetta mikäli Ruuvi Cloud on valittuna.</p>
 			</div>
 
 			<label class="control control-checkbox">
@@ -1523,7 +1521,7 @@
 					</div>
 				</label>
 				<label class="font-bold">
-					<span lang="en">User name (optional)</span>
+					<span lang="en">Username (optional)</span>
 					<span lang="fi">Käyttäjänimi (valinnainen)</span>
 					<div class="input-with_validity_check">
 						<input id="http_user" type="text" placeholder="" value="">
@@ -1584,14 +1582,14 @@
 					<span class="control_indicator"></span>
 				</label>
 				<label class="control control-radio">
-					<span lang="en">MQTT over Websocket</span>
-					<span lang="fi">MQTT Websocketin kautta</span>
+					<span lang="en">MQTT over WebSocket</span>
+					<span lang="fi">MQTT WebSocketin kautta</span>
 					<input id="mqtt_transport_WS" name="mqtt_transport" type="radio" value="mqtt_transport_WS"/>
 					<span class="control_indicator"></span>
 				</label>
 				<label class="control control-radio">
-					<span lang="en">MQTT over Secure Websocket</span>
-					<span lang="fi">MQTT Secure Websocketin kautta</span>
+					<span lang="en">MQTT over Secure WebSocket</span>
+					<span lang="fi">MQTT Secure WebSocketin kautta</span>
 					<input id="mqtt_transport_WSS" name="mqtt_transport" type="radio" value="mqtt_transport_WSS"/>
 					<span class="control_indicator"></span>
 				</label>
@@ -1661,7 +1659,7 @@
 
 				<label class="conf-settings-checkbox control control-checkbox">
 					<span lang="en">Disable the use of retained messages</span>
-					<span lang="fi">Poista säilytettyjen viestien käyttö käytöstä</span>
+					<span lang="fi">Älä käytä säilytettyjä viestejä</span>
 					<input id="mqtt_disable_retained_messages" type="checkbox">
 					<span class="control_indicator"></span>
 				</label>
@@ -1723,7 +1721,7 @@
 								</div>
 							</li>
 							<li>
-								<p lang="en">Subscribe to messages from a Bluetooth sensor with the MAC:</p>
+								<p lang="en">Subscribe to messages from a Bluetooth sensor with this MAC:</p>
 								<p lang="fi">Tilaa viestit tämän MAC-osoitteen sisältävästä Bluetooth-anturista:</p>
 								<div id="mqtt_example3">mosquitto_sub -h test.mosquitto.org -p 1883 -t "ruuvi/#/&lt;TAG_MAC&gt;/#"
 									-v
@@ -1762,14 +1760,14 @@
 			<div id="page-custom_server-advanced-dropdown" class="hidden">
 				<label class="control control-radio">
 					<span lang="en">Send statistics to Ruuvi (default)</span>
-					<span lang="fi">Lähetä statistiikka Ruuville (oletus)</span>
+					<span lang="fi">Lähetä statistiikkatiedot Ruuville (oletus)</span>
 					<input id="use_http_stat_ruuvi" value="statistics_use_ruuvi" name="use_statistics" type="radio" class="conf-checkbox">
 					<span class="control_indicator"></span>
 				</label>
 
 				<label class="control control-radio">
 					<span lang="en">Send to custom server</span>
-					<span lang="fi">Lähetä omalle palvelimelle</span>
+					<span lang="fi">Lähetä mukautetulle palvelimelle</span>
 					<input id="use_http_stat" value="statistics_use_custom" name="use_statistics" type="radio" class="conf-checkbox">
 					<span class="control_indicator"></span>
 				</label>
@@ -1789,7 +1787,7 @@
 						</div>
 					</label>
 					<label class="font-bold">
-						<span lang="en">User name (optional)</span>
+						<span lang="en">Username (optional)</span>
 						<span lang="fi">Käyttäjänimi (valinnainen)</span>
 						<div class="input-with_validity_check">
 							<input id="http_stat_user" type="text" placeholder="" value="">
@@ -1957,7 +1955,7 @@
 			</div>
 
 			<div class="ingress">
-				<p lang="en">Ruuvi Gateway continuously listens to Bluetooth beacon messages.
+				<p lang="en">Ruuvi Gateway actively listens for Bluetooth beacon messages from its surroundings.
 					You can modify the listening settings.</p>
 				<p lang="fi">Ruuvi Gateway kuuntelee jatkuvasti ympäristön Bluetooth-majakkaviestejä.
 					Voit muokata kuunteluasetuksia.</p>
@@ -1987,7 +1985,7 @@
 				<div>&nbsp;</div>
 				<label class="control control-radio info-icon-container">
 					<div class="info-icon-left-column">
-						<span lang="en">Ruuvi sensors (experimental long range sensors included)</span>
+						<span lang="en">Ruuvi sensors (including experimental long range sensors)</span>
 						<span lang="fi">Ruuvi-anturit (myös kokeelliset pitkän kantaman anturit)</span>
 						<input type="radio" name="company_use_filtering" value="2" checked="checked" placeholder="Scan only Ruuvitags">
 						<span class="control_indicator"></span>
@@ -2049,8 +2047,8 @@
 					<a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
 					<div class="info-icon-content">
 						<p>
-							<span lang="en">If you also enable long range reception, the Gateway will continuously switch
-								between the modes (normal mode 50% / long range mode 50%)</span>
+							<span lang="en">If you enable long range, Ruuvi Gateway will continuously switch the operating mode
+								between short and long range (normal mode 50% / long range mode 50%)</span>
 							<span lang="fi">Jos otat pitkän kantaman käyttöön, Ruuvi Gateway vaihtaa toimintatilaa lyhyen
 								ja pitkän kantaman välillä (normaali tila 50 % / pitkän kantaman tila 50 %)</span>
 						</p>
@@ -2147,15 +2145,15 @@
 			</h2>
 
 			<div class="ingress">
-				<p lang="en">If you misconfigured, you can restart the configuration Wi-Fi hotspot by taking a paper
-					clip and briefly pressing the small pinhole button under the power socket.</p>
+				<p lang="en">If you misconfigured, you can restart the configuration Wi-Fi hotspot. Locate the pinhole 
+					button under the power socket and press the button down briefly using a paperclip.</p>
 				<p lang="fi">Mikäli haluat käynnistää ohjatun käyttöönoton uudelleen, paina laitteen virtaliittimen
 					alla olevaa nollauspainiketta lyhyesti paperiliittimellä ja yhdistä sitten päätelaitteellasi
 					uudelleen Ruuvi Gatewayn muodostamaan Wi-Fi-yhteyspisteeseen.</p>
 			</div>
 
 			<div class="ingress">
-				<p lang="en">If you want to reset to the factory settings, take a paper clip and press the small
+				<p lang="en">If you want to reset to the factory settings, use a paperclip and press the small
 					pinhole button under the power socket for 10 seconds.</p>
 				<p lang="fi">Mikäli haluat palauttaa tehdasasetukset, pidä paperiliittimellä virtaliittimen alla
 					olevaa nollauspainiketta alaspainettuna kymmenen sekunnin ajan.</p>
@@ -2169,13 +2167,13 @@
                     Oh no! Connection to the Ruuvi Gateway is lost.
                     <br/>
                     <br/>
-                    Please reconnect to the Wi-Fi hotspot. If the hotspot is not active, start it again by taking a paper clip
-					and briefly pressing the pinhole button	under the power socket.</span>
+                    Please reconnect to the Wi-Fi hotspot. If the hotspot is not active, start it again.
+					 Locate the pinhole button under the power socket and press the button down briefly using a paperclip.</span>
 				<span lang="fi">
                     Voi ei! Yhteys Ruuvi Gatewayhyn on menetetty.
                     <br/>
                     <br/>
-                    Muodosta yhteys Wi-Fi-yhteyspisteeseen uudelleen. Mikäli verkko ei ole
+                    Yhdistä Wi-Fi-yhteyspisteeseen uudelleen. Mikäli yhteyspiste ei ole
 					aktiivinen, paina paperiliittimellä lyhyesti virtaliittimen alla olevaa painiketta.</span>
 			</div>
 		</div>
