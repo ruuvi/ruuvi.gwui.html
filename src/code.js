@@ -2159,7 +2159,11 @@ $(document).ready(function () {
               } else if (resp.status === 500) {
                 set_error_message(params, `Ruuvi Gateway internal error: ${resp.message}`)
               } else {
-                set_error_message(params, `HTTP response status: ${resp.status}, Message: ${resp.message}`)
+                if (resp.message.startsWith('HTTP response status:')) {
+                  set_error_message(params, resp.message)
+                } else {
+                  set_error_message(params, `HTTP response status: ${resp.status}, Message: ${resp.message}`)
+                }
               }
             }
             resolve(true)
