@@ -133,7 +133,7 @@
 						You're accessing the Ruuvi Gateway configuration wizard from your local area network.
 						You cannot adjust the connection type at this time.
 						In order to change the connection type, please reconfigure the Gateway using its Wi-Fi hotspot.
-						To restart the Wi-Fi hotspot, locate the pinhole button under the power socket and press the button 
+						To restart the Wi-Fi hotspot, locate the pinhole button under the power socket and press the button
 						down briefly using a paperclip.
 					</span>
 					<span lang="fi">
@@ -1544,6 +1544,14 @@
 						</div>
 					</div>
 				</label>
+				<div id="page-custom_server-http_validation_error" class="rd hidden">
+					<div class="block-centered">
+						<span lang="en">Validation failed</span>
+						<span lang="fi">Vahvistus epäonnistui</span>
+					</div>
+					<div id="page-custom_server-http_validation_error-desc" class="block-centered">
+					</div>
+				</div>
 				<div>&nbsp;</div>
 			</div>
 
@@ -1631,6 +1639,14 @@
 						</div>
 					</div>
 				</label>
+				<div id="page-custom_server-mqtt_validation_error" class="rd hidden">
+					<div class="block-centered">
+						<span lang="en">Validation failed</span>
+						<span lang="fi">Vahvistus epäonnistui</span>
+					</div>
+					<div id="page-custom_server-mqtt_validation_error-desc" class="block-centered">
+					</div>
+				</div>
 				<label class="font-bold">
 					<span lang="en">Client name</span>
 					<span lang="fi">Asiakastunnus</span>
@@ -1794,6 +1810,14 @@
 							</div>
 						</div>
 					</label>
+					<div id="page-custom_server-http_stat_validation_error" class="rd hidden">
+						<div class="block-centered">
+							<span lang="en">Validation failed</span>
+							<span lang="fi">Vahvistus epäonnistui</span>
+						</div>
+						<div id="page-custom_server-http_stat_validation_error-desc" class="block-centered">
+						</div>
+					</div>
 					<div class="border"></div>
 					<div>&nbsp;</div>
 				</div>
@@ -1811,13 +1835,13 @@
 					<span lang="en">Back</span>
 					<span lang="fi">Edellinen</span>
 				</a>
+				<a href="" id="page-custom_server-button-check" class="btn disable-click">
+					<span lang="en">CHECK</span>
+					<span lang="fi">TARKASTA</span>
+				</a>
 				<a href="" id="page-custom_server-button-continue" class="btn">
 					<span lang="en">NEXT</span>
 					<span lang="fi">SEURAAVA</span>
-				</a>
-				<a href="" id="page-custom_server-button-check" class="btn hidden">
-					<span lang="en">CHECK</span>
-					<span lang="fi">TARKISTAA</span>
 				</a>
 			</div>
 		</section>
@@ -2121,7 +2145,7 @@
 			</h2>
 
 			<div class="ingress">
-				<p lang="en">If you misconfigured, you can restart the configuration Wi-Fi hotspot. Locate the pinhole 
+				<p lang="en">If you misconfigured, you can restart the configuration Wi-Fi hotspot. Locate the pinhole
 					button under the power socket and press the button down briefly using a paperclip.</p>
 				<p lang="fi">Mikäli haluat käynnistää ohjatun käyttöönoton uudelleen, paina laitteen virtaliittimen
 					alla olevaa nollauspainiketta lyhyesti paperiliittimellä ja yhdistä sitten päätelaitteellasi
