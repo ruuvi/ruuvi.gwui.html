@@ -1857,7 +1857,7 @@ if __name__ == '__main__':
     print('    4 - disconnected by the user command')
     print('    5 - lost connection')
 
-    os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../src'))
+    os.chdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../build'))
 
     if args.lan:
         g_flag_access_from_lan = True
