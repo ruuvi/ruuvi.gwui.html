@@ -1,0 +1,22 @@
+{
+  "name": "ruuvi.gwui.html",
+  "version": "1.0.0",
+  "description": "Ruuvi Gateway Web Configurator",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruuvi/ruuvi.gwui.html.git"
+  },
+  "author": "TheSomeMan",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/ruuvi/ruuvi.gwui.html/issues"
+  },
+  "homepage": "https://github.com/ruuvi/ruuvi.gwui.html#readme"
+}
