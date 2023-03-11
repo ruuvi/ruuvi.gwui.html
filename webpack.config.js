@@ -6,10 +6,17 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
   mode: 'development',
   devtool: 'source-map',
-  entry: './src/ruuvi.js',
+  entry: {
+    ruuvi: {
+      import: [path.resolve(__dirname, 'src/ruuvi.js')]
+    },
+    auth: {
+      import: [path.resolve(__dirname, 'src/auth.js')]
+    }
+  },
   output: {
-    filename: 'ruuvi.js',
     path: path.resolve(__dirname, 'build'),
+    publicPath: '',
     clean: true,
   },
   plugins: [
@@ -19,10 +26,18 @@ module.exports = {
       scriptLoading: 'blocking',
       inject: 'head',
       favicon: path.resolve(__dirname, 'src/favicon.ico'),
+      chunks: ['ruuvi'],
+    }),
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'src/auth.html'),
+      filename: 'auth.html',
+      scriptLoading: 'blocking',
+      inject: 'head',
+      favicon: path.resolve(__dirname, 'src/favicon.ico'),
+      chunks: ['auth'],
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: path.resolve(__dirname, 'src/auth.html') },
         { from: path.resolve(__dirname, 'src/jquery-3.5.1.js') },
         {
           from: path.resolve(__dirname, 'src/crypto-js-4.0.0/core.js'),
