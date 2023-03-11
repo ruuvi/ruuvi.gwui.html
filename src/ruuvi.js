@@ -1,6 +1,7 @@
 'use strict'
 
 import $ from 'jquery'
+import crypto from './crypto'
 
 // Former code.js:
 
