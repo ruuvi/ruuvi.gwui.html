@@ -30,7 +30,7 @@ module.exports = {
     runtimeChunk: 'single',
     minimize: true,
     minimizer: [new TerserPlugin({
-      include: /(jquery)\.js/,
+      include: /(jquery)|(crypto)\.js/,
     })],
   },
   module: {
