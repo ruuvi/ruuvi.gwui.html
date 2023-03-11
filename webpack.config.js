@@ -1,4 +1,6 @@
+require("webpack")
 const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
@@ -11,9 +13,14 @@ module.exports = {
     clean: true,
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'src/index.html'),
+      filename: 'index.html',
+      scriptLoading: 'blocking',
+      inject: 'head',
+    }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: path.resolve(__dirname, 'src/index.html') },
         { from: path.resolve(__dirname, 'src/favicon.ico') },
         { from: path.resolve(__dirname, 'src/jquery-3.5.1.js') },
         {
