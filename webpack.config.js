@@ -22,6 +22,7 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
       patterns: [
+        { from: path.resolve(__dirname, 'src/auth.html') },
         { from: path.resolve(__dirname, 'src/jquery-3.5.1.js') },
         {
           from: path.resolve(__dirname, 'src/crypto-js-4.0.0/core.js'),
