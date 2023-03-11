@@ -1,5 +1,7 @@
 'use strict'
 
+import $ from 'jquery'
+
 let g_realm = null
 let g_challenge = null
 let g_session_cookie = null

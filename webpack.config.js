@@ -8,11 +8,14 @@ module.exports = {
   devtool: 'source-map',
   entry: {
     ruuvi: {
-      import: [path.resolve(__dirname, 'src/ruuvi.js')]
+      import: [path.resolve(__dirname, 'src/ruuvi.js')],
+      dependOn: ['jquery'],
     },
     auth: {
-      import: [path.resolve(__dirname, 'src/auth.js')]
-    }
+      import: [path.resolve(__dirname, 'src/auth.js')],
+      dependOn: ['jquery'],
+    },
+    jquery: 'jquery',
   },
   output: {
     path: path.resolve(__dirname, 'build'),
@@ -26,7 +29,7 @@ module.exports = {
       scriptLoading: 'blocking',
       inject: 'head',
       favicon: path.resolve(__dirname, 'src/favicon.ico'),
-      chunks: ['ruuvi'],
+      chunks: ['ruuvi', 'jquery'],
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/auth.html'),
@@ -34,11 +37,10 @@ module.exports = {
       scriptLoading: 'blocking',
       inject: 'head',
       favicon: path.resolve(__dirname, 'src/favicon.ico'),
-      chunks: ['auth'],
+      chunks: ['auth', 'jquery'],
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: path.resolve(__dirname, 'src/jquery-3.5.1.js') },
         {
           from: path.resolve(__dirname, 'src/crypto-js-4.0.0/core.js'),
           to: path.resolve(__dirname, 'build/crypto-js-4.0.0/core.js')

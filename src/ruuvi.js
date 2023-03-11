@@ -1,5 +1,7 @@
 'use strict'
 
+import $ from 'jquery'
+
 // Former code.js:
 
 // First, checks if it isn't implemented yet.
