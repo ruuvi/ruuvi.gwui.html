@@ -3,6 +3,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const TerserPlugin = require("terser-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: 'development',
@@ -40,7 +41,7 @@ module.exports = {
       {
         test: /\.s[ac]ss$/i,
         use: [
-          "style-loader",
+          MiniCssExtractPlugin.loader,
           'css-loader', // Translates CSS into CommonJS
           'sass-loader', // Compiles Sass to CSS
         ],
@@ -63,6 +64,9 @@ module.exports = {
       inject: 'head',
       favicon: path.resolve(__dirname, 'src/favicon.ico'),
       chunks: ['auth', 'jquery', 'style'],
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'style.css',
     }),
     new CopyWebpackPlugin({
       patterns: [
