@@ -17,6 +17,7 @@ module.exports = {
       dependOn: ['jquery'],
     },
     jquery: 'jquery',
+    style: path.resolve(__dirname, 'src/scss/style.scss'),
   },
   output: {
     path: path.resolve(__dirname, 'build'),
@@ -30,6 +31,22 @@ module.exports = {
       include: /(jquery)\.js/,
     })],
   },
+  module: {
+    rules: [
+      {
+        test: /\.(woff|woff2)$/i,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          "style-loader",
+          'css-loader', // Translates CSS into CommonJS
+          'sass-loader', // Compiles Sass to CSS
+        ],
+      },
+    ],
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
@@ -37,7 +54,7 @@ module.exports = {
       scriptLoading: 'blocking',
       inject: 'head',
       favicon: path.resolve(__dirname, 'src/favicon.ico'),
-      chunks: ['ruuvi', 'jquery'],
+      chunks: ['ruuvi', 'jquery', 'style'],
     }),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/auth.html'),
@@ -45,7 +62,7 @@ module.exports = {
       scriptLoading: 'blocking',
       inject: 'head',
       favicon: path.resolve(__dirname, 'src/favicon.ico'),
-      chunks: ['auth', 'jquery'],
+      chunks: ['auth', 'jquery', 'style'],
     }),
     new CopyWebpackPlugin({
       patterns: [
@@ -66,14 +83,6 @@ module.exports = {
           to: path.resolve(__dirname, 'build/crypto-js-4.0.0/enc-base64.js')
         },
         { from: path.resolve(__dirname, 'src/crypto_browserify.js') },
-        {
-          from: path.resolve(__dirname, 'src/css/style.css'),
-          to: path.resolve(__dirname, 'build/css/')
-        },
-        {
-          from: path.resolve(__dirname, 'src/assets/fonts/'),
-          to: path.resolve(__dirname, 'build/assets/fonts/')
-        },
       ],
     }),
   ]

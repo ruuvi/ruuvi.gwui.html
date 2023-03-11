@@ -22,7 +22,11 @@
   "homepage": "https://github.com/ruuvi/ruuvi.gwui.html#readme",
   "devDependencies": {
     "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.7.3",
     "html-webpack-plugin": "^5.5.0",
+    "sass": "^1.59.2",
+    "sass-loader": "^13.2.0",
+    "style-loader": "^3.3.1",
     "terser-webpack-plugin": "^5.3.7",
     "webpack": "^5.76.0",
     "webpack-cli": "^5.0.1"
