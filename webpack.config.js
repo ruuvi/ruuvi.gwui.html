@@ -2,6 +2,7 @@ require("webpack")
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
   mode: 'development',
@@ -21,6 +22,13 @@ module.exports = {
     path: path.resolve(__dirname, 'build'),
     publicPath: '',
     clean: true,
+  },
+  optimization: {
+    runtimeChunk: 'single',
+    minimize: true,
+    minimizer: [new TerserPlugin({
+      include: /(jquery)\.js/,
+    })],
   },
   plugins: [
     new HtmlWebpackPlugin({
