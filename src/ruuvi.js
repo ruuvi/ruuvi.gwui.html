@@ -1,3 +1,5 @@
+'use strict'
+
 // Former code.js:
 
 // First, checks if it isn't implemented yet.
@@ -903,7 +905,7 @@ function ethernet_connection_check_validity () {
 }
 
 $(document).ready(function () {
-  console.log(log_wrap('code.js: Ready'))
+  console.log(log_wrap('ruuvi.js: Ready'))
   window.onpopstate = function (event) {
     console.log(log_wrap('window.onpopstate: ' + document.location.hash + ', current_page: ' + g_current_page))
     let url = window.location.hash.substring(1)
@@ -4004,10 +4006,6 @@ function get_config () {
     }
   )
 }
-
-$(document).ready(function () {
-  console.log('ruuvi.js: Ready')
-})
 
 $(window).on('load', function () {
   console.log(log_wrap('ruuvi.js: Loaded'))
