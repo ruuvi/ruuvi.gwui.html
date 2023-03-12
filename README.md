@@ -1,14 +1,17 @@
-# ruuvi.ruuvi_gwui.html
+# ruuvi.gwui.html
 
 ## Ruuvi Gateway web UI
 This repository contains files related to the web interface of the Gateway configurator. 
 
 ### Pre-requisites:
-* npm and crypto-browserify:
- 
-`sudo apt install npm`
 
-`sudo npm install -g browserify browserify-shim`
+* Install npm:
+
+  `sudo apt install npm`
+
+* Install the Node.js modules that ruuvi.gwui.html depends on:
+
+  `npm install`
 
 ## Gateway simulator
 

@@ -1,6 +1,5 @@
 .DS_Store
 .idea
-src/crypto_browserify.js
 node_modules
 build
 

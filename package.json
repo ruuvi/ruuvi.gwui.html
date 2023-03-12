@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/ruuvi/ruuvi.gwui.html#readme",
   "devDependencies": {
-    "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.7.3",
@@ -33,6 +32,8 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
+    "buffer": "^6.0.3",
+    "create-ecdh": "^4.0.4",
     "crypto-js": "^4.1.1",
     "jquery": "^3.6.4"
   }

@@ -3,6 +3,8 @@
 import $ from 'jquery'
 import * as CryptoJS from './crypto'
 
+window.Buffer = require('buffer').Buffer
+
 // Former code.js:
 
 // First, checks if it isn't implemented yet.
@@ -3507,7 +3509,7 @@ function ruuvi_edch_encrypt (msg) {
 function on_get_config (data, ecdh_pub_key_srv_b64) {
   g_aes_key = null
   if (ecdh_pub_key_srv_b64) {
-    let ecdh_pub_key_srv = crypto_browserify.createECDH('secp256r1')
+    let ecdh_pub_key_srv = CryptoJS.createECDH('secp256r1')
     ecdh_pub_key_srv.generateKeys()
     let ecdh_pub_key_srv_buf = arrayBufferFromBase64(ecdh_pub_key_srv_b64)
     console.log(log_wrap(`ECDH PubKey(Srv): ${buf2hex(ecdh_pub_key_srv_buf)}`))
@@ -3983,7 +3985,7 @@ function arrayBufferFromBase64 (base64_string) {
 }
 
 function get_config () {
-  g_ecdh = crypto_browserify.createECDH('secp256r1')
+  g_ecdh = CryptoJS.createECDH('secp256r1')
   let pub_key = g_ecdh.generateKeys()
   console.log(log_wrap(`ECDH PubKey(Cli): ${buf2hex(pub_key)}`))
   console.log(log_wrap('GET /ruuvi.json'))

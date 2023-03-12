@@ -1,7 +1,6 @@
 require("webpack")
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -68,11 +67,6 @@ module.exports = {
     }),
     new MiniCssExtractPlugin({
       filename: 'style.css',
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        { from: path.resolve(__dirname, 'src/crypto_browserify.js') },
-      ],
     }),
   ]
 }
