@@ -3494,14 +3494,11 @@ function buf2hex (buffer) { // buffer is an ArrayBuffer
 function ruuvi_edch_encrypt (msg) {
   const hash = CryptoJS.SHA256(msg)
   const aes_iv = CryptoJS.lib.WordArray.random(16)
-  let aes_cipher = crypto_browserify.createCipheriv('aes-256-cbc',
-    CryptoJS.convert.WordArrayToUint8Array(g_aes_key),
-    CryptoJS.convert.WordArrayToUint8Array(aes_iv))
-  let msg_encrypted = aes_cipher.update(msg, 'utf8', 'base64')
-  msg_encrypted += aes_cipher.final('base64')
+
+  let msg_encrypted = CryptoJS.AES.encrypt(msg, g_aes_key, { iv: aes_iv })
 
   return JSON.stringify({
-    'encrypted': msg_encrypted,
+    'encrypted': msg_encrypted.toString(),
     'iv': CryptoJS.enc.Base64.stringify(aes_iv),
     'hash': CryptoJS.enc.Base64.stringify(hash)
   })

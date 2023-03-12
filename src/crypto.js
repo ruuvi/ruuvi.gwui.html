@@ -1,5 +1,6 @@
 let MD5 = require('crypto-js/md5')
 let SHA256 = require('crypto-js/sha256')
+let AES = require('crypto-js/aes')
 let enc_base64 = require('crypto-js/enc-base64')
 let core = require('crypto-js/core')
 
@@ -52,8 +53,8 @@ let convert = {}
 convert.Uint8ArrayToWordArray = convertUint8ArrayToWordArray
 convert.WordArrayToUint8Array = convertWordArrayToUint8Array
 
-export default { MD5, SHA256, enc, enc_base64, lib, convert }
-export { MD5, SHA256, enc, enc_base64, lib, convert }
+export default { MD5, SHA256, AES, enc, enc_base64, lib, convert }
+export { MD5, SHA256, AES, enc, enc_base64, lib, convert }
 
 (function (f) {
   if (typeof exports === 'object' && typeof module !== 'undefined') {
@@ -74,5 +75,5 @@ export { MD5, SHA256, enc, enc_base64, lib, convert }
     g.CryptoJS = f()
   }
 })(function () {
-  return { MD5, SHA256, enc, enc_base64, lib, convert }
+  return { MD5, SHA256, AES, enc, enc_base64, lib, convert }
 })
