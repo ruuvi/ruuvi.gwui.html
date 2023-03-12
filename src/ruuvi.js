@@ -1,7 +1,7 @@
 'use strict'
 
 import $ from 'jquery'
-import crypto from './crypto'
+import * as CryptoJS from './crypto'
 
 // Former code.js:
 
@@ -3492,15 +3492,18 @@ function buf2hex (buffer) { // buffer is an ArrayBuffer
 }
 
 function ruuvi_edch_encrypt (msg) {
-  let hash = crypto_browserify.createHash('sha256').update(msg).digest()
-  let aes_iv = crypto_browserify.randomBytes(16)
-  let aes_cipher = crypto_browserify.createCipheriv('aes-256-cbc', g_aes_key, aes_iv)
+  const hash = CryptoJS.SHA256(msg)
+  const aes_iv = CryptoJS.lib.WordArray.random(16)
+  let aes_cipher = crypto_browserify.createCipheriv('aes-256-cbc',
+    CryptoJS.convert.WordArrayToUint8Array(g_aes_key),
+    CryptoJS.convert.WordArrayToUint8Array(aes_iv))
   let msg_encrypted = aes_cipher.update(msg, 'utf8', 'base64')
   msg_encrypted += aes_cipher.final('base64')
+
   return JSON.stringify({
     'encrypted': msg_encrypted,
-    'iv': arrayBufferToBase64(aes_iv),
-    'hash': arrayBufferToBase64(hash)
+    'iv': CryptoJS.enc.Base64.stringify(aes_iv),
+    'hash': CryptoJS.enc.Base64.stringify(hash)
   })
 }
 
@@ -3513,9 +3516,10 @@ function on_get_config (data, ecdh_pub_key_srv_b64) {
     console.log(log_wrap(`ECDH PubKey(Srv): ${buf2hex(ecdh_pub_key_srv_buf)}`))
     ecdh_pub_key_srv.setPublicKey(ecdh_pub_key_srv_buf)
     let shared_secret = g_ecdh.computeSecret(ecdh_pub_key_srv.getPublicKey())
-    // console.log(log_wrap(`Shared secret: ${buf2hex(shared_secret)}`));
-    g_aes_key = crypto_browserify.createHash('sha256').update(shared_secret).digest()
-    // console.log(log_wrap(`AES key: ${buf2hex(g_aes_key)}`));
+    shared_secret = CryptoJS.convert.Uint8ArrayToWordArray(shared_secret)
+    // console.log(log_wrap(`Shared secret: ${shared_secret}`));
+    g_aes_key = CryptoJS.SHA256(shared_secret)
+    // console.log(log_wrap(`AES key: ${g_aes_key}`));
   }
 
   if (data != null) {

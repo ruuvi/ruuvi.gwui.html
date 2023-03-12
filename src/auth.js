@@ -1,7 +1,7 @@
 'use strict'
 
 import $ from 'jquery'
-import crypto from './crypto'
+import * as CryptoJS from './crypto'
 
 let g_realm = null
 let g_challenge = null
