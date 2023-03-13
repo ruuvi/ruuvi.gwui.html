@@ -1,7 +1,7 @@
 'use strict'
 
 import $ from 'jquery'
-import * as CryptoJS from './crypto'
+import * as crypto from './crypto'
 
 // Former code.js:
 
@@ -511,7 +511,7 @@ function on_lan_auth_use_api_key_changed () {
   if ($('#settings_lan_auth-use_api_key')[0].checked) {
     $('#settings_lan_auth-api_key').show()
     if (lan_auth_api_key.val() === '') {
-      lan_auth_api_key.val(CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(CryptoJS.lib.WordArray.random(32))))
+      lan_auth_api_key.val(crypto.enc.Base64.stringify(crypto.SHA256(crypto.lib.WordArray.random(32))))
     }
   } else {
     $('#settings_lan_auth-api_key').hide()
@@ -525,7 +525,7 @@ function on_lan_auth_use_api_key_rw_changed () {
   if ($('#settings_lan_auth-use_api_key_rw')[0].checked) {
     $('#settings_lan_auth-api_key_rw').show()
     if (lan_auth_api_key_rw.val() === '') {
-      lan_auth_api_key_rw.val(CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(CryptoJS.lib.WordArray.random(32))))
+      lan_auth_api_key_rw.val(crypto.enc.Base64.stringify(crypto.SHA256(crypto.lib.WordArray.random(32))))
     }
   } else {
     $('#settings_lan_auth-api_key_rw').hide()
@@ -3231,11 +3231,11 @@ function save_config_internal (flag_save_network_cfg, ap_wifi_channel, cb_on_suc
       let realm = 'RuuviGateway' + gw_mac.substring(12, 14) + gw_mac.substring(15, 17)
       if (data.lan_auth_type === LAN_AUTH_TYPE.RUUVI) {
         data.lan_auth_user = lan_auth_user
-        data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString()
+        data.lan_auth_pass = crypto.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString()
       } else if (data.lan_auth_type === LAN_AUTH_TYPE.DIGEST) {
         data.lan_auth_user = lan_auth_user
         let raw_str = lan_auth_user + ':' + realm + ':' + lan_auth_pass
-        let auth_path_md5 = CryptoJS.MD5(raw_str)
+        let auth_path_md5 = crypto.MD5(raw_str)
         data.lan_auth_pass = auth_path_md5.toString()
       } else if (data.lan_auth_type === LAN_AUTH_TYPE.BASIC) {
         data.lan_auth_user = lan_auth_user
@@ -3492,15 +3492,15 @@ function buf2hex (buffer) { // buffer is an ArrayBuffer
 }
 
 function ruuvi_edch_encrypt (msg) {
-  const hash = CryptoJS.SHA256(msg)
-  const aes_iv = CryptoJS.lib.WordArray.random(16)
+  const hash = crypto.SHA256(msg)
+  const aes_iv = crypto.lib.WordArray.random(16)
 
-  let msg_encrypted = CryptoJS.AES.encrypt(msg, g_aes_key, { iv: aes_iv })
+  let msg_encrypted = crypto.AES.encrypt(msg, g_aes_key, { iv: aes_iv })
 
   return JSON.stringify({
     'encrypted': msg_encrypted.toString(),
-    'iv': CryptoJS.enc.Base64.stringify(aes_iv),
-    'hash': CryptoJS.enc.Base64.stringify(hash)
+    'iv': crypto.enc.Base64.stringify(aes_iv),
+    'hash': crypto.enc.Base64.stringify(hash)
   })
 }
 
@@ -3511,7 +3511,7 @@ function on_get_config (data, ecdh_pub_key_srv_b64) {
 
     const shared_secret = g_ecdh.computeSecret(ecdh_pub_key_srv_b64, 'base64')
     // console.log(log_wrap(`Shared secret: ${shared_secret}`));
-    g_aes_key = CryptoJS.SHA256(shared_secret)
+    g_aes_key = crypto.SHA256(shared_secret)
     // console.log(log_wrap(`AES key: ${g_aes_key}`));
   }
 
@@ -3971,7 +3971,7 @@ function on_get_config (data, ecdh_pub_key_srv_b64) {
 }
 
 function get_config () {
-  g_ecdh = new CryptoJS.ECDH()
+  g_ecdh = new crypto.ECDH()
   const pub_key_b64 = g_ecdh.getPublicKey('base64')
 
   console.log(log_wrap(`ECDH PubKey(Cli): ${pub_key_b64}`))
