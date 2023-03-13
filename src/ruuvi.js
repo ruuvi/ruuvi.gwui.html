@@ -3,8 +3,6 @@
 import $ from 'jquery'
 import * as CryptoJS from './crypto'
 
-window.Buffer = require('buffer').Buffer
-
 // Former code.js:
 
 // First, checks if it isn't implemented yet.
@@ -3509,13 +3507,9 @@ function ruuvi_edch_encrypt (msg) {
 function on_get_config (data, ecdh_pub_key_srv_b64) {
   g_aes_key = null
   if (ecdh_pub_key_srv_b64) {
-    let ecdh_pub_key_srv = CryptoJS.createECDH('secp256r1')
-    ecdh_pub_key_srv.generateKeys()
-    let ecdh_pub_key_srv_buf = arrayBufferFromBase64(ecdh_pub_key_srv_b64)
-    console.log(log_wrap(`ECDH PubKey(Srv): ${buf2hex(ecdh_pub_key_srv_buf)}`))
-    ecdh_pub_key_srv.setPublicKey(ecdh_pub_key_srv_buf)
-    let shared_secret = g_ecdh.computeSecret(ecdh_pub_key_srv.getPublicKey())
-    shared_secret = CryptoJS.convert.Uint8ArrayToWordArray(shared_secret)
+    console.log(log_wrap(`ECDH PubKey(Srv): ${ecdh_pub_key_srv_b64}`))
+
+    const shared_secret = g_ecdh.computeSecret(ecdh_pub_key_srv_b64, 'base64')
     // console.log(log_wrap(`Shared secret: ${shared_secret}`));
     g_aes_key = CryptoJS.SHA256(shared_secret)
     // console.log(log_wrap(`AES key: ${g_aes_key}`));
@@ -3976,18 +3970,11 @@ function on_get_config (data, ecdh_pub_key_srv_b64) {
   }
 }
 
-function arrayBufferToBase64 (arrayBuffer) {
-  return btoa(String.fromCharCode.apply(null, new Uint8Array(arrayBuffer)))
-}
-
-function arrayBufferFromBase64 (base64_string) {
-  return Uint8Array.from(atob(base64_string), c => c.charCodeAt(0))
-}
-
 function get_config () {
-  g_ecdh = CryptoJS.createECDH('secp256r1')
-  let pub_key = g_ecdh.generateKeys()
-  console.log(log_wrap(`ECDH PubKey(Cli): ${buf2hex(pub_key)}`))
+  g_ecdh = new CryptoJS.ECDH()
+  const pub_key_b64 = g_ecdh.getPublicKey('base64')
+
+  console.log(log_wrap(`ECDH PubKey(Cli): ${pub_key_b64}`))
   console.log(log_wrap('GET /ruuvi.json'))
   $.ajax({
       method: 'GET',
@@ -3995,7 +3982,7 @@ function get_config () {
       accept: 'application/json, text/plain, */*',
       dataType: 'json',
       cache: false,
-      headers: { 'ruuvi_ecdh_pub_key': arrayBufferToBase64(pub_key) },
+      headers: { 'ruuvi_ecdh_pub_key': pub_key_b64 },
       success: function (data, textStatus, request) {
         console.log(log_wrap('GET /ruuvi.json: success'))
         on_get_config(data, request.getResponseHeader('ruuvi_ecdh_pub_key'))
