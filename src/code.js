@@ -916,10 +916,6 @@ $(document).ready(function () {
     $(g_current_page).show()
     $(g_current_page).trigger('onShow')
 
-    setTimeout(function () {
-      window.scrollTo(0, 0)
-    }, 1)
-
     if (document.location.hash === '#page-finished') {
       // Prevent the user from leaving this page by pressing the Back button
       window.history.pushState(null, '', '#page-finished')

@@ -612,11 +612,11 @@ body {
   color: var(--color-text);
   font-family: "Mulish", sans-serif;
   line-height: 1.5;
-  padding: 10vh 5vw 3vh;
+  padding: calc(4vh - 1em) 5vw 3vh;
 }
 @media (max-width: 576px) {
   body {
-    padding-top: 2.5vh;
+    padding-top: calc(2vh - 1em);
     padding-bottom: 1vh;
     min-height: 90vh;
   }
@@ -742,9 +742,9 @@ header {
 }
 
 #language-switcher {
-  position: absolute;
-  right: 0;
-  top: -1em;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1em;
 }
 
 .language-switcher > ul {
