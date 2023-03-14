@@ -15,7 +15,7 @@
 	<script src="code.js"></script>
 	<script src="ruuvi.js"></script>
 
-	<title>Ruuvi Gateway Configuration Wizard</title>
+	<title>Ruuvi Gateway Setup Wizard</title>
 </head>
 
 <body>
@@ -39,7 +39,7 @@
 		<!-- WELCOME INTO -->
 		<section id="page-welcome">
 			<h1>
-				<span lang="en">Configuration Wizard</span>
+				<span lang="en">Setup Wizard</span>
 				<span lang="fi">Ohjattu käyttöönotto</span>
 			</h1>
 
@@ -57,12 +57,11 @@
 			</div>
 
 			<div class="ingress">
-				<p lang="en">Setting up your Ruuvi Gateway is easy. Follow these simple steps and
-					you're ready to go.</p>
+				<p lang="en">Setting up your Ruuvi Gateway is easy. Follow the simple steps in the setup wizard.</p>
 				<p lang="en">Please note that your Internet connection may be turned off for the duration of the
 					configuration.</p>
 
-				<p lang="fi">Ruuvi Gatewayn käyttöönotto on helppoa. Yhdistä reititin verkkoon tämän ohjatun määrityksen avulla.</p>
+				<p lang="fi">Ruuvi Gateway -reittimen käyttöönotto on helppoa. Jatka seuraamalla ohjatun määrityksen ohjeita.</p>
 				<p lang="fi">Huomaathan, että internet-yhteys saattaa olla poissa käytöstä asetusten määrityksen ajan.</p>
 			</div>
 
@@ -95,13 +94,13 @@
 			</div>
 
 			<div class="ingress">
-				<p lang="en">Ruuvi Gateway requires an Internet connection in order to work correctly.
-					Connect an Ethernet (RJ45) to make a fixed network connection or connect to a local Wi-Fi network wirelessly.
-					To ensure the most reliable Internet connectivity, fixed connection is recommended.</p>
-				<p lang="fi">Ruuvi Gateway tarvitsee toimiakseen internet-yhteyden.
+				<p lang="en">Ruuvi Gateway requires an Internet connection.
+					Connect an Ethernet (RJ45) cable to use a fixed network connection or connect to a local Wi-Fi network wirelessly.
+					To ensure the most reliable Internet connectivity, Ethernet connection is recommended.</p>
+				<p lang="fi">Ruuvi Gateway tarvitsee internet-yhteyden.
 					Yhdistä internetiin joko kiinteän (Ethernet RJ45) tai langattoman (Wi-Fi)
 					lähiverkkoyhteyden avulla. Häiriöttömän yhteyden takaamiseksi suosittelemme käyttämään
-					aina kiinteää yhteyttä.</p>
+					aina kiinteää Ethernet-yhteyttä.</p>
 			</div>
 
 			<h2>
@@ -130,31 +129,31 @@
 			<div id="page-network_type-access_from_lan">
 				<div class="font-bold">
 					<span lang="en">
-						You're accessing the Ruuvi Gateway configuration wizard from your local area network.
+						You're accessing the Ruuvi Gateway setup wizard from your local area network.
 						You cannot adjust the connection type at this time.
-						In order to change the connection type, please reconfigure the Gateway using its Wi-Fi hotspot.
+						In order to change the connection type, please reconfigure the Ruuvi Gateway using its Wi-Fi hotspot.
 						To restart the Wi-Fi hotspot, locate the pinhole button under the power socket and press the button
-						down briefly using a paperclip.
+						briefly using a paperclip.
 					</span>
 					<span lang="fi">
 						Olet avannut Ruuvi Gatewayn käyttöönottosivun kiinteän lähiverkkoyhteyden kautta. Tästä johtuen
-						et voi vaihtaa tapaa, jolla Gateway on yhteydessä internetiin.
-						Voit vaihtaa yhteystyyppiä Gatewayn Wi-Fi-yhteyspisteen ohjatun käyttöönoton kautta.
-						Käynnistä Wi-Fi -yhteyspiste uudelleen painamalla paperiliittimellä lyhyesti virtaliittimen alla
+						et voi vaihtaa tapaa, jolla Ruuvi Gateway on yhteydessä internetiin.
+						Voit vaihtaa yhteystyyppiä Ruuvi Gatewayn Wi-Fi-yhteyspisteen ohjatun käyttöönoton kautta.
+						Käynnistä Wi-Fi-yhteyspiste uudelleen painamalla paperiliittimellä lyhyesti virtaliittimen alla
 						sijaitsevaa painiketta.
 					</span>
 				</div>
 				<div class="border-hidden"></div>
 				<div class="font-bold">
 					<span lang="en">
-						Next, connect to a Wi-Fi hotspot named RuuviGatewayXXXX.
+						Next, connect to a Wi-Fi hotspot named Configure Ruuvi Gateway XXXX.
 						After connecting to the hotspot, your device may ask you to sign in to the network.
-						Next, a new web browser window with the correct configuration page will open.
+						Next, a captive portal window showing the setup wizard will open.
 						If the page doesn't open automatically open your web browser, type 10.10.0.1 and press enter.
 					</span>
 					<span lang="fi">
-						Liity seuraavaksi päätelaitteellasi Wi-Fi-verkkoon RuuviGatewayXXXX.
-						Gatewayn käyttöönottosivu avautuu uuteen selainikkunaan yhteyden muodostuttua.
+						Liity seuraavaksi päätelaitteellasi Wi-Fi-verkkoon Configure Ruuvi Gateway XXXX.
+						Ruuvi Gatewayn käyttöönottosivu avautuu uuteen selainikkunaan yhteyden muodostuttua.
 						Mikäli ikkuna ei avaudu automaattisesti, voit avata käyttöönottosivun kirjoittamalla
 						selaimesi osoitekenttään 10.10.0.1 ja painamalla enter.
 					</span>
@@ -622,8 +621,8 @@
 
 			<div id="page-software_update_progress-info" class="hidden">
 				<div class="block-centered">
-					<span lang="en">Please wait. Do not power off the Gateway during update!</span>
-					<span lang="fi">Odota päivityksen valmistumista! Älä sammuta laitetta päivityksen aikana.</span>
+					<span lang="en">Please wait. Do not power off the Ruuvi Gateway during the update!</span>
+					<span lang="fi">Odota päivityksen valmistumista! Älä sammuta Ruuvi Gateway laitetta päivityksen aikana.</span>
 				</div>
 
 				<div>&nbsp;</div>
@@ -678,7 +677,7 @@
 				</div>
 				<div class="block-centered">
 					<span lang="en">Continue with the configuration by reconnecting to the device's Wi-Fi hotspot.
-						If the Wi-Fi hotspot doesn't appear automatically, locate the pinhole button under the power socket and press the button down briefly using a paperclip.</span>
+						If the Wi-Fi hotspot doesn't appear automatically, locate the pinhole button under the power socket and press the button briefly using a paperclip.</span>
 					<span lang="fi">Jatka asetusten määrittämistä muodostamalla yhteys uudelleen laitteen luomaan Wi-Fi
 						verkkoon. Mikäli verkko ei ilmesty näkyviin automaattisesti, paina paperiliittimellä
 						lyhyesti virtaliittimen alla olevaa painiketta.</span>
@@ -693,13 +692,13 @@
 				<div class="block-centered">
 					<div id="software_update_progress-status-completed_unsuccessfully-message"></div>
 					<div id="software_update_progress-status-completed_unsuccessfully-because_of_gateway_reboot" class="hidden">
-						<span lang="en">Gateway suddenly rebooted during firmware upgrade. Please try again.</span>
-						<span lang="fi">Gateway käynnistyi yhtäkkiä uudelleen laiteohjelmistopäivityksen aikana. Yritä uudelleen.</span>
+						<span lang="en">Ruuvi Gateway suddenly rebooted during firmware upgrade. Please try again.</span>
+						<span lang="fi">Ruuvi Gateway käynnistyi yhtäkkiä uudelleen laiteohjelmistopäivityksen aikana. Yritä uudelleen.</span>
 					</div>
 				</div>
 				<div>&nbsp;</div>
 				<div class="block-centered">
-					<span lang="en">Please reboot the device. Locate the pinhole button under the power socket and press the button down briefly using a paperclip. </span>
+					<span lang="en">Please reboot the device. Locate the pinhole button under the power socket and press the button briefly using a paperclip. </span>
 					<span lang="fi">Käynnistä laite uudelleen painamalla paperiliittimellä lyhyesti virtaliittimen
 						alla olevaa painiketta.</span>
 				</div>
@@ -739,9 +738,9 @@
 			<div class="ingress">
 				<p lang="en">If you are an advanced user, then you can configure getting
 					the Ruuvi Gateway configuration from a remote server by HTTP(S),
-					in this case, you do not need to configure the Gateway manually.</p>
+					in this case, you do not need to configure the Ruuvi Gateway manually.</p>
 				<p lang="fi">Jos olet edistynyt käyttäjä, voit määrittää Ruuvi Gatewayn määritysten hakemisen
-					etäpalvelimelta HTTP(S) -osoitteesta. Tässä tapauksessa sinun ei tarvitse määrittää Gatewaytä
+					etäpalvelimelta HTTP(S) -osoitteesta. Tässä tapauksessa sinun ei tarvitse määrittää Ruuvi Gatewaytä
 					manuaalisesti.</p>
 			</div>
 
@@ -770,9 +769,9 @@
 					<div id="remote_cfg-options_url_title">
 						<div class="info-icon-left-column">
 							<span lang="en">Specify the URL of the json file containing the configuration or
-								the URL of the folder containing the json files for each Gateway:</span>
+								the URL of the folder containing the json files for each Ruuvi Gateway:</span>
 							<span lang="fi">Anna määritykset sisältävän json-tiedoston URL-osoite tai sen kansion
-								URL-osoite, jossa on json-tiedostot jokaiselle Gatewaylle:</span>
+								URL-osoite, jossa on json-tiedostot jokaiselle Ruuvi Gatewaylle:</span>
 						</div>
 						<a class="info-icon-button" href="#popup-info-icon-button-remote_cfg">i</a>
 					</div>
@@ -883,12 +882,12 @@
 						<p>
 							<span lang="en">
 								If you specify a folder name, it will first attempt to read the configuration file
-								for this Gateway from &lt;GW_MAC&gt;.json (for example, AABBCCDDEEFF.json).
+								for this Ruuvi Gateway from &lt;GW_MAC&gt;.json (for example, AABBCCDDEEFF.json).
 								If that file fails, an attempt will be made to read the overall configuration
 								from gw_cfg.json.
 							</span>
 							<span lang="fi">
-								Jos määrität kansion nimen, tämän Gatewayn määritystiedot pyritään ensin
+								Jos määrität kansion nimen, tämän Ruuvi Gatewayn määritystiedot pyritään ensin
 								hakemaan &lt;GW_MAC&gt;.json-tiedostosta (esimerkiksi AABBCCDDEEFF.json).
 								Jos tiedoston lukeminen epäonnistuu, määritykset haetaan tiedostosta gw_cfg.json.
 							</span>
@@ -1009,8 +1008,8 @@
 						<span lang="fi">Määritä päivitysajankohta</span>
 					</h2>
 					<div class="ingress">
-						<p lang="en">Select days and time range when Ruuvi Gateway is allowed to run updates.</p>
-						<p lang="fi">Valitse päivät ja aikaväli, jolloin ohjelmistopäivitykset sallitaan.</p>
+						<p lang="en">Select days and time range when Ruuvi Gateway is allowed to run automated firmware updates.</p>
+						<p lang="fi">Valitse päivät ja aikaväli, jolloin Ruuvi Gatewayn automaattiset laiteohjelmistopäivitykset sallitaan.</p>
 					</div>
 
 					<h3>
@@ -1242,7 +1241,7 @@
 
 			<div class="ingress">
 				<p lang="en">
-					Define how to access Ruuvi Gateway's configuration wizard from your local area network.
+					Define how to access Ruuvi Gateway's setup wizard from your local area network.
 				</p>
 				<p lang="fi">
 					Määrittele, kuinka Ruuvi Gatewayn ohjattu käyttöönotto on saavutettavissa lähiverkon kautta.
@@ -1707,15 +1706,15 @@
 					<div id="mqtt_examples" hidden>
 						<ol>
 							<li>
-								<p lang="en">Subscribe to service messages from this Gateway:</p>
-								<p lang="fi">Tilaa palveluviestit tästä Gatewaysta:</p>
+								<p lang="en">Subscribe to service messages from this Ruuvi Gateway:</p>
+								<p lang="fi">Tilaa palveluviestit tästä Ruuvi Gatewaysta:</p>
 								<div id="mqtt_example1">mosquitto_sub -h test.mosquitto.org -p 1883 -t
 									"ruuvi/AA:BB:CC:DD:EE:FF/gw_status" -v
 								</div>
 							</li>
 							<li>
-								<p lang="en">Subscribe to service messages from any Gateway:</p>
-								<p lang="fi">Tilaa palveluviestit mistä tahansa Gatewaysta:</p>
+								<p lang="en">Subscribe to service messages from any Ruuvi Gateway:</p>
+								<p lang="fi">Tilaa palveluviestit mistä tahansa Ruuvi Gatewaysta:</p>
 								<div id="mqtt_example2">mosquitto_sub -h test.mosquitto.org -p 1883 -t
 									"ruuvi/#/gw_status" -v
 								</div>
@@ -1728,8 +1727,8 @@
 								</div>
 							</li>
 							<li>
-								<p lang="en">Subscribe to messages from any Bluetooth sensor heard by this Gateway:</p>
-								<p lang="fi">Tilaa viestit kaikista tämän Gatewayn kuulemista Bluetooth-antureista:</p>
+								<p lang="en">Subscribe to messages from any Bluetooth sensor heard by this Ruuvi Gateway:</p>
+								<p lang="fi">Tilaa viestit kaikista tämän Ruuvi Gatewayn kuulemista Bluetooth-antureista:</p>
 								<div id="mqtt_example4">mosquitto_sub -h test.mosquitto.org -p 1883 -t
 									"ruuvi/AA:BB:CC:DD:EE:FF/#/#" -v
 								</div>
@@ -2088,7 +2087,7 @@
 			<div>&nbsp;</div>
 
 			<div class="block-centered">
-				<span lang="en">You can now close this window and disconnect from the Ruuvi Gateway configuration Wi-Fi hotspot.</span>
+				<span lang="en">You can now close this window and disconnect from the Ruuvi Gateway's Wi-Fi hotspot.</span>
 				<span lang="fi">Voit nyt sulkea tämän ikkunan ja katkaista yhteyden Ruuvi Gatewayn Wi-Fi-yhteyspisteeseen.</span>
 			</div>
 
@@ -2126,7 +2125,7 @@
 
 			<div class="block-left">
 				<span lang="en">Gateway:&nbsp;</span>
-				<span lang="fi">Gateway:&nbsp;</span>
+				<span lang="fi">Yhdyskäytävä:&nbsp;</span>
 				<div id="gw"></div>
 			</div>
 
@@ -2141,15 +2140,14 @@
 
 			<h2>
 				<span lang="en">How to reconfigure?</span>
-				<span lang="fi">Tarvitsetko aloittaa alusta?</span>
+				<span lang="fi">Kuinka voin muokata asetuksia?</span>
 			</h2>
 
 			<div class="ingress">
-				<p lang="en">If you misconfigured, you can restart the configuration Wi-Fi hotspot. Locate the pinhole
-					button under the power socket and press the button down briefly using a paperclip.</p>
-				<p lang="fi">Mikäli haluat käynnistää ohjatun käyttöönoton uudelleen, paina laitteen virtaliittimen
-					alla olevaa nollauspainiketta lyhyesti paperiliittimellä ja yhdistä sitten päätelaitteellasi
-					uudelleen Ruuvi Gatewayn muodostamaan Wi-Fi-yhteyspisteeseen.</p>
+				<p lang="en">If you need to modify these settings later, you can reconfigure your Ruuvi Gateway by restaring the Wi-Fi hotspot.
+					Locate the pinhole button under the power socket and press the button briefly using a paperclip.</p>
+				<p lang="fi">Mikäli haluat myöhemmin muokata Ruuvi Gatewayn asetuksia, voit käynnistää Wi-Fi-yhteyspisteen ja ohjatun käyttöönoton 
+					uudelleen painamalla lyhyesti laitteen virtaliittimen alla olevaa nollauspainiketta paperiliittimellä.</p>
 			</div>
 
 			<div class="ingress">
@@ -2168,7 +2166,7 @@
                     <br/>
                     <br/>
                     Please reconnect to the Wi-Fi hotspot. If the hotspot is not active, start it again.
-					 Locate the pinhole button under the power socket and press the button down briefly using a paperclip.</span>
+					 Locate the pinhole button under the power socket and press the button briefly using a paperclip.</span>
 				<span lang="fi">
                     Voi ei! Yhteys Ruuvi Gatewayhyn on menetetty.
                     <br/>
