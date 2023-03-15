@@ -196,7 +196,7 @@ function save_config_internal (flag_save_network_cfg, ap_wifi_channel, cb_on_suc
       data.lan_auth_type = $('input[name=\'lan_auth_type\']:checked').val()
       let lan_auth_user = $('#lan_auth-user').val()
       let lan_auth_pass = $('#lan_auth-pass').val()
-      let realm = 'Configure Ruuvi Gateway ' + gw_mac.substring(12, 14) + gw_mac.substring(15, 17)
+      let realm = 'RuuviGateway' + gw_mac.substring(12, 14) + gw_mac.substring(15, 17)
       if (data.lan_auth_type === LAN_AUTH_TYPE.RUUVI) {
         data.lan_auth_user = lan_auth_user
         data.lan_auth_pass = CryptoJS.MD5(lan_auth_user + ':' + realm + ':' + lan_auth_pass).toString()
