@@ -493,7 +493,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     def _on_post_resp(self, http_status, content_type, content):
         content = content.encode('utf-8')
         resp = b''
-        resp += f'HTTP/1.1 {http_status}\r\n'.encode('ascii')
+        resp += f'HTTP/1.0 {http_status}\r\n'.encode('ascii')
         resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
         resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
         resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -538,7 +538,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp_content = self._gen_auth_resp_content(False, message=message)
             resp_content_encoded = resp_content.encode('utf-8')
             resp = b''
-            resp += f'HTTP/1.1 401 Unauthorized\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 401 Unauthorized\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
             resp += g_login_session.generate_auth_header_fields().encode('ascii')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
@@ -552,7 +552,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(resp)
         elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_BASIC:
             resp = b''
-            resp += f'HTTP/1.1 401 Unauthorized\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 401 Unauthorized\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'WWW-Authenticate: Basic realm="{RUUVI_AUTH_REALM}", charset="UTF-8"\r\n'.encode('ascii')
@@ -560,7 +560,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(resp)
         elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DIGEST:
             resp = b''
-            resp += f'HTTP/1.1 401 Unauthorized\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 401 Unauthorized\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
 
@@ -578,7 +578,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     @staticmethod
     def _prep_resp_200_ok(conent_type):
         resp = b''
-        resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
         resp += f'Content-type: {conent_type}\r\n'.encode('ascii')
         resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
         resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -722,7 +722,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp_content = f'{{}}'
             resp_content_encoded = resp_content.encode('utf-8')
             resp = b''
-            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             if prev_url is not None and prev_url != "":
@@ -739,7 +739,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp = b''
             req_dict = self._ecdh_decrypt_request(g_aes_key)
             if req_dict is None:
-                resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
                 resp += f'Content-Length: 0\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
                 print(f'Response: {resp}')
@@ -754,7 +754,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 g_timestamp = time.time()
                 resp_content = f'{{}}'
                 resp_content_encoded = resp_content.encode('utf-8')
-                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                 resp += f'Content-type: application/json\r\n'.encode('ascii')
                 resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
                 resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -762,15 +762,15 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += f'\r\n'.encode('ascii')
                 resp += resp_content_encoded
             elif ssid is None:
-                resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
                 resp += f'Content-Length: 0\r\n'.encode('ascii')
             else:
                 print(f'Try to connect to SSID:{ssid} with password:{password}')
                 if ssid == 'dlink-noauth-err-400':
-                    resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
+                    resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
                     resp += f'Content-Length: 0\r\n'.encode('ascii')
                 elif ssid == 'dlink-noauth-err-503':
-                    resp += f'HTTP/1.1 503 Service Unavailable\r\n'.encode('ascii')
+                    resp += f'HTTP/1.0 503 Service Unavailable\r\n'.encode('ascii')
                     resp += f'Content-Length: 0\r\n'.encode('ascii')
                 else:
                     g_ssid = ssid
@@ -779,7 +779,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     g_simulation_mode = SIMULATION_MODE_NO_CONNECTION
                     resp_content = f'{{}}'
                     resp_content_encoded = resp_content.encode('utf-8')
-                    resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                    resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                     resp += f'Content-type: application/json\r\n'.encode('ascii')
                     resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
                     resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -792,7 +792,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             req_dict = self._ecdh_decrypt_request(g_aes_key)
             if req_dict is None:
                 resp = b''
-                resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
                 resp += f'Content-Length: {0}\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
                 self.wfile.write(resp)
@@ -848,12 +848,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             try:
                 response = urllib.request.urlopen(g_ruuvi_dict['remote_cfg_url'])
             except urllib.error.HTTPError as ex:
-                resp += f'HTTP/1.1 {ex.code} {ex.msg}\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 {ex.code} {ex.msg}\r\n'.encode('ascii')
                 resp += f'Content-Length: 0\r\n'.encode('ascii')
                 self.wfile.write(resp)
                 return
             except:
-                resp += f'HTTP/1.1 503 Service Unavailable\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 503 Service Unavailable\r\n'.encode('ascii')
                 resp += f'Content-Length: 0\r\n'.encode('ascii')
                 self.wfile.write(resp)
                 return
@@ -861,7 +861,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             response_text = response_data.decode('utf-8')
             content = '{}'
             content_encoded = content.encode('utf-8')
-            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -882,7 +882,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 content = '{"status": 200, "message": "OK"}'
             content_encoded = content.encode('utf-8')
             resp = b''
-            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -896,7 +896,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             content = '{}'
             content_encoded = content.encode('utf-8')
             resp = b''
-            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -906,7 +906,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(resp)
         else:
             resp = b''
-            resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
             resp += f'Content-Length: {0}\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
             self.wfile.write(resp)
@@ -939,7 +939,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp_content_encoded = resp_content.encode('utf-8')
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
             resp = b''
-            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
@@ -954,7 +954,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             content = '{}'
             content_encoded = content.encode('utf-8')
             resp = b''
-            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -964,7 +964,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(resp)
         else:
             resp = b''
-            resp += f'HTTP/1.1 400 Bad Request\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
             resp += f'Content-Length: {0}\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
             self.wfile.write(resp)
@@ -1079,7 +1079,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DENY:
             print(f"Resp: 403 Forbidden")
             resp = b''
-            resp += f'HTTP/1.1 403 Forbidden\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 403 Forbidden\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
 
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
@@ -1108,13 +1108,13 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             if session_id is not None:
                 print(f"Resp: 200 OK")
                 resp = b''
-                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                 resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
             else:
                 print(f"Resp: 401 Unauthorized")
                 g_login_session = LoginSession()
                 resp = b''
-                resp += f'HTTP/1.1 401 Unauthorized\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 401 Unauthorized\r\n'.encode('ascii')
                 resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
                 resp += g_login_session.generate_auth_header_fields().encode('ascii')
 
@@ -1154,7 +1154,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 return
 
             resp = b''
-            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
@@ -1185,7 +1185,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 return
 
             resp = b''
-            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
@@ -1201,7 +1201,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(resp)
         elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_ALLOW:
             resp = b''
-            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
@@ -1220,7 +1220,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
     def _resp_200_json_empty(self):
         resp = b''
-        resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
         resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
         cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
         resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
@@ -1237,7 +1237,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
     def _resp_200_json_validate_url_status(self, status, message=None):
         resp = b''
-        resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
         resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
         cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
         resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
@@ -1257,7 +1257,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
     def _resp_200_json_validate_url_status_incorrect_json(self, status, message=None):
         resp = b''
-        resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
         resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
         cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
         resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
@@ -1432,7 +1432,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             return
         elif file_path.endswith('.json'):
             resp = b''
-            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -1584,7 +1584,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 content = g_content_github_latest_release
                 time.sleep(GET_LATEST_RELEASE_TIMEOUT)
                 resp = b''
-                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                 resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
                 resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
                 resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -1598,7 +1598,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 content = g_content_github_latest_release
                 time.sleep(10.0)
                 resp = b''
-                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                 resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
                 resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
                 resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -1625,7 +1625,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
                 time.sleep(10.0)
                 resp = b''
-                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                 resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
                 resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
                 resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -1637,7 +1637,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(resp)
             else:
                 resp = b''
-                resp += f'HTTP/1.1 404 Not Found\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
                 resp += f'Content-Length: {0}\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
                 self.wfile.write(resp)
@@ -1690,7 +1690,7 @@ ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DEFAULT"} 93756
             '''
             content_encoded = content.encode('utf-8')
             resp = b''
-            resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Content-type: text/plain; charset=utf-8; version=0.0.4\r\n'.encode('ascii')
             resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
@@ -1705,7 +1705,7 @@ ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DEFAULT"} 93756
                 content_type = self._get_content_type(file_path)
                 file_size = os.path.getsize(file_path)
                 resp = b''
-                resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                 resp += f'Content-type: {content_type}\r\n'.encode('ascii')
                 resp += f'Content-Length: {file_size}\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
@@ -1715,7 +1715,7 @@ ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DEFAULT"} 93756
             else:
                 if file_path == 'test_chunked.txt':
                     resp = b''
-                    resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                    resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                     resp += f'Content-type: text/plain; charset=utf-8\r\n'.encode('ascii')
                     resp += f'Transfer-Encoding: chunked\r\n'.encode('ascii')
                     resp += f'\r\n'.encode('ascii')
@@ -1726,7 +1726,7 @@ ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DEFAULT"} 93756
                     self.wfile.write('0\r\n\r\n'.encode('ascii'))
                 elif file_path == 'test_nonchunked.txt':
                     resp = b''
-                    resp += f'HTTP/1.1 200 OK\r\n'.encode('ascii')
+                    resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                     resp += f'Content-type: text/plain; charset=utf-8\r\n'.encode('ascii')
                     one_chunk = f"this is chunk: {0}\r\n"
                     resp += f'Content-Length: {len(one_chunk) * 10}\r\n'.encode('ascii')
@@ -1736,7 +1736,7 @@ ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DEFAULT"} 93756
                         self.wfile.write(chunk.encode('ascii'))
                 else:
                     resp = b''
-                    resp += f'HTTP/1.1 404 Not Found\r\n'.encode('ascii')
+                    resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
                     resp += f'Content-Length: {0}\r\n'.encode('ascii')
                     resp += f'\r\n'.encode('ascii')
                     self.wfile.write(resp)
