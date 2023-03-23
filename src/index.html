@@ -19,16 +19,101 @@
 				<li><a id="language-switcher-fi"><span>Fi</span></a></li>
 			</ul>
 		</div>
-		<div id="app-header">
-			<span lang="en">Ruuvi Gateway</span>
-			<span lang="fi">Ruuvi Gateway</span>
-		</div>
+		<div id="app-header">Ruuvi Gateway</div>
 	</header>
 
 	<div id="app-wrap">
 
+		<section id="page-auth" class="hidden">
+			<h1>
+				<span lang="en">Web Interface Login</span>
+				<span lang="fi">Kirjautuminen verkkokäyttöliittymään</span>
+			</h1>
+			<div id="gateway_name" class="gateway_name"></div>
+			<div>
+				<div id="auth-yes" class="hidden">
+					<span lang="en">Authorisation successful.</span>
+					<span lang="fi">Sisäänkirjautuminen onnistui.</span>
+				</div>
+				<div id="auth-forbidden" class="rd hidden">
+					<span lang="en">Access from LAN is forbidden - wrong username or password.</span>
+					<span lang="fi">Pääsy lähiverkosta on kielletty - väärä käyttäjätunnus tai salasana.</span>
+				</div>
+				<div id="auth-denied" class="rd hidden">
+					<span lang="en">Access from LAN is denied.</span>
+					<span lang="fi">Pääsy lähiverkosta on estetty.</span>
+				</div>
+				<div id="auth-error" class="rd hidden">
+					<span lang="en">Authentication error.</span>
+					<span lang="fi">Todennusvirhe.</span>
+					<div id="auth-error-msg" class="rd"></div>
+				</div>
+				<div id="auth-default" class="hidden">
+					<span lang="en">This Ruuvi Gateway is configured for access from LAN with a default password (Unique ID in format XX:XX:XX:XX:XX:XX:XX:XX which is printed on the bottom of the Ruuvi Gateway).</span>
+					<span lang="fi">Tämä Ruuvi Gateway on määritetty käytettäväksi lähiverkosta oletussalasanalla (yksilöllinen tunnus muodossa XX:XX:XX:XX:XX:XX:XX:XX, joka on painettu Ruuvi Gatewayn pohjaan).</span>
+				</div>
+				<div id="auth-reconfigure" class="hidden">
+                    <span lang="en">
+						In order to change the access settings, please reconfigure the Gateway using its Wi-Fi hotspot.
+						To start the hotspot, press the small configuration button for a short time,
+						found under the power socket.
+                    </span>
+					<span lang="fi">
+                        Voit vaihtaa pääsyasetukset Gatewayn Wi-Fi-yhteyspisteen kautta.
+						Paina lyhyesti virtaliittimen alla sijaitsevaa nappia ohjatun käyttöönoton aloittamiseksi.
+                    </span>
+				</div>
+			</div>
+
+			<div>&nbsp;</div>
+			<div>&nbsp;</div>
+
+			<div class="border-hidden"></div>
+
+			<div id="auth-user_login" class="hidden indent" style="max-width: 300px">
+				<label class="bold">
+					<span lang="en">Login:</span>
+					<span lang="fi">Kirjaudu sisään:</span>
+					<input id="auth-user" type="text" placeholder="" value="">
+				</label>
+				<label class="bold">
+					<span lang="en">Password:</span>
+					<span lang="fi">Salasana:</span>
+					<div class="input-password">
+						<input id="auth-pass" type="password" placeholder="" value="">
+						<div class="input-password-eye">
+							<div class="eye">
+							</div>
+							<div class="eye-slash hidden">
+							</div>
+						</div>
+					</div>
+				</label>
+				<div style="height: 30px">
+					<div id="auth-err-message" class="rd hidden">
+						<span lang="en">Incorrect username or password</span>
+						<span lang="fi">Väärä käyttäjätunnus tai salasana</span>
+					</div>
+				</div>
+				<div class="border-hidden"></div>
+				<a href="" id="auth-button-login" class="btn">
+					<span lang="en">LOG IN</span>
+					<span lang="fi">KIRJAUDU SISÄÄN</span>
+				</a>
+			</div>
+
+			<div id="auth-home" class="hidden">
+				<div class="block-centered">
+					<a href="" id="auth-button-home" class="btn">
+						<span lang="en">Go to home page</span>
+						<span lang="fi">Mene kotisivulle</span>
+					</a>
+				</div>
+			</div>
+		</section>
+
 		<!-- WELCOME INTO -->
-		<section id="page-welcome">
+		<section id="page-welcome" class="hidden">
 			<h1>
 				<span lang="en">Setup Wizard</span>
 				<span lang="fi">Ohjattu käyttöönotto</span>
@@ -698,7 +783,7 @@
 				<div class="button-container button-container-centered">
 					<a href="" id="page-software_update_progress-button-configure" class="btn">
 						<span lang="en">CONFIGURE</span>
-						<span lang="fi"MÄÄRITÄ</span>
+						<span lang="fi">MÄÄRITÄ</span>
 					</a>
 				</div>
 			</div>

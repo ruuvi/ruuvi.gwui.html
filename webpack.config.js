@@ -12,10 +12,6 @@ module.exports = {
       import: [path.resolve(__dirname, 'src/ruuvi.js')],
       dependOn: ['jquery', 'crypto'],
     },
-    auth: {
-      import: [path.resolve(__dirname, 'src/auth.js')],
-      dependOn: ['jquery', 'crypto'],
-    },
     jquery: 'jquery',
     crypto: path.resolve(__dirname, 'src/crypto.js'),
     style: path.resolve(__dirname, 'src/scss/style.scss'),
@@ -56,14 +52,6 @@ module.exports = {
       inject: 'head',
       favicon: path.resolve(__dirname, 'src/favicon.ico'),
       chunks: ['ruuvi', 'jquery', 'crypto', 'style'],
-    }),
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src/auth.html'),
-      filename: 'auth.html',
-      scriptLoading: 'blocking',
-      inject: 'head',
-      favicon: path.resolve(__dirname, 'src/favicon.ico'),
-      chunks: ['auth', 'jquery', 'crypto', 'style'],
     }),
     new MiniCssExtractPlugin({
       filename: 'style.css',
