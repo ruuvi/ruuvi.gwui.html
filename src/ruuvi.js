@@ -3,6 +3,8 @@
 import $ from 'jquery'
 import * as crypto from './crypto'
 
+import "./scss/style.scss"
+
 // Former code.js:
 
 // First, checks if it isn't implemented yet.
