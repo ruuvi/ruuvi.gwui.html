@@ -1,7 +1,7 @@
 'use strict'
 
 import $ from 'jquery'
-import * as crypto from './crypto'
+import * as crypto from './crypto.mjs'
 
 import "./scss/style.scss"
 

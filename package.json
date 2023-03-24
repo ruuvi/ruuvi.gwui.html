@@ -1,6 +1,8 @@
 {
   "name": "ruuvi.gwui.html",
   "version": "1.0.0",
+  "type": "module",
+  "main": "ruuvi.js",
   "description": "Ruuvi Gateway Web Configurator",
   "private": true,
   "directories": {

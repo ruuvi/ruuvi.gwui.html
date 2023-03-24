@@ -1,10 +1,10 @@
-let MD5 = require('crypto-js/md5')
-let SHA256 = require('crypto-js/sha256')
-let AES = require('crypto-js/aes')
-let enc_base64 = require('crypto-js/enc-base64')
-let enc_hex = require('crypto-js/enc-hex')
-let core = require('crypto-js/core')
-let elliptic = require('elliptic')
+import MD5 from 'crypto-js/md5.js'
+import SHA256 from 'crypto-js/sha256.js'
+import AES from 'crypto-js/aes.js'
+import enc_base64 from 'crypto-js/enc-base64.js'
+import enc_hex from 'crypto-js/enc-hex.js'
+import core from 'crypto-js/core.js'
+import elliptic from 'elliptic'
 
 let enc = {}
 enc.Base64 = enc_base64
