@@ -2,6 +2,7 @@
 
 import $ from 'jquery'
 import * as crypto from './crypto.mjs'
+import logger from './logger.mjs'
 
 import "./scss/style.scss"
 
@@ -4198,7 +4199,7 @@ function performLogIn (user, password) {
 }
 
 $(window).on('load', function () {
-  console.log(log_wrap('ruuvi.js: Loaded'))
+  logger.info('ruuvi.js: Loaded')
   const anchor = window.location.hash
 
   initialize()
