@@ -4,19 +4,19 @@ class Logger {
   }
 
   debug (message) {
-    console.log(`[${this.getCurrentTimestamp()}] [DEBUG]: ${message}`)
+    console.log(`[${this.getCurrentTimestamp()}] [DEBUG] ${message}`)
   }
 
   info (message) {
-    console.log(`[${this.getCurrentTimestamp()}] [INFO]: ${message}`)
+    console.log(`[${this.getCurrentTimestamp()}] [INFO] ${message}`)
   }
 
   warn (message) {
-    console.log(`[${this.getCurrentTimestamp()}] [WARN]: ${message}`)
+    console.log(`[${this.getCurrentTimestamp()}] [WARN] ${message}`)
   }
 
   error (message) {
-    console.error(`[${this.getCurrentTimestamp()}] [ERROR]: ${message}`)
+    console.error(`[${this.getCurrentTimestamp()}] [ERROR] ${message}`)
   }
 }
 

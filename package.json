@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha './src/**/*.test.js'"
   },
   "repository": {
     "type": "git",
@@ -23,10 +23,17 @@
   },
   "homepage": "https://github.com/ruuvi/ruuvi.gwui.html#readme",
   "devDependencies": {
+    "chai": "^4.3.7",
     "css-loader": "^6.7.3",
+    "esm": "^3.2.25",
+    "fetch-mock": "^9.11.0",
     "html-webpack-plugin": "^5.5.0",
+    "mocha": "^10.2.0",
+    "node-fetch": "^2.6.9",
     "sass": "^1.59.2",
     "sass-loader": "^13.2.0",
+    "sinon": "^15.0.2",
+    "sinon-chai": "^3.7.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.76.0",
     "webpack-cli": "^5.0.1"

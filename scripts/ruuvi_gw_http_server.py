@@ -535,7 +535,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI or \
                 g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DEFAULT:
             message = message if message is not None else ''
-            resp_content = self._gen_auth_resp_content(False, message=message)
+            resp_content = self._gen_auth_resp_content(message=message)
             resp_content_encoded = resp_content.encode('utf-8')
             resp = b''
             resp += f'HTTP/1.0 401 Unauthorized\r\n'.encode('ascii')
@@ -719,7 +719,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             g_login_session = None
 
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
-            resp_content = f'{{}}'
+            resp_content = self._gen_auth_resp_content()
             resp_content_encoded = resp_content.encode('utf-8')
             resp = b''
             resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
@@ -1063,12 +1063,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         else:
             raise RuntimeError("Unsupported Auth")
 
-    def _gen_auth_resp_content(self, flag_success, message=None):
+    def _gen_auth_resp_content(self, message=None):
         lan_auth_type = g_ruuvi_dict['lan_auth_type']
         if message is None:
-            resp_content = f'{{"success": {"true" if flag_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "fw_ver": "{g_fw_ver}", "nrf52_fw_ver": "{g_nrf52_fw_ver}", "lan_auth_type": "{lan_auth_type}"}}'
+            resp_content = f'{{"gateway_name": "{RUUVI_AUTH_REALM}", "fw_ver": "{g_fw_ver}", "nrf52_fw_ver": "{g_nrf52_fw_ver}", "lan_auth_type": "{lan_auth_type}"}}'
         else:
-            resp_content = f'{{"success": {"true" if flag_success else "false"}, "gateway_name": "{RUUVI_AUTH_REALM}", "fw_ver": "{g_fw_ver}", "nrf52_fw_ver": "{g_nrf52_fw_ver}", "lan_auth_type": "{lan_auth_type}", "message": "{message}"}}'
+            resp_content = f'{{"gateway_name": "{RUUVI_AUTH_REALM}", "fw_ver": "{g_fw_ver}", "nrf52_fw_ver": "{g_nrf52_fw_ver}", "lan_auth_type": "{lan_auth_type}", "message": "{message}"}}'
         return resp_content
 
     def _do_get_auth(self):
@@ -1086,7 +1086,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp_content = self._gen_auth_resp_content(False)
+            resp_content = self._gen_auth_resp_content()
             resp_content_encoded = resp_content.encode('utf-8')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1122,8 +1122,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            is_success = True if session_id is not None else False
-            resp_content = self._gen_auth_resp_content(is_success)
+            resp_content = self._gen_auth_resp_content()
             resp_content_encoded = resp_content.encode('utf-8')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1160,8 +1159,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            is_success = True
-            resp_content = self._gen_auth_resp_content(is_success)
+            resp_content = self._gen_auth_resp_content()
             resp_content_encoded = resp_content.encode('utf-8')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1191,8 +1189,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            is_success = True
-            resp_content = self._gen_auth_resp_content(is_success)
+            resp_content = self._gen_auth_resp_content()
             resp_content_encoded = resp_content.encode('utf-8')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1207,8 +1204,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            is_success = True
-            resp_content = self._gen_auth_resp_content(is_success)
+            resp_content = self._gen_auth_resp_content()
             resp_content_encoded = resp_content.encode('utf-8')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')

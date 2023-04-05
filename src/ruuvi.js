@@ -3,6 +3,10 @@
 import $ from 'jquery'
 import * as crypto from './crypto.mjs'
 import logger from './logger.mjs'
+import createAuth from './auth.mjs'
+import PageAuth from './page_auth.mjs'
+import AppInfo from './app_info.mjs'
+import WindowLocation from './window_location.mjs'
 
 import "./scss/style.scss"
 
@@ -20,8 +24,8 @@ if (!String.prototype.format) {
   }
 }
 
-let g_auth_session = undefined
-let g_gateway_name = undefined
+let g_auth
+
 let apList = null
 let selectedSSID = ''
 let connectedSSID = ''
@@ -984,18 +988,6 @@ function initialize () {
       $(this).children('.eye').removeClass('hidden')
       password_field.attr('type', 'password')
     }
-  })
-
-  // ==== page-auth ==================================================================================================
-  $('#auth-button-login').click(function (e) {
-    e.preventDefault()
-    performLogIn($('#auth-user').val(), $('#auth-pass').val())
-  })
-
-  $('#auth-button-home').click(function (e) {
-    e.preventDefault()
-    console.log(log_wrap(`window.location.replace: ${'/'}`))
-    window.location.replace('/')
   })
 
   // ==== page-welcome ===============================================================================================
@@ -3242,11 +3234,12 @@ function save_config_internal (flag_save_network_cfg, ap_wifi_channel, cb_on_suc
       let lan_auth_pass = $('#lan_auth-pass').val()
       if (data.lan_auth_type === LAN_AUTH_TYPE.RUUVI) {
         data.lan_auth_user = lan_auth_user
-        data.lan_auth_pass = crypto.MD5(lan_auth_user + ':' + g_gateway_name + ':' + lan_auth_pass).toString()
+        const user_gw_password = lan_auth_user + ':' + g_auth.gatewayName + ':' + lan_auth_pass
+        data.lan_auth_pass = crypto.MD5(user_gw_password).toString()
       } else if (data.lan_auth_type === LAN_AUTH_TYPE.DIGEST) {
         data.lan_auth_user = lan_auth_user
-        let raw_str = lan_auth_user + ':' + g_gateway_name + ':' + lan_auth_pass
-        let auth_path_md5 = crypto.MD5(raw_str)
+        const raw_str = lan_auth_user + ':' + g_auth.gatewayName + ':' + lan_auth_pass
+        const auth_path_md5 = crypto.MD5(raw_str)
         data.lan_auth_pass = auth_path_md5.toString()
       } else if (data.lan_auth_type === LAN_AUTH_TYPE.BASIC) {
         data.lan_auth_user = lan_auth_user
@@ -4011,197 +4004,20 @@ function get_config () {
   )
 }
 
-class AuthSession {
-  realm = null
-  challenge = null
-  session_cookie = null
-  session_id = null
-
-  #parseToken (auth_str, prefix, suffix) {
-    const startIndex = auth_str.indexOf(prefix)
-    if (startIndex === -1) {
-      throw new Error(`Prefix '${prefix}' not found in '${auth_str}'`)
-    }
-    const endIndex = auth_str.indexOf(suffix, startIndex + prefix.length)
-    if (endIndex === -1) {
-      throw new Error(`Suffix '${suffix}' not found in '${auth_str}'`)
-    }
-    return auth_str.substring(startIndex + prefix.length, endIndex)
-  }
-
-  constructor (auth_str) {
-    // x-ruuvi-interactive realm="RuuviGatewayEEFF" challenge="03601dc11c92170713b68d4bfe430899b61c3df9c2559a9b7bce70ab451d9ade" session_cookie="RUUVISESSION" session_id="CXOHVRWYOIPHMKMV"
-    if (!auth_str) {
-      throw new Error(`auth_str is empty`)
-    }
-    if (!auth_str.startsWith('x-ruuvi-interactive ')) {
-      throw new Error(`auth_str should start from prefix 'x-ruuvi-interactive ', auth_str: '${auth_str}'`)
-    }
-    this.realm = this.#parseToken(auth_str, 'realm="', '"')
-    this.challenge = this.#parseToken(auth_str, 'challenge="', '"')
-    this.session_cookie = this.#parseToken(auth_str, 'session_cookie="', '"')
-    this.session_id = this.#parseToken(auth_str, 'session_id="', '"')
-  }
-}
-
-function updateGatewayNameFwVerAndAuth (data, flag_show_auth_default) {
-  if (data.gateway_name) {
-    g_gateway_name = data.gateway_name
-    let suffix = data.gateway_name.slice(-4)
-    $('#app-header').text('Ruuvi Gateway ' + suffix)
-    document.title = `Ruuvi Gateway ${suffix} Configuration Wizard`
-  } else {
-    g_gateway_name = ''
-  }
-  $('#app-footer-fw_ver').text(data.fw_ver)
-  $('#app-footer-fw_ver_nrf52').text(data.nrf52_fw_ver)
-
-  let lan_auth_type = data.lan_auth_type
-  if (lan_auth_type === 'lan_auth_default') {
-    let auth_user = $('#auth-user')
-    auth_user.val('Admin')
-    auth_user.prop('disabled', true)
-    if (flag_show_auth_default) {
-      $('#auth-default').show()
-    } else {
-      $('#auth-default').hide()
-    }
-  } else {
-    $('#auth-default').hide()
-  }
-}
-
-let g_anchor = undefined
-
-function checkAuth (anchor) {
-  g_anchor = anchor
-  console.log(log_wrap(`Check auth`))
-  $('#auth-yes').hide()
-  $('#auth-forbidden').hide()
-  $('#auth-denied').hide()
-  $('#auth-error').hide()
-  $('#auth-default').hide()
-  $('#auth-reconfigure').hide()
-  $('#auth-user_login').hide()
-  $('#auth-home').hide()
-  $.ajax({
-      url: '/auth',
-      accept: 'application/json, text/plain, */*',
-      method: 'GET',
-      dataType: 'json',
-      cache: false,
-      headers: null,
-      success: function (data, text) {
-        console.log(log_wrap(`Check auth: success`))
-        updateGatewayNameFwVerAndAuth(data, false)
-        $('#auth-yes').show()
-
-        console.log(log_wrap(`anchor: ${g_anchor}`))
-        if (g_anchor && g_anchor === '#auth') {
-          $('#auth-home').show()
-          console.log(log_wrap('Open: page-auth'))
-          window.location.replace('#page-auth')
-        } else {
-          console.log(log_wrap('Open: page-welcome'))
-          window.location.replace('#page-welcome')
-          console.log(log_wrap(`Read config`))
-          get_config()
-        }
-      },
-      error: function (request, status, error) {
-        console.log(log_wrap(`Check auth: fail: status=${request.status}`))
-        console.log(log_wrap('Open: page-auth'))
-        window.location.hash = null
-        window.location.hash = 'page-auth'
-        updateGatewayNameFwVerAndAuth(request.responseJSON, request.status === 401 || request.status === 403)
-        if (request.status === 401) {
-          $('#auth-user_login').show()
-          try {
-            g_auth_session = new AuthSession(request.getResponseHeader('WWW-Authenticate'))
-          } catch (err) {
-            console.log(log_wrap(`Failed to parse response header: ${err}`))
-          }
-        } else if (request.status === 403) {
-          if (request.responseJSON.lan_auth_type === 'lan_auth_deny') {
-            $('#auth-denied').show()
-          } else {
-            $('#auth-forbidden').show()
-          }
-          $('#auth-reconfigure').show()
-        } else {
-          $('#auth-default').hide()
-          $('#auth-error-msg').text(`HTTP response status=${request.status}: ${request.responseText}`)
-          $('#auth-error').show()
-        }
-      }
-    }
-  )
-}
-
-function performLogIn (user, password) {
-  $('#auth-err-message').hide()
-  let encrypted_password = crypto.MD5(user + ':' + g_auth_session.realm + ':' + password).toString()
-  let password_sha256 = crypto.SHA256(g_auth_session.challenge + ':' + encrypted_password).toString()
-  $('#auth-yes').hide()
-  $('#auth-forbidden').hide()
-  $('#auth-denied').hide()
-  $('#auth-error').hide()
-  $.ajax({
-      url: '/auth',
-      contentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      method: 'POST',
-      cache: false,
-      headers: null,
-      data: JSON.stringify({
-        'login': user,
-        'password': password_sha256
-      }),
-      success: function (data, text, request) {
-        $('#auth-user_login').hide()
-        $('#auth-yes').show()
-        updateGatewayNameFwVerAndAuth(data, false)
-        let prev_url = request.getResponseHeader('Ruuvi-prev-url')
-        if (prev_url) {
-          console.log(log_wrap(`window.location.replace: ${prev_url}`))
-          window.location.replace(prev_url)
-        } else {
-          console.log(log_wrap(`anchor: ${g_anchor}`))
-          if (g_anchor && g_anchor === '#auth') {
-            $('#auth-home').show()
-          } else {
-            console.log(log_wrap('Open: page-welcome'))
-            window.location.replace('#page-welcome')
-            console.log(log_wrap(`Read config`))
-            get_config()
-          }
-        }
-      },
-      error: function (request, status, error) {
-        if (request.status === 401) {
-          $('#auth-user_login').show()
-          try {
-            g_auth_session = new AuthSession(request.getResponseHeader('WWW-Authenticate'))
-          } catch (err) {
-            console.log(log_wrap(`Failed to parse response header: ${err}`))
-          }
-          $('#auth-err-message').show()
-          updateGatewayNameFwVerAndAuth(request.responseJSON, request.status === 401 || request.status === 403)
-        } else {
-          $('#auth-default').hide()
-          $('#auth-user_login').hide()
-          $('#auth-error-msg').text(`HTTP response status=${request.status}: ${request.responseText}`)
-          $('#auth-error').show()
-        }
-      }
-    }
-  )
-}
-
 $(window).on('load', function () {
   logger.info('ruuvi.js: Loaded')
   const anchor = window.location.hash
 
   initialize()
-  checkAuth(anchor)
+  g_auth = createAuth(anchor, new PageAuth(), new AppInfo(), new WindowLocation(window.location))
+  g_auth.waitAuth().then((result) => {
+    if (result) {
+      logger.info(`on load: waitAuth: ok`)
+      get_config()
+    } else {
+      logger.info(`on load: waitAuth: denied`)
+    }
+  }, (error) => {
+    logger.info(`on load: waitAuth error: ${error}`)
+  })
 })
