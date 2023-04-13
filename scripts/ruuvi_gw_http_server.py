@@ -1075,6 +1075,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_ruuvi_dict
         global g_login_session
         print(f"LAN auth: {g_ruuvi_dict['lan_auth_type']}")
+        pub_key_b64_cli = self._ecdh_handshake(self._get_value_from_headers('ruuvi_ecdh_pub_key: '))
 
         if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DENY:
             print(f"Resp: 403 Forbidden")
@@ -1119,6 +1120,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += g_login_session.generate_auth_header_fields().encode('ascii')
 
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+            resp += f'ruuvi_ecdh_pub_key: {pub_key_b64_cli}\r\n'.encode('ascii')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
@@ -1433,8 +1435,6 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
             if file_path == '/ruuvi.json':
-                pub_key_b64_cli = self._ecdh_handshake(self._get_value_from_headers('ruuvi_ecdh_pub_key: '))
-                resp += f'ruuvi_ecdh_pub_key: {pub_key_b64_cli}\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
 
                 ruuvi_dict = copy.deepcopy(g_ruuvi_dict)

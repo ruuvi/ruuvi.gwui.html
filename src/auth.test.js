@@ -52,12 +52,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(true)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=true, status=200',
         'FetchAuth: success',
         'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
@@ -88,12 +90,14 @@ describe('Auth', () => {
       })
 
       const anchor = '#auth'
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(true)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: #auth',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=true, status=200',
         'FetchAuth: success',
         'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
@@ -125,12 +129,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=true, status=200',
         'FetchAuth: success',
         'CheckAuth: exception: Error: Invalid auth json - missing key \'gateway_name\', json=\'{"fw_ver":"1.13.0","nrf52_fw_ver":"1.0.0","lan_auth_type":"default"}\'',
@@ -158,12 +164,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=true, status=200',
         'FetchAuth: success',
         'CheckAuth: exception: Error: Invalid auth json - missing key \'fw_ver\', json=\'{"gateway_name":"RuuviGatewayAABB","nrf52_fw_ver":"1.0.0","lan_auth_type":"default"}\'',
@@ -191,12 +199,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=true, status=200',
         'FetchAuth: success',
         'CheckAuth: exception: Error: Invalid auth json - missing key \'nrf52_fw_ver\', json=\'{"gateway_name":"RuuviGatewayAABB","fw_ver":"1.13.0","lan_auth_type":"default"}\'',
@@ -223,12 +233,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=true, status=200',
         'FetchAuth: success',
         'CheckAuth: exception: Error: Invalid auth json - missing key \'lan_auth_type\', json=\'{"gateway_name":"RuuviGatewayAABB","fw_ver":"1.13.0","nrf52_fw_ver":"1.0.0"}\'',
@@ -253,12 +265,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=true, status=200',
         'CheckAuth: exception: FetchError: invalid json response body at /auth reason: Unexpected token \'T\', "This is not a json" is not valid JSON',
       ])
@@ -282,12 +296,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=false, status=500',
         'FetchAuth: bad response',
         'CheckAuth: exception: Error: Response HTTP status=500, statusText=Internal Server Error',
@@ -314,12 +330,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=false, status=500',
         'FetchAuth: bad response',
         'CheckAuth: exception: Error: Response HTTP status=500, statusText=Internal Server Error, message="Low memory"',
@@ -346,12 +364,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=false, status=500',
         'FetchAuth: bad response',
         'CheckAuth: exception: Error: Response HTTP status=500, statusText=Internal Server Error, json=\'{"field123":"some data"}\'',
@@ -376,12 +396,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=false, status=500',
         'FetchAuth: bad response',
         'CheckAuth: exception: Error: Response HTTP status=500, statusText=Internal Server Error, message="some text"',
@@ -406,7 +428,8 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
 
       let result
       try {
@@ -419,6 +442,7 @@ describe('Auth', () => {
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: error: TypeError: Failed to fetch: connection reset by peer',
         'CheckAuth: exception: Error: Error: TypeError: Failed to fetch: connection reset by peer',
       ])
@@ -463,12 +487,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(true)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=false, status=401',
         'FetchAuth: fail',
         'CheckAuth: AuthStatus.Unauthorized, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
@@ -559,12 +585,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(true)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=false, status=401',
         'FetchAuth: fail',
         'CheckAuth: AuthStatus.Unauthorized, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
@@ -637,12 +665,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=false, status=401',
         'FetchAuth: fail',
         'CheckAuth: exception: Error: There is no "WWW-Authenticate" key in HTTP response header',
@@ -669,12 +699,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=false, status=403',
         'FetchAuth: fail',
         'CheckAuth: AuthStatus.Forbidden, lan_auth_type=lan_auth_deny, gatewayName=RuuviGatewayAABB',
@@ -737,12 +769,14 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation)
+      const ecdhInstance = new crypto.ECDH()
+      const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstance)
       const result = await auth.waitAuth()
       expect(result).to.equal(true)
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
+        `ECDH PubKey(Cli): ${ecdhInstance.getPublicKey('base64')}`,
         'FetchAuth: response is_ok=false, status=401',
         'FetchAuth: fail',
         'CheckAuth: AuthStatus.Unauthorized, lan_auth_type=ruuvi, gatewayName=RuuviGatewayAABB',

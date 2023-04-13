@@ -94,17 +94,20 @@ class Auth {
   gatewayName
   flagRedirectToPageAuth
   windowLocationObj
+  ecdh
+  aes_key
 
-  constructor (anchor, pageAuth, appInfo, windowLocationObj) {
+  constructor (anchor, pageAuth, appInfo, windowLocationObj, ecdhInstance) {
     this.anchor = anchor
     this.pageAuth = pageAuth
     this.appInfo = appInfo
     this.windowLocationObj = windowLocationObj
     this.flagRedirectToPageAuth = anchor === '#auth'
+    this.ecdh = ecdhInstance || new crypto.ECDH()
     logger.info(`Auth: anchor: ${anchor}`)
 
-    this.performLogIn = this.performLogIn.bind(this);
-    this.openHomePage = this.openHomePage.bind(this);
+    this.performLogIn = this.performLogIn.bind(this)
+    this.openHomePage = this.openHomePage.bind(this)
   }
 
   windowLocationReplace (url) {
@@ -134,11 +137,25 @@ class Auth {
     if (json_data) {
       params.headers['Content-Type'] = 'application/json; charset=utf-8'
       params.body = json_data
+    } else {
+      const pub_key_b64 = this.ecdh.getPublicKey('base64')
+      logger.info(`ECDH PubKey(Cli): ${pub_key_b64}`)
+      params.headers['ruuvi_ecdh_pub_key'] = pub_key_b64
     }
 
     return fetch('/auth', params)
         .then((response) => {
           logger.info(`FetchAuth: response is_ok=${response.ok}, status=${response.status}`)
+
+          const ecdh_pub_key_srv_b64 = response.headers.get('ruuvi_ecdh_pub_key')
+          if (ecdh_pub_key_srv_b64) {
+            logger.info(`ECDH PubKey(Srv): ${ecdh_pub_key_srv_b64}`)
+            const shared_secret = this.ecdh.computeSecret(ecdh_pub_key_srv_b64, 'base64')
+            logger.debug(`Shared secret: ${shared_secret}`)
+            this.aes_key = crypto.SHA256(shared_secret)
+            logger.debug(`AES key: ${this.aes_key}`)
+          }
+
           if (response.ok && response.status === 200) {
             return response.json().then((data) => {
               logger.info('FetchAuth: success')
@@ -235,12 +252,12 @@ class Auth {
     this.#login(json_data)
   }
 
-  openHomePage() {
+  openHomePage () {
     logger.info(`Open home page: '/'`)
     this.windowLocationReplace('/')
   }
 
-  waitAuth() {
+  waitAuth () {
     this.pageAuth.setCallbacks(this.openHomePage, this.performLogIn)
     this.promiseAuthFinished = new Promise((resolve, reject) => {
       this.promiseAuthFinishedResolved = resolve
@@ -249,10 +266,27 @@ class Auth {
     this.#login()
     return this.promiseAuthFinished
   }
+
+  ecdhEncrypt (msg) {
+    const hash = crypto.SHA256(msg)
+    const aes_iv = crypto.lib.WordArray.random(16)
+
+    if (!this.aes_key) {
+      throw Error('AES key has not yet been initialized.')
+    }
+
+    let msg_encrypted = crypto.AES.encrypt(msg, this.aes_key, { iv: aes_iv })
+
+    return JSON.stringify({
+      'encrypted': msg_encrypted.toString(),
+      'iv': crypto.enc.Base64.stringify(aes_iv),
+      'hash': crypto.enc.Base64.stringify(hash)
+    })
+  }
 }
 
-function createAuth (anchor, pageAuth, appInfo, windowLocationObj) {
-  return new Auth(anchor, pageAuth, appInfo, windowLocationObj)
+function createAuth (anchor, pageAuth, appInfo, windowLocationObj, ecdhInstance) {
+  return new Auth(anchor, pageAuth, appInfo, windowLocationObj, ecdhInstance)
 }
 
 export default createAuth

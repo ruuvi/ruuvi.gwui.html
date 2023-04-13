@@ -2027,7 +2027,7 @@ function initialize () {
           url += '&use_saved_password=true'
         } else {
           let pass_val = input_pass.val()
-          let json_encrypted_password = JSON.parse(ruuvi_edch_encrypt(pass_val))
+          let json_encrypted_password = JSON.parse(g_auth.ecdhEncrypt(pass_val))
           url += '&encrypted_password='
           url += encodeURIComponent(json_encrypted_password['encrypted'])
           url += '&encrypted_password_iv='
@@ -2043,7 +2043,7 @@ function initialize () {
       } else {
         let token_val = input_token.val()
         if (token_val) {
-          let json_encrypted_password = JSON.parse(ruuvi_edch_encrypt(token_val))
+          let json_encrypted_password = JSON.parse(g_auth.ecdhEncrypt(token_val))
           url += '&encrypted_password='
           url += encodeURIComponent(json_encrypted_password['encrypted'])
           url += '&encrypted_password_iv='
@@ -2434,7 +2434,7 @@ function networkConnect (ssid, password) {
     stub = ' '.repeat(240 - json_content.length)
     json_content = JSON.stringify({ 'ssid': ssid, 'password': password, 'stub': stub })
   }
-  let json_content_encrypted = ruuvi_edch_encrypt(json_content)
+  let json_content_encrypted = g_auth.ecdhEncrypt(json_content)
 
   console.log(log_wrap('POST /connect.json'))
   $.ajax({
@@ -3034,8 +3034,6 @@ function checkStatus () {
 
 // Former ruuvi.js
 
-let g_ecdh
-let g_aes_key
 let gw_mac = ''
 let g_flag_lan_auth_pass_changed = false
 const MQTT_PREFIX_MAX_LENGTH = 256
@@ -3332,7 +3330,7 @@ function save_config_internal (flag_save_network_cfg, ap_wifi_channel, cb_on_suc
     }
   }
 
-  let data_encrypted = ruuvi_edch_encrypt(JSON.stringify(data))
+  let data_encrypted = g_auth.ecdhEncrypt(JSON.stringify(data))
 
   console.log(log_wrap('ajax: POST /ruuvi.json'))
   $.ajax({
@@ -3495,30 +3493,7 @@ function buf2hex (buffer) { // buffer is an ArrayBuffer
     .join('')
 }
 
-function ruuvi_edch_encrypt (msg) {
-  const hash = crypto.SHA256(msg)
-  const aes_iv = crypto.lib.WordArray.random(16)
-
-  let msg_encrypted = crypto.AES.encrypt(msg, g_aes_key, { iv: aes_iv })
-
-  return JSON.stringify({
-    'encrypted': msg_encrypted.toString(),
-    'iv': crypto.enc.Base64.stringify(aes_iv),
-    'hash': crypto.enc.Base64.stringify(hash)
-  })
-}
-
 function on_get_config (data, ecdh_pub_key_srv_b64) {
-  g_aes_key = null
-  if (ecdh_pub_key_srv_b64) {
-    console.log(log_wrap(`ECDH PubKey(Srv): ${ecdh_pub_key_srv_b64}`))
-
-    const shared_secret = g_ecdh.computeSecret(ecdh_pub_key_srv_b64, 'base64')
-    // console.log(log_wrap(`Shared secret: ${shared_secret}`));
-    g_aes_key = crypto.SHA256(shared_secret)
-    // console.log(log_wrap(`AES key: ${g_aes_key}`));
-  }
-
   if (data != null) {
     let use_eth = false
     let remote_cfg_use = false
@@ -3975,10 +3950,6 @@ function on_get_config (data, ecdh_pub_key_srv_b64) {
 }
 
 function get_config () {
-  g_ecdh = new crypto.ECDH()
-  const pub_key_b64 = g_ecdh.getPublicKey('base64')
-
-  console.log(log_wrap(`ECDH PubKey(Cli): ${pub_key_b64}`))
   console.log(log_wrap('GET /ruuvi.json'))
   $.ajax({
       method: 'GET',
@@ -3986,7 +3957,6 @@ function get_config () {
       accept: 'application/json, text/plain, */*',
       dataType: 'json',
       cache: false,
-      headers: { 'ruuvi_ecdh_pub_key': pub_key_b64 },
       success: function (data, textStatus, request) {
         console.log(log_wrap('GET /ruuvi.json: success'))
         on_get_config(data, request.getResponseHeader('ruuvi_ecdh_pub_key'))
@@ -4004,12 +3974,11 @@ function get_config () {
   )
 }
 
-$(window).on('load', function () {
+function on_load() {
   logger.info('ruuvi.js: Loaded')
-  const anchor = window.location.hash
 
   initialize()
-  g_auth = createAuth(anchor, new PageAuth(), new AppInfo(), new WindowLocation(window.location))
+  g_auth = createAuth(window.location.hash, new PageAuth(), new AppInfo(), new WindowLocation(window.location))
   g_auth.waitAuth().then((result) => {
     if (result) {
       logger.info(`on load: waitAuth: ok`)
@@ -4020,4 +3989,8 @@ $(window).on('load', function () {
   }, (error) => {
     logger.info(`on load: waitAuth error: ${error}`)
   })
+}
+
+$(window).on('load', function () {
+  on_load()
 })
