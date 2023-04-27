@@ -1,6 +1,8 @@
 import $ from 'jquery'
 
 class Navigation {
+  static #flagSaveCfgOnPageFinished = false
+
   static #change_url (url) {
     if (window.location.hash === ('#' + url)) {
       return
@@ -21,8 +23,6 @@ class Navigation {
   }
 
   static change_page_to_software_update () {
-    // bodyClassLoadingRemove()
-    // TODO: enable bodyClassLoadingRemove
     this.#change_url('page-software_update')
   }
 
@@ -58,7 +58,8 @@ class Navigation {
     this.#change_url('page-scanning')
   }
 
-  static change_page_to_finished (num_steps) {
+  static change_page_to_finished (num_steps, flagSaveCfgOnPageFinished = true) {
+    Navigation.#flagSaveCfgOnPageFinished = flagSaveCfgOnPageFinished
     let h = ''
     h += '<ul class="progressbar">'
     for (let i = 0; i < num_steps; ++i) {
@@ -67,6 +68,10 @@ class Navigation {
     h += '</ul>'
     $('section#page-finished div.progressbar-container').html(h)
     this.#change_url('page-finished')
+  }
+
+  static isRequiredToSaveCfgOnPageFinished () {
+    return Navigation.#flagSaveCfgOnPageFinished
   }
 
 }

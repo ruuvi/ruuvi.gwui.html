@@ -101,13 +101,16 @@ class PageRemoteCfg {
     this.#on_remote_cfg_changed()
   }
 
-  #onHide () {
-    console.log(log_wrap('section#page-remote_cfg: onHide'))
+  #updateGwCfg () {
     this.#gwCfg.remote_cfg.remote_cfg_use = this.#checkbox_remote_cfg_use.isChecked()
     if (this.#gwCfg.remote_cfg.remote_cfg_use) {
+      this.#gwCfg.remote_cfg.remote_cfg_refresh_interval_minutes = 0
       this.#gwCfg.remote_cfg.remote_cfg_url = this.#input_base_url.getVal()
       if (!this.#checkbox_remote_cfg_use_auth.isChecked()) {
         this.#gwCfg.remote_cfg.remote_cfg_auth_type.setNoAuth()
+        this.#gwCfg.remote_cfg.remote_cfg_auth_basic_user = ''
+        this.#gwCfg.remote_cfg.remote_cfg_auth_basic_pass = ''
+        this.#gwCfg.remote_cfg.remote_cfg_auth_bearer_token = ''
       } else {
         if (this.#radio_remote_cfg_auth_type_basic.isChecked()) {
           this.#gwCfg.remote_cfg.remote_cfg_auth_type.setBasicAuth()
@@ -115,14 +118,31 @@ class PageRemoteCfg {
           if (!this.#input_auth_basic_pass.is_saved()) {
             this.#gwCfg.remote_cfg.remote_cfg_auth_basic_pass = this.#input_auth_basic_pass.getVal()
           }
+          this.#gwCfg.remote_cfg.remote_cfg_auth_bearer_token = ''
         } else if (this.#radio_remote_cfg_auth_type_bearer.isChecked()) {
           this.#gwCfg.remote_cfg.remote_cfg_auth_type.setBearerAuth()
           if (!this.#input_auth_bearer_token.is_saved()) {
             this.#gwCfg.remote_cfg.remote_cfg_auth_bearer_token = this.#input_auth_bearer_token.getVal()
           }
+          this.#gwCfg.remote_cfg.remote_cfg_auth_basic_user = ''
+          this.#gwCfg.remote_cfg.remote_cfg_auth_basic_pass = ''
+        } else {
+          throw new Error('Unsupported remote_cfg_auth_type')
         }
       }
+    } else {
+      this.#gwCfg.remote_cfg.remote_cfg_url = ''
+      this.#gwCfg.remote_cfg.remote_cfg_refresh_interval_minutes = 0
+      this.#gwCfg.remote_cfg.remote_cfg_auth_type.setNoAuth()
+      this.#gwCfg.remote_cfg.remote_cfg_auth_basic_user = ''
+      this.#gwCfg.remote_cfg.remote_cfg_auth_basic_pass = ''
+      this.#gwCfg.remote_cfg.remote_cfg_auth_bearer_token = ''
     }
+  }
+
+  #onHide () {
+    console.log(log_wrap('section#page-remote_cfg: onHide'))
+    this.#updateGwCfg()
   }
 
   #onChangeRemoteCfgUse () {
@@ -222,6 +242,8 @@ class PageRemoteCfg {
     GwStatus.stopCheckingStatus()
     await Network.waitWhileInProgress()
 
+    this.#updateGwCfg()
+
     try {
       await this.#gwCfg.saveConfig(this.#auth)
       let data = await Network.httpPostJson('/gw_cfg_download', 10000, '{}')
@@ -232,7 +254,7 @@ class PageRemoteCfg {
       }
       if (status === 200) {
         this.#button_download.enable()
-        Navigation.change_page_to_finished(5)
+        Navigation.change_page_to_finished(5, false)
       } else {
         console.log(log_wrap(`POST /gw_cfg_download: failure, status=${status}, message=${message}`))
         this.#button_download.enable()

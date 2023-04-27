@@ -5,6 +5,7 @@ import GuiText from './gui_text.mjs'
 import GwStatus from './gw_status.mjs'
 import GuiOverlay from './gui_overlay.mjs'
 import gui_loading from './gui_loading.mjs'
+import Navigation from './navigation.mjs'
 
 class PageFinished {
   /** @type GwCfg */
@@ -40,15 +41,17 @@ class PageFinished {
   #onShow () {
     console.log(log_wrap('section#page-finished: onShow'))
     GwStatus.stopCheckingStatus()
-    gui_loading.bodyClassLoadingAdd()
-    this.#gwCfg.saveConfig(this.#auth).then(() => {
-      console.log(log_wrap(`saveConfig ok`))
-    }).catch((err) => {
-      console.log(log_wrap(`saveConfig failed: ${err}`))
-      this.#overlay_no_gateway_connection.fadeIn()
-    }).finally(() => {
-      gui_loading.bodyClassLoadingRemove()
-    })
+    if (Navigation.isRequiredToSaveCfgOnPageFinished()) {
+      gui_loading.bodyClassLoadingAdd()
+      this.#gwCfg.saveConfig(this.#auth).then(() => {
+        console.log(log_wrap(`saveConfig ok`))
+      }).catch((err) => {
+        console.log(log_wrap(`saveConfig failed: ${err}`))
+        this.#overlay_no_gateway_connection.fadeIn()
+      }).finally(() => {
+        gui_loading.bodyClassLoadingRemove()
+      })
+    }
     const networkConnectionInfo = GwStatus.getNetworkConnectionInfo()
     if (networkConnectionInfo.ssid) {
       this.#div_connected_wifi.show()

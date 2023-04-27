@@ -94,6 +94,7 @@ export class GwCfg {
 
     data.remote_cfg_use = this.remote_cfg.remote_cfg_use
     data.remote_cfg_url = this.remote_cfg.remote_cfg_url
+    data.remote_cfg_refresh_interval_minutes = this.remote_cfg.remote_cfg_refresh_interval_minutes
     if (this.remote_cfg.remote_cfg_auth_type.isBasicAuth()) {
       data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.BASIC
       data.remote_cfg_auth_basic_user = this.remote_cfg.remote_cfg_auth_basic_user
