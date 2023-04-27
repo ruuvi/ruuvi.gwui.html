@@ -1,4 +1,15 @@
 class Logger {
+  static #instance
+
+  constructor () {
+    if (!Logger.#instance) {
+      Logger.#instance = this
+    }
+
+    // Always return the same instance
+    return Logger.#instance
+  }
+
   getCurrentTimestamp () {
     return new Date().toISOString()
   }

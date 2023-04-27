@@ -1,7 +1,7 @@
-import $ from 'jquery'
 import * as crypto from './crypto.mjs'
 import logger from './logger.mjs'
 import AuthStatus from './auth_status.mjs'
+import Network from './network.mjs'
 
 class AuthSession {
   realm = null
@@ -43,6 +43,7 @@ class AuthResp {
   fw_ver
   nrf52_fw_ver
   lan_auth_type
+  flagAccessFromLAN
   header_www_auth
   err_message
 
@@ -80,6 +81,10 @@ class AuthResp {
     }
     this.lan_auth_type = data.lan_auth_type
 
+    if (data.hasOwnProperty('lan')) {
+      this.flagAccessFromLAN = data.lan
+    }
+
     if (data.hasOwnProperty('message')) {
       this.err_message = data.message
     }
@@ -96,6 +101,7 @@ class Auth {
   windowLocationObj
   ecdh
   aes_key
+  flagAccessFromLAN
 
   constructor (anchor, pageAuth, appInfo, windowLocationObj, ecdhInstance) {
     this.anchor = anchor
@@ -127,116 +133,93 @@ class Auth {
     }
   }
 
-  #http_get_or_post_auth (json_data) {
-    let params = {
-      method: json_data ? 'POST' : 'GET',
-      headers: {
-        'Accept': 'application/json, text/plain, */*',
-      },
+  #handleResponseHeader_ruuvi_ecdh_pub_key () {
+    let response = Network.getResponse()
+    const ecdh_pub_key_srv_b64 = response?.headers.get('ruuvi_ecdh_pub_key')
+    if (ecdh_pub_key_srv_b64) {
+      logger.info(`ECDH PubKey(Srv): ${ecdh_pub_key_srv_b64}`)
+      const shared_secret = this.ecdh.computeSecret(ecdh_pub_key_srv_b64, 'base64')
+      // logger.debug(`Shared secret: ${shared_secret}`)
+      this.aes_key = crypto.SHA256(shared_secret)
+      // logger.debug(`AES key: ${this.aes_key}`)
     }
-    if (json_data) {
-      params.headers['Content-Type'] = 'application/json; charset=utf-8'
-      params.body = json_data
-    } else {
-      const pub_key_b64 = this.ecdh.getPublicKey('base64')
-      logger.info(`ECDH PubKey(Cli): ${pub_key_b64}`)
-      params.headers['ruuvi_ecdh_pub_key'] = pub_key_b64
-    }
-
-    return fetch('/auth', params)
-        .then((response) => {
-          logger.info(`FetchAuth: response is_ok=${response.ok}, status=${response.status}`)
-
-          const ecdh_pub_key_srv_b64 = response.headers.get('ruuvi_ecdh_pub_key')
-          if (ecdh_pub_key_srv_b64) {
-            logger.info(`ECDH PubKey(Srv): ${ecdh_pub_key_srv_b64}`)
-            const shared_secret = this.ecdh.computeSecret(ecdh_pub_key_srv_b64, 'base64')
-            logger.debug(`Shared secret: ${shared_secret}`)
-            this.aes_key = crypto.SHA256(shared_secret)
-            logger.debug(`AES key: ${this.aes_key}`)
-          }
-
-          if (response.ok && response.status === 200) {
-            return response.json().then((data) => {
-              logger.info('FetchAuth: success')
-              return new AuthResp(response, data)
-            })
-          } else if ((response.status === 401 || response.status === 403)) {
-            return response.json().then((data) => {
-              logger.info('FetchAuth: fail')
-              return new AuthResp(response, data)
-            })
-          } else {
-            logger.info('FetchAuth: bad response')
-            const contentType = response.headers.get('content-type')
-            if (contentType && contentType.includes('application/json')) {
-              return response.json().then(errorData => {
-                throw Error(`Response HTTP status=${response.status}, statusText=${response.statusText}, ${errorData.message ? 'message="' + errorData.message + '"' : 'json=\'' + JSON.stringify(errorData) + '\''}`)
-              })
-            } else {
-              return response.text().then(bodyText => {
-                let error_msg = `Response HTTP status=${response.status}, statusText=${response.statusText}`
-                if (bodyText) {
-                  error_msg += `, message="${bodyText}"`
-                }
-                throw Error(error_msg)
-              })
-            }
-          }
-        }, (error) => {
-          logger.info(`FetchAuth: error: ${error}`)
-          throw Error(`Error: ${error}`)
-        })
   }
 
-  #login (json_data) {
-    this.#http_get_or_post_auth(json_data).then((authResp) => {
-      logger.info(`CheckAuth: ${authResp.auth_status}, lan_auth_type=${authResp.lan_auth_type}, gatewayName=${authResp.gatewayName}`)
-      this.#updateGatewayNameFwVerAndAuth(authResp)
-      switch (authResp.auth_status) {
-        case AuthStatus.OK:
-          this.pageAuth.on_auth_successful()
-          if (authResp.header_ruuvi_prev_url) {
-            logger.info(`CheckAuth: Open: ${authResp.header_ruuvi_prev_url}`)
-            this.windowLocationReplace(authResp.header_ruuvi_prev_url)
+  async #http_get_or_post_auth (json_data) {
+    const timeout = 10000
+    let data
+    if (json_data) {
+      data = await Network.httpPostJson('/auth', timeout, json_data, {
+        list_of_allowed_statuses: [200, 401, 403]
+      })
+      logger.info('FetchAuth: success')
+    } else {
+      const pub_key_cli = this.ecdh.getPublicKey('base64')
+      logger.info(`ECDH PubKey(Cli): ${pub_key_cli}`)
+      data = await Network.httpGetJson('/auth', timeout, {
+        extra_headers: {
+          'ruuvi_ecdh_pub_key': pub_key_cli
+        },
+        list_of_allowed_statuses: [200, 401, 403]
+      })
+      logger.info(`FetchAuth: success, status=${Network.getResponse().status}`)
+      this.#handleResponseHeader_ruuvi_ecdh_pub_key()
+    }
+    return new AuthResp(Network.getResponse(), data)
+  }
+
+  async #login (json_data) {
+    let authResp
+    try {
+      authResp = await this.#http_get_or_post_auth(json_data)
+    } catch (err) {
+      logger.info(`CheckAuth: exception: ${err}`)
+      this.pageAuth.show_error_message(`${err instanceof Error ? err.message : err}`)
+      this.promiseAuthFinishedResolved(false)
+      return
+    }
+    logger.info(`CheckAuth: ${authResp.auth_status}, lan_auth_type=${authResp.lan_auth_type}, gatewayName=${authResp.gatewayName}`)
+    this.#updateGatewayNameFwVerAndAuth(authResp)
+    this.flagAccessFromLAN = authResp.flagAccessFromLAN
+    switch (authResp.auth_status) {
+      case AuthStatus.OK:
+        this.pageAuth.on_auth_successful()
+        if (authResp.header_ruuvi_prev_url) {
+          logger.info(`CheckAuth: Open: ${authResp.header_ruuvi_prev_url}`)
+          this.windowLocationReplace(authResp.header_ruuvi_prev_url)
+        } else {
+          if (this.flagRedirectToPageAuth) {
+            logger.info('CheckAuth: Open: page-auth')
+            this.windowLocationReplace('#page-auth')
           } else {
-            if (this.flagRedirectToPageAuth) {
-              logger.info('CheckAuth: Open: page-auth')
-              this.windowLocationReplace('#page-auth')
-            } else {
-              logger.info('CheckAuth: Open: page-welcome')
-              this.windowLocationReplace('#page-welcome')
-            }
+            logger.info('CheckAuth: Open: page-welcome')
+            this.windowLocationReplace('#page-welcome')
           }
-          this.promiseAuthFinishedResolved(true)
-          break
-        case AuthStatus.Unauthorized:
-          this.pageAuth.on_auth_unauthorized()
-          if (authResp.err_message) {
-            this.pageAuth.show_error_message(authResp.err_message)
-          }
-          this.authSession = new AuthSession(authResp.header_www_auth)
+        }
+        this.promiseAuthFinishedResolved(true)
+        break
+      case AuthStatus.Unauthorized:
+        this.pageAuth.on_auth_unauthorized()
+        if (authResp.err_message) {
+          this.pageAuth.show_error_message(authResp.err_message)
+        }
+        this.authSession = new AuthSession(authResp.header_www_auth)
+        logger.info('CheckAuth: Open: page-auth')
+        this.windowLocationAssign(null)
+        this.windowLocationAssign('#page-auth')
+        break
+      case AuthStatus.Forbidden:
+        if (authResp.lan_auth_type === 'lan_auth_deny') {
+          this.pageAuth.on_auth_forbidden(true)
+          this.promiseAuthFinishedResolved(false)
+        } else {
+          this.pageAuth.on_auth_forbidden(false)
           logger.info('CheckAuth: Open: page-auth')
           this.windowLocationAssign(null)
           this.windowLocationAssign('#page-auth')
-          break
-        case AuthStatus.Forbidden:
-          if (authResp.lan_auth_type === 'lan_auth_deny') {
-            this.pageAuth.on_auth_forbidden(true)
-            this.promiseAuthFinishedResolved(false)
-          } else {
-            this.pageAuth.on_auth_forbidden(false)
-            logger.info('CheckAuth: Open: page-auth')
-            this.windowLocationAssign(null)
-            this.windowLocationAssign('#page-auth')
-          }
-          break
-      }
-    }).catch((errorResponse) => {
-      logger.info(`CheckAuth: exception: ${errorResponse}`)
-      this.pageAuth.show_error_message(`${errorResponse instanceof Error ? errorResponse.message : errorResponse}`)
-      this.promiseAuthFinishedResolved(false)
-    })
+        }
+        break
+    }
   }
 
   performLogIn (user, password) {
@@ -249,7 +232,7 @@ class Auth {
       'password': password_sha256,
     })
 
-    this.#login(json_data)
+    this.#login(json_data).then(() => {})
   }
 
   openHomePage () {
@@ -257,14 +240,14 @@ class Auth {
     this.windowLocationReplace('/')
   }
 
-  waitAuth () {
+  async waitAuth () {
     this.pageAuth.setCallbacks(this.openHomePage, this.performLogIn)
     this.promiseAuthFinished = new Promise((resolve, reject) => {
       this.promiseAuthFinishedResolved = resolve
       this.promiseAuthFinishedRejected = reject
     })
-    this.#login()
-    return this.promiseAuthFinished
+    await this.#login()
+    return await this.promiseAuthFinished
   }
 
   ecdhEncrypt (msg) {

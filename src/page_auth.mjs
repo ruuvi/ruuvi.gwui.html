@@ -42,14 +42,14 @@ class PageAuth {
 
   }
 
-  #on_click_button_login() {
+  #on_click_button_login () {
     this.hide_all_statuses()
     let user = this.getUserName()
     let password = this.getPassword()
     this.#cb_performLogIn(user, password)
   }
 
-  setCallbacks(cb_openHomePage, cb_performLogIn) {
+  setCallbacks (cb_openHomePage, cb_performLogIn) {
     this.#cb_openHomePage = cb_openHomePage
     this.#cb_performLogIn = cb_performLogIn
   }

@@ -1,19 +1,11 @@
-class GuiText {
+class GuiDiv {
   #obj
 
   constructor (obj) {
     if (obj.prop('tagName') !== 'DIV') {
-      throw new Error('GuiText class constructor requires a <div> element.')
+      throw new Error('GuiDiv class constructor requires a <div> element.')
     }
     this.#obj = obj
-  }
-
-  setVal (val) {
-    this.#obj.text(val)
-  }
-
-  getVal () {
-    return this.#obj.text()
   }
 
   show () {
@@ -33,4 +25,4 @@ class GuiText {
   }
 }
 
-export default GuiText
+export default GuiDiv

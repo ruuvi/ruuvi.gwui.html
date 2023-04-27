@@ -4,6 +4,7 @@ class PageAuthMock {
   #cb_openHomePage
   #cb_performLogIn
   auth_status
+
   constructor () {
     this.setDefaultUserNameAndShowHint = sinon.stub()
     this.on_auth_successful = sinon.stub().callsFake(() => {this.auth_status = 'auth_successful'})
@@ -14,11 +15,13 @@ class PageAuthMock {
     this.getUserName = sinon.stub()
     this.getPassword = sinon.stub()
   }
-  setCallbacks(cb_openHomePage, cb_performLogIn) {
+
+  setCallbacks (cb_openHomePage, cb_performLogIn) {
     this.#cb_openHomePage = cb_openHomePage
     this.#cb_performLogIn = cb_performLogIn
   }
-  simulateClickButtonLogIn(user, password) {
+
+  simulateClickButtonLogIn (user, password) {
     this.#cb_performLogIn(user, password)
   }
 }

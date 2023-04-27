@@ -93,7 +93,7 @@ RUUVI_AUTH_REALM = 'RuuviGateway' + g_gw_mac[-5:-3] + g_gw_mac[-2:]
 
 g_lan_auth_default_password_hashed = hashlib.md5(f'{LAN_AUTH_DEFAULT_USER}:{RUUVI_AUTH_REALM}:{g_gw_unique_id}'.encode('utf-8')).hexdigest()
 
-g_fw_ver = 'v1.13.0'
+g_fw_ver = 'v1.14.0'
 g_nrf52_fw_ver = 'v1.0.0'
 
 g_ruuvi_dict = {
@@ -179,7 +179,7 @@ g_content_github_latest_release = '''{
     "site_admin": false
   },
   "node_id": "MDc6UmVsZWFzZTQwOTgzNjUz",
-  "tag_name": "v1.14.0",
+  "tag_name": "v1.13.0",
   "target_commitish": "master",
   "name": "GW A2 beta tester release",
   "draft": false,
@@ -531,11 +531,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self._on_post_resp('404 Not Found', 'text/html; charset=utf-8', content)
 
     def _on_post_resp_401(self, message=None):
+        global g_flag_access_from_lan
         cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
         if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI or \
                 g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DEFAULT:
             message = message if message is not None else ''
-            resp_content = self._gen_auth_resp_content(message=message)
+            resp_content = self._gen_auth_resp_content(g_flag_access_from_lan, message=message)
             resp_content_encoded = resp_content.encode('utf-8')
             resp = b''
             resp += f'HTTP/1.0 401 Unauthorized\r\n'.encode('ascii')
@@ -664,6 +665,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_software_update_url
         global g_software_update_stage
         global g_software_update_percentage
+        global g_flag_access_from_lan
         print('POST %s' % self.path)
         if self.path == '/auth':
             if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI and g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_DEFAULT:
@@ -719,7 +721,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             g_login_session = None
 
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
-            resp_content = self._gen_auth_resp_content()
+            resp_content = self._gen_auth_resp_content(g_flag_access_from_lan)
             resp_content_encoded = resp_content.encode('utf-8')
             resp = b''
             resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
@@ -1000,16 +1002,15 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(tosend.encode('ascii'))
 
     @staticmethod
-    def _generate_status_json(urc, flag_access_from_lan, ssid, ip='0', netmask='0', gw='0', fw_updating_stage=0,
+    def _generate_status_json(urc, ssid, ip='0', netmask='0', gw='0', fw_updating_stage=0,
                               percentage=0, fw_updating_msg=None):
-        flag_access_from_lan = 1 if flag_access_from_lan else 0
         if fw_updating_stage == 0:
-            return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"lan":{flag_access_from_lan}}}'
+            return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc}}}'
         else:
             if fw_updating_msg is None:
-                return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"lan":{flag_access_from_lan},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}}}}}'
+                return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}}}}}'
             else:
-                return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"lan":{flag_access_from_lan},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}, "message":"{fw_updating_msg}"}}}}'
+                return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}, "message":"{fw_updating_msg}"}}}}'
 
     def _check_auth(self):
         global g_ruuvi_dict
@@ -1063,17 +1064,20 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         else:
             raise RuntimeError("Unsupported Auth")
 
-    def _gen_auth_resp_content(self, message=None):
+    def _gen_auth_resp_content(self, flag_access_from_lan, message=None):
+        flag_access_from_lan = 1 if flag_access_from_lan else 0
+
         lan_auth_type = g_ruuvi_dict['lan_auth_type']
         if message is None:
-            resp_content = f'{{"gateway_name": "{RUUVI_AUTH_REALM}", "fw_ver": "{g_fw_ver}", "nrf52_fw_ver": "{g_nrf52_fw_ver}", "lan_auth_type": "{lan_auth_type}"}}'
+            resp_content = f'{{"gateway_name": "{RUUVI_AUTH_REALM}", "fw_ver": "{g_fw_ver}", "nrf52_fw_ver": "{g_nrf52_fw_ver}", "lan_auth_type": "{lan_auth_type}", "lan":{flag_access_from_lan}}}'
         else:
-            resp_content = f'{{"gateway_name": "{RUUVI_AUTH_REALM}", "fw_ver": "{g_fw_ver}", "nrf52_fw_ver": "{g_nrf52_fw_ver}", "lan_auth_type": "{lan_auth_type}", "message": "{message}"}}'
+            resp_content = f'{{"gateway_name": "{RUUVI_AUTH_REALM}", "fw_ver": "{g_fw_ver}", "nrf52_fw_ver": "{g_nrf52_fw_ver}", "lan_auth_type": "{lan_auth_type}", "lan":{flag_access_from_lan}, "message": "{message}"}}'
         return resp_content
 
     def _do_get_auth(self):
         global g_ruuvi_dict
         global g_login_session
+        global g_flag_access_from_lan
         print(f"LAN auth: {g_ruuvi_dict['lan_auth_type']}")
         pub_key_b64_cli = self._ecdh_handshake(self._get_value_from_headers('ruuvi_ecdh_pub_key: '))
 
@@ -1087,7 +1091,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp_content = self._gen_auth_resp_content()
+            resp_content = self._gen_auth_resp_content(g_flag_access_from_lan)
             resp_content_encoded = resp_content.encode('utf-8')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1120,11 +1124,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += g_login_session.generate_auth_header_fields().encode('ascii')
 
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
-            resp += f'ruuvi_ecdh_pub_key: {pub_key_b64_cli}\r\n'.encode('ascii')
+            if pub_key_b64_cli is not None:
+                resp += f'ruuvi_ecdh_pub_key: {pub_key_b64_cli}\r\n'.encode('ascii')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp_content = self._gen_auth_resp_content()
+            resp_content = self._gen_auth_resp_content(g_flag_access_from_lan)
             resp_content_encoded = resp_content.encode('utf-8')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1157,11 +1162,13 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp = b''
             resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+            if pub_key_b64_cli is not None:
+                resp += f'ruuvi_ecdh_pub_key: {pub_key_b64_cli}\r\n'.encode('ascii')
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp_content = self._gen_auth_resp_content()
+            resp_content = self._gen_auth_resp_content(g_flag_access_from_lan)
             resp_content_encoded = resp_content.encode('utf-8')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1187,11 +1194,13 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp = b''
             resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+            if pub_key_b64_cli is not None:
+                resp += f'ruuvi_ecdh_pub_key: {pub_key_b64_cli}\r\n'.encode('ascii')
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp_content = self._gen_auth_resp_content()
+            resp_content = self._gen_auth_resp_content(g_flag_access_from_lan)
             resp_content_encoded = resp_content.encode('utf-8')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1202,11 +1211,13 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp = b''
             resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+            if pub_key_b64_cli is not None:
+                resp += f'ruuvi_ecdh_pub_key: {pub_key_b64_cli}\r\n'.encode('ascii')
             cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
             resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
             resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
             resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp_content = self._gen_auth_resp_content()
+            resp_content = self._gen_auth_resp_content(g_flag_access_from_lan)
             resp_content_encoded = resp_content.encode('utf-8')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
@@ -1513,7 +1524,6 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 time.sleep(GET_AP_JSON_TIMEOUT)
                 self.wfile.write(resp)
             elif file_path == '/status.json':
-                global g_flag_access_from_lan
                 global g_software_update_stage
                 global g_software_update_percentage
 
@@ -1557,18 +1567,18 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     elif g_software_update_stage == SOFTWARE_UPDATE_STAGE_7_FLASHING_NRF52_FAILED:
                         fw_updating_msg = "Failed to update nRF52 firmware"
 
-                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED, g_flag_access_from_lan,
+                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED,
                                                          ssid_key_with_val, ip, netmask, gw, g_software_update_stage,
                                                          g_software_update_percentage, fw_updating_msg=fw_updating_msg)
 
                 elif g_simulation_mode == SIMULATION_MODE_WIFI_FAILED_ATTEMPT:
-                    content = self._generate_status_json(STATUS_JSON_URC_WIFI_FAILED_ATTEMPT, g_flag_access_from_lan,
+                    content = self._generate_status_json(STATUS_JSON_URC_WIFI_FAILED_ATTEMPT,
                                                          ssid_key_with_val)
                 elif g_simulation_mode == SIMULATION_MODE_USER_DISCONNECT:
-                    content = self._generate_status_json(STATUS_JSON_URC_USER_DISCONNECT, g_flag_access_from_lan,
+                    content = self._generate_status_json(STATUS_JSON_URC_USER_DISCONNECT,
                                                          ssid_key_with_val)
                 elif g_simulation_mode == SIMULATION_MODE_LOST_CONNECTION:
-                    content = self._generate_status_json(STATUS_JSON_URC_LOST_CONNECTION, g_flag_access_from_lan,
+                    content = self._generate_status_json(STATUS_JSON_URC_LOST_CONNECTION,
                                                          ssid_key_with_val)
                 else:
                     content = ''

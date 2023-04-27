@@ -23,6 +23,22 @@ class GuiInputText {
   enable () {
     this.#obj.prop('disabled', false)
   }
+
+  on_input (fn) {
+    this.#obj.on('input', () => fn())
+  }
+
+  on_change (fn) {
+    this.#obj.on('change', () => fn())
+  }
+
+  on_input_or_change (fn) {
+    this.#obj.on('input change', () => fn())
+  }
+
+  on_keyup_or_click (fn) {
+    this.#obj.on('keyup click', () => fn())
+  }
 }
 
 export default GuiInputText
