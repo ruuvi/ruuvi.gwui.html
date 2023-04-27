@@ -118,6 +118,9 @@ class Network {
       jsonData = JSON.parse(bodyText)
     } catch (err) {
       console.log(log_wrap(`fetch_json: JSON.parse failed: ${err}`))
+      if (err.name === 'SyntaxError') {
+        throw new Error(`fetch_json: JSON.parse failed: ${err.name}: '${bodyText}' is not valid JSON`)
+      }
       throw new Error(`fetch_json: JSON.parse failed: ${err}`)
     }
 

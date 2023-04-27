@@ -328,14 +328,14 @@ describe('Auth', () => {
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
         `ECDH PubKey(Cli): ${ecdhInstanceCli.getPublicKey('base64')}`,
-        'CheckAuth: exception: Error: fetch_json: JSON.parse failed: SyntaxError: Unexpected token \'T\', "This is not a json" is not valid JSON',
+        "CheckAuth: exception: Error: fetch_json: JSON.parse failed: SyntaxError: 'This is not a json' is not valid JSON"
       ])
 
       expect(mockPageAuth.on_auth_successful.notCalled).to.be.true
       expect(mockPageAuth.on_auth_unauthorized.notCalled).to.be.true
       expect(mockPageAuth.on_auth_forbidden.notCalled).to.be.true
       expect(mockPageAuth.show_error_message.calledOnce).to.be.true
-      sinon.assert.calledWith(mockPageAuth.show_error_message, 'fetch_json: JSON.parse failed: SyntaxError: Unexpected token \'T\', "This is not a json" is not valid JSON')
+      sinon.assert.calledWith(mockPageAuth.show_error_message, 'fetch_json: JSON.parse failed: SyntaxError: \'This is not a json\' is not valid JSON')
 
       expect(appInfoMocks.setGatewayNameSuffix.notCalled).to.be.true
       expect(appInfoMocks.setFirmwareVersions.notCalled).to.be.true

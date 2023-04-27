@@ -119,7 +119,8 @@ describe('Network', () => {
       })
 
       const promise = Network.fetch_json('GET', 'http://example.com', 500)
-      await promise.should.be.rejectedWith('fetch_json: JSON.parse failed: SyntaxError: Unexpected token \'i\', "invalid_json_1234" is not valid JSON')
+      await promise.should.be.rejectedWith('fetch_json: JSON.parse failed: SyntaxError: \'invalid_json_1234\' is not valid JSON')
+
       expect(Network.isInProgress()).to.be.false
       expect(Network.getResponse().status).to.equal(200)
     })
