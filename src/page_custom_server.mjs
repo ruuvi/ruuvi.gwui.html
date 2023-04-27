@@ -307,6 +307,9 @@ class PageCustomServer {
       }
       this.#gwCfg.mqtt.mqtt_server = this.#input_mqtt_server.getVal()
       this.#gwCfg.mqtt.mqtt_port = parseInt(this.#input_mqtt_port.getVal())
+      if (Number.isNaN(this.#gwCfg.mqtt.mqtt_port)) {
+        this.#gwCfg.mqtt.mqtt_port = 0
+      }
       this.#gwCfg.mqtt.mqtt_user = this.#input_mqtt_user.getVal()
       if (!this.#input_mqtt_pass.is_saved()) {
         this.#gwCfg.mqtt.mqtt_pass = this.#input_mqtt_pass.getVal()

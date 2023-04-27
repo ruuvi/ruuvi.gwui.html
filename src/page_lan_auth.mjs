@@ -14,8 +14,12 @@ import Navigation from './navigation.mjs'
 import * as crypto from './crypto.mjs'
 
 class PageLanAuth {
-  /** @type #GwCfgLanAuth */
+  /** @type GwCfgLanAuth */
   #gwCfgLanAuth
+
+  /** @type Auth */
+  #auth
+
   #section = $('section#page-settings_lan_auth')
   #radio_lan_auth_type = new GuiRadioButton('lan_auth_type')
 
@@ -47,8 +51,13 @@ class PageLanAuth {
   #button_continue = new GuiButton($('#page-lan_auth_type-button-continue'))
   #button_back = new GuiButtonBack($('#page-lan_auth_type-button-back'))
 
-  constructor (gwCfgLanAuth) {
+  /**
+   * @param {GwCfgLanAuth} gwCfgLanAuth
+   * @param {Auth} auth
+   */
+  constructor (gwCfgLanAuth, auth) {
     this.#gwCfgLanAuth = gwCfgLanAuth
+    this.#auth = auth
 
     this.#section.bind('onShow', () => this.#onShow())
     this.#section.bind('onHide', () => this.#onHide())
@@ -132,21 +141,28 @@ class PageLanAuth {
     console.log(log_wrap('section#page-settings_lan_auth: onHide'))
     if (this.#radio_lan_auth_type_default.isChecked()) {
       this.#gwCfgLanAuth.lan_auth_type.setAuthDefault()
+      this.#gwCfgLanAuth.setDefaultUser()
+      this.#gwCfgLanAuth.lan_auth_pass = null
     } else if (this.#radio_lan_auth_type_ruuvi.isChecked()) {
       this.#gwCfgLanAuth.lan_auth_type.setAuthRuuvi()
-    } else if (this.#radio_lan_auth_type_allow.isChecked()) {
-      this.#gwCfgLanAuth.lan_auth_type.setAuthAllow()
-    } else if (this.#radio_lan_auth_type_deny.isChecked()) {
-      this.#gwCfgLanAuth.lan_auth_type.setAuthDeny()
-    } else {
-      this.#gwCfgLanAuth.lan_auth_type.setAuthDefault()
-    }
-    this.#gwCfgLanAuth.lan_auth_user = this.#input_user.getVal()
-    this.#gwCfgLanAuth.lan_auth_pass = this.#input_password.getVal()
-    if (this.#radio_lan_auth_type_ruuvi.isChecked()) {
+      this.#gwCfgLanAuth.lan_auth_user = this.#input_user.getVal()
       if (this.#input_password.is_saved()) {
         this.#gwCfgLanAuth.lan_auth_pass = undefined
+      } else {
+        const lan_auth_path_unencrypted = this.#input_password.getVal()
+        const user_gw_password = this.#gwCfgLanAuth.lan_auth_user + ':' + this.#auth.gatewayName + ':' + lan_auth_path_unencrypted
+        this.#gwCfgLanAuth.lan_auth_pass = crypto.MD5(user_gw_password).toString()
       }
+    } else if (this.#radio_lan_auth_type_allow.isChecked()) {
+      this.#gwCfgLanAuth.lan_auth_type.setAuthAllow()
+      this.#gwCfgLanAuth.setDefaultUser()
+      this.#gwCfgLanAuth.lan_auth_pass = null
+    } else if (this.#radio_lan_auth_type_deny.isChecked()) {
+      this.#gwCfgLanAuth.lan_auth_type.setAuthDeny()
+      this.#gwCfgLanAuth.setDefaultUser()
+      this.#gwCfgLanAuth.lan_auth_pass = null
+    } else {
+      throw new Error('Unknown lan_auth_type')
     }
 
     if (this.#checkbox_use_api_key.isChecked()) {

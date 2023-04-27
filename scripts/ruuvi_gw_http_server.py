@@ -830,8 +830,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                         g_ruuvi_dict['lan_auth_pass'] != lan_auth_pass:
                     g_ruuvi_dict['lan_auth_type'] = lan_auth_type
                     g_ruuvi_dict['lan_auth_user'] = lan_auth_user
-                    g_ruuvi_dict['lan_auth_pass'] = lan_auth_pass
-                    print(f'Set LAN auth: {lan_auth_type}, {lan_auth_user}, {lan_auth_pass}')
+                    if lan_auth_pass is not None:
+                        g_ruuvi_dict['lan_auth_pass'] = lan_auth_pass
+                        print(f'Set LAN auth: {lan_auth_type}, {lan_auth_user}, {lan_auth_pass}')
+                    else:
+                        lan_auth_pass = g_ruuvi_dict['lan_auth_pass']
+                        print(f'Set LAN auth (prev password): {lan_auth_type}, {lan_auth_user}, {lan_auth_pass}')
                     g_authorized_sessions = dict()
 
             content = '{}'
