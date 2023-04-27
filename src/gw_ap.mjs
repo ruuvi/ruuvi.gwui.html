@@ -56,6 +56,7 @@ class GwAP {
     }
     const prevIsActive = this.#refreshAPActive
     this.#refreshAPActive = false
+    this.#cb_refreshAPHTML = null
     return prevIsActive
   }
 

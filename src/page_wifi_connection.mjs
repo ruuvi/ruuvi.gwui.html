@@ -27,6 +27,7 @@ export class PageWiFiConnection {
   #button_back = new GuiButtonBack($('#page-wifi_connection-button-back'))
   #apList = null
   #flag_sort_by_rssi = false
+  #flag_initial_refresh = false
 
   constructor (gwCfg, auth) {
     this.#gwCfg = gwCfg
@@ -58,9 +59,11 @@ export class PageWiFiConnection {
     this.#input_password_wifi.set_use_saved()
     $('#page-wifi_connection-ssid_password').hide()
     networkDisconnect().then(() => {
-      GwAP.startRefreshingAP(0, (data) => {this.#refreshAPHTML(data)})
     }).catch((err) => {
       console.log(log_wrap(`networkDisconnect error: ${err}`))
+    }).finally(() => {
+      this.#flag_initial_refresh = true
+      GwAP.startRefreshingAP(0, (data) => {this.#refreshAPHTML(data)})
     })
   }
 
@@ -126,14 +129,22 @@ export class PageWiFiConnection {
 
   async #save_network_config_and_connect_to_wifi (wifi_channel, ssid, password) {
     gui_loading.bodyClassLoadingAdd()
+    let isSuccessful = false
     try {
       GwStatus.stopCheckingStatus()
       GwAP.stopRefreshingAP()
       await Network.waitWhileInProgress()
       this.#gwCfg.wifi_ap_cfg.setWiFiChannel(wifi_channel)
       await this.#gwCfg.saveNetworkConfig(this.#auth)
-      const isSuccessful = await networkConnect(ssid, password, this.#auth)
+      isSuccessful = await networkConnect(ssid, password, this.#auth)
       console.log(log_wrap(`networkConnect: ${isSuccessful}`))
+    } catch (err) {
+      console.log(log_wrap(`save_network_config_and_connect_to_wifi failed: ${err}`))
+    } finally {
+      console.log(log_wrap('Start periodic status check'))
+      GwStatus.startCheckingStatus()
+      this.#button_continue.enable()
+      gui_loading.bodyClassLoadingRemove()
       if (isSuccessful) {
         Navigation.change_page_to_software_update()
       } else {
@@ -141,17 +152,7 @@ export class PageWiFiConnection {
         this.#updatePositionOfWiFiPasswordInput()
         GwAP.startRefreshingAP()
       }
-    } catch (err) {
-      console.log(log_wrap(`save_network_config_and_connect_to_wifi failed: ${err}`))
-
-      this.#button_continue.disable()
-      $('#wifi-connection-status-block').show()
-      this.#updatePositionOfWiFiPasswordInput()
-      GwAP.startRefreshingAP()
     }
-    gui_loading.bodyClassLoadingRemove()
-    console.log(log_wrap('Start periodic status check'))
-    GwStatus.startCheckingStatus()
   }
 
   #onClickButtonContinue () {
@@ -202,7 +203,10 @@ export class PageWiFiConnection {
   }
 
   #refreshAPHTML (data) {
-    gui_loading.bodyClassLoadingRemove()
+    if (this.#flag_initial_refresh) {
+      this.#flag_initial_refresh = false
+      gui_loading.bodyClassLoadingRemove()
+    }
     if (data === null) {
       return
     }
@@ -267,14 +271,11 @@ export class PageWiFiConnection {
       h += '<div>'
       h += '<label class="control control-radio">'
       h += '    <div style="display: flex">'
-      h += '        <div>{0}</div>'.format(e.ssid)
-      h += '        <div style="margin-left: auto;" class="{0}"></div>'.format(e.auth === 0 ? '' : 'pw')
-      h += '        <div class="{0}"></div>'.format(this.#rssiToIcon(e.rssi))
+      h += `        <div>${e.ssid}</div>`
+      h += `        <div style="margin-left: auto;" class="${e.auth === 0 ? '' : 'pw'}"></div>`
+      h += `        <div class="${this.#rssiToIcon(e.rssi)}"></div>`
       h += '    </div>'
-      h += '    <input value="{0}" name="wifi-name" type="radio" class="{1} wifi_chan_{2}">'.format(
-          e.ssid,
-          (e.auth === 0) ? 'no_auth' : 'auth',
-          e.chan)
+      h += `    <input value="${e.ssid}" name="wifi-name" type="radio" class="${(e.auth === 0) ? 'no_auth' : 'auth'} wifi_chan_${e.chan}">`
       h += '    <span class="control_indicator"></span>'
       h += '</label>'
       h += '<div class="wifi_password"></div>'
