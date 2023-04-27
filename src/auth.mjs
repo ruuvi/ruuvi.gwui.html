@@ -214,10 +214,10 @@ class Auth {
           this.promiseAuthFinishedResolved(false)
         } else {
           this.pageAuth.on_auth_forbidden(false)
-          logger.info('CheckAuth: Open: page-auth')
-          this.windowLocationAssign(null)
-          this.windowLocationAssign('#page-auth')
         }
+        logger.info('CheckAuth: Open: page-auth')
+        this.windowLocationAssign(null)
+        this.windowLocationAssign('#page-auth')
         break
     }
   }

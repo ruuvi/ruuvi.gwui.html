@@ -795,6 +795,9 @@ describe('Auth', () => {
         'FetchAuth: success, status=403',
         `ECDH PubKey(Srv): ${ecdhInstanceSrv.getPublicKey('base64')}`,
         'CheckAuth: AuthStatus.Forbidden, lan_auth_type=lan_auth_deny, gatewayName=RuuviGatewayAABB',
+        'CheckAuth: Open: page-auth',
+        'WindowLocationMock: assign: null',
+        'WindowLocationMock: assign: #page-auth',
       ])
 
       expect(mockPageAuth.on_auth_successful.notCalled).to.be.true
@@ -808,7 +811,9 @@ describe('Auth', () => {
       expect(appInfoMocks.setFirmwareVersions.calledWith('1.13.0', '1.0.0')).to.be.true
 
       expect(mockWindowLocation.replace.notCalled).to.be.true
-      expect(mockWindowLocation.assign.notCalled).to.be.true
+      expect(mockWindowLocation.assign.callCount).to.equal(2)
+      sinon.assert.calledWith(mockWindowLocation.assign.getCall(0), null)
+      sinon.assert.calledWith(mockWindowLocation.assign.getCall(1), '#page-auth')
     })
 
     it('should handle unauthorized and then try to login, but forbidden', async () => {
