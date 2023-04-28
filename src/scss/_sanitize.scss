@@ -120,7 +120,6 @@ a {
  */
 
 abbr[title] {
-	text-decoration: underline;
 	text-decoration: underline dotted;
 }
 
@@ -425,16 +424,12 @@ dialog {
 	border: solid;
 	color: black;
 	display: block;
-	height: -moz-fit-content;
-	height: -webkit-fit-content;
 	height: fit-content;
 	left: 0;
 	margin: auto;
 	padding: 1em;
 	position: absolute;
 	right: 0;
-	width: -moz-fit-content;
-	width: -webkit-fit-content;
 	width: fit-content;
 }
 

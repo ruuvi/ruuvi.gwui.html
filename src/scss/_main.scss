@@ -1,3 +1,6 @@
+@import "media";
+@import "variables";
+
 body {
 	min-height: 100vh;
 	background-color: var(--color-background);
@@ -592,15 +595,6 @@ select {
 	}
 	to {
 		transform: rotate(360deg);
-	}
-}
-
-@-webkit-keyframes rotate {
-	from {
-		-webkit-transform: rotate(0deg);
-	}
-	to {
-		-webkit-transform: rotate(360deg);
 	}
 }
 
