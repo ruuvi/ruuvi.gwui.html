@@ -91,7 +91,7 @@ class Network {
     console.log(log_wrap(`${method} ${url}`))
 
     if (this.#timeoutId) {
-      throw Error('Another jetch_json is active')
+      throw Error('Another fetch_json is active')
     }
 
     let bodyText

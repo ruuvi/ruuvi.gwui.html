@@ -26,7 +26,7 @@ To start simulator run:
 
 To test UI, open in web-browser: http://127.0.0.1:8001
 
-You can choose any WiFi from the list, the valid password is `12345678`
+You can choose any Wi-Fi from the list, the valid password is `12345678`
 
 ======================================
 
@@ -59,13 +59,13 @@ To generate certificate for HTTPS (`server.pem`):
 
 ## Example of testing a gateway configured to transfer data via HTTP
 
-* Connect your computer to a WiFi network 
+* Connect your computer to a Wi-Fi network 
   and find out what IP address has been assigned to your computer 
   (we will refer to it as `<IP>` in the following).
   
 * Reset the Gateway configuration by pressing the CONFIGURE button for 5 seconds
   
-* Connect your PC to the Gateway's WiFi access point, 
+* Connect your PC to the Gateway's Wi-Fi access point, 
   the Gateway configuration page will be automatically opened in your web-browser
   
 * On the "SERVER SETTINGS" page select "Use Custom Server" option: 
@@ -78,7 +78,7 @@ To generate certificate for HTTPS (`server.pem`):
   
 * On the next page select which devices to scan
   
-* On the next page (`INTERNET CONNECTION`) select WiFi
+* On the next page (`INTERNET CONNECTION`) select Wi-Fi
   
 * On the next page choose WiFi-network and connect to it, after the connection will be established you should see the following page:
   
@@ -88,7 +88,7 @@ To generate certificate for HTTPS (`server.pem`):
   
 * Connect your PC to the same WiFi-network as the Gateway is connected
   
-* Check that your PC can communicate with the Gateway via WiFi - use `ping <gateway-IP>`
+* Check that your PC can communicate with the Gateway via Wi-Fi - use `ping <gateway-IP>`
   
 * Run HTTP server on your PC:
   `python http_server_auth.py --port 8000 --bind <IP>`
@@ -99,13 +99,13 @@ To generate certificate for HTTPS (`server.pem`):
 
 ## Example of testing a gateway configured to transfer data via HTTPS
 
-* Connect your computer to a WiFi network
+* Connect your computer to a Wi-Fi network
   and find out what IP address has been assigned to your computer
   (we will refer to it as `<IP>` in the following).
   
 * Reset the Gateway configuration by pressing the CONFIGURE button for 5 seconds
   
-* Connect your PC to the Gateway's WiFi access point,
+* Connect your PC to the Gateway's Wi-Fi access point,
   the Gateway configuration page will be automatically opened in your web-browser
   
 * On the "SERVER SETTINGS" page select "Use Custom Server" option:
@@ -118,7 +118,7 @@ To generate certificate for HTTPS (`server.pem`):
   ![ruuvi_custom_server_settings_https](docs/ruuvi_custom_server_settings_https.png)
 * On the next page select which devices to scan
   
-* On the next page (`INTERNET CONNECTION`) select WiFi
+* On the next page (`INTERNET CONNECTION`) select Wi-Fi
   
 * On the next page choose WiFi-network and connect to it, after the connection will be established you should see the following page:
 
@@ -128,7 +128,7 @@ To generate certificate for HTTPS (`server.pem`):
   
 * Connect your PC to the same WiFi-network as the Gateway is connected
   
-* Check that your PC can communicate with the Gateway via WiFi - use `ping <gateway-IP>`
+* Check that your PC can communicate with the Gateway via Wi-Fi - use `ping <gateway-IP>`
   
 * Run HTTPS server on your PC:
   `python http_server_auth.py --port 8000 --bind <IP> --ssl_cert=./server.pem -u user -p pass`

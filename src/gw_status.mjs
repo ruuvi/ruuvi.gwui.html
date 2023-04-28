@@ -203,7 +203,7 @@ class GwStatus {
         networkConnection.setDisconnected()
       }
     } else if (data.hasOwnProperty('urc') && data['urc'] === URC_CODE.CONNECTED) {
-      //ESP32 is already connected to a wifi without having the user do anything
+      //ESP32 is already connected to a Wi-Fi without having the user do anything
       this.#ui_update_network_info(this.#connectedSSID, data)
       switch (this.#connectionState) {
         case CONNECTION_STATE.NOT_CONNECTED:
