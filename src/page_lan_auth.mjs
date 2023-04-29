@@ -34,7 +34,7 @@ class PageLanAuth {
 
   #div_login_password = new GuiDiv($('#conf-lan_auth-login-password'))
   #input_user = new GuiInputText($('#lan_auth-user'))
-  #input_password = new GuiInputPassword($('#lan_auth-pass'))
+  #input_password = new GuiInputPassword($('#lan_auth-pass'), true)
 
   #div_auth_default = new GuiDiv($('#conf-lan_auth-default'))
 
@@ -42,11 +42,11 @@ class PageLanAuth {
 
   #checkbox_use_api_key = new GuiCheckbox($('#settings_lan_auth-use_api_key'))
   #div_api_key = new GuiDiv($('#settings_lan_auth-api_key'))
-  #input_api_key = new GuiInputToken($('#lan_auth-api_key'))
+  #input_api_key = new GuiInputToken($('#lan_auth-api_key'), true)
 
   #checkbox_use_api_key_rw = new GuiCheckbox($('#settings_lan_auth-use_api_key_rw'))
   #div_api_key_rw = new GuiDiv($('#settings_lan_auth-api_key_rw'))
-  #input_api_key_rw = new GuiInputToken($('#lan_auth-api_key_rw'))
+  #input_api_key_rw = new GuiInputToken($('#lan_auth-api_key_rw'), true)
 
   #button_continue = new GuiButton($('#page-lan_auth_type-button-continue'))
   #button_back = new GuiButtonBack($('#page-lan_auth_type-button-back'))
@@ -67,8 +67,8 @@ class PageLanAuth {
     this.#radio_lan_auth_type_deny = this.#radio_lan_auth_type.addOption('lan_auth_deny', false)
     this.#radio_lan_auth_type_allow = this.#radio_lan_auth_type.addOption('lan_auth_allow', false)
 
-    this.#input_user.on_input_or_change(() => this.#onChangeUser())
-    this.#input_password.on_input_or_change(() => this.#onChangePassword())
+    this.#input_user.on_change(() => this.#onChangeUser())
+    this.#input_password.on_change(() => this.#onChangePassword())
 
     this.#radio_lan_auth_type_default.on_click(() => this.#onChangeAuthType())
     this.#radio_lan_auth_type_ruuvi.on_click(() => this.#onChangeAuthType())
@@ -78,8 +78,8 @@ class PageLanAuth {
     this.#checkbox_use_api_key.on_change(() => this.#onChangeUseApiKey())
     this.#checkbox_use_api_key_rw.on_change(() => this.#onChangeUseApiKeyRw())
 
-    this.#input_api_key.on_input_or_change(() => this.#onChangeApiKey())
-    this.#input_api_key_rw.on_input_or_change(() => this.#onChangeApiKeyRw())
+    this.#input_api_key.on_change(() => this.#onChangeApiKey())
+    this.#input_api_key_rw.on_change(() => this.#onChangeApiKeyRw())
 
     this.#button_continue.on_click(() => Navigation.change_url_cloud_options())
   }
@@ -93,9 +93,6 @@ class PageLanAuth {
       this.#radio_lan_auth_type_default.setChecked()
     } else if (this.#gwCfgLanAuth.lan_auth_type.isAuthRuuvi()) {
       this.#radio_lan_auth_type_ruuvi.setChecked()
-      if (this.#gwCfgLanAuth.lan_auth_pass === undefined) {
-        this.#input_password.set_use_saved()
-      }
       this.#div_login_password.show()
     } else if (this.#gwCfgLanAuth.lan_auth_type.isAuthAllow()) {
       this.#radio_lan_auth_type_allow.setChecked()
@@ -146,11 +143,9 @@ class PageLanAuth {
     } else if (this.#radio_lan_auth_type_ruuvi.isChecked()) {
       this.#gwCfgLanAuth.lan_auth_type.setAuthRuuvi()
       this.#gwCfgLanAuth.lan_auth_user = this.#input_user.getVal()
-      if (this.#input_password.is_saved()) {
-        this.#gwCfgLanAuth.lan_auth_pass = undefined
-      } else {
-        const lan_auth_path_unencrypted = this.#input_password.getVal()
-        const user_gw_password = this.#gwCfgLanAuth.lan_auth_user + ':' + this.#auth.gatewayName + ':' + lan_auth_path_unencrypted
+      if (!this.#input_password.is_saved()) {
+        const lan_auth_pass_unencrypted = this.#input_password.getVal()
+        const user_gw_password = this.#gwCfgLanAuth.lan_auth_user + ':' + this.#auth.gatewayName + ':' + lan_auth_pass_unencrypted
         this.#gwCfgLanAuth.lan_auth_pass = crypto.MD5(user_gw_password).toString()
       }
     } else if (this.#radio_lan_auth_type_allow.isChecked()) {
@@ -197,12 +192,10 @@ class PageLanAuth {
   }
 
   #onChangePassword () {
-    this.#input_password.clear_saved()
     this.#on_lan_auth_user_pass_changed()
   }
 
   #onChangeAuthType () {
-    this.#input_password.clear()
     this.#on_lan_auth_type_changed()
   }
 
@@ -217,34 +210,26 @@ class PageLanAuth {
   }
 
   #onChangeApiKey () {
-    this.#input_api_key.clear_saved()
     this.#on_lan_auth_user_pass_changed()
   }
 
   #onChangeApiKeyRw () {
-    this.#input_api_key_rw.clear_saved()
     this.#on_lan_auth_user_pass_changed()
   }
 
   #on_lan_auth_use_api_key_changed () {
-    this.#input_api_key.clear_saved()
     if (this.#checkbox_use_api_key.isChecked()) {
+      this.#input_api_key.setNewTokenIfEmpty()
       this.#div_api_key.show()
-      if (this.#input_api_key.getVal() === '') {
-        this.#input_api_key.setVal(crypto.enc.Base64.stringify(crypto.SHA256(crypto.lib.WordArray.random(32))))
-      }
     } else {
       this.#div_api_key.hide()
     }
   }
 
   #on_lan_auth_use_api_key_rw_changed () {
-    this.#input_api_key_rw.clear_saved()
     if (this.#checkbox_use_api_key_rw.isChecked()) {
+      this.#input_api_key_rw.setNewTokenIfEmpty()
       this.#div_api_key_rw.show()
-      if (this.#input_api_key_rw.getVal() === '') {
-        this.#input_api_key_rw.setVal(crypto.enc.Base64.stringify(crypto.SHA256(crypto.lib.WordArray.random(32))))
-      }
     } else {
       this.#div_api_key_rw.hide()
     }
@@ -282,26 +267,25 @@ class PageLanAuth {
   }
 
   #on_lan_auth_user_pass_changed () {
-    let flag_need_to_disable = false
+    let flagDisableContinueButton = false
 
-    if (!this.#radio_lan_auth_type_allow.isChecked() && !this.#radio_lan_auth_type_deny.isChecked() &&
-        !this.#radio_lan_auth_type_default.isChecked()) {
-      if (this.#input_user.getVal() === '' || (this.#input_password.getVal() === '' && !this.#input_password.is_saved())) {
-        flag_need_to_disable = true
+    if (this.#radio_lan_auth_type_ruuvi.isChecked()) {
+      if (this.#input_user.getVal() === '' || this.#input_password.getVal() === '') {
+        flagDisableContinueButton = true
       }
     }
 
     if (this.#checkbox_use_api_key.isChecked()) {
       if (this.#input_api_key.getVal() === '' && !this.#input_api_key.is_saved()) {
-        flag_need_to_disable = true
+        flagDisableContinueButton = true
       }
     }
     if (this.#checkbox_use_api_key_rw.isChecked()) {
       if (this.#input_api_key_rw.getVal() === '' && !this.#input_api_key_rw.is_saved()) {
-        flag_need_to_disable = true
+        flagDisableContinueButton = true
       }
     }
-    if (flag_need_to_disable) {
+    if (flagDisableContinueButton) {
       this.#button_continue.disable()
     } else {
       this.#button_continue.enable()

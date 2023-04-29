@@ -4,7 +4,7 @@ class GuiInputPassword {
   #icon_eye
   #icon_eye_slash
 
-  constructor (obj) {
+  constructor (obj, useSavedPassword = true) {
     if (obj.prop('tagName') !== 'INPUT' || obj.attr('type') !== 'password') {
       throw new Error('GuiInputPassword class constructor requires an <input type="password"> element.')
     }
@@ -35,17 +35,25 @@ class GuiInputPassword {
     if (this.#icon_eye_slash.length !== 1) {
       throw new Error(`There are more than one child of GuiInputPassword.input-password-eye with CSS class 'eye-slash'.`)
     }
+    if (useSavedPassword) {
+      this.set_use_saved()
+    } else {
+      this.#clear_saved()
+    }
+
+    this.on_change(() => {
+      this.#clear_saved()
+    })
   }
 
-  on_keyup_or_click (fn) {
-    this.#obj.on('keyup click', () => fn())
-  }
-
-  on_input_or_change (fn) {
-    this.#obj.on('input change', () => fn())
+  on_change (fn) {
+    this.#obj.on('input change keyup paste', () => fn())
   }
 
   getVal () {
+    if (this.is_saved()) {
+      return undefined
+    }
     return this.#obj.val()
   }
 
@@ -61,14 +69,14 @@ class GuiInputPassword {
     return this.#obj.attr('placeholder') === '********'
   }
 
-  clear_saved () {
+  #clear_saved () {
     this.#obj.removeAttr('placeholder')
     this.#eye.removeClass('disabled')
   }
 
   clear () {
     this.#obj.val('')
-    this.clear_saved()
+    this.#clear_saved()
   }
 
   set_use_saved () {

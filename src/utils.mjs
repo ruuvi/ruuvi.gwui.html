@@ -95,6 +95,10 @@ export async function networkDisconnect () {
 export async function networkConnect (ssid, password, auth) {
   GwStatus.setSelectedSSID(ssid)
 
+  if (password === undefined) {
+    password = null
+  }
+
   let stub = ''
   let json_content = JSON.stringify({ 'ssid': ssid, 'password': password, 'stub': stub })
   if (json_content.length < 240) {

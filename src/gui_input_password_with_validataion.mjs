@@ -6,7 +6,7 @@ class GuiInputPasswordWithValidation {
   #parent
   #icon
 
-  constructor (obj) {
+  constructor (obj, useSavedPassword = true) {
     if (obj.prop('tagName') !== 'INPUT' || obj.attr('type') !== 'password') {
       throw new Error('GuiInputPasswordWithValidation class constructor requires an <input type="password"> element.')
     }
@@ -49,21 +49,31 @@ class GuiInputPasswordWithValidation {
     if (this.#icon.prop('tagName') !== 'DIV') {
       throw new Error('Child of GuiInputWithValidation class must be a <div> element.')
     }
+
+    if (useSavedPassword) {
+      this.set_use_saved()
+    } else {
+      this.#clear_saved()
+    }
+
+    this.on_change(() => {
+      this.#clear_saved()
+    })
   }
 
-  on_keyup_or_click (fn) {
-    this.#obj.on('keyup click', () => fn())
-  }
-
-  on_input_or_change (fn) {
-    this.#obj.on('input change', () => fn())
+  on_change (fn) {
+    this.#obj.on('input change keyup paste', () => fn())
   }
 
   getVal () {
+    if (this.is_saved()) {
+      return undefined
+    }
     return this.#obj.val()
   }
 
   setVal (password) {
+    this.#clear_saved()
     this.#obj.val(password)
   }
 
@@ -79,14 +89,14 @@ class GuiInputPasswordWithValidation {
     return this.#obj.attr('placeholder') === '********'
   }
 
-  clear_saved () {
+  #clear_saved () {
     this.#obj.removeAttr('placeholder')
     this.#eye.removeClass('disabled')
   }
 
   clear () {
     this.#obj.val('')
-    this.clear_saved()
+    this.#clear_saved()
   }
 
   set_use_saved () {

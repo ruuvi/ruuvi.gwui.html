@@ -3,7 +3,7 @@ import logger from './logger.mjs'
 import GuiButton from './gui_button.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
 import GuiLoading from './gui_loading.mjs'
-import GuiInputWithValidation from './gui_input_with_validation.mjs'
+import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
 import GuiText from './gui_text.mjs'
 import { log_wrap, networkConnect, networkDisconnect } from './utils.mjs'
 import GwStatus from './gw_status.mjs'
@@ -23,11 +23,11 @@ export class PageEthernetConnection {
   #buttonContinue = new GuiButton($('#page-ethernet_connection-button-continue'))
   #buttonBack = new GuiButtonBack($('#page-ethernet_connection-button-back'))
   #checkbox_eth_dhcp = new GuiCheckbox($('#eth_dhcp'))
-  #input_eth_static_ip = new GuiInputWithValidation($('#eth_static_ip'))
-  #input_eth_netmask = new GuiInputWithValidation($('#eth_netmask'))
-  #input_eth_gw = new GuiInputWithValidation($('#eth_gw'))
-  #input_eth_dns1 = new GuiInputWithValidation($('#eth_dns1'))
-  #input_eth_dns2 = new GuiInputWithValidation($('#eth_dns2'))
+  #input_eth_static_ip = new GuiInputTextWithValidation($('#eth_static_ip'))
+  #input_eth_netmask = new GuiInputTextWithValidation($('#eth_netmask'))
+  #input_eth_gw = new GuiInputTextWithValidation($('#eth_gw'))
+  #input_eth_dns1 = new GuiInputTextWithValidation($('#eth_dns1'))
+  #input_eth_dns2 = new GuiInputTextWithValidation($('#eth_dns2'))
   #subSectionManualSettings = new GuiText($('#page-ethernet_connection-section-manual_settings'))
   #timerEthConnection = null
 
@@ -40,11 +40,11 @@ export class PageEthernetConnection {
 
     this.#checkbox_eth_dhcp.on_change(() => this.#onChange_eth_dhcp())
 
-    this.#input_eth_static_ip.on_input_or_change(() => this.#ethernet_connection_check_validity())
-    this.#input_eth_netmask.on_input_or_change(() => this.#ethernet_connection_check_validity())
-    this.#input_eth_gw.on_input_or_change(() => this.#ethernet_connection_check_validity())
-    this.#input_eth_dns1.on_input_or_change(() => this.#ethernet_connection_check_validity())
-    this.#input_eth_dns2.on_input_or_change(() => this.#ethernet_connection_check_validity())
+    this.#input_eth_static_ip.on_change(() => this.#ethernet_connection_check_validity())
+    this.#input_eth_netmask.on_change(() => this.#ethernet_connection_check_validity())
+    this.#input_eth_gw.on_change(() => this.#ethernet_connection_check_validity())
+    this.#input_eth_dns1.on_change(() => this.#ethernet_connection_check_validity())
+    this.#input_eth_dns2.on_change(() => this.#ethernet_connection_check_validity())
 
     this.#buttonContinue.on_click(() => this.#onClickButtonContinue())
   }

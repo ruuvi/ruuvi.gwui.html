@@ -19,7 +19,7 @@ export class PageWiFiConnection {
   #button_sort_order_by_name = new GuiButton($('#wifi_connection-sort_order-by_name'))
   #button_sort_order_by_rssi = new GuiButton($('#wifi_connection-sort_order-by_rssi'))
   #input_ssid = new GuiInputText($('section#page-wifi_connection input#manual_ssid'))
-  #input_password_wifi = new GuiInputPassword($('input#pwd'))
+  #input_password_wifi = new GuiInputPassword($('input#pwd'), true)
   #radio_wifi_name = new GuiRadioButton('wifi-name')
   #radio_wifi_name_manual
   #sect_advanced = new GuiSectAdvanced($('#page-wifi_connection-advanced-button'))
@@ -41,8 +41,8 @@ export class PageWiFiConnection {
     this.#button_sort_order_by_name.on_click(() => this.#onChangeSortByRSSI(false))
     this.#button_sort_order_by_rssi.on_click(() => this.#onChangeSortByRSSI(true))
 
-    this.#input_ssid.on_keyup_or_click(() => this.#onKeyupInputSSID())
-    this.#input_password_wifi.on_keyup_or_click(() => this.#onKeyupInputPassword())
+    this.#input_ssid.on_change(() => this.#onKeyupInputSSID())
+    this.#input_password_wifi.on_change(() => this.#onKeyupInputPassword())
 
     this.#radio_wifi_name_manual = this.#radio_wifi_name.addOption('', false)
     this.#radio_wifi_name_manual.on_click(() => this.#onClickRadioButtonWiFiManual())
@@ -56,7 +56,6 @@ export class PageWiFiConnection {
 
     gui_loading.bodyClassLoadingAdd()
     this.#checkAndUpdatePageWiFiListButtonNext()
-    this.#input_password_wifi.set_use_saved()
     $('#page-wifi_connection-ssid_password').hide()
     networkDisconnect().then(() => {
     }).catch((err) => {
@@ -94,7 +93,6 @@ export class PageWiFiConnection {
   }
 
   #onKeyupInputPassword () {
-    this.#input_password_wifi.clear_saved()
     $('#wifi-connection-status-block').hide()
     this.#updatePositionOfWiFiPasswordInput()
     this.#checkAndUpdatePageWiFiListButtonNext()
@@ -195,7 +193,7 @@ export class PageWiFiConnection {
         wifi_channel = 14
       }
     }
-    let password = (this.#input_password_wifi.is_saved() || !isAuthNeeded) ? null : this.#input_password_wifi.getVal()
+    let password = !isAuthNeeded ? null : this.#input_password_wifi.getVal()
     this.#button_continue.disable()
     $('#wifi-connection-status-block').hide()
     this.#updatePositionOfWiFiPasswordInput()

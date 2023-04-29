@@ -3,7 +3,7 @@ import { log_wrap, validate_url } from './utils.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
 import GuiDiv from './gui_div.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
-import GuiInputWithValidation from './gui_input_with_validation.mjs'
+import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
 import GuiInputPasswordWithValidation from './gui_input_password_with_validataion.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
 import GuiButton from './gui_button.mjs'
@@ -34,10 +34,10 @@ class PageRemoteCfg {
   #radio_remote_cfg_auth_type_bearer
 
   #sect_advanced = new GuiSectAdvanced($('#page-remote_cfg-advanced-button'))
-  #input_base_url = new GuiInputWithValidation($('#remote_cfg-base_url'))
-  #input_auth_basic_user = new GuiInputWithValidation($('#remote_cfg-auth_basic-user'))
+  #input_base_url = new GuiInputTextWithValidation($('#remote_cfg-base_url'))
+  #input_auth_basic_user = new GuiInputTextWithValidation($('#remote_cfg-auth_basic-user'))
   #input_auth_basic_pass = new GuiInputPasswordWithValidation($('#remote_cfg-auth_basic-password'))
-  #input_auth_bearer_token = new GuiInputTokenWithValidation($('#remote_cfg-auth_bearer-token'), 'text')
+  #input_auth_bearer_token = new GuiInputTokenWithValidation($('#remote_cfg-auth_bearer-token'), true)
   #button_continue = new GuiButton($('#page-remote_cfg-button-continue'))
   #button_back = new GuiButtonBack($('#page-remote_cfg-button-back'))
   #button_check = new GuiButton($('#remote_cfg-button-check'))
@@ -59,14 +59,21 @@ class PageRemoteCfg {
     this.#section.bind('onShow', () => this.#onShow())
     this.#section.bind('onHide', () => this.#onHide())
 
+    if (!this.#gwCfg.remote_cfg.remote_cfg_use || !this.#gwCfg.remote_cfg.remote_cfg_auth_type.isBasicAuth()) {
+      this.#input_auth_basic_pass.clear()
+    }
+    if (!this.#gwCfg.remote_cfg.remote_cfg_use || !this.#gwCfg.remote_cfg.remote_cfg_auth_type.isBearerAuth()) {
+      this.#input_auth_bearer_token.clear()
+    }
+
     this.#checkbox_remote_cfg_use.on_change(() => this.#onChangeRemoteCfgUse())
     this.#checkbox_remote_cfg_use_auth.on_change(() => this.#onChangeRemoteCfgUseAuth())
     this.#radio_remote_cfg_auth_type_basic.on_click(() => this.#onChangeRemoteCfgAuthType())
     this.#radio_remote_cfg_auth_type_bearer.on_click(() => this.#onChangeRemoteCfgAuthType())
-    this.#input_base_url.on_input_or_change(() => this.#onChangeBaseURL())
-    this.#input_auth_basic_user.on_input_or_change(() => this.#onChangeAuthBasicUser())
-    this.#input_auth_basic_pass.on_input_or_change(() => this.#onChangeAuthBasicPass())
-    this.#input_auth_bearer_token.on_input_or_change(() => this.#onChangeAuthBearerToken())
+    this.#input_base_url.on_change(() => this.#onChangeBaseURL())
+    this.#input_auth_basic_user.on_change(() => this.#onChangeAuthBasicUser())
+    this.#input_auth_basic_pass.on_change(() => this.#onChangeAuthBasicPass())
+    this.#input_auth_bearer_token.on_change(() => this.#onChangeAuthBearerToken())
 
     this.#button_continue.on_click(() => Navigation.change_page_to_update_schedule())
     this.#button_check.on_click(() => this.#onButtonCheck())
@@ -84,15 +91,9 @@ class PageRemoteCfg {
         this.#checkbox_remote_cfg_use_auth.setChecked()
         this.#radio_remote_cfg_auth_type_basic.setChecked()
         this.#input_auth_basic_user.setVal(this.#gwCfg.remote_cfg.remote_cfg_auth_basic_user)
-        if (this.#gwCfg.remote_cfg.remote_cfg_auth_basic_pass === undefined) {
-          this.#input_auth_basic_pass.set_use_saved()
-        }
       } else if (this.#gwCfg.remote_cfg.remote_cfg_auth_type.isBearerAuth()) {
         this.#checkbox_remote_cfg_use_auth.setChecked()
         this.#radio_remote_cfg_auth_type_bearer.setChecked()
-        if (this.#gwCfg.remote_cfg.remote_cfg_auth_bearer_token === undefined) {
-          this.#input_auth_bearer_token.set_use_saved()
-        }
       }
       this.#sect_advanced.show()
     } else {
@@ -121,9 +122,7 @@ class PageRemoteCfg {
           this.#gwCfg.remote_cfg.remote_cfg_auth_bearer_token = ''
         } else if (this.#radio_remote_cfg_auth_type_bearer.isChecked()) {
           this.#gwCfg.remote_cfg.remote_cfg_auth_type.setBearerAuth()
-          if (!this.#input_auth_bearer_token.is_saved()) {
-            this.#gwCfg.remote_cfg.remote_cfg_auth_bearer_token = this.#input_auth_bearer_token.getVal()
-          }
+          this.#gwCfg.remote_cfg.remote_cfg_auth_bearer_token = this.#input_auth_bearer_token.getVal()
           this.#gwCfg.remote_cfg.remote_cfg_auth_basic_user = ''
           this.#gwCfg.remote_cfg.remote_cfg_auth_basic_pass = ''
         } else {
@@ -167,21 +166,19 @@ class PageRemoteCfg {
   }
 
   #onChangeAuthBasicUser () {
-    this.#input_auth_basic_pass.clear_saved()
+    this.#input_auth_basic_pass.clear()
     this.#input_auth_basic_user.setValidationRequired()
     this.#input_base_url.setValidationRequired()
     this.#on_remote_cfg_changed()
   }
 
   #onChangeAuthBasicPass () {
-    this.#input_auth_basic_pass.clear_saved()
     this.#input_auth_basic_pass.setValidationRequired()
     this.#input_base_url.setValidationRequired()
     this.#on_remote_cfg_changed()
   }
 
   #onChangeAuthBearerToken () {
-    this.#input_auth_bearer_token.clear_saved()
     this.#input_auth_bearer_token.setValidationRequired()
     this.#input_base_url.setValidationRequired()
     this.#on_remote_cfg_changed()

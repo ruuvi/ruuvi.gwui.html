@@ -1,7 +1,7 @@
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
-import GuiInputWithValidation from './gui_input_with_validation.mjs'
+import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
 import GuiDiv from './gui_div.mjs'
 import GuiButton from './gui_button.mjs'
 import GuiText from './gui_text.mjs'
@@ -18,7 +18,7 @@ class PageSoftwareUpdate {
   #section = $('section#page-software_update')
   #checkbox_software_update_set_url_manually = new GuiCheckbox($('#software_update-set-url-manually'))
   #div_software_update_url = new GuiDiv($('#software_update-url-div'))
-  #input_software_update_url = new GuiInputWithValidation($('#software_update-url'))
+  #input_software_update_url = new GuiInputTextWithValidation($('#software_update-url'))
   #button_upgrade = new GuiButton($('#software_update-button-upgrade'))
 
   #button_continue = new GuiButton($('#page-software_update-button-continue'))
@@ -48,7 +48,7 @@ class PageSoftwareUpdate {
     this.#section.bind('onShow', () => this.#onShow())
     this.#section.bind('onHide', () => this.#onHide())
 
-    this.#input_software_update_url.on_input_or_change(() => this.#on_change_url())
+    this.#input_software_update_url.on_change(() => this.#on_change_url())
     this.#button_upgrade.on_click(() => this.#on_button_upgrade())
     this.#checkbox_software_update_set_url_manually.on_change(() => this.#on_change_url())
     this.#button_continue.on_click(() => Navigation.change_page_to_remote_cfg())

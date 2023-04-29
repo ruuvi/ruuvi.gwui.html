@@ -16,7 +16,7 @@ class PageAuth {
   #auth_button_login = $('#auth-button-login')
   #auth_button_home = $('#auth-button-home')
   #auth_user = new GuiInputText($('#auth-user'))
-  #auth_pass = new GuiInputPassword($('#auth-pass'))
+  #auth_pass = new GuiInputPassword($('#auth-pass'), false)
   #cb_openHomePage
   #cb_performLogIn
 

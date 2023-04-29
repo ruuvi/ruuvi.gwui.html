@@ -1,7 +1,7 @@
 import $ from 'jquery'
 import { log_wrap, validate_url } from './utils.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
-import GuiInputWithValidation from './gui_input_with_validation.mjs'
+import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
 import GuiInputPasswordWithValidation from './gui_input_password_with_validataion.mjs'
 import GuiDiv from './gui_div.mjs'
 import GuiText from './gui_text.mjs'
@@ -28,9 +28,9 @@ class PageCustomServer {
 
   #checkbox_use_http = new GuiCheckbox($('#use_http'))
   #div_settings_http = new GuiDiv($('#conf-settings-http'))
-  #input_http_url = new GuiInputWithValidation($('#http_url'))
-  #input_http_user = new GuiInputWithValidation($('#http_user'))
-  #input_http_pass = new GuiInputPasswordWithValidation($('#http_pass'))
+  #input_http_url = new GuiInputTextWithValidation($('#http_url'))
+  #input_http_user = new GuiInputTextWithValidation($('#http_user'))
+  #input_http_pass = new GuiInputPasswordWithValidation($('#http_pass'), true)
   #div_http_validation_error = new GuiDiv($('#page-custom_server-http_validation_error'))
   #text_http_validation_error_desc = new GuiText($('#page-custom_server-http_validation_error-desc'))
 
@@ -47,13 +47,13 @@ class PageCustomServer {
   /** @type GuiRadioButtonOption */
   #radio_mqtt_transport_WSS
 
-  #input_mqtt_server = new GuiInputWithValidation($('#mqtt_server'))
-  #input_mqtt_port = new GuiInputWithValidation($('#mqtt_port'))
-  #input_mqtt_user = new GuiInputWithValidation($('#mqtt_user'))
-  #input_mqtt_pass = new GuiInputPasswordWithValidation($('#mqtt_pass'))
+  #input_mqtt_server = new GuiInputTextWithValidation($('#mqtt_server'))
+  #input_mqtt_port = new GuiInputTextWithValidation($('#mqtt_port'))
+  #input_mqtt_user = new GuiInputTextWithValidation($('#mqtt_user'))
+  #input_mqtt_pass = new GuiInputPasswordWithValidation($('#mqtt_pass'), true)
   #div_mqtt_validation_error = new GuiDiv($('#page-custom_server-mqtt_validation_error'))
   #text_mqtt_validation_error_desc = new GuiText($('#page-custom_server-mqtt_validation_error-desc'))
-  #input_mqtt_client_id = new GuiInputWithValidation($('#mqtt_client_id'))
+  #input_mqtt_client_id = new GuiInputTextWithValidation($('#mqtt_client_id'))
   #checkbox_mqtt_disable_retained_messages = new GuiCheckbox($('#mqtt_disable_retained_messages'))
   #text_mqtt_prefix = new GuiText($('#mqtt_prefix'))
   #checkbox_use_mqtt_prefix_ruuvi = new GuiCheckbox($('#use_mqtt_prefix_ruuvi'))
@@ -71,9 +71,9 @@ class PageCustomServer {
   /** @type GuiRadioButtonOption */
   #radio_statistics_no
 
-  #input_http_stat_url = new GuiInputWithValidation($('#http_stat_url'))
-  #input_http_stat_user = new GuiInputWithValidation($('#http_stat_user'))
-  #input_http_stat_pass = new GuiInputPasswordWithValidation($('#http_stat_pass'))
+  #input_http_stat_url = new GuiInputTextWithValidation($('#http_stat_url'))
+  #input_http_stat_user = new GuiInputTextWithValidation($('#http_stat_user'))
+  #input_http_stat_pass = new GuiInputPasswordWithValidation($('#http_stat_pass'), true)
   #div_settings_http_stat = new GuiDiv($('#conf-settings-http_stat'))
   #div_http_stat_validation_error = new GuiDiv($('#page-custom_server-http_stat_validation_error'))
   #text_http_stat_validation_error_desc = new GuiText($('#page-custom_server-http_stat_validation_error-desc'))
@@ -112,13 +112,13 @@ class PageCustomServer {
     this.#radio_statistics_use_custom.on_click(() => this.#onChangeUseStatistics())
     this.#radio_statistics_no.on_click(() => this.#onChangeUseStatistics())
 
-    this.#input_http_url.on_input_or_change(() => this.#onChangeHttpUrl())
-    this.#input_http_user.on_input_or_change(() => this.#onChangeHttpUser())
-    this.#input_http_pass.on_input_or_change(() => this.#onChangeHttpPass())
+    this.#input_http_url.on_change(() => this.#onChangeHttpUrl())
+    this.#input_http_user.on_change(() => this.#onChangeHttpUser())
+    this.#input_http_pass.on_change(() => this.#onChangeHttpPass())
 
-    this.#input_http_stat_url.on_input_or_change(() => this.#onChangeHttpStatUrl())
-    this.#input_http_stat_user.on_input_or_change(() => this.#onChangeHttpStatUser())
-    this.#input_http_stat_pass.on_input_or_change(() => this.#onChangeHttpStatPass())
+    this.#input_http_stat_url.on_change(() => this.#onChangeHttpStatUrl())
+    this.#input_http_stat_user.on_change(() => this.#onChangeHttpStatUser())
+    this.#input_http_stat_pass.on_change(() => this.#onChangeHttpStatPass())
 
     this.#checkbox_use_mqtt.on_change(() => this.#onChangeUseMqtt())
     this.#radio_mqtt_transport_TCP.on_click(() => this.#onChangeMqttTransport())
@@ -126,10 +126,10 @@ class PageCustomServer {
     this.#radio_mqtt_transport_WS.on_click(() => this.#onChangeMqttTransport())
     this.#radio_mqtt_transport_WSS.on_click(() => this.#onChangeMqttTransport())
 
-    this.#input_mqtt_server.on_input_or_change(() => this.#onChangeMqttServer())
-    this.#input_mqtt_port.on_input_or_change(() => this.#onChangeMqttPort())
-    this.#input_mqtt_user.on_input_or_change(() => this.#onChangeMqttUser())
-    this.#input_mqtt_pass.on_input_or_change(() => this.#onChangeMqttPass())
+    this.#input_mqtt_server.on_change(() => this.#onChangeMqttServer())
+    this.#input_mqtt_port.on_change(() => this.#onChangeMqttPort())
+    this.#input_mqtt_user.on_change(() => this.#onChangeMqttUser())
+    this.#input_mqtt_pass.on_change(() => this.#onChangeMqttPass())
 
     this.#checkbox_use_mqtt_prefix_ruuvi.on_change(() => this.#onChangeUseMqttPrefix())
     this.#checkbox_use_mqtt_prefix_gw_mac.on_change(() => this.#onChangeUseMqttPrefix())
@@ -161,9 +161,6 @@ class PageCustomServer {
 
     this.#input_http_url.setVal(this.#gwCfg.http.http_url)
     this.#input_http_user.setVal(this.#gwCfg.http.http_user)
-    if (this.#gwCfg.http.http_pass === undefined) {
-      this.#input_http_pass.set_use_saved()
-    }
 
     if (this.#gwCfg.http_stat.use_http_stat) {
       if (this.#gwCfg.http_stat.is_default()) {
@@ -177,9 +174,6 @@ class PageCustomServer {
 
     this.#input_http_stat_url.setVal(this.#gwCfg.http_stat.http_stat_url)
     this.#input_http_stat_user.setVal(this.#gwCfg.http_stat.http_stat_user)
-    if (this.#gwCfg.http_stat.http_stat_user === undefined) {
-      this.#input_http_stat_pass.set_use_saved()
-    }
 
     this.#checkbox_use_mqtt.setState(this.#gwCfg.mqtt.use_mqtt)
     if (this.#gwCfg.mqtt.mqtt_transport.isTCP()) {
@@ -195,9 +189,6 @@ class PageCustomServer {
     this.#input_mqtt_server.setVal(this.#gwCfg.mqtt.mqtt_server)
     this.#input_mqtt_port.setVal(this.#gwCfg.mqtt.mqtt_port)
     this.#input_mqtt_user.setVal(this.#gwCfg.mqtt.mqtt_user)
-    if (this.#gwCfg.mqtt.mqtt_pass === undefined) {
-      this.#input_mqtt_pass.set_use_saved()
-    }
     if (this.#gwCfg.mqtt.mqtt_client_id) {
       this.#input_mqtt_client_id.setVal(this.#gwCfg.mqtt.mqtt_client_id)
     } else {
@@ -265,9 +256,7 @@ class PageCustomServer {
       this.#gwCfg.http.use_http = true
       this.#gwCfg.http.http_url = this.#input_http_url.getVal()
       this.#gwCfg.http.http_user = this.#input_http_user.getVal()
-      if (!this.#input_http_pass.is_saved()) {
-        this.#gwCfg.http.http_pass = this.#input_http_pass.getVal()
-      }
+      this.#gwCfg.http.http_pass = this.#input_http_pass.getVal()
     } else {
       this.#gwCfg.http.use_http = false
       this.#gwCfg.http.http_url = ''
@@ -281,9 +270,7 @@ class PageCustomServer {
       this.#gwCfg.http_stat.use_http_stat = true
       this.#gwCfg.http_stat.http_stat_url = this.#input_http_stat_url.getVal()
       this.#gwCfg.http_stat.http_stat_user = this.#input_http_stat_user.getVal()
-      if (!this.#input_http_stat_pass.is_saved()) {
-        this.#gwCfg.http_stat.http_stat_pass = this.#input_http_stat_pass.getVal()
-      }
+      this.#gwCfg.http_stat.http_stat_pass = this.#input_http_stat_pass.getVal()
     } else {
       this.#gwCfg.http_stat.use_http_stat = false
       this.#gwCfg.http_stat.http_stat_url = ''
@@ -311,9 +298,7 @@ class PageCustomServer {
         this.#gwCfg.mqtt.mqtt_port = 0
       }
       this.#gwCfg.mqtt.mqtt_user = this.#input_mqtt_user.getVal()
-      if (!this.#input_mqtt_pass.is_saved()) {
-        this.#gwCfg.mqtt.mqtt_pass = this.#input_mqtt_pass.getVal()
-      }
+      this.#gwCfg.mqtt.mqtt_pass = this.#input_mqtt_pass.getVal()
       this.#gwCfg.mqtt.mqtt_prefix = this.#get_mqtt_topic_prefix()
       this.#gwCfg.mqtt.mqtt_client_id = this.#input_mqtt_client_id.getVal()
       if (!this.#gwCfg.mqtt.mqtt_client_id) {
@@ -358,13 +343,12 @@ class PageCustomServer {
   }
 
   #onChangeHttpUser () {
-    this.#input_http_pass.clear_saved()
+    this.#input_http_pass.clear()
     this.#input_http_url.setValidationRequired()
     this.#on_custom_server_url_changed()
   }
 
   #onChangeHttpPass () {
-    this.#input_http_pass.clear_saved()
     this.#input_http_url.setValidationRequired()
     this.#on_custom_server_url_changed()
   }
@@ -375,13 +359,12 @@ class PageCustomServer {
   }
 
   #onChangeHttpStatUser () {
-    this.#input_http_pass.clear_saved()
+    this.#input_http_pass.clear()
     this.#input_http_stat_url.setValidationRequired()
     this.#on_custom_server_url_changed()
   }
 
   #onChangeHttpStatPass () {
-    this.#input_http_pass.clear_saved()
     this.#input_http_stat_url.setValidationRequired()
     this.#on_custom_server_url_changed()
   }
@@ -433,7 +416,6 @@ class PageCustomServer {
       } else {
         this.#input_mqtt_pass.clear()
       }
-      this.#input_mqtt_pass.clear_saved()
     }
     this.#input_mqtt_server.setValidationRequired()
     this.#on_custom_server_url_changed()
@@ -452,14 +434,13 @@ class PageCustomServer {
   }
 
   #onChangeMqttUser () {
-    this.#input_mqtt_pass.clear_saved()
+    this.#input_mqtt_pass.clear()
     this.#on_edit_mqtt_settings()
     this.#input_mqtt_server.setValidationRequired()
     this.#on_custom_server_url_changed()
   }
 
   #onChangeMqttPass () {
-    this.#input_mqtt_pass.clear_saved()
     this.#on_edit_mqtt_settings()
     this.#input_mqtt_server.setValidationRequired()
     this.#on_custom_server_url_changed()

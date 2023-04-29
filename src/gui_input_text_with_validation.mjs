@@ -1,4 +1,4 @@
-class GuiInputWithValidation {
+class GuiInputTextWithValidation {
   #obj
   #parent
   #icon
@@ -40,16 +40,8 @@ class GuiInputWithValidation {
     this.#obj.prop('disabled', false)
   }
 
-  on_input (fn) {
-    this.#obj.on('input', () => fn())
-  }
-
   on_change (fn) {
-    this.#obj.on('change', () => fn())
-  }
-
-  on_input_or_change (fn) {
-    this.#obj.on('input change', () => fn())
+    this.#obj.on('input change keyup paste', () => fn())
   }
 
   isValidationRequired () {
@@ -98,4 +90,4 @@ class GuiInputWithValidation {
   }
 }
 
-export default GuiInputWithValidation
+export default GuiInputTextWithValidation
