@@ -1,3 +1,6 @@
+@import "media";
+@import "variables";
+
 body {
 	min-height: 100vh;
 	background-color: var(--color-background);
@@ -394,7 +397,7 @@ progress {
 
 	p {
 		margin: 0 0 1.625em;
-		text-align: justify;
+		text-align: left;
 	}
 }
 
@@ -595,15 +598,6 @@ select {
 	}
 }
 
-@-webkit-keyframes rotate {
-	from {
-		-webkit-transform: rotate(0deg);
-	}
-	to {
-		-webkit-transform: rotate(360deg);
-	}
-}
-
 .input-checking {
 	width: var(--fontawesome-icon-width);
 	height: var(--fontawesome-icon-width);
@@ -762,6 +756,10 @@ table {
 }
 
 .rd {
+	color: red;
+}
+
+.auth-err-message {
 	color: red;
 }
 

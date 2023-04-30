@@ -31,7 +31,7 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
     # def handle_one_request(self):
     #     super(AuthHTTPRequestHandler, self).handle_one_request()
     #     # self.close_connection = False
-    #     # self.protocol_version = 'HTTP/1.1'
+    #     # self.protocol_version = 'HTTP/1.0'
 
     def do_HEAD(self):
         self.send_response(200)

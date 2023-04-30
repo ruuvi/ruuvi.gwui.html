@@ -1,3 +1,5 @@
+@import "variables";
+
 // --- max-width
 @mixin max($bp) {
 	@if map-has-key($grid-breakpoints-max, $bp) {
