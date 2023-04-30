@@ -1,92 +1,49 @@
-class GuiInputTextWithValidation {
-  #obj
-  #parent
-  #icon
+import GuiInputText from './gui_input_text.mjs'
+import GuiInputValidationIcon from './gui_input_validation_icon.mjs'
+
+class GuiInputTextWithValidation extends GuiInputText {
+  /** @type GuiInputValidationIcon */
+  #validation
 
   constructor (obj) {
-    if (obj.prop('tagName') !== 'INPUT' || obj.attr('type') !== 'text') {
-      throw new Error('GuiInputWithValidation class constructor requires an <input type="text"> element.')
-    }
-    this.#obj = obj
-    this.#parent = obj.parent()
-    if (this.#parent.prop('tagName') !== 'DIV') {
-      throw new Error('Parent of GuiInputWithValidation class must be a <div> element.')
-    }
-    if (!this.#parent.hasClass('input-with_validity_check')) {
-      throw new Error('Parent of GuiInputWithValidation must have \'input-with_validity_check\' CSS class.')
-    }
-    this.#icon = this.#parent.children('.input-with_validity_check-icon')
-    if (this.#icon === undefined || this.#icon === null) {
-      throw new Error('There is no child of GuiInputWithValidation with \'input-with_validity_check-icon\' CSS class.')
-    }
-    if (this.#icon.prop('tagName') !== 'DIV') {
-      throw new Error('Child of GuiInputWithValidation class must be a <div> element.')
-    }
-  }
-
-  setVal (val) {
-    this.#obj.val(val)
-  }
-
-  getVal () {
-    return this.#obj.val()
-  }
-
-  disable () {
-    this.#obj.prop('disabled', true)
-  }
-
-  enable () {
-    this.#obj.prop('disabled', false)
-  }
-
-  on_change (fn) {
-    this.#obj.on('input change keyup paste', () => fn())
+    super(obj)
+    this.#validation = new GuiInputValidationIcon(obj)
   }
 
   isValidationRequired () {
-    return this.#icon.hasClass('input-validation_required')
+    return this.#validation.isValidationRequired()
   }
 
   setValidationRequired () {
-    this.#icon.addClass('input-validation_required')
+    return this.#validation.setValidationRequired()
   }
 
   clearValidationRequired () {
-    this.#icon.removeClass('input-validation_required')
+    return this.#validation.clearValidationRequired()
   }
 
   clearValidationIcon () {
-    this.#icon.removeClass('input-checking')
-    this.#icon.removeClass('input-valid')
-    this.#icon.removeClass('input-invalid')
+    this.#validation.clearValidationIcon()
   }
 
   setCheckingIsValid () {
-    this.clearValidationIcon()
-    this.#icon.addClass('input-checking')
+    this.#validation.setCheckingIsValid()
   }
 
   setValid () {
-    this.clearValidationIcon()
-    this.#icon.removeClass('input-validation_required')
-    this.#icon.addClass('input-valid')
+    this.#validation.setValid()
   }
 
   setInvalid () {
-    this.clearValidationIcon()
-    this.#icon.removeClass('input-validation_required')
-    this.#icon.addClass('input-invalid')
+    this.#validation.setInvalid()
   }
 
   isInvalid () {
-    return !!this.#icon.hasClass('input-invalid')
+    return this.#validation.isInvalid()
   }
 
   isValidityChecked () {
-    const flagInvalid = this.#icon.hasClass('input-invalid')
-    const flagValid = this.#icon.hasClass('input-valid')
-    return !!(flagInvalid || flagValid)
+    return this.#validation.isValidityChecked()
   }
 }
 

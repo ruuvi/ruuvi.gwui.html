@@ -412,7 +412,8 @@ class PageCustomServer {
       this.#input_mqtt_port.setVal(default_port)
       if (is_mqtt_authentication_used) {
         this.#input_mqtt_user.setVal('rw')
-        this.#input_mqtt_pass.setVal('readwrite')
+        this.#input_mqtt_pass.setPassword('readwrite')
+        this.#input_mqtt_pass.showPassword()
       } else {
         this.#input_mqtt_pass.clear()
       }

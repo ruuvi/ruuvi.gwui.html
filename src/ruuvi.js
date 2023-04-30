@@ -87,23 +87,6 @@ function initialize () {
     $(this).addClass('language-switcher-active')
     on_switch_language('fi')
   })
-
-  $('.input-password-eye').click(function (e) {
-    if ($(this).hasClass('disabled')) {
-      return
-    }
-    let password_field = $(this).parent().children('input')
-    const flag_hidden = password_field.attr('type') === 'password'
-    if (flag_hidden) {
-      $(this).children('.eye').addClass('hidden')
-      $(this).children('.eye-slash').removeClass('hidden')
-      password_field.attr('type', 'text')
-    } else {
-      $(this).children('.eye-slash').addClass('hidden')
-      $(this).children('.eye').removeClass('hidden')
-      password_field.attr('type', 'password')
-    }
-  })
 }
 
 class Pages {
@@ -156,6 +139,7 @@ async function on_authenticate (result) {
       GwStatus.startCheckingStatus()
     } catch (error) {
       alert(error)
+      throw error
     }
   } else {
     logger.info(`on authenticate: denied`)
