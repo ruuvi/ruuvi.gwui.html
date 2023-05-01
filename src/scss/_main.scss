@@ -124,6 +124,12 @@ header {
 	display: flex;
 	justify-content: flex-end;
 	margin-top: 1em;
+	padding-top: 0.1em;
+
+	@include max(sm) {
+		margin-top: 2em;
+		padding-top: 1em;
+	}
 }
 
 .language-switcher > ul {
