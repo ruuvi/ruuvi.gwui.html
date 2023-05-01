@@ -1,7 +1,7 @@
 import * as utils from './utils.mjs'
 
 export const REMOTE_CFG_AUTH_TYPE = Object.freeze({
-  'NO': 'no',
+  'NONE': 'none',
   'BASIC': 'basic',
   'BEARER': 'bearer',
 })
@@ -12,7 +12,11 @@ export class GwCfgRemoteCfgAuthType {
     if (val === null || allowedValues.includes(val)) {
       this.auth_type = val
     } else {
-      throw new Error(`Invalid value for 'remote_cfg_auth_type': ${val}. Allowed values are '${allowedValues.join('\', \'')}'.`)
+      if (val === 'no') {
+        this.auth_type = REMOTE_CFG_AUTH_TYPE.NONE
+      } else {
+        throw new Error(`Invalid value for 'remote_cfg_auth_type': ${val}. Allowed values are '${allowedValues.join('\', \'')}'.`)
+      }
     }
   }
 
@@ -21,11 +25,11 @@ export class GwCfgRemoteCfgAuthType {
   }
 
   isNoAuth () {
-    return this.auth_type === REMOTE_CFG_AUTH_TYPE.NO
+    return this.auth_type === REMOTE_CFG_AUTH_TYPE.NONE
   }
 
   setNoAuth () {
-    this.auth_type = REMOTE_CFG_AUTH_TYPE.NO
+    this.auth_type = REMOTE_CFG_AUTH_TYPE.NONE
   }
 
   isBasicAuth () {
