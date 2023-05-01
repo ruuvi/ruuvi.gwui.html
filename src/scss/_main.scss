@@ -305,6 +305,13 @@ progress {
 
 .btn {
 	min-width: 155px;
+	padding: 14px 30px;
+
+	@include max(sm) {
+		min-width: 110px;
+		padding: 14px 20px;
+	}
+
 	display: inline-block;
 	background-color: var(--color-primary);
 	color: white;
@@ -315,7 +322,6 @@ progress {
 	line-height: 1;
 	border: none;
 	border-radius: 30px;
-	padding: 14px 30px;
 	white-space: normal;
 	cursor: pointer;
 	text-align: center;
