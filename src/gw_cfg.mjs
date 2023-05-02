@@ -107,14 +107,23 @@ export class GwCfg {
         data.remote_cfg_auth_bearer_token = this.remote_cfg.remote_cfg_auth_bearer_token
       }
     } else {
-      data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.NO
+      data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.NONE
     }
 
+    data.use_http_ruuvi = this.http.use_http_ruuvi
     data.use_http = this.http.use_http
     data.http_url = this.http.http_url
-    data.http_user = this.http.http_user
-    if (this.http.http_pass !== undefined) {
+    data.http_data_format = this.http.http_data_format.getVal()
+    data.http_auth = this.http.http_auth.getVal()
+    if (this.http.http_auth.isNone()) {
+      // do nothing
+    } else if (this.http.http_auth.isBasic()) {
+      data.http_user = this.http.http_user
       data.http_pass = this.http.http_pass
+    } else if (this.http.http_auth.isBearer()) {
+      data.http_bearer_token = this.http.http_bearer_token
+    } else if (this.http.http_auth.isToken()) {
+      data.http_api_key = this.http.http_api_key
     }
 
     data.use_http_stat = this.http_stat.use_http_stat

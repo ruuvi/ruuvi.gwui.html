@@ -108,11 +108,16 @@ g_ruuvi_dict = {
     'eth_dns2': "",
     'remote_cfg_use': False,
     'remote_cfg_url': '',
-    'remote_cfg_auth_type': 'no',
+    'remote_cfg_auth_type': 'none',
     'remote_cfg_refresh_interval_minutes': 0,
+    'use_http_ruuvi': True,
     'use_http': True,
     'http_url': 'https://network.ruuvi.com/record',
-    'http_user': '',
+    'http_auth': 'none',
+    'http_data_format': 'ruuvi',
+    # 'http_user': '',
+    # 'http_bearer_token': '',
+    # 'http_api_key': '',
     'use_http_stat': True,
     'http_stat_url': 'https://network.ruuvi.com/status',
     'http_stat_user': '',
@@ -804,6 +809,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             lan_auth_pass = None
             for key, value in req_dict.items():
                 if key == 'http_pass':
+                    continue
+                if key == 'http_bearer_token':
+                    continue
+                if key == 'http_api_key':
                     continue
                 if key == 'http_stat_pass':
                     continue
