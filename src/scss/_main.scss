@@ -106,10 +106,10 @@ header {
 	}
 
 	&-footer-fw_ver {
-		font-size: smaller;
+		font-size: x-small;
 	}
 	&-footer-fw_ver_nrf52 {
-		font-size: smaller;
+		font-size: x-small;
 	}
 }
 
@@ -117,13 +117,19 @@ header {
 	width: 100px;
 	height: 24px;
 	fill: var(--color-primary);
-	margin-bottom: 10px;
+	margin-bottom: 0;
 }
 
 #language-switcher {
 	display: flex;
 	justify-content: flex-end;
 	margin-top: 1em;
+	padding-top: 0.1em;
+
+	@include max(sm) {
+		margin-top: 2em;
+		padding-top: 1em;
+	}
 }
 
 .language-switcher > ul {
@@ -299,6 +305,13 @@ progress {
 
 .btn {
 	min-width: 155px;
+	padding: 14px 30px;
+
+	@include max(sm) {
+		min-width: 110px;
+		padding: 14px 20px;
+	}
+
 	display: inline-block;
 	background-color: var(--color-primary);
 	color: white;
@@ -309,7 +322,6 @@ progress {
 	line-height: 1;
 	border: none;
 	border-radius: 30px;
-	padding: 14px 30px;
 	white-space: normal;
 	cursor: pointer;
 	text-align: center;
@@ -388,7 +400,7 @@ progress {
 }
 
 #button-container_page-welcome-button-get-started {
-	margin-top: 70px;
+	margin-top: 10px;
 }
 
 .ingress {
