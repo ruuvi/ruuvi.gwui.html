@@ -25,6 +25,14 @@ class GuiObj {
   get _obj () {
     return this.#obj
   }
+
+  show () {
+    this.#obj.show()
+  }
+
+  hide () {
+    this.#obj.hide()
+  }
 }
 
 export default GuiObj
