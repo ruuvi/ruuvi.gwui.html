@@ -23,7 +23,8 @@
 
 // Grid breakpoints
 $grid-breakpoints: (
-				xs: 0,
+				xxs: 410px,
+				xs: 450px,
 				sm: 576px,
 				md: 768px,
 				lg: 992px,
@@ -32,7 +33,8 @@ $grid-breakpoints: (
 );
 
 $grid-breakpoints-max: (
-				xs: 0,
+				xxs: 409px,
+				xs: 449px,
 				sm: 575px,
 				md: 767px,
 				lg: 991px,
