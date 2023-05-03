@@ -307,11 +307,6 @@ progress {
 	min-width: 155px;
 	padding: 14px 30px;
 
-	@include max(sm) {
-		min-width: 110px;
-		padding: 14px 20px;
-	}
-
 	display: inline-block;
 	background-color: var(--color-primary);
 	color: white;
@@ -339,6 +334,21 @@ progress {
 	&.disable-click {
 		pointer-events: none;
 		opacity: 40%;
+	}
+}
+
+.btn-narrow {
+	@include max(sm) {
+		min-width: 110px;
+		padding: 14px 20px;
+	}
+	@include max(xs) {
+		min-width: 100px;
+		padding: 14px 15px;
+	}
+	@include max(xxs) {
+		min-width: 90px;
+		padding: 14px 10px;
 	}
 }
 
