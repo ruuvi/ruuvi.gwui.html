@@ -138,6 +138,7 @@ async function on_authenticate (result) {
       console.log(log_wrap('Start periodic status check'))
       GwStatus.startCheckingStatus()
     } catch (error) {
+      console.log(log_wrap(`Exception: ${error}`))
       alert(error)
       throw error
     }

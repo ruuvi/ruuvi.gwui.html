@@ -2,6 +2,7 @@ import * as crypto from './crypto.mjs'
 import logger from './logger.mjs'
 import AuthStatus from './auth_status.mjs'
 import Network from './network.mjs'
+import { log_wrap } from './utils.mjs'
 
 class AuthSession {
   realm = null
@@ -149,21 +150,31 @@ class Auth {
     const timeout = 10000
     let data
     if (json_data) {
-      data = await Network.httpPostJson('/auth', timeout, json_data, {
-        list_of_allowed_statuses: [200, 401, 403]
-      })
-      logger.info('FetchAuth: success')
+      try {
+        data = await Network.httpPostJson('/auth', timeout, json_data, {
+          list_of_allowed_statuses: [200, 401, 403]
+        })
+        logger.info('FetchAuth: success')
+      } catch (e) {
+        console.log(log_wrap(`FetchAuth: error: ${e}`))
+        throw e
+      }
     } else {
       const pub_key_cli = this.ecdh.getPublicKey('base64')
       logger.info(`ECDH PubKey(Cli): ${pub_key_cli}`)
-      data = await Network.httpGetJson('/auth', timeout, {
-        extra_headers: {
-          'ruuvi_ecdh_pub_key': pub_key_cli
-        },
-        list_of_allowed_statuses: [200, 401, 403]
-      })
-      logger.info(`FetchAuth: success, status=${Network.getResponse().status}`)
-      this.#handleResponseHeader_ruuvi_ecdh_pub_key()
+      try {
+        data = await Network.httpGetJson('/auth', timeout, {
+          extra_headers: {
+            'ruuvi_ecdh_pub_key': pub_key_cli
+          },
+          list_of_allowed_statuses: [200, 401, 403]
+        })
+        logger.info(`FetchAuth: success, status=${Network.getResponse().status}`)
+        this.#handleResponseHeader_ruuvi_ecdh_pub_key()
+      } catch (e) {
+        console.log(log_wrap(`FetchAuth: error: ${e}`))
+        throw e
+      }
     }
     return new AuthResp(Network.getResponse(), data)
   }
