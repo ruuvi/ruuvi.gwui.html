@@ -6,7 +6,7 @@ class GuiButtonContinue {
       throw new Error('GuiButtonContinue class constructor requires a <A> element.')
     }
     if (!obj.hasClass('btn')) {
-      throw new Error('GuiButtonContinue must have CSS style \'btn\'.')
+      throw new Error('GuiButtonContinue must have CSS style "btn".')
     }
     this.#obj = obj
   }

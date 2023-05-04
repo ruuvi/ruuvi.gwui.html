@@ -11,7 +11,7 @@ import GwStatus from './gw_status.mjs'
 import Network from './network.mjs'
 import Navigation from './navigation.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
-import GuiObj from './gui_obj.mjs'
+import GuiButton from './gui_button.mjs'
 
 class PageSoftwareUpdate {
   #firmwareUpdatingBaseURL = 'https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/'
@@ -20,7 +20,7 @@ class PageSoftwareUpdate {
   #checkbox_software_update_set_url_manually = new GuiCheckbox($('#software_update-set-url-manually'))
   #div_software_update_url = new GuiDiv($('#software_update-url-div'))
   #input_software_update_url = new GuiInputTextWithValidation($('#software_update-url'))
-  #button_upgrade = new GuiButtonContinue($('#software_update-button-upgrade'))
+  #button_upgrade = new GuiButton($('#software_update-button-upgrade'))
 
   #button_continue = new GuiButtonContinue($('#page-software_update-button-continue'))
   #div_in_button_continue_no_update = new GuiText($('#page-software_update-button-continue_no_update'))

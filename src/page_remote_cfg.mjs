@@ -14,6 +14,7 @@ import GwStatus from './gw_status.mjs'
 import GuiText from './gui_text.mjs'
 import Network from './network.mjs'
 import GuiInputTokenWithValidation from './gui_input_token_with_validation.mjs'
+import GuiButton from './gui_button.mjs'
 
 class PageRemoteCfg {
   /** @type GwCfg */
@@ -40,8 +41,8 @@ class PageRemoteCfg {
   #input_auth_bearer_token = new GuiInputTokenWithValidation($('#remote_cfg-auth_bearer-token'), true)
   #button_continue = new GuiButtonContinue($('#page-remote_cfg-button-continue'))
   #button_back = new GuiButtonBack($('#page-remote_cfg-button-back'))
-  #button_check = new GuiButtonContinue($('#remote_cfg-button-check'))
-  #button_download = new GuiButtonContinue($('#remote_cfg-button-download'))
+  #button_check = new GuiButton($('#remote_cfg-button-check'))
+  #button_download = new GuiButton($('#remote_cfg-button-download'))
   #div_status_error = new GuiDiv($('#page-remote_cfg-status-error'))
   #text_status_error_desc = new GuiText($('#page-remote_cfg-status-error-desc'))
   #div_options = new GuiDiv($('#remote_cfg-options'))
