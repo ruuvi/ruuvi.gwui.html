@@ -5,7 +5,7 @@ import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import GuiDiv from './gui_div.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import Navigation from './navigation.mjs'
 
 class PageScanning {
@@ -34,7 +34,7 @@ class PageScanning {
   #checkbox_scan_channel_39 = new GuiCheckbox($('#scan_channel_39'))
 
   #button_back = new GuiButtonBack($('#page-scanning-button-back'))
-  #button_continue = new GuiButton($('#page-scanning-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-scanning-button-continue'))
 
   /**
    * @param {GwCfg} gwCfg

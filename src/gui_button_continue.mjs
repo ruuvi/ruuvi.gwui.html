@@ -1,13 +1,13 @@
-class GuiButton {
+class GuiButtonContinue {
   #obj
 
   constructor (obj) {
     if (obj.prop('tagName') !== 'A') {
-      throw new Error('GuiButton class constructor requires a <A> element.')
+      throw new Error('GuiButtonContinue class constructor requires a <A> element.')
     }
-    // if (!obj.hasClass('btn')) {
-    //   throw new Error('GuiButton must have CSS style \'btn\'.')
-    // }
+    if (!obj.hasClass('btn')) {
+      throw new Error('GuiButtonContinue must have CSS style \'btn\'.')
+    }
     this.#obj = obj
   }
 
@@ -56,4 +56,4 @@ class GuiButton {
 
 }
 
-export default GuiButton
+export default GuiButtonContinue

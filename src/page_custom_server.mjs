@@ -9,7 +9,7 @@ import GuiRadioButton from './gui_radio_button.mjs'
 import GuiInputText from './gui_input_text.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import { GwCfgMqtt } from './gw_cfg_mqtt.mjs'
 import gui_loading from './gui_loading.mjs'
 import GwStatus from './gw_status.mjs'
@@ -106,8 +106,8 @@ class PageCustomServer {
   #sect_advanced = new GuiSectAdvanced($('#page-custom_server-advanced-button'))
 
   #button_back = new GuiButtonBack($('#page-custom_server-button-back'))
-  #button_check = new GuiButton($('#page-custom_server-button-check'))
-  #button_continue = new GuiButton($('#page-custom_server-button-continue'))
+  #button_check = new GuiButtonContinue($('#page-custom_server-button-check'))
+  #button_continue = new GuiButtonContinue($('#page-custom_server-button-continue'))
 
   /**
    * constructor

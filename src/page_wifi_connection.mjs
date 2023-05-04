@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiInputPassword from './gui_input_password.mjs'
 import GuiInputText from './gui_input_text.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
@@ -16,14 +16,14 @@ export class PageWiFiConnection {
   #gwCfg
   #auth
   #section = $('section#page-wifi_connection')
-  #button_sort_order_by_name = new GuiButton($('#wifi_connection-sort_order-by_name'))
-  #button_sort_order_by_rssi = new GuiButton($('#wifi_connection-sort_order-by_rssi'))
+  #button_sort_order_by_name = new GuiButtonContinue($('#wifi_connection-sort_order-by_name'))
+  #button_sort_order_by_rssi = new GuiButtonContinue($('#wifi_connection-sort_order-by_rssi'))
   #input_ssid = new GuiInputText($('section#page-wifi_connection input#manual_ssid'))
   #input_password_wifi = new GuiInputPassword($('input#pwd'), true)
   #radio_wifi_name = new GuiRadioButton('wifi-name')
   #radio_wifi_name_manual
   #sect_advanced = new GuiSectAdvanced($('#page-wifi_connection-advanced-button'))
-  #button_continue = new GuiButton($('#page-wifi_connection-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-wifi_connection-button-continue'))
   #button_back = new GuiButtonBack($('#page-wifi_connection-button-back'))
   #apList = null
   #flag_sort_by_rssi = false

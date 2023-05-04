@@ -4,7 +4,7 @@ import GuiRadioButton from './gui_radio_button.mjs'
 import GuiDiv from './gui_div.mjs'
 import GuiInputText from './gui_input_text.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import Navigation from './navigation.mjs'
 import { GwCfgNtp } from './gw_cfg_ntp.mjs'
 
@@ -32,7 +32,7 @@ class PageTimeSync {
   #input_ntp_server4 = new GuiInputText($('#ntp_server4'))
 
   #button_back = new GuiButtonBack($('#page-ntp_config-button-back'))
-  #button_continue = new GuiButton($('#page-ntp_config-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-ntp_config-button-continue'))
 
   /**
    * @param {GwCfgNtp} gwCfgNtp

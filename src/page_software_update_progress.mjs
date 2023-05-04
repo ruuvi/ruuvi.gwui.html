@@ -1,7 +1,7 @@
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import GuiDiv from './gui_div.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import Network from './network.mjs'
 import Navigation from './navigation.mjs'
 import GwStatus from './gw_status.mjs'
@@ -15,7 +15,7 @@ class PageSoftwareUpdateProgress {
   #div_status_completed_successfully = new GuiDiv($('#software_update_progress-status-completed_successfully'))
   #div_status_completed_unsuccessfully = new GuiDiv($('#software_update_progress-status-completed_unsuccessfully'))
   #div_button_container_configure = new GuiDiv($('#page-software_update_progress-button_container-configure'))
-  #button_configure = new GuiButton($('#page-software_update_progress-button-configure'))
+  #button_configure = new GuiButtonContinue($('#page-software_update_progress-button-configure'))
   #div_software_update_progress_info = new GuiDiv($('#page-software_update_progress-info'))
   #div_software_update_progress_status_completed_successfully = new GuiDiv($('#software_update_progress-status-completed_successfully'))
   #div_software_update_progress_status_completed_unsuccessfully = new GuiDiv($('#software_update_progress-status-completed_unsuccessfully'))

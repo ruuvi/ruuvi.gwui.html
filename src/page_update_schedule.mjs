@@ -4,7 +4,7 @@ import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
 import GuiSelect from './gui_select.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import Navigation from './navigation.mjs'
 import GuiDiv from './gui_div.mjs'
@@ -33,7 +33,7 @@ class PageUpdateSchedule {
   #select_period_to = new GuiSelect($('#conf-auto_update_schedule-period_to'))
   #select_tz = new GuiSelect($('#conf-auto_update_schedule-tz'))
   #div_schedule_options = new GuiDiv($('#conf-auto_update_schedule'))
-  #button_continue = new GuiButton($('#page-update_schedule-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-update_schedule-button-continue'))
   #button_back = new GuiButtonBack($('#page-update_schedule-button-back'))
 
   /**

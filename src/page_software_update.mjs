@@ -3,7 +3,7 @@ import { log_wrap } from './utils.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
 import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
 import GuiDiv from './gui_div.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiText from './gui_text.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import gui_loading from './gui_loading.mjs'
@@ -20,9 +20,9 @@ class PageSoftwareUpdate {
   #checkbox_software_update_set_url_manually = new GuiCheckbox($('#software_update-set-url-manually'))
   #div_software_update_url = new GuiDiv($('#software_update-url-div'))
   #input_software_update_url = new GuiInputTextWithValidation($('#software_update-url'))
-  #button_upgrade = new GuiButton($('#software_update-button-upgrade'))
+  #button_upgrade = new GuiButtonContinue($('#software_update-button-upgrade'))
 
-  #button_continue = new GuiButton($('#page-software_update-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-software_update-button-continue'))
   #div_in_button_continue_no_update = new GuiText($('#page-software_update-button-continue_no_update'))
   #div_in_button_continue_without_update = new GuiText($('#page-software_update-button-continue_without_update'))
   #button_back = new GuiButtonBack($('#page-software_update-button-back'))

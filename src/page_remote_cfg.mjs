@@ -6,7 +6,7 @@ import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
 import GuiInputPasswordWithValidation from './gui_input_password_with_validataion.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import Navigation from './navigation.mjs'
 import gui_loading from './gui_loading.mjs'
@@ -38,10 +38,10 @@ class PageRemoteCfg {
   #input_auth_basic_user = new GuiInputTextWithValidation($('#remote_cfg-auth_basic-user'))
   #input_auth_basic_pass = new GuiInputPasswordWithValidation($('#remote_cfg-auth_basic-password'))
   #input_auth_bearer_token = new GuiInputTokenWithValidation($('#remote_cfg-auth_bearer-token'), true)
-  #button_continue = new GuiButton($('#page-remote_cfg-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-remote_cfg-button-continue'))
   #button_back = new GuiButtonBack($('#page-remote_cfg-button-back'))
-  #button_check = new GuiButton($('#remote_cfg-button-check'))
-  #button_download = new GuiButton($('#remote_cfg-button-download'))
+  #button_check = new GuiButtonContinue($('#remote_cfg-button-check'))
+  #button_download = new GuiButtonContinue($('#remote_cfg-button-download'))
   #div_status_error = new GuiDiv($('#page-remote_cfg-status-error'))
   #text_status_error_desc = new GuiText($('#page-remote_cfg-status-error-desc'))
   #div_options = new GuiDiv($('#remote_cfg-options'))

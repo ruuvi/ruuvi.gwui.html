@@ -7,7 +7,7 @@ import GuiInputText from './gui_input_text.mjs'
 import GuiInputPassword from './gui_input_password.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import GuiInputToken from './gui_input_token.mjs'
 import Navigation from './navigation.mjs'
@@ -48,7 +48,7 @@ class PageLanAuth {
   #div_api_key_rw = new GuiDiv($('#settings_lan_auth-api_key_rw'))
   #input_api_key_rw = new GuiInputToken($('#lan_auth-api_key_rw'), true)
 
-  #button_continue = new GuiButton($('#page-lan_auth_type-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-lan_auth_type-button-continue'))
   #button_back = new GuiButtonBack($('#page-lan_auth_type-button-back'))
 
   /**

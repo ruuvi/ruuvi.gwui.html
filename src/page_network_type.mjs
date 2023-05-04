@@ -1,6 +1,6 @@
 import $ from 'jquery'
 import Navigation from './navigation.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiText from './gui_text.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
 import { log_wrap } from './utils.mjs'
@@ -11,8 +11,8 @@ export class PageNetworkType {
   #gwCfgEth
   #section = $('section#page-network_type')
   #text_access_from_lan = new GuiText($('#page-network_type-access_from_lan'))
-  #button_continue = new GuiButton($('section#page-network_type #page-network_type-button-continue'))
-  #button_skip = new GuiButton($('section#page-network_type #page-network_type-button-skip'))
+  #button_continue = new GuiButtonContinue($('section#page-network_type #page-network_type-button-continue'))
+  #button_skip = new GuiButtonContinue($('section#page-network_type #page-network_type-button-skip'))
   #radio_network_type = new GuiRadioButton('network_type')
   #buttonBack = new GuiButtonBack($('#page-network_type-button-back'))
   #radio_network_type_cable

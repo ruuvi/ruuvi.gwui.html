@@ -7,7 +7,7 @@ import { GwCfgHttp } from './gw_cfg_http.mjs'
 import { GwCfgHttpStat } from './gw_cfg_http_stat.mjs'
 import { GwCfgCompanyFilter } from './gw_cfg_company_filter.mjs'
 import { GwCfgMqtt } from './gw_cfg_mqtt.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import Navigation from './navigation.mjs'
 
@@ -25,7 +25,7 @@ class PageCloudOptions {
 
   #sect_advanced = new GuiSectAdvanced($('#page-cloud_options-advanced-button'))
 
-  #button_continue = new GuiButton($('#page-cloud_options-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-cloud_options-button-continue'))
   #button_back = new GuiButtonBack($('#page-cloud_options-button-back'))
 
   /**
