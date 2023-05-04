@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 class GuiButtonContinue {
   #obj
 

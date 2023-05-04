@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap, validate_url } from './utils.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
@@ -14,7 +19,6 @@ import { GwCfgMqtt } from './gw_cfg_mqtt.mjs'
 import gui_loading from './gui_loading.mjs'
 import GwStatus from './gw_status.mjs'
 import Navigation from './navigation.mjs'
-import GuiInputToken from './gui_input_token.mjs'
 import { GwCfgHttp } from './gw_cfg_http.mjs'
 import GuiInputTokenWithValidation from './gui_input_token_with_validation.mjs'
 

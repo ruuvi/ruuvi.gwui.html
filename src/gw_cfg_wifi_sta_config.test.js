@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import { GwCfgWifiStaCfg } from './gw_cfg_wifi_sta_config.mjs'
 import chai from 'chai'
 import sinon from 'sinon'

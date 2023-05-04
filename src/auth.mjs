@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import * as crypto from './crypto.mjs'
 import logger from './logger.mjs'
 import AuthStatus from './auth_status.mjs'

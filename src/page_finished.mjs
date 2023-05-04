@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import GuiDiv from './gui_div.mjs'

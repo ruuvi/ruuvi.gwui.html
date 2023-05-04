@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import { GwCfgLanAuth } from './gw_cfg_lan_auth.mjs'

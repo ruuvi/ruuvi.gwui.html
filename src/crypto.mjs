@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import MD5 from 'crypto-js/md5.js'
 import SHA256 from 'crypto-js/sha256.js'
 import AES from 'crypto-js/aes.js'

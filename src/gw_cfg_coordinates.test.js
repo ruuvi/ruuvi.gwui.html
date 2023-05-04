@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import { GwCfgCoordinates } from './gw_cfg_coordinates.mjs'
 import chai from 'chai'
 import sinon from 'sinon'

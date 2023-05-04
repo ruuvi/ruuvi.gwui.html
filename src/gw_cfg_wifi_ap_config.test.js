@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import { GwCfgWifiAPCfg } from './gw_cfg_wifi_ap_config.mjs'
 import chai from 'chai'
 import sinon from 'sinon'

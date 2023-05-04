@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import { GwCfgRemoteCfg, GwCfgRemoteCfgAuthType } from './gw_cfg_remote_cfg.mjs'
 import chai from 'chai'
 import sinon from 'sinon'

@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiInputPassword from './gui_input_password.mjs'

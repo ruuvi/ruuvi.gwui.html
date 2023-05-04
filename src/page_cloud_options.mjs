@@ -1,12 +1,13 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import { GwCfg } from './gw_cfg.mjs'
-import { GwCfgHttp } from './gw_cfg_http.mjs'
-import { GwCfgHttpStat } from './gw_cfg_http_stat.mjs'
-import { GwCfgCompanyFilter } from './gw_cfg_company_filter.mjs'
-import { GwCfgMqtt } from './gw_cfg_mqtt.mjs'
 import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import Navigation from './navigation.mjs'

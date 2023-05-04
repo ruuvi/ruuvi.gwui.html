@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import GuiInputTextWithSaving from './gui_input_text_with_saving.mjs'
 import GuiInputEyeIcon from './gui_input_eye_icon.mjs'
 

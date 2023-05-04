@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import { GwCfgInfo } from './gw_cfg_info.mjs'
 import chai from 'chai'
 import sinon from 'sinon'

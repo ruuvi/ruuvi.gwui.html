@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import GuiObj from './gui_obj.mjs'
 
 class GuiInputValidationIcon extends GuiObj {
