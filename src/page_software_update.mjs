@@ -11,6 +11,7 @@ import GwStatus from './gw_status.mjs'
 import Network from './network.mjs'
 import Navigation from './navigation.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
+import GuiObj from './gui_obj.mjs'
 
 class PageSoftwareUpdate {
   #firmwareUpdatingBaseURL = 'https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/'
@@ -29,7 +30,6 @@ class PageSoftwareUpdate {
   #div_version_info = new GuiDiv($('#page-software_update-version_info'))
   #text_version_latest = new GuiText($('#software_update-version-latest'))
   #text_version_current = new GuiText($('#software_update-version-current'))
-  #div_latest_fw_ver = new GuiDiv($('#page-software_update-latest_fw_ver'))
 
   #div_in_progress = new GuiDiv($('#page-software_update-in_progress'))
 
@@ -64,7 +64,6 @@ class PageSoftwareUpdate {
       this.#input_software_update_url.setVal(software_update_url)
       return
     }
-    this.#div_latest_fw_ver.hide()
     this.#button_upgrade.disable()
     this.#div_status.hide()
     this.#div_in_progress.show()
@@ -129,7 +128,6 @@ class PageSoftwareUpdate {
 
     this.#div_in_progress.hide()
     this.#text_version_latest.setVal(latest_release_version)
-    this.#div_latest_fw_ver.show()
     if (latest_release_version !== this.#text_version_current.getVal()) {
       this.#div_in_button_continue_no_update.hide()
       this.#div_in_button_continue_without_update.show()

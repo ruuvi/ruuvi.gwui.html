@@ -530,22 +530,30 @@
             </div>
 
             <div id="page-software_update-version_info">
-                <div class="block-left">
-                    <div>
-                        <span lang="en">Current firmware version: &nbsp;</span>
-                        <span lang="fi">Nykyinen laiteohjelmistoversio: &nbsp;</span>
-                    </div>
-                    <div id="software_update-version-current"></div>
-                </div>
-                <div id="page-software_update-latest_fw_ver" class="hidden">
-                    <div class="block-left">
-                        <div>
-                            <span lang="en">Latest available firmware version: &nbsp;</span>
-                            <span lang="fi">Uusin saatavilla oleva laiteohjelmistoversio: &nbsp;</span>
-                        </div>
-                        <div id="software_update-version-latest"></div>
-                    </div>
-                </div>
+                <table class="page-software_update-version_info">
+                    <tr class="page-software_update-version_info-row">
+                        <td class="page-software_update-version_info-column1">
+                            <div>
+                                <span lang="en">Current firmware version: &nbsp;</span>
+                                <span lang="fi">Nykyinen laiteohjelmistoversio: &nbsp;</span>
+                            </div>
+                        </td>
+                        <td class="page-software_update-version_info-column2">
+                            <div id="software_update-version-current"></div>
+                        </td>
+                    </tr>
+                    <tr class="page-software_update-version_info-row">
+                        <td class="page-software_update-version_info-column1">
+                            <div>
+                                <span lang="en">Latest available firmware version: &nbsp;</span>
+                                <span lang="fi">Uusin saatavilla oleva laiteohjelmistoversio: &nbsp;</span>
+                            </div>
+                        </td>
+                        <td class="page-software_update-version_info-column2">
+                            <div id="software_update-version-latest"></div>
+                        </td>
+                    </tr>
+                </table>
                 <div id="page-software_update-in_progress" class="hidden">
                     <div class="block-centered bl">
                         <span lang="en">Checking for the latest available version...</span>
