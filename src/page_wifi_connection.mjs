@@ -11,13 +11,14 @@ import Network from './network.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import Navigation from './navigation.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
+import GuiButton from './gui_button.mjs'
 
 export class PageWiFiConnection {
   #gwCfg
   #auth
   #section = $('section#page-wifi_connection')
-  #button_sort_order_by_name = new GuiButtonContinue($('#wifi_connection-sort_order-by_name'))
-  #button_sort_order_by_rssi = new GuiButtonContinue($('#wifi_connection-sort_order-by_rssi'))
+  #button_sort_order_by_name = new GuiButton($('#wifi_connection-sort_order-by_name'))
+  #button_sort_order_by_rssi = new GuiButton($('#wifi_connection-sort_order-by_rssi'))
   #input_ssid = new GuiInputText($('section#page-wifi_connection input#manual_ssid'))
   #input_password_wifi = new GuiInputPassword($('input#pwd'), true)
   #radio_wifi_name = new GuiRadioButton('wifi-name')
