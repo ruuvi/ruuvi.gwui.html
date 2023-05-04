@@ -120,6 +120,18 @@ header {
 	margin-bottom: 0;
 }
 
+.button-link {
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+	font-family: inherit;
+	font-size: inherit;
+	color: inherit;
+	padding: 0;
+	margin: 0;
+	outline: none;
+}
+
 #language-switcher {
 	display: flex;
 	justify-content: flex-end;
@@ -152,7 +164,7 @@ header {
 	border-right: 0;
 }
 
-.language-switcher > ul > li > a {
+.language-switcher > ul > li > button {
 	cursor: default;
 	color: var(--color-primary);
 	padding: 0;
@@ -160,18 +172,18 @@ header {
 	border: 0;
 }
 
-.language-switcher > ul > li > a.language-switcher-active {
+.language-switcher > ul > li > button.language-switcher-active {
 	color: var(--color-text);
 }
 
-.language-switcher > ul > li:last-child > a {
+.language-switcher > ul > li:last-child > button {
 	border-right: 0;
 }
 
-.language-switcher > ul > li > a:hover {
+.language-switcher > ul > li > button:hover {
 	cursor: pointer;
 }
-.language-switcher > ul > li > a.language-switcher-active:hover {
+.language-switcher > ul > li > button.language-switcher-active:hover {
 	cursor: default;
 }
 

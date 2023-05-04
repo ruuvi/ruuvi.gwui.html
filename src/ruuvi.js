@@ -77,13 +77,13 @@ function initialize () {
   }
 
   $('#language-switcher-en').click(function (e) {
-    $('div#language-switcher > ul > li > a').removeClass('language-switcher-active')
+    $('div#language-switcher > ul > li > button').removeClass('language-switcher-active')
     $(this).addClass('language-switcher-active')
     on_switch_language('en')
   })
 
   $('#language-switcher-fi').click(function (e) {
-    $('div#language-switcher > ul > li > a').removeClass('language-switcher-active')
+    $('div#language-switcher > ul > li > button').removeClass('language-switcher-active')
     $(this).addClass('language-switcher-active')
     on_switch_language('fi')
   })
