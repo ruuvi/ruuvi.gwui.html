@@ -50,8 +50,8 @@ class PageSoftwareUpdate {
   #sect_advanced = new GuiSectAdvanced($('#page-software_update-advanced-button'))
 
   constructor (cur_fw_ver) {
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#input_software_update_url.on_change(() => this.#on_change_url())
     this.#button_upgrade.on_click(() => this.#on_button_upgrade())
@@ -61,7 +61,7 @@ class PageSoftwareUpdate {
     this.#text_version_current.setVal(cur_fw_ver)
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-software_update: onShow'))
     this.#checkbox_software_update_set_url_manually.setUnchecked()
     if (this.#text_version_latest.getVal() !== '') {
@@ -102,7 +102,7 @@ class PageSoftwareUpdate {
     })
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-software_update: onHide'))
     this.#on_change_url()
   }

@@ -27,14 +27,14 @@ export class PageNetworkType {
     this.#flagAccessFromLAN = flagAccessFromLAN
     this.#gwCfgEth = gwCfgEth
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#button_continue.on_click(() => this.#onClickButtonContinue())
     this.#button_skip.on_click(() => this.#onClickButtonSkip())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-network_type: onShow'))
     this.#radio_network_type_cable = this.#radio_network_type.addOption('cable', this.#gwCfgEth.use_eth)
     this.#radio_network_type_wifi = this.#radio_network_type.addOption('wifi', !this.#gwCfgEth.use_eth)
@@ -52,7 +52,7 @@ export class PageNetworkType {
     }
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-network_type: onHide'))
     this.#gwCfgEth.use_eth = this.#radio_network_type_cable.isChecked()
   }

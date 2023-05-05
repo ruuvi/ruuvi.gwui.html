@@ -47,8 +47,8 @@ class PageUpdateSchedule {
   constructor (gwCfgAutoUpdate) {
     this.#gwCfgAutoUpdate = gwCfgAutoUpdate
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#radio_auto_update_cycle_regular = this.#radio_auto_update_cycle.addOption('auto_update_cycle-regular',
         this.#gwCfgAutoUpdate.auto_update_cycle.isRegular())
@@ -76,7 +76,7 @@ class PageUpdateSchedule {
     this.#button_continue.on_click(() => Navigation.change_page_to_settings_lan_auth())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-update_schedule: onShow'))
     const weekdays_bitmask = this.#gwCfgAutoUpdate.auto_update_weekdays_bitmask
 
@@ -111,7 +111,7 @@ class PageUpdateSchedule {
     this.#on_edit_automatic_update_settings()
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-update_schedule: onHide'))
 
     if (this.#radio_auto_update_cycle_regular.isChecked()) {

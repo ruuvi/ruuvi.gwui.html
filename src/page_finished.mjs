@@ -39,11 +39,11 @@ class PageFinished {
     this.#gwCfg = gwCfg
     this.#auth = auth
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-finished: onShow'))
     GwStatus.stopCheckingStatus()
     if (Navigation.isRequiredToSaveCfgOnPageFinished()) {
@@ -77,7 +77,7 @@ class PageFinished {
     }
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-finished: onHide'))
   }
 

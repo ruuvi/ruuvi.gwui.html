@@ -50,8 +50,8 @@ class PageTimeSync {
     this.#radio_ntp_sync_dhcp = this.#radio_ntp_sync.addOption('ntp_sync_dhcp', false)
     this.#radio_ntp_sync_disabled = this.#radio_ntp_sync.addOption('ntp_sync_disabled', false)
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#radio_ntp_sync_default.on_click(() => this.#onNtpConfigChanged())
     this.#radio_ntp_sync_custom.on_click(() => this.#onNtpConfigChanged())
@@ -61,7 +61,7 @@ class PageTimeSync {
     this.#button_continue.on_click(() => Navigation.change_url_scanning())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-ntp_config: onShow'))
     if (this.#gwCfgNtp.is_default()) {
       this.#radio_ntp_sync_default.setChecked()
@@ -81,7 +81,7 @@ class PageTimeSync {
     this.#onNtpConfigChanged()
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-ntp_config: onHide'))
 
     if (this.#radio_ntp_sync_default.isChecked()) {

@@ -64,8 +64,8 @@ class PageLanAuth {
     this.#gwCfgLanAuth = gwCfgLanAuth
     this.#auth = auth
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#radio_lan_auth_type_default = this.#radio_lan_auth_type.addOption('lan_auth_default', false)
     this.#radio_lan_auth_type_ruuvi = this.#radio_lan_auth_type.addOption('lan_auth_ruuvi', false)
@@ -89,7 +89,7 @@ class PageLanAuth {
     this.#button_continue.on_click(() => Navigation.change_url_cloud_options())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-settings_lan_auth: onShow'))
     this.#input_user.setVal(this.#gwCfgLanAuth.lan_auth_user)
     this.#div_login_password.hide()
@@ -139,7 +139,7 @@ class PageLanAuth {
     this.#on_lan_auth_type_changed()
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-settings_lan_auth: onHide'))
     if (this.#radio_lan_auth_type_default.isChecked()) {
       this.#gwCfgLanAuth.lan_auth_type.setAuthDefault()

@@ -62,8 +62,8 @@ class PageRemoteCfg {
     this.#radio_remote_cfg_auth_type_basic = this.#radio_remote_cfg_auth_type.addOption('remote_cfg_auth_type_basic', false)
     this.#radio_remote_cfg_auth_type_bearer = this.#radio_remote_cfg_auth_type.addOption('remote_cfg_auth_type_bearer', false)
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     if (!this.#gwCfg.remote_cfg.remote_cfg_use || !this.#gwCfg.remote_cfg.remote_cfg_auth_type.isBasicAuth()) {
       this.#input_auth_basic_pass.clear()
@@ -86,7 +86,7 @@ class PageRemoteCfg {
     this.#button_download.on_click(async () => this.#onButtonDownload())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-remote_cfg: onShow'))
     this.#checkbox_remote_cfg_use.setState(this.#gwCfg.remote_cfg.remote_cfg_use)
     if (this.#gwCfg.remote_cfg.remote_cfg_use) {
@@ -145,7 +145,7 @@ class PageRemoteCfg {
     }
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-remote_cfg: onHide'))
     this.#updateGwCfg()
   }

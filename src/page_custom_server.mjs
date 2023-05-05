@@ -122,8 +122,8 @@ class PageCustomServer {
     this.#gwCfg = gwCfg
     this.#auth = auth
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#radio_http_data_format_ruuvi = this.#radio_http_data_format.addOption('http_data_format_ruuvi', false)
 
@@ -184,7 +184,7 @@ class PageCustomServer {
     this.#button_continue.on_click(() => Navigation.change_url_ntp_config())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-custom_server: onShow'))
 
     if (this.#gwCfg.http_stat.is_default()) {
@@ -311,7 +311,7 @@ class PageCustomServer {
     this.#on_edit_mqtt_settings()
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-custom_server: onHide'))
     if (this.#checkbox_use_http_ruuvi.isChecked()) {
       this.#gwCfg.http.use_http_ruuvi = true

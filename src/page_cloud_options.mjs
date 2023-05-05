@@ -35,8 +35,8 @@ class PageCloudOptions {
   constructor (gwCfg) {
     this.#gwCfg = gwCfg
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#radio_connection_type_ruuvi = this.#radio_connection_type.addOption('ruuvi', false)
     this.#radio_connection_type_custom = this.#radio_connection_type.addOption('custom', false)
@@ -47,7 +47,7 @@ class PageCloudOptions {
     this.#button_continue.on_click(() => this.#onButtonContinue())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-cloud_options: onShow'))
 
     if (this.#gwCfg.is_use_ruuvi_cloud_with_default_options()) {
@@ -63,7 +63,7 @@ class PageCloudOptions {
     this.#onChangeConnectionType()
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-cloud_options: onHide'))
     if (this.#radio_connection_type_ruuvi.isChecked()) {
       this.#gwCfg.http.set_default()

@@ -40,8 +40,8 @@ export class PageEthernetConnection {
     this.#gwCfg = gwCfg
     this.#auth = auth
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#checkbox_eth_dhcp.on_change(() => this.#onChange_eth_dhcp())
 
@@ -54,7 +54,7 @@ export class PageEthernetConnection {
     this.#buttonContinue.on_click(() => this.#onClickButtonContinue())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-ethernet_connection: onShow'))
     this.#checkbox_eth_dhcp.setState(this.#gwCfg.eth.eth_dhcp)
     if (this.#gwCfg.eth.eth_dhcp) {
@@ -72,7 +72,7 @@ export class PageEthernetConnection {
     networkDisconnect().then(() => {})
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-ethernet_connection: onHide'))
     $('#page-ethernet_connection-ask_user').hide()
     $('#page-ethernet_connection-no_cable').hide()

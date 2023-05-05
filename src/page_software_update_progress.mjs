@@ -33,13 +33,13 @@ class PageSoftwareUpdateProgress {
   #progress_stage4 = new GuiProgress($('#software_update_progress-stage4'))
 
   constructor () {
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#button_configure.on_click(() => this.#onButtonConfigure())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('page-software_update_progress: onShow'))
     this.#div_info.show()
     this.#div_status_completed_successfully.hide()
@@ -50,7 +50,7 @@ class PageSoftwareUpdateProgress {
         this.#firmwareUpdatingProgress(fw_updating_stage, fw_updating_percentage, err_message))
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('page-software_update_progress: onHide'))
     GwStatus.setCallbackFirmwareUpdatingProgress(null)
   }

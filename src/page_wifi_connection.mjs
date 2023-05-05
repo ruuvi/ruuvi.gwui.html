@@ -39,8 +39,8 @@ export class PageWiFiConnection {
     this.#gwCfg = gwCfg
     this.#auth = auth
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#onChangeSortByRSSI(false)
 
@@ -57,7 +57,7 @@ export class PageWiFiConnection {
     this.#button_continue.on_click(() => this.#onClickButtonContinue())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-wifi_connection: onShow'))
 
     gui_loading.bodyClassLoadingAdd()
@@ -72,7 +72,7 @@ export class PageWiFiConnection {
     })
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-wifi_connection: onHide'))
     this.#button_continue.enable()
     $('#page-wifi_connection-ssid_password').hide()
