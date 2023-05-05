@@ -190,9 +190,10 @@ class PageRemoteCfg {
     this.#on_remote_cfg_changed()
   }
 
-  #remote_cfg_validate_url () {
+  async #remote_cfg_validate_url () {
     gui_loading.bodyClassLoadingAdd()
     GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
 
     let auth_type = 'none'
 
@@ -234,7 +235,7 @@ class PageRemoteCfg {
     this.#input_auth_bearer_token.clearValidationIcon()
     this.#input_base_url.setValidationRequired()
 
-    this.#remote_cfg_validate_url()
+    this.#remote_cfg_validate_url().then(() => {})
   }
 
   async #onButtonDownload () {

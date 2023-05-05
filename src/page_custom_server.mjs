@@ -21,6 +21,7 @@ import GwStatus from './gw_status.mjs'
 import Navigation from './navigation.mjs'
 import { GwCfgHttp } from './gw_cfg_http.mjs'
 import GuiInputTokenWithValidation from './gui_input_token_with_validation.mjs'
+import Network from './network.mjs'
 
 class PageCustomServer {
   /** @type GwCfg */
@@ -180,7 +181,7 @@ class PageCustomServer {
     this.#checkbox_use_mqtt_prefix_custom.on_change(() => this.#onChangeUseMqttPrefix())
     this.#input_mqtt_prefix_custom.on_change(() => this.#onChangeUseMqttPrefix())
 
-    this.#button_check.on_click(() => this.#onButtonCheck())
+    this.#button_check.on_click(async () => this.#onButtonCheck())
     this.#button_continue.on_click(() => Navigation.change_url_ntp_config())
   }
 
@@ -572,7 +573,7 @@ class PageCustomServer {
     this.#on_edit_mqtt_settings()
   }
 
-  #onButtonCheck () {
+  async #onButtonCheck () {
     if (!this.#input_http_url.getVal().startsWith('http://') && !this.#input_http_url.getVal().startsWith('https://')) {
       this.#input_http_url.setVal('http://' + this.#input_http_url.getVal())
       this.#input_http_url.setValidationRequired()
@@ -605,7 +606,7 @@ class PageCustomServer {
       this.#input_http_stat_pass.clearValidationIcon()
     }
 
-    this.#custom_server_validate_urls()
+    await this.#custom_server_validate_urls()
   }
 
   #on_custom_connection_type_changed () {
@@ -733,10 +734,11 @@ class PageCustomServer {
     this.#text_mqtt_prefix.setVal(mqtt_prefix)
   }
 
-  #custom_server_validate_urls () {
+  async #custom_server_validate_urls () {
     console.log('custom_server_validate_urls')
     gui_loading.bodyClassLoadingAdd()
     GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
 
     this.#custom_server_validate_url_http()
         .then(() => this.#custom_server_validate_url_http_stat())

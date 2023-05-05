@@ -11,6 +11,7 @@ import GwStatus from './gw_status.mjs'
 import GuiOverlay from './gui_overlay.mjs'
 import gui_loading from './gui_loading.mjs'
 import Navigation from './navigation.mjs'
+import Network from './network.mjs'
 
 class PageFinished {
   /** @type GwCfg */
@@ -46,6 +47,7 @@ class PageFinished {
   async #onShow () {
     console.log(log_wrap('section#page-finished: onShow'))
     GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
     if (Navigation.isRequiredToSaveCfgOnPageFinished()) {
       gui_loading.bodyClassLoadingAdd()
       this.#gwCfg.saveConfig(this.#auth).then(() => {
