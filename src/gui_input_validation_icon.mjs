@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import GuiObj from './gui_obj.mjs'
 
 class GuiInputValidationIcon extends GuiObj {
@@ -6,7 +11,11 @@ class GuiInputValidationIcon extends GuiObj {
 
   constructor (obj) {
     super('GuiInputValidationIcon', obj, 'INPUT')
-    this.#parent = obj.parent()
+    let parent = obj.parent()
+    if (parent.prop('tagName') === 'LABEL') {
+      parent = parent.parent().parent()
+    }
+    this.#parent = parent
     if (this.#parent.prop('tagName') !== 'DIV') {
       throw new Error(`GuiInputWithValidation: Parent class must be a DIV element.`)
     }

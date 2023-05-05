@@ -1,13 +1,11 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import GwStatus from './gw_status.mjs'
 import GwAP from './gw_ap.mjs'
-import $ from 'jquery'
 import Network from './network.mjs'
-import * as crypto from './crypto.mjs'
-import gw_status from './gw_status.mjs'
-import gui_loading from './gui_loading.mjs'
-import networkConnection from './network_connection.mjs'
-import log from './log.mjs'
-import Navigation from './navigation.mjs'
 
 export function log_wrap (msg) {
   return '[' + new Date().toISOString() + '] ' + msg

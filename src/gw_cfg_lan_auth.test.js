@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import { GwCfgLanAuth, GwCfgLanAuthType } from './gw_cfg_lan_auth.mjs'
 import chai from 'chai'
 import sinon from 'sinon'

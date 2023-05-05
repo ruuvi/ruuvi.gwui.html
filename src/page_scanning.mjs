@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
@@ -5,7 +10,7 @@ import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import GuiDiv from './gui_div.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import Navigation from './navigation.mjs'
 
 class PageScanning {
@@ -34,7 +39,7 @@ class PageScanning {
   #checkbox_scan_channel_39 = new GuiCheckbox($('#scan_channel_39'))
 
   #button_back = new GuiButtonBack($('#page-scanning-button-back'))
-  #button_continue = new GuiButton($('#page-scanning-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-scanning-button-continue'))
 
   /**
    * @param {GwCfg} gwCfg
@@ -46,8 +51,8 @@ class PageScanning {
     this.#radio_company_use_filtering_1 = this.#radio_company_use_filtering.addOption('1', false)
     this.#radio_company_use_filtering_2 = this.#radio_company_use_filtering.addOption('2', false)
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#radio_company_use_filtering_0.on_click(() => this.#on_settings_scan_filtering_changed())
     this.#radio_company_use_filtering_1.on_click(() => this.#on_settings_scan_filtering_changed())
@@ -56,7 +61,7 @@ class PageScanning {
     this.#button_continue.on_click(() => Navigation.change_page_to_finished(11))
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-scanning: onShow'))
 
     if (!this.#radio_company_use_filtering_1.isChecked()) {
@@ -85,7 +90,7 @@ class PageScanning {
     this.#on_settings_scan_filtering_changed()
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-scanning: onHide'))
 
     this.#gwCfg.company_filter.company_use_filtering = !this.#radio_company_use_filtering_0.isChecked()

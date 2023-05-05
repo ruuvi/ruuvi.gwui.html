@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 'use strict'
 
 import $ from 'jquery'
@@ -77,13 +82,13 @@ function initialize () {
   }
 
   $('#language-switcher-en').click(function (e) {
-    $('div#language-switcher > ul > li > a').removeClass('language-switcher-active')
+    $('div#language-switcher > ul > li > button').removeClass('language-switcher-active')
     $(this).addClass('language-switcher-active')
     on_switch_language('en')
   })
 
   $('#language-switcher-fi').click(function (e) {
-    $('div#language-switcher > ul > li > a').removeClass('language-switcher-active')
+    $('div#language-switcher > ul > li > button').removeClass('language-switcher-active')
     $(this).addClass('language-switcher-active')
     on_switch_language('fi')
   })
@@ -138,6 +143,7 @@ async function on_authenticate (result) {
       console.log(log_wrap('Start periodic status check'))
       GwStatus.startCheckingStatus()
     } catch (error) {
+      console.log(log_wrap(`Exception: ${error}`))
       alert(error)
       throw error
     }

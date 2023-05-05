@@ -1,10 +1,15 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
 import GuiSelect from './gui_select.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import Navigation from './navigation.mjs'
 import GuiDiv from './gui_div.mjs'
@@ -33,7 +38,7 @@ class PageUpdateSchedule {
   #select_period_to = new GuiSelect($('#conf-auto_update_schedule-period_to'))
   #select_tz = new GuiSelect($('#conf-auto_update_schedule-tz'))
   #div_schedule_options = new GuiDiv($('#conf-auto_update_schedule'))
-  #button_continue = new GuiButton($('#page-update_schedule-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-update_schedule-button-continue'))
   #button_back = new GuiButtonBack($('#page-update_schedule-button-back'))
 
   /**
@@ -42,8 +47,8 @@ class PageUpdateSchedule {
   constructor (gwCfgAutoUpdate) {
     this.#gwCfgAutoUpdate = gwCfgAutoUpdate
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#radio_auto_update_cycle_regular = this.#radio_auto_update_cycle.addOption('auto_update_cycle-regular',
         this.#gwCfgAutoUpdate.auto_update_cycle.isRegular())
@@ -71,7 +76,7 @@ class PageUpdateSchedule {
     this.#button_continue.on_click(() => Navigation.change_page_to_settings_lan_auth())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-update_schedule: onShow'))
     const weekdays_bitmask = this.#gwCfgAutoUpdate.auto_update_weekdays_bitmask
 
@@ -106,7 +111,7 @@ class PageUpdateSchedule {
     this.#on_edit_automatic_update_settings()
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-update_schedule: onHide'))
 
     if (this.#radio_auto_update_cycle_regular.isChecked()) {

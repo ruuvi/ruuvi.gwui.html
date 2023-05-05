@@ -1,4 +1,8 @@
-import logger from './logger.mjs'
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import Network from './network.mjs'
 import { GwCfgInfo } from './gw_cfg_info.mjs'
 import { GwCfgEth } from './gw_cfg_eth.mjs'

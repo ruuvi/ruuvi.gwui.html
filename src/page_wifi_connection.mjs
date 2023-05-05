@@ -1,5 +1,10 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiInputPassword from './gui_input_password.mjs'
 import GuiInputText from './gui_input_text.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
@@ -11,6 +16,7 @@ import Network from './network.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import Navigation from './navigation.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
+import GuiButton from './gui_button.mjs'
 
 export class PageWiFiConnection {
   #gwCfg
@@ -23,7 +29,7 @@ export class PageWiFiConnection {
   #radio_wifi_name = new GuiRadioButton('wifi-name')
   #radio_wifi_name_manual
   #sect_advanced = new GuiSectAdvanced($('#page-wifi_connection-advanced-button'))
-  #button_continue = new GuiButton($('#page-wifi_connection-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-wifi_connection-button-continue'))
   #button_back = new GuiButtonBack($('#page-wifi_connection-button-back'))
   #apList = null
   #flag_sort_by_rssi = false
@@ -33,8 +39,8 @@ export class PageWiFiConnection {
     this.#gwCfg = gwCfg
     this.#auth = auth
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#onChangeSortByRSSI(false)
 
@@ -51,7 +57,7 @@ export class PageWiFiConnection {
     this.#button_continue.on_click(() => this.#onClickButtonContinue())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-wifi_connection: onShow'))
 
     gui_loading.bodyClassLoadingAdd()
@@ -66,7 +72,7 @@ export class PageWiFiConnection {
     })
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-wifi_connection: onHide'))
     this.#button_continue.enable()
     $('#page-wifi_connection-ssid_password').hide()

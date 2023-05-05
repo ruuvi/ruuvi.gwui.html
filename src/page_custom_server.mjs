@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap, validate_url } from './utils.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
@@ -9,14 +14,14 @@ import GuiRadioButton from './gui_radio_button.mjs'
 import GuiInputText from './gui_input_text.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import { GwCfgMqtt } from './gw_cfg_mqtt.mjs'
 import gui_loading from './gui_loading.mjs'
 import GwStatus from './gw_status.mjs'
 import Navigation from './navigation.mjs'
-import GuiInputToken from './gui_input_token.mjs'
 import { GwCfgHttp } from './gw_cfg_http.mjs'
 import GuiInputTokenWithValidation from './gui_input_token_with_validation.mjs'
+import Network from './network.mjs'
 
 class PageCustomServer {
   /** @type GwCfg */
@@ -106,8 +111,8 @@ class PageCustomServer {
   #sect_advanced = new GuiSectAdvanced($('#page-custom_server-advanced-button'))
 
   #button_back = new GuiButtonBack($('#page-custom_server-button-back'))
-  #button_check = new GuiButton($('#page-custom_server-button-check'))
-  #button_continue = new GuiButton($('#page-custom_server-button-continue'))
+  #button_check = new GuiButtonContinue($('#page-custom_server-button-check'))
+  #button_continue = new GuiButtonContinue($('#page-custom_server-button-continue'))
 
   /**
    * constructor
@@ -118,8 +123,8 @@ class PageCustomServer {
     this.#gwCfg = gwCfg
     this.#auth = auth
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#radio_http_data_format_ruuvi = this.#radio_http_data_format.addOption('http_data_format_ruuvi', false)
 
@@ -176,11 +181,11 @@ class PageCustomServer {
     this.#checkbox_use_mqtt_prefix_custom.on_change(() => this.#onChangeUseMqttPrefix())
     this.#input_mqtt_prefix_custom.on_change(() => this.#onChangeUseMqttPrefix())
 
-    this.#button_check.on_click(() => this.#onButtonCheck())
+    this.#button_check.on_click(async () => this.#onButtonCheck())
     this.#button_continue.on_click(() => Navigation.change_url_ntp_config())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-custom_server: onShow'))
 
     if (this.#gwCfg.http_stat.is_default()) {
@@ -307,7 +312,7 @@ class PageCustomServer {
     this.#on_edit_mqtt_settings()
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-custom_server: onHide'))
     if (this.#checkbox_use_http_ruuvi.isChecked()) {
       this.#gwCfg.http.use_http_ruuvi = true
@@ -568,7 +573,7 @@ class PageCustomServer {
     this.#on_edit_mqtt_settings()
   }
 
-  #onButtonCheck () {
+  async #onButtonCheck () {
     if (!this.#input_http_url.getVal().startsWith('http://') && !this.#input_http_url.getVal().startsWith('https://')) {
       this.#input_http_url.setVal('http://' + this.#input_http_url.getVal())
       this.#input_http_url.setValidationRequired()
@@ -601,7 +606,7 @@ class PageCustomServer {
       this.#input_http_stat_pass.clearValidationIcon()
     }
 
-    this.#custom_server_validate_urls()
+    await this.#custom_server_validate_urls()
   }
 
   #on_custom_connection_type_changed () {
@@ -729,10 +734,11 @@ class PageCustomServer {
     this.#text_mqtt_prefix.setVal(mqtt_prefix)
   }
 
-  #custom_server_validate_urls () {
+  async #custom_server_validate_urls () {
     console.log('custom_server_validate_urls')
     gui_loading.bodyClassLoadingAdd()
     GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
 
     this.#custom_server_validate_url_http()
         .then(() => this.#custom_server_validate_url_http_stat())

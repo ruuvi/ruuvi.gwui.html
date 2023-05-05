@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import { GwCfgLanAuth } from './gw_cfg_lan_auth.mjs'
@@ -7,7 +12,7 @@ import GuiInputText from './gui_input_text.mjs'
 import GuiInputPassword from './gui_input_password.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import GuiInputToken from './gui_input_token.mjs'
 import Navigation from './navigation.mjs'
@@ -48,7 +53,7 @@ class PageLanAuth {
   #div_api_key_rw = new GuiDiv($('#settings_lan_auth-api_key_rw'))
   #input_api_key_rw = new GuiInputToken($('#lan_auth-api_key_rw'), true)
 
-  #button_continue = new GuiButton($('#page-lan_auth_type-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-lan_auth_type-button-continue'))
   #button_back = new GuiButtonBack($('#page-lan_auth_type-button-back'))
 
   /**
@@ -59,8 +64,8 @@ class PageLanAuth {
     this.#gwCfgLanAuth = gwCfgLanAuth
     this.#auth = auth
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#radio_lan_auth_type_default = this.#radio_lan_auth_type.addOption('lan_auth_default', false)
     this.#radio_lan_auth_type_ruuvi = this.#radio_lan_auth_type.addOption('lan_auth_ruuvi', false)
@@ -84,7 +89,7 @@ class PageLanAuth {
     this.#button_continue.on_click(() => Navigation.change_url_cloud_options())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-settings_lan_auth: onShow'))
     this.#input_user.setVal(this.#gwCfgLanAuth.lan_auth_user)
     this.#div_login_password.hide()
@@ -134,7 +139,7 @@ class PageLanAuth {
     this.#on_lan_auth_type_changed()
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-settings_lan_auth: onHide'))
     if (this.#radio_lan_auth_type_default.isChecked()) {
       this.#gwCfgLanAuth.lan_auth_type.setAuthDefault()

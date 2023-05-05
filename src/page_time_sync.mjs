@@ -1,10 +1,15 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
 import GuiDiv from './gui_div.mjs'
 import GuiInputText from './gui_input_text.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import Navigation from './navigation.mjs'
 import { GwCfgNtp } from './gw_cfg_ntp.mjs'
 
@@ -32,7 +37,7 @@ class PageTimeSync {
   #input_ntp_server4 = new GuiInputText($('#ntp_server4'))
 
   #button_back = new GuiButtonBack($('#page-ntp_config-button-back'))
-  #button_continue = new GuiButton($('#page-ntp_config-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-ntp_config-button-continue'))
 
   /**
    * @param {GwCfgNtp} gwCfgNtp
@@ -45,8 +50,8 @@ class PageTimeSync {
     this.#radio_ntp_sync_dhcp = this.#radio_ntp_sync.addOption('ntp_sync_dhcp', false)
     this.#radio_ntp_sync_disabled = this.#radio_ntp_sync.addOption('ntp_sync_disabled', false)
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#radio_ntp_sync_default.on_click(() => this.#onNtpConfigChanged())
     this.#radio_ntp_sync_custom.on_click(() => this.#onNtpConfigChanged())
@@ -56,7 +61,7 @@ class PageTimeSync {
     this.#button_continue.on_click(() => Navigation.change_url_scanning())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-ntp_config: onShow'))
     if (this.#gwCfgNtp.is_default()) {
       this.#radio_ntp_sync_default.setChecked()
@@ -76,7 +81,7 @@ class PageTimeSync {
     this.#onNtpConfigChanged()
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-ntp_config: onHide'))
 
     if (this.#radio_ntp_sync_default.isChecked()) {

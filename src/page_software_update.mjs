@@ -1,9 +1,14 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
 import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
 import GuiDiv from './gui_div.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiText from './gui_text.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import gui_loading from './gui_loading.mjs'
@@ -11,7 +16,7 @@ import GwStatus from './gw_status.mjs'
 import Network from './network.mjs'
 import Navigation from './navigation.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
-import GuiObj from './gui_obj.mjs'
+import GuiButton from './gui_button.mjs'
 
 class PageSoftwareUpdate {
   #firmwareUpdatingBaseURL = 'https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/'
@@ -22,7 +27,7 @@ class PageSoftwareUpdate {
   #input_software_update_url = new GuiInputTextWithValidation($('#software_update-url'))
   #button_upgrade = new GuiButton($('#software_update-button-upgrade'))
 
-  #button_continue = new GuiButton($('#page-software_update-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-software_update-button-continue'))
   #div_in_button_continue_no_update = new GuiText($('#page-software_update-button-continue_no_update'))
   #div_in_button_continue_without_update = new GuiText($('#page-software_update-button-continue_without_update'))
   #button_back = new GuiButtonBack($('#page-software_update-button-back'))
@@ -45,18 +50,18 @@ class PageSoftwareUpdate {
   #sect_advanced = new GuiSectAdvanced($('#page-software_update-advanced-button'))
 
   constructor (cur_fw_ver) {
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#input_software_update_url.on_change(() => this.#on_change_url())
-    this.#button_upgrade.on_click(() => this.#on_button_upgrade())
+    this.#button_upgrade.on_click(async () => this.#on_button_upgrade())
     this.#checkbox_software_update_set_url_manually.on_change(() => this.#on_change_url())
     this.#button_continue.on_click(() => Navigation.change_page_to_remote_cfg())
 
     this.#text_version_current.setVal(cur_fw_ver)
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-software_update: onShow'))
     this.#checkbox_software_update_set_url_manually.setUnchecked()
     if (this.#text_version_latest.getVal() !== '') {
@@ -79,6 +84,7 @@ class PageSoftwareUpdate {
 
     gui_loading.bodyClassLoadingAdd()
     GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
 
     Network.httpGetJson('/github_latest_release.json', 40000).then((data) => {
       this.#on_get_latest_release_info(data)
@@ -97,7 +103,7 @@ class PageSoftwareUpdate {
     })
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-software_update: onHide'))
     this.#on_change_url()
   }
@@ -192,7 +198,7 @@ class PageSoftwareUpdate {
     }
   }
 
-  #on_button_upgrade () {
+  async #on_button_upgrade () {
     this.#div_status_error.hide()
     let software_update_url_val = this.#input_software_update_url.getVal()
 
@@ -212,6 +218,7 @@ class PageSoftwareUpdate {
     }
     gui_loading.bodyClassLoadingAdd()
     GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
 
     const timeout = 8 * 60 * 1000
     const json_data = { 'url': software_update_url_val }

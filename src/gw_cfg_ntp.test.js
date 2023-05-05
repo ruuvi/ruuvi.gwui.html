@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import { GwCfgNtp } from './gw_cfg_ntp.mjs'
 import chai from 'chai'
 import sinon from 'sinon'

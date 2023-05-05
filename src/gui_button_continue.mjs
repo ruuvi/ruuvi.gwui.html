@@ -3,16 +3,16 @@
  * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
  */
 
-class GuiButton {
+class GuiButtonContinue {
   #obj
 
   constructor (obj) {
-    if (obj.prop('tagName') !== 'BUTTON') {
-      throw new Error('GuiButton class constructor requires a <BUTTON> element.')
+    if (obj.prop('tagName') !== 'A') {
+      throw new Error('GuiButtonContinue class constructor requires a <A> element.')
     }
-    // if (!obj.hasClass('btn')) {
-    //   throw new Error('GuiButton must have CSS style \'btn\'.')
-    // }
+    if (!obj.hasClass('btn')) {
+      throw new Error('GuiButtonContinue must have CSS style "btn".')
+    }
     this.#obj = obj
   }
 
@@ -46,6 +46,7 @@ class GuiButton {
 
   on_click (fn) {
     this.#obj.click((e) => {
+      e.preventDefault()
       fn()
     })
   }
@@ -60,4 +61,4 @@ class GuiButton {
 
 }
 
-export default GuiButton
+export default GuiButtonContinue

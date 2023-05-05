@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 class AuthStatus {
   static OK = new AuthStatus(200, 'OK')
   static Unauthorized = new AuthStatus(401, 'Unauthorized')

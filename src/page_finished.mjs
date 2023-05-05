@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import GuiDiv from './gui_div.mjs'
@@ -6,6 +11,7 @@ import GwStatus from './gw_status.mjs'
 import GuiOverlay from './gui_overlay.mjs'
 import gui_loading from './gui_loading.mjs'
 import Navigation from './navigation.mjs'
+import Network from './network.mjs'
 
 class PageFinished {
   /** @type GwCfg */
@@ -34,13 +40,14 @@ class PageFinished {
     this.#gwCfg = gwCfg
     this.#auth = auth
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-finished: onShow'))
     GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
     if (Navigation.isRequiredToSaveCfgOnPageFinished()) {
       gui_loading.bodyClassLoadingAdd()
       this.#gwCfg.saveConfig(this.#auth).then(() => {
@@ -72,7 +79,7 @@ class PageFinished {
     }
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-finished: onHide'))
   }
 

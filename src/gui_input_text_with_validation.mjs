@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import GuiInputText from './gui_input_text.mjs'
 import GuiInputValidationIcon from './gui_input_validation_icon.mjs'
 

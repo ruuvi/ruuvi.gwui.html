@@ -1,6 +1,11 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import logger from './logger.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
 import GuiLoading from './gui_loading.mjs'
 import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
@@ -20,7 +25,7 @@ export class PageEthernetConnection {
   #auth
 
   #section = $('section#page-ethernet_connection')
-  #buttonContinue = new GuiButton($('#page-ethernet_connection-button-continue'))
+  #buttonContinue = new GuiButtonContinue($('#page-ethernet_connection-button-continue'))
   #buttonBack = new GuiButtonBack($('#page-ethernet_connection-button-back'))
   #checkbox_eth_dhcp = new GuiCheckbox($('#eth_dhcp'))
   #input_eth_static_ip = new GuiInputTextWithValidation($('#eth_static_ip'))
@@ -35,8 +40,8 @@ export class PageEthernetConnection {
     this.#gwCfg = gwCfg
     this.#auth = auth
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#checkbox_eth_dhcp.on_change(() => this.#onChange_eth_dhcp())
 
@@ -49,7 +54,7 @@ export class PageEthernetConnection {
     this.#buttonContinue.on_click(() => this.#onClickButtonContinue())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-ethernet_connection: onShow'))
     this.#checkbox_eth_dhcp.setState(this.#gwCfg.eth.eth_dhcp)
     if (this.#gwCfg.eth.eth_dhcp) {
@@ -67,7 +72,7 @@ export class PageEthernetConnection {
     networkDisconnect().then(() => {})
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-ethernet_connection: onHide'))
     $('#page-ethernet_connection-ask_user').hide()
     $('#page-ethernet_connection-no_cable').hide()

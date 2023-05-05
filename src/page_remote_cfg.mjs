@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap, validate_url } from './utils.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
@@ -6,7 +11,7 @@ import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
 import GuiInputPasswordWithValidation from './gui_input_password_with_validataion.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import Navigation from './navigation.mjs'
 import gui_loading from './gui_loading.mjs'
@@ -14,6 +19,7 @@ import GwStatus from './gw_status.mjs'
 import GuiText from './gui_text.mjs'
 import Network from './network.mjs'
 import GuiInputTokenWithValidation from './gui_input_token_with_validation.mjs'
+import GuiButton from './gui_button.mjs'
 
 class PageRemoteCfg {
   /** @type GwCfg */
@@ -38,7 +44,7 @@ class PageRemoteCfg {
   #input_auth_basic_user = new GuiInputTextWithValidation($('#remote_cfg-auth_basic-user'))
   #input_auth_basic_pass = new GuiInputPasswordWithValidation($('#remote_cfg-auth_basic-password'))
   #input_auth_bearer_token = new GuiInputTokenWithValidation($('#remote_cfg-auth_bearer-token'), true)
-  #button_continue = new GuiButton($('#page-remote_cfg-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-remote_cfg-button-continue'))
   #button_back = new GuiButtonBack($('#page-remote_cfg-button-back'))
   #button_check = new GuiButton($('#remote_cfg-button-check'))
   #button_download = new GuiButton($('#remote_cfg-button-download'))
@@ -56,8 +62,8 @@ class PageRemoteCfg {
     this.#radio_remote_cfg_auth_type_basic = this.#radio_remote_cfg_auth_type.addOption('remote_cfg_auth_type_basic', false)
     this.#radio_remote_cfg_auth_type_bearer = this.#radio_remote_cfg_auth_type.addOption('remote_cfg_auth_type_bearer', false)
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     if (!this.#gwCfg.remote_cfg.remote_cfg_use || !this.#gwCfg.remote_cfg.remote_cfg_auth_type.isBasicAuth()) {
       this.#input_auth_basic_pass.clear()
@@ -80,7 +86,7 @@ class PageRemoteCfg {
     this.#button_download.on_click(async () => this.#onButtonDownload())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-remote_cfg: onShow'))
     this.#checkbox_remote_cfg_use.setState(this.#gwCfg.remote_cfg.remote_cfg_use)
     if (this.#gwCfg.remote_cfg.remote_cfg_use) {
@@ -139,7 +145,7 @@ class PageRemoteCfg {
     }
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-remote_cfg: onHide'))
     this.#updateGwCfg()
   }
@@ -184,9 +190,10 @@ class PageRemoteCfg {
     this.#on_remote_cfg_changed()
   }
 
-  #remote_cfg_validate_url () {
+  async #remote_cfg_validate_url () {
     gui_loading.bodyClassLoadingAdd()
     GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
 
     let auth_type = 'none'
 
@@ -228,7 +235,7 @@ class PageRemoteCfg {
     this.#input_auth_bearer_token.clearValidationIcon()
     this.#input_base_url.setValidationRequired()
 
-    this.#remote_cfg_validate_url()
+    this.#remote_cfg_validate_url().then(() => {})
   }
 
   async #onButtonDownload () {

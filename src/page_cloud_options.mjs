@@ -1,13 +1,14 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import $ from 'jquery'
 import { log_wrap } from './utils.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import { GwCfg } from './gw_cfg.mjs'
-import { GwCfgHttp } from './gw_cfg_http.mjs'
-import { GwCfgHttpStat } from './gw_cfg_http_stat.mjs'
-import { GwCfgCompanyFilter } from './gw_cfg_company_filter.mjs'
-import { GwCfgMqtt } from './gw_cfg_mqtt.mjs'
-import GuiButton from './gui_button.mjs'
+import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import Navigation from './navigation.mjs'
 
@@ -25,7 +26,7 @@ class PageCloudOptions {
 
   #sect_advanced = new GuiSectAdvanced($('#page-cloud_options-advanced-button'))
 
-  #button_continue = new GuiButton($('#page-cloud_options-button-continue'))
+  #button_continue = new GuiButtonContinue($('#page-cloud_options-button-continue'))
   #button_back = new GuiButtonBack($('#page-cloud_options-button-back'))
 
   /**
@@ -34,8 +35,8 @@ class PageCloudOptions {
   constructor (gwCfg) {
     this.#gwCfg = gwCfg
 
-    this.#section.bind('onShow', () => this.#onShow())
-    this.#section.bind('onHide', () => this.#onHide())
+    this.#section.bind('onShow', async () => this.#onShow())
+    this.#section.bind('onHide', async () => this.#onHide())
 
     this.#radio_connection_type_ruuvi = this.#radio_connection_type.addOption('ruuvi', false)
     this.#radio_connection_type_custom = this.#radio_connection_type.addOption('custom', false)
@@ -46,7 +47,7 @@ class PageCloudOptions {
     this.#button_continue.on_click(() => this.#onButtonContinue())
   }
 
-  #onShow () {
+  async #onShow () {
     console.log(log_wrap('section#page-cloud_options: onShow'))
 
     if (this.#gwCfg.is_use_ruuvi_cloud_with_default_options()) {
@@ -62,7 +63,7 @@ class PageCloudOptions {
     this.#onChangeConnectionType()
   }
 
-  #onHide () {
+  async #onHide () {
     console.log(log_wrap('section#page-cloud_options: onHide'))
     if (this.#radio_connection_type_ruuvi.isChecked()) {
       this.#gwCfg.http.set_default()

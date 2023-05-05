@@ -1,3 +1,8 @@
+/**
+ * @author TheSomeMan
+ * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
+ */
+
 import { GwCfgAutoUpdate, GwCfgAutoUpdateCycle } from './gw_cfg_auto_update.mjs'
 import chai from 'chai'
 import sinon from 'sinon'
