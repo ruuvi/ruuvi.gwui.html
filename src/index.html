@@ -2115,7 +2115,7 @@
                     <div class="info-icon-left-column">
                         <span lang="en">Ruuvi sensors (including experimental long range sensors)</span>
                         <span lang="fi">Ruuvi-anturit (myös kokeelliset pitkän kantaman anturit)</span>
-                        <input type="radio" name="company_use_filtering" value="2" checked="checked"
+                        <input type="radio" name="company_use_filtering" value="2"
                                placeholder="Scan only Ruuvitags">
                         <span class="control_indicator"></span>
                     </div>
@@ -2169,6 +2169,130 @@
                         <span class="control_indicator"></span>
                     </label>
                 </div>
+
+                <div class="border"></div>
+
+                <div>
+                    <label class="control control-checkbox">
+                        <span lang="en">Enable Bluetooth sensor filtering</span>
+                        <span lang="fi">Ota Bluetooth-anturin suodatus käyttöön</span>
+                        <input id="scan_filtering" type="checkbox">
+                        <span class="control_indicator"></span>
+                    </label>
+                    <div id="scan_filtering-options" class="indent hidden">
+                        <div>
+                            <div>
+                                <label class="control control-radio">
+                                    <span lang="en">Discard Listed Sensors</span>
+                                    <span lang="fi">Hävitä luetellut anturit</span>
+                                    <input type="radio" name="scan_filtering-type" value="scan_filtering-type_discard"
+                                           checked="checked">
+                                    <span class="control_indicator"></span>
+                                </label>
+                            </div>
+                            <div id="scan_filtering-type_discard-desc" class="indent">
+                                <span lang="en">Choose this mode to configure the gateway to collect data from all Bluetooth sensors, excluding those with MAC addresses in the excluded list.</span>
+                                <span lang="fi">Valitse tämä tila määrittääksesi yhdyskäytävän keräämään tietoja kaikista Bluetooth-antureista, pois lukien ne, joiden MAC-osoite on poissuljetussa luettelossa.</span>
+                            </div>
+                        </div>
+
+                        <div>&nbsp;</div>
+
+                        <div>
+                            <div>
+                                <label class="control control-radio">
+                                    <span lang="en">Allow Listed Sensors</span>
+                                    <span lang="fi">Salli luetellut anturit</span>
+                                    <input type="radio" name="scan_filtering-type" value="scan_filtering-type_allow">
+                                    <span class="control_indicator"></span>
+                                </label>
+                            </div>
+                            <div id="scan_filtering-type_allow-desc" class="indent">
+                                <span lang="en">Choose this mode to configure the gateway to collect data exclusively from Bluetooth sensors with specific MAC addresses in the permitted list.</span>
+                                <span lang="fi">Valitse tämä tila määrittääksesi yhdyskäytävän keräämään tietoja yksinomaan Bluetooth-antureista, joiden MAC-osoitteet ovat sallittujen luettelossa.</span>
+                            </div>
+                        </div>
+
+                        <div class="border indent"></div>
+
+                        <div class="indent">
+                            <span lang="en">Configured filters:</span>
+                            <span lang="fi">Määritetyt suodattimet:</span>
+                        </div>
+
+                        <div class="indent">
+                            <table id="page_scanning-list_of_configured_sensors">
+                            </table>
+                        </div>
+
+                        <div class="border indent"></div>
+
+                        <div class="container indent">
+                            <div>
+                                <span lang="en">Bluetooth sensors online:</span>
+                                <span lang="fi">Bluetooth-anturit verkossa:</span>
+                            </div>
+                            <button class="btn" id="scan_filter_refresh" type="button">
+                                <span lang="en">REFRESH</span>
+                                <span lang="fi">VIRKISTÄÄ</span>
+                            </button>
+                        </div>
+
+                        <div class="container indent">
+                            <div>
+                                <span lang="en">Note that only sensors that have passed the filter
+                                    will be displayed in the Online Sensors list.
+                                    To view all sensors, you need to disable the filter and save the configuration.</span>
+                                <span lang="fi">Huomaa, että vain suodattimen läpäisseet anturit näkyvät
+                                    Online Sensors -luettelossa. Jos haluat tarkastella kaikkia antureita,
+                                    sinun on poistettava suodatin käytöstä ja tallennettava asetukset.</span>
+                            </div>
+                        </div>
+
+                        <div class="indent">
+                            <table id="page_scanning-list_of_online_sensors">
+                            </table>
+                        </div>
+
+                        <div class="border indent"></div>
+
+                        <div class="indent">
+                            <span lang="en">Adding Bluetooth sensors manually by MAC address:</span>
+                            <span lang="fi">Bluetooth-anturien lisääminen manuaalisesti MAC-osoitteen perusteella:</span>
+                        </div>
+
+                        <div class="indent">
+                            <table id="page_scanning-add_filter_manually">
+                                <tr>
+                                    <td class="page_scanning-list_of_configured_sensors-column_mac">
+                                        <div class="input-with_validity_check">
+                                            <div>
+                                                <label>
+                                                    <input id="scan_add_filter" type="text" value="">
+                                                </label>
+                                            </div>
+                                            <div class="input-with_validity_check-icon">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="page_scanning-list_of_configured_sensors-column_button">
+                                        <div>
+                                            <button id="scan_filter-button-add_manually" class="btn">
+                                                <span lang="en">ADD</span>
+                                                <span lang="fi">LISÄTÄ</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="border"></div>
+
             </div>
 
             <div id="popup-info-icon-scanning" class="info-icon-overlay">
@@ -2176,10 +2300,10 @@
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
                     <div class="info-icon-content">
                         <p>
-							<span lang="en">If you enable long range, Ruuvi Gateway will continuously switch the operating mode
-								between short and long range (normal mode 50% / long range mode 50%)</span>
+                            <span lang="en">If you enable long range, Ruuvi Gateway will continuously switch the operating mode
+                                between short and long range (normal mode 50% / long range mode 50%)</span>
                             <span lang="fi">Jos otat pitkän kantaman käyttöön, Ruuvi Gateway vaihtaa toimintatilaa lyhyen
-								ja pitkän kantaman välillä (normaali tila 50 % / pitkän kantaman tila 50 %)</span>
+                                ja pitkän kantaman välillä (normaali tila 50 % / pitkän kantaman tila 50 %)</span>
                         </p>
                     </div>
                 </div>

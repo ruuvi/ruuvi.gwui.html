@@ -55,6 +55,15 @@ export function fetchObjectKeyFromData (data, keyName, flagRequired = false, def
       (val) => {return typeof val === 'object'}, 'object')
 }
 
+export function fetchListKeyFromData (data, keyName, flagRequired = false, defaultVal) {
+  const res = fetchValKeyFromData(data, keyName, flagRequired, defaultVal,
+      (val) => {return typeof val === 'object' && Array.isArray(val)}, 'List')
+  if (res === null) {
+    return []
+  }
+  return res
+}
+
 export function fetchWithTimeout (url, options, timeout = 15000) {
   const abortController = new AbortController()
   const signal = abortController.signal
@@ -120,6 +129,24 @@ export async function networkConnect (ssid, password, auth) {
   } catch (err) {
     console.log(log_wrap(`POST /connect.json: failure: ${err}`))
     throw err
+  }
+}
+
+export async function networkGetHistoryJson () {
+  GwStatus.stopCheckingStatus()
+  await Network.waitWhileInProgress()
+
+  console.log(log_wrap('GET /history'))
+  const data = { 'timestamp': Date.now() }
+
+  try {
+    const result = await Network.httpGetJson('/history', 5000, JSON.stringify(data))
+    console.log(log_wrap('GET /history: success'))
+    return result
+  } catch (err) {
+    console.log(log_wrap(`GET /history: failure: ${err}`))
+  } finally {
+    GwStatus.startCheckingStatus()
   }
 }
 

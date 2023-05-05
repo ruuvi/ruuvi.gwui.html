@@ -170,6 +170,8 @@ export class GwCfg {
     data.scan_channel_37 = this.scan.scan_channel_37
     data.scan_channel_38 = this.scan.scan_channel_38
     data.scan_channel_39 = this.scan.scan_channel_39
+    data.scan_filter_allow_listed = this.scan.scan_filter_allow_listed
+    data.scan_filter_list = this.scan.scan_filter_list
 
     data.auto_update_cycle = this.auto_update.auto_update_cycle.getVal()
     data.auto_update_weekdays_bitmask = this.auto_update.auto_update_weekdays_bitmask

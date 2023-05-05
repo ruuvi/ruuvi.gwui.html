@@ -4,7 +4,7 @@
  */
 
 import $ from 'jquery'
-import { log_wrap } from './utils.mjs'
+import { log_wrap, networkGetHistoryJson } from './utils.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
 import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import GuiDiv from './gui_div.mjs'
@@ -12,6 +12,10 @@ import GuiCheckbox from './gui_checkbox.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import GuiButtonContinue from './gui_button_continue.mjs'
 import Navigation from './navigation.mjs'
+import gui_loading from './gui_loading.mjs'
+import GuiButton from './gui_button.mjs'
+import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
+import { GwCfgScan } from './gw_cfg_scan.mjs'
 
 class PageScanning {
   /** @type GwCfg */
@@ -38,6 +42,21 @@ class PageScanning {
   #checkbox_scan_channel_38 = new GuiCheckbox($('#scan_channel_38'))
   #checkbox_scan_channel_39 = new GuiCheckbox($('#scan_channel_39'))
 
+  #checkbox_scan_filtering = new GuiCheckbox($('#scan_filtering'))
+  #div_scan_filtering_options = new GuiDiv($('#scan_filtering-options'))
+  #radio_scan_filtering_type = new GuiRadioButton('scan_filtering-type')
+
+  /** @type GuiRadioButtonOption */
+  #radio_scan_filtering_type_discard
+  /** @type GuiRadioButtonOption */
+  #radio_scan_filtering_type_allow
+
+  #list_of_configured_sensors = $('#page_scanning-list_of_configured_sensors')
+  #list_of_online_sensors = $('#page_scanning-list_of_online_sensors')
+  #button_refresh_online_sensors = new GuiButton($('#scan_filter_refresh'))
+  #input_add_filter = new GuiInputTextWithValidation($('#scan_add_filter'))
+  #button_add_filter_manually = new GuiButton($('#scan_filter-button-add_manually'))
+
   #button_back = new GuiButtonBack($('#page-scanning-button-back'))
   #button_continue = new GuiButtonContinue($('#page-scanning-button-continue'))
 
@@ -51,24 +70,31 @@ class PageScanning {
     this.#radio_company_use_filtering_1 = this.#radio_company_use_filtering.addOption('1', false)
     this.#radio_company_use_filtering_2 = this.#radio_company_use_filtering.addOption('2', false)
 
+    this.#radio_scan_filtering_type_discard = this.#radio_scan_filtering_type.addOption('scan_filtering-type_discard', true)
+    this.#radio_scan_filtering_type_allow = this.#radio_scan_filtering_type.addOption('scan_filtering-type_allow', false)
+
+    this.#gwCfg.scan.scan_filter_list.forEach((mac, idx) => {
+      this.#add_row_configured_sensor(mac)
+    })
+
     this.#section.bind('onShow', async () => this.#onShow())
     this.#section.bind('onHide', async () => this.#onHide())
+
 
     this.#radio_company_use_filtering_0.on_click(() => this.#on_settings_scan_filtering_changed())
     this.#radio_company_use_filtering_1.on_click(() => this.#on_settings_scan_filtering_changed())
     this.#radio_company_use_filtering_2.on_click(() => this.#on_settings_scan_filtering_changed())
+
+    this.#checkbox_scan_filtering.on_change(() => this.#onChangeCheckboxScanFiltering())
+    this.#button_refresh_online_sensors.on_click(() => this.#refreshListOfOnlineSensors())
+    this.#input_add_filter.on_change(() => this.#onChangeInputFilter())
+    this.#button_add_filter_manually.on_click(() => this.#onClickButtonAddFilterManually())
 
     this.#button_continue.on_click(() => Navigation.change_page_to_finished(11))
   }
 
   async #onShow () {
     console.log(log_wrap('section#page-scanning: onShow'))
-
-    if (!this.#radio_company_use_filtering_1.isChecked()) {
-      this.#sect_advanced.hide()
-    } else {
-      this.#sect_advanced.show()
-    }
 
     this.#checkbox_scan_coded_phy.setState(this.#gwCfg.scan.scan_coded_phy)
 
@@ -86,8 +112,33 @@ class PageScanning {
       this.#checkbox_scan_channel_38.setChecked()
       this.#checkbox_scan_channel_39.setChecked()
     }
-
     this.#on_settings_scan_filtering_changed()
+
+    if (this.#gwCfg.scan.scan_filter_list.length === 0) {
+      this.#checkbox_scan_filtering.setUnchecked()
+      this.#div_scan_filtering_options.hide()
+      this.#radio_scan_filtering_type_discard.setChecked()
+    } else {
+      this.#checkbox_scan_filtering.setChecked()
+      this.#div_scan_filtering_options.show()
+      if (this.#gwCfg.scan.scan_filter_allow_listed) {
+        this.#radio_scan_filtering_type_allow.setChecked()
+      } else {
+        this.#radio_scan_filtering_type_discard.setChecked()
+      }
+    }
+
+    this.#onChangeInputFilter()
+
+    if (this.#radio_company_use_filtering_1.isChecked() && !this.#checkbox_scan_filtering.isChecked()) {
+      this.#sect_advanced.hide()
+    } else {
+      this.#sect_advanced.show()
+    }
+
+    if (this.#checkbox_scan_filtering.isChecked()) {
+      this.#refreshListOfOnlineSensors()
+    }
   }
 
   async #onHide () {
@@ -100,6 +151,29 @@ class PageScanning {
     this.#gwCfg.scan.scan_channel_37 = this.#checkbox_scan_channel_37.isChecked()
     this.#gwCfg.scan.scan_channel_38 = this.#checkbox_scan_channel_38.isChecked()
     this.#gwCfg.scan.scan_channel_39 = this.#checkbox_scan_channel_39.isChecked()
+
+    function extractMacAddr (prefixedMacAddr) {
+      const lastIndex = prefixedMacAddr.lastIndexOf('-')
+      const macAddress = prefixedMacAddr.substring(lastIndex + 1)
+      return macAddress.match(/.{1,2}/g).join(':')
+    }
+
+    let list_of_mac = []
+    if (this.#checkbox_scan_filtering.isChecked()) {
+      $('#page_scanning-list_of_configured_sensors tr').each((index, row) => {
+        const row_id = $(row).attr('id')
+        const mac = extractMacAddr(row_id)
+        list_of_mac.push(mac)
+      })
+      list_of_mac.sort()
+    }
+
+    this.#gwCfg.scan.scan_filter_list = list_of_mac
+    if (list_of_mac.length === 0) {
+      this.#gwCfg.scan.scan_filter_allow_listed = false
+    } else {
+      this.#gwCfg.scan.scan_filter_allow_listed = this.#radio_scan_filtering_type_allow.isChecked()
+    }
   }
 
   #on_settings_scan_filtering_changed () {
@@ -125,6 +199,152 @@ class PageScanning {
       throw new Error('Unsupported scan_filtering')
     }
   }
+
+  #onChangeCheckboxScanFiltering () {
+    if (this.#checkbox_scan_filtering.isChecked()) {
+      this.#div_scan_filtering_options.slideDown()
+      this.#refreshListOfOnlineSensors()
+    } else {
+      this.#div_scan_filtering_options.slideUp()
+    }
+  }
+
+  #refreshListOfOnlineSensors () {
+    gui_loading.bodyClassLoadingAdd()
+    networkGetHistoryJson().then((history_json) => {
+      this.#updateListOfOnlineSensors(history_json)
+    }).catch((err) => {
+      console.log(log_wrap(`refreshListOfOnlineSensors error: ${err}`))
+    }).finally(() => {
+      gui_loading.bodyClassLoadingRemove()
+    })
+  }
+
+  #updateListOfOnlineSensors (history_json) {
+    this.#list_of_online_sensors.empty()
+    const dict_of_tags = history_json.data.tags
+    let arr_of_mac = []
+    for (const [mac, value] of Object.entries(dict_of_tags)) {
+      arr_of_mac.push(mac)
+    }
+    arr_of_mac.sort()
+    arr_of_mac.forEach((mac, idx) => {
+      let row = $(`#${this.#get_scan_filter_row_id(mac)}`)
+      if (row.length === 0) {
+        this.#list_of_online_sensors.append(this.#generateRowOnlineSensor(mac))
+        let button_add = new GuiButton($(`#${this.#get_scan_filter_button_add_id(mac)}`))
+        button_add.on_click(() => this.#onClickButtonAddFilter(mac))
+      }
+    })
+  }
+
+  #add_row_configured_sensor (mac) {
+    this.#list_of_configured_sensors.append(this.#generateRowConfiguredSensor(mac))
+    new GuiButton($(`#${this.#get_scan_filter_button_remove_id(mac)}`)).on_click(() => this.#onClickButtonRemoveFilter(mac))
+  }
+
+  #onClickButtonRemoveFilter (mac) {
+    $(`#${this.#get_scan_filter_row_id(mac)}`).remove()
+  }
+
+  #onClickButtonAddFilter (mac) {
+    $(`#${this.#get_scan_filter_row_id(mac)}`).remove()
+    this.#add_row_configured_sensor(mac)
+  }
+
+  #onChangeInputFilter () {
+    const mac = this.#input_add_filter.getVal()
+    if (GwCfgScan.isValidMacAddress(mac)) {
+      this.#button_add_filter_manually.enable()
+      this.#input_add_filter.setValid()
+    } else {
+      this.#button_add_filter_manually.disable()
+      if (mac === '') {
+        this.#input_add_filter.clearValidationIcon()
+      } else {
+        this.#input_add_filter.setInvalid()
+      }
+    }
+  }
+
+  #onClickButtonAddFilterManually () {
+    const mac = this.#input_add_filter.getVal()
+    $(`#${this.#get_scan_filter_row_id(mac)}`).remove()
+    this.#add_row_configured_sensor(mac)
+  }
+
+  #get_scan_filter_row_id (mac) {
+    return `scan_filter-row-${this.#removeColonsFromMacAddress(mac)}`
+  }
+
+  #get_scan_filter_input_mac_id (mac) {
+    return `scan_filter-input-${this.#removeColonsFromMacAddress(mac)}`
+  }
+
+  #get_scan_filter_button_remove_id (mac) {
+    return `scan_filter-button-remove-${this.#removeColonsFromMacAddress(mac)}`
+  }
+
+  #get_scan_filter_button_add_id (mac) {
+    return `scan_filter-button-add-${this.#removeColonsFromMacAddress(mac)}`
+  }
+
+  #generateRowConfiguredSensor (mac) {
+    return `
+      <tr id="${this.#get_scan_filter_row_id(mac)}">
+          <td class="page_scanning-list_of_configured_sensors-column_mac">
+              <div class="input-with_validity_check">
+                  <div>
+                      <label>
+                          <input id="${this.#get_scan_filter_input_mac_id(mac)}" type="text" value="${mac}" class="input-row" disabled>
+                      </label>
+                  </div>
+                  <div class="input-with_validity_check-icon">
+                  </div>
+              </div>
+          </td>
+          <td class="page_scanning-list_of_configured_sensors-column_button">
+              <div>
+                  <button id="${this.#get_scan_filter_button_remove_id(mac)}" class="btn">
+                      <span lang="en">REMOVE</span>
+                      <span lang="fi">POISTA</span>
+                  </button>
+              </div>
+          </td>
+      </tr>
+    `
+  }
+
+  #generateRowOnlineSensor (mac) {
+    return `
+      <tr id="${this.#get_scan_filter_row_id(mac)}">
+          <td class="page_scanning-list_of_configured_sensors-column_mac">
+              <div class="input-with_validity_check">
+                  <div>
+                      <label>
+                          <input id="${this.#get_scan_filter_input_mac_id(mac)}" type="text" value="${mac}" class="input-row" disabled>
+                      </label>
+                  </div>
+                  <div class="input-with_validity_check-icon">
+                  </div>
+              </div>
+          </td>
+          <td class="page_scanning-list_of_configured_sensors-column_button">
+              <div>
+                  <button id="${this.#get_scan_filter_button_add_id(mac)}" class="btn">
+                      <span lang="en">ADD</span>
+                      <span lang="fi">LISÄTÄ</span>
+                  </button>
+              </div>
+          </td>
+      </tr>
+    `
+  }
+
+  #removeColonsFromMacAddress (macAddress) {
+    return macAddress.replace(/:/g, '')
+  }
+
 }
 
 export default PageScanning

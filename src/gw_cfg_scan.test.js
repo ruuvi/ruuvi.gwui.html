@@ -30,6 +30,8 @@ describe('GwCfgScan', () => {
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: true,
+      scan_filter_allow_listed: false,
+      scan_filter_list: []
     }
     let scan = new GwCfgScan()
     scan.parse(data)
@@ -39,6 +41,8 @@ describe('GwCfgScan', () => {
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_filter_allow_listed).to.be.false
+    expect(scan.scan_filter_list).to.deep.equal([])
   })
 
   it('should check non default scan_coded_phy', () => {
@@ -49,6 +53,8 @@ describe('GwCfgScan', () => {
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: true,
+      scan_filter_allow_listed: false,
+      scan_filter_list: []
     }
     let scan = new GwCfgScan()
     scan.parse(data)
@@ -58,6 +64,8 @@ describe('GwCfgScan', () => {
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_filter_allow_listed).to.be.false
+    expect(scan.scan_filter_list).to.deep.equal([])
   })
 
   it('should check non default scan_1mbit_phy', () => {
@@ -68,6 +76,8 @@ describe('GwCfgScan', () => {
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: true,
+      scan_filter_allow_listed: false,
+      scan_filter_list: []
     }
     let scan = new GwCfgScan()
     scan.parse(data)
@@ -77,6 +87,8 @@ describe('GwCfgScan', () => {
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_filter_allow_listed).to.be.false
+    expect(scan.scan_filter_list).to.deep.equal([])
   })
 
   it('should check non default scan_extended_payload', () => {
@@ -87,6 +99,8 @@ describe('GwCfgScan', () => {
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: true,
+      scan_filter_allow_listed: false,
+      scan_filter_list: []
     }
     let scan = new GwCfgScan()
     scan.parse(data)
@@ -96,6 +110,8 @@ describe('GwCfgScan', () => {
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_filter_allow_listed).to.be.false
+    expect(scan.scan_filter_list).to.deep.equal([])
   })
 
   it('should check non default scan_channel_37', () => {
@@ -106,6 +122,8 @@ describe('GwCfgScan', () => {
       scan_channel_37: false,
       scan_channel_38: true,
       scan_channel_39: true,
+      scan_filter_allow_listed: false,
+      scan_filter_list: []
     }
     let scan = new GwCfgScan()
     scan.parse(data)
@@ -115,6 +133,8 @@ describe('GwCfgScan', () => {
     expect(scan.scan_channel_37).to.be.false
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_filter_allow_listed).to.be.false
+    expect(scan.scan_filter_list).to.deep.equal([])
   })
 
   it('should check non default scan_channel_38', () => {
@@ -125,6 +145,8 @@ describe('GwCfgScan', () => {
       scan_channel_37: true,
       scan_channel_38: false,
       scan_channel_39: true,
+      scan_filter_allow_listed: false,
+      scan_filter_list: []
     }
     let scan = new GwCfgScan()
     scan.parse(data)
@@ -134,9 +156,80 @@ describe('GwCfgScan', () => {
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.false
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_filter_allow_listed).to.be.false
+    expect(scan.scan_filter_list).to.deep.equal([])
   })
 
   it('should check non default scan_channel_39', () => {
+    let data = {
+      scan_coded_phy: false,
+      scan_1mbit_phy: true,
+      scan_extended_payload: true,
+      scan_channel_37: true,
+      scan_channel_38: true,
+      scan_channel_39: false,
+      scan_filter_allow_listed: false,
+      scan_filter_list: []
+    }
+    let scan = new GwCfgScan()
+    scan.parse(data)
+    expect(scan.scan_coded_phy).to.be.false
+    expect(scan.scan_1mbit_phy).to.be.true
+    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_channel_37).to.be.true
+    expect(scan.scan_channel_38).to.be.true
+    expect(scan.scan_channel_39).to.be.false
+    expect(scan.scan_filter_allow_listed).to.be.false
+    expect(scan.scan_filter_list).to.deep.equal([])
+  })
+
+  it('should check non empty scan_filter_list, scan_filter_allow_listed=false', () => {
+    let data = {
+      scan_coded_phy: false,
+      scan_1mbit_phy: true,
+      scan_extended_payload: true,
+      scan_channel_37: true,
+      scan_channel_38: true,
+      scan_channel_39: false,
+      scan_filter_allow_listed: false,
+      scan_filter_list: ['AA:BB:CC:00:00:01', 'AA:BB:CC:00:00:02']
+    }
+    let scan = new GwCfgScan()
+    scan.parse(data)
+    expect(scan.scan_coded_phy).to.be.false
+    expect(scan.scan_1mbit_phy).to.be.true
+    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_channel_37).to.be.true
+    expect(scan.scan_channel_38).to.be.true
+    expect(scan.scan_channel_39).to.be.false
+    expect(scan.scan_filter_allow_listed).to.be.false
+    expect(scan.scan_filter_list).to.deep.equal(['AA:BB:CC:00:00:01', 'AA:BB:CC:00:00:02'])
+  })
+
+  it('should check non empty scan_filter_list, scan_filter_allow_listed=true', () => {
+    let data = {
+      scan_coded_phy: false,
+      scan_1mbit_phy: true,
+      scan_extended_payload: true,
+      scan_channel_37: true,
+      scan_channel_38: true,
+      scan_channel_39: false,
+      scan_filter_allow_listed: true,
+      scan_filter_list: ['AA:BB:CC:00:00:01']
+    }
+    let scan = new GwCfgScan()
+    scan.parse(data)
+    expect(scan.scan_coded_phy).to.be.false
+    expect(scan.scan_1mbit_phy).to.be.true
+    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_channel_37).to.be.true
+    expect(scan.scan_channel_38).to.be.true
+    expect(scan.scan_channel_39).to.be.false
+    expect(scan.scan_filter_allow_listed).to.be.true
+    expect(scan.scan_filter_list).to.deep.equal(['AA:BB:CC:00:00:01'])
+  })
+
+  it('should check missing scan_filter_list', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
@@ -153,6 +246,8 @@ describe('GwCfgScan', () => {
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.false
+    expect(scan.scan_filter_allow_listed).to.be.false
+    expect(scan.scan_filter_list).to.deep.equal([])
   })
 
   it('should check missing scan_channel_39', () => {

@@ -246,10 +246,6 @@ table {
 	font-weight: bold;
 }
 
-.indent {
-	margin-left: 28px;
-}
-
 fieldset {
 	border: none;
 	margin: 0;
@@ -298,6 +294,12 @@ progress {
 }
 
 /*============================================*/
+.container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
 .button-container {
 	width: 100%;
 	display: flex;
@@ -566,6 +568,10 @@ select {
 	}
 }
 
+input.input-row {
+	margin: 0 0 0;
+}
+
 .input-password {
 	position: relative
 }
@@ -613,6 +619,10 @@ select {
 	position: absolute;
 	top: calc(var(--input-margin-top) + var(--input-border) + var(--input-padding-top-and-bottom));
 	right: 0;
+}
+
+.input-with_validity_check-icon.input-row {
+	top: calc(var(--input-border) + var(--input-padding-top-and-bottom));
 }
 
 .input-valid {
@@ -780,6 +790,10 @@ select {
 	color: var(--color-primary-hover);
 }
 
+.indent {
+	margin-left: 28px;
+}
+
 table {
 	border-collapse: separate;
 	border-spacing: 0 8px;
@@ -887,6 +901,10 @@ table {
 	content: " ";
 	display: block;
 	clear: both;
+}
+
+.page_scanning-list_of_configured_sensors-column_button {
+	text-align: right;
 }
 
 .page-software_update-version_info {
