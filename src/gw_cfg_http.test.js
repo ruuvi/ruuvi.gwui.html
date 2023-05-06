@@ -51,8 +51,8 @@ describe('GwCfgHttp', () => {
     }
     let cfg_http = new GwCfgHttp()
     cfg_http.parse(data)
-    expect(cfg_http.use_http_ruuvi).to.be.false
-    expect(cfg_http.use_http).to.be.true
+    expect(cfg_http.use_http_ruuvi).to.be.true
+    expect(cfg_http.use_http).to.be.false
     expect(cfg_http.http_data_format.isRuuvi()).to.be.true
     expect(cfg_http.http_auth.isNone()).to.be.true
     expect(cfg_http.http_url).to.equal('https://network.ruuvi.com/record')
