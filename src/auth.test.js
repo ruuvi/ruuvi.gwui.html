@@ -73,7 +73,7 @@ describe('Auth', () => {
       const anchor = null
       const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstanceCli)
       const result = await auth.waitAuth()
-      expect(result).to.equal(true)
+      expect(result).to.be.true
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
@@ -81,8 +81,6 @@ describe('Auth', () => {
         'FetchAuth: success, status=200',
         `ECDH PubKey(Srv): ${ecdhInstanceSrv.getPublicKey('base64')}`,
         'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
-        'CheckAuth: Open: page-welcome',
-        'WindowLocationMock: replace: #page-welcome',
       ])
 
       expect(mockPageAuth.on_auth_successful.calledOnce).to.be.true
@@ -95,8 +93,7 @@ describe('Auth', () => {
       expect(appInfoMocks.setFirmwareVersions.calledOnce).to.be.true
       expect(appInfoMocks.setFirmwareVersions.calledWith('1.13.0', '1.0.0')).to.be.true
 
-      expect(mockWindowLocation.replace.calledOnce).to.be.true
-      sinon.assert.calledWith(mockWindowLocation.replace.getCall(0), '#page-welcome')
+      expect(mockWindowLocation.replace.notCalled).to.be.true
       expect(mockWindowLocation.assign.notCalled).to.be.true
     })
 
@@ -118,7 +115,7 @@ describe('Auth', () => {
       const anchor = '#auth'
       const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstanceCli)
       const result = await auth.waitAuth()
-      expect(result).to.equal(true)
+      expect(result).to.be.false
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: #auth',
@@ -569,8 +566,6 @@ describe('Auth', () => {
         `Login: user=${user}, password_sha256=${password_sha256}`,
         'FetchAuth: success',
         'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
-        'CheckAuth: Open: page-welcome',
-        'WindowLocationMock: replace: #page-welcome',
       ])
 
       const [url, request] = fetchMock.lastCall('/auth', 'POST')
@@ -597,12 +592,12 @@ describe('Auth', () => {
       expect(appInfoMocks.setFirmwareVersions.callCount).to.equal(2)
       expect(appInfoMocks.setFirmwareVersions.calledWith('1.13.0', '1.0.0')).to.be.true
 
-      expect(mockWindowLocation.replace.calledOnce).to.be.true
+      expect(mockWindowLocation.replace.notCalled).to.be.true
       expect(mockWindowLocation.assign.callCount).to.equal(2)
       sinon.assert.calledWith(mockWindowLocation.assign.getCall(0), null)
       sinon.assert.calledWith(mockWindowLocation.assign.getCall(1), '#page-auth')
 
-      expect(mockWindowLocation.replace.calledBefore(mockWindowLocation.assign.getCall(0))).to.be.true
+      // expect(mockWindowLocation.replace.calledBefore(mockWindowLocation.assign.getCall(0))).to.be.true
     })
 
     it('should handle unauthorized and then try to login with incorrect password', async () => {
@@ -684,8 +679,6 @@ describe('Auth', () => {
         `Login: user=${user}, password_sha256=${password_sha256_2}`,
         'FetchAuth: success',
         'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
-        'CheckAuth: Open: page-welcome',
-        'WindowLocationMock: replace: #page-welcome',
       ])
 
       const [url1, request1] = fetchMock.calls('/auth', 'POST')[0]
@@ -724,7 +717,7 @@ describe('Auth', () => {
       expect(appInfoMocks.setFirmwareVersions.callCount).to.equal(3)
       expect(appInfoMocks.setFirmwareVersions.calledWith('1.13.0', '1.0.0')).to.be.true
 
-      expect(mockWindowLocation.replace.calledOnce).to.be.true
+      expect(mockWindowLocation.replace.notCalled).to.be.true
       sinon.assert.calledWith(mockWindowLocation.assign, '#page-auth')
       expect(mockWindowLocation.assign.callCount).to.equal(4)
       sinon.assert.calledWith(mockWindowLocation.assign.getCall(0), null)
@@ -732,7 +725,7 @@ describe('Auth', () => {
       sinon.assert.calledWith(mockWindowLocation.assign.getCall(2), null)
       sinon.assert.calledWith(mockWindowLocation.assign.getCall(3), '#page-auth')
 
-      expect(mockWindowLocation.replace.calledBefore(mockWindowLocation.assign.getCall(0))).to.be.true
+      // expect(mockWindowLocation.replace.calledBefore(mockWindowLocation.assign.getCall(0))).to.be.true
     })
 
     it('should handle failed authentication without WWW-Authenticate header', async () => {
@@ -894,8 +887,6 @@ describe('Auth', () => {
         `Login: user=${user2}, password_sha256=${password2_sha256}`,
         'FetchAuth: success',
         'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
-        'CheckAuth: Open: page-welcome',
-        'WindowLocationMock: replace: #page-welcome',
       ])
 
       const [url, request] = fetchMock.lastCall('/auth', 'POST')
@@ -927,10 +918,9 @@ describe('Auth', () => {
       sinon.assert.calledWith(mockWindowLocation.assign.getCall(1), '#page-auth')
       sinon.assert.calledWith(mockWindowLocation.assign.getCall(2), null)
       sinon.assert.calledWith(mockWindowLocation.assign.getCall(3), '#page-auth')
-      expect(mockWindowLocation.replace.calledOnce).to.be.true
-      sinon.assert.calledWith(mockWindowLocation.replace, '#page-welcome')
+      expect(mockWindowLocation.replace.notCalled).to.be.true
 
-      expect(mockWindowLocation.assign.getCall(3).calledBefore(mockWindowLocation.replace.getCall(0))).to.be.true
+      // expect(mockWindowLocation.assign.getCall(3).calledBefore(mockWindowLocation.replace.getCall(0))).to.be.true
     })
 
   })
