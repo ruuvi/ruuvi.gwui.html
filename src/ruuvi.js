@@ -140,15 +140,15 @@ async function on_authenticate (result) {
     try {
       await g_gw_cfg.fetch()
       g_pages = new Pages(g_gw_cfg, g_auth, g_auth.flagAccessFromLAN)
-      console.log(log_wrap('Start periodic status check'))
-      GwStatus.startCheckingStatus()
+      logger.info('CheckAuth: Open: page-welcome')
+      window.location.replace('#page-welcome')
     } catch (error) {
       console.log(log_wrap(`Exception: ${error}`))
       alert(error)
       throw error
     }
   } else {
-    logger.info(`on authenticate: denied`)
+    logger.info(`on authenticate: denied or redirected to another page`)
   }
 }
 

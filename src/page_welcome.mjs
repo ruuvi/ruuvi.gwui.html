@@ -7,6 +7,8 @@ import $ from 'jquery'
 import logger from './logger.mjs'
 import Navigation from './navigation.mjs'
 import GuiButtonContinue from './gui_button_continue.mjs'
+import { log_wrap } from './utils.mjs'
+import GwStatus from './gw_status.mjs'
 
 export class PageWelcome {
   #section = $('section#page-welcome')
@@ -23,6 +25,8 @@ export class PageWelcome {
     let progressbar = $('#progressbar')
     progressbar.css('top', $('section#page-welcome div.progressbar-container').position().top)
     progressbar.show()
+    console.log(log_wrap('Start periodic status check'))
+    GwStatus.startCheckingStatus()
   }
 
   async #onHide () {
