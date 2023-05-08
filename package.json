@@ -12,6 +12,11 @@
     "build": "webpack --config webpack.config.js",
     "test": "mocha './src/**/*.test.js'"
   },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ruuvi/ruuvi.gwui.html.git"
@@ -23,6 +28,9 @@
   },
   "homepage": "https://github.com/ruuvi/ruuvi.gwui.html#readme",
   "devDependencies": {
+    "@babel/core": "^7.21.8",
+    "@babel/preset-env": "^7.21.5",
+    "babel-loader": "^9.1.2",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "css-loader": "^6.7.3",

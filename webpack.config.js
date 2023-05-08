@@ -26,6 +26,13 @@ const config = {
   module: {
     rules: [
       {
+        test: /\.(js|mjs)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+        },
+      },
+      {
         test: /\.(woff|woff2)$/i,
         type: 'asset/resource',
       },
