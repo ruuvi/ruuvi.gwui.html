@@ -123,9 +123,9 @@ export class GwCfgHttp {
         this.http_user = utils.fetchStringKeyFromData(data, 'http_user', false, '')
       }
     }
-    if (this.use_http_ruuvi && this.use_http && this.http_url === GwCfgHttp.HTTP_URL_DEFAULT && this.http_auth.isNone()) {
+    if (this.use_http && this.http_url === GwCfgHttp.HTTP_URL_DEFAULT && this.http_auth.isNone()) {
+      this.use_http_ruuvi = true
       this.use_http = false
-      this.http_url = ''
     }
   }
 

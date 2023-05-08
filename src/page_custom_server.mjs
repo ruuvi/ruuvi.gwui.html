@@ -314,11 +314,9 @@ class PageCustomServer {
 
   async #onHide () {
     console.log(log_wrap('section#page-custom_server: onHide'))
-    if (this.#checkbox_use_http_ruuvi.isChecked()) {
-      this.#gwCfg.http.use_http_ruuvi = true
-    }
+    this.#gwCfg.http.use_http_ruuvi = this.#checkbox_use_http_ruuvi.isChecked()
+    this.#gwCfg.http.use_http = this.#checkbox_use_http.isChecked()
     if (this.#checkbox_use_http.isChecked()) {
-      this.#gwCfg.http.use_http = true
       this.#gwCfg.http.http_url = this.#input_http_url.getVal()
       if (this.#radio_http_data_format_ruuvi.isChecked()) {
         this.#gwCfg.http.http_data_format.setRuuvi()
@@ -341,7 +339,6 @@ class PageCustomServer {
         throw new Error(`Unknown http_auth`)
       }
     } else {
-      this.#gwCfg.http.use_http = false
       this.#gwCfg.http.http_url = ''
       this.#gwCfg.http.http_data_format.setRuuvi()
       this.#gwCfg.http.http_auth.setNone()

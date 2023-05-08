@@ -203,16 +203,16 @@ class Auth {
         if (authResp.header_ruuvi_prev_url) {
           logger.info(`CheckAuth: Open: ${authResp.header_ruuvi_prev_url}`)
           this.windowLocationReplace(authResp.header_ruuvi_prev_url)
+          this.promiseAuthFinishedResolved(false)
         } else {
           if (this.flagRedirectToPageAuth) {
             logger.info('CheckAuth: Open: page-auth')
             this.windowLocationReplace('#page-auth')
+            this.promiseAuthFinishedResolved(false)
           } else {
-            logger.info('CheckAuth: Open: page-welcome')
-            this.windowLocationReplace('#page-welcome')
+            this.promiseAuthFinishedResolved(true)
           }
         }
-        this.promiseAuthFinishedResolved(true)
         break
       case AuthStatus.Unauthorized:
         this.pageAuth.on_auth_unauthorized()
