@@ -99,6 +99,14 @@ g_nrf52_fw_ver = 'v1.0.0'
 g_ruuvi_dict = {
     'fw_ver': g_fw_ver,
     'nrf52_fw_ver': g_nrf52_fw_ver,
+    'storage': {
+        'client_cert.pem': False,
+        'client_key.pem': False,
+        'cert_http.pem': False,
+        'cert_stat.pem': False,
+        'cert_remote.pem': False,
+        'cert_mqtt.pem': False,
+    },
     'use_eth': False,
     'eth_dhcp': True,
     'eth_static_ip': "",
@@ -110,17 +118,23 @@ g_ruuvi_dict = {
     'remote_cfg_url': '',
     'remote_cfg_auth_type': 'none',
     'remote_cfg_refresh_interval_minutes': 0,
+    'remote_cfg_use_ssl_client_cert': False,
+    'remote_cfg_use_ssl_server_cert': False,
     'use_http_ruuvi': True,
     'use_http': True,
     'http_url': 'https://network.ruuvi.com/record',
     'http_auth': 'none',
     'http_data_format': 'ruuvi',
+    'http_use_ssl_client_cert': False,
+    'http_use_ssl_server_cert': False,
     # 'http_user': '',
     # 'http_bearer_token': '',
     # 'http_api_key': '',
     'use_http_stat': True,
     'http_stat_url': 'https://network.ruuvi.com/status',
     'http_stat_user': '',
+    'http_stat_use_ssl_client_cert': False,
+    'http_stat_use_ssl_server_cert': False,
     'use_mqtt': False,
     'mqtt_disable_retained_messages': False,
     'mqtt_transport': 'TCP',
@@ -129,6 +143,8 @@ g_ruuvi_dict = {
     'mqtt_prefix': 'ruuvi/AA:BB:CC:DD:EE:FF/',
     'mqtt_client_id': 'AA:BB:CC:DD:EE:FF',
     'mqtt_user': '',
+    'mqtt_use_ssl_client_cert': False,
+    'mqtt_use_ssl_server_cert': False,
     'lan_auth_type': LAN_AUTH_TYPE_DEFAULT,
     'lan_auth_user': LAN_AUTH_DEFAULT_USER,
     'lan_auth_pass': g_lan_auth_default_password_hashed,
@@ -650,7 +666,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             print(f'Error: Bad encrypted json: {ex}')
             return None
 
-        req_decrypted = self._ecdh_decrypt(aes_key, req_encrypted, req_iv, req_hash)
+        return self._ecdh_decrypt(aes_key, req_encrypted, req_iv, req_hash)
+
+
+    def _ecdh_decrypt_request_json(self, aes_key):
+        req_decrypted = self._ecdh_decrypt_request(aes_key)
 
         try:
             req_dict = json.loads(req_decrypted)
@@ -671,7 +691,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_software_update_stage
         global g_software_update_percentage
         global g_flag_access_from_lan
-        print('POST %s' % self.path)
+
+        parsed_url = urlparse(self.path)
+        query_params = parse_qs(parsed_url.query)
+
+        print(f'POST {parsed_url.path}, Query: {parsed_url.query}')
         if self.path == '/auth':
             if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI and g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_DEFAULT:
                 self._on_post_resp_401()
@@ -744,7 +768,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(resp)
         elif self.path == '/connect.json':
             resp = b''
-            req_dict = self._ecdh_decrypt_request(g_aes_key)
+            req_dict = self._ecdh_decrypt_request_json(g_aes_key)
             if req_dict is None:
                 resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
                 resp += f'Content-Length: 0\r\n'.encode('ascii')
@@ -796,7 +820,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             print(f'Response: {resp}')
             self.wfile.write(resp)
         elif self.path == '/ruuvi.json':
-            req_dict = self._ecdh_decrypt_request(g_aes_key)
+            req_dict = self._ecdh_decrypt_request_json(g_aes_key)
             if req_dict is None:
                 resp = b''
                 resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
@@ -909,6 +933,31 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             g_software_update_stage = SOFTWARE_UPDATE_STAGE_0_NONE
             g_software_update_percentage = 0
             content = '{}'
+            self._write_json_response(content)
+        elif parsed_url.path == '/ssl_cert':
+            file_name = query_params.get("file", [None])[0]
+            if file_name is None:
+                self._on_post_resp_400()
+                return
+            file_content = self._ecdh_decrypt_request(g_aes_key)
+
+            if file_name == 'client_cert.pem':
+                g_ruuvi_dict['storage']['client_cert.pem'] = True
+            elif file_name == 'client_key.pem':
+                g_ruuvi_dict['storage']['client_key.pem'] = True
+            elif file_name == 'cert_http.pem':
+                g_ruuvi_dict['storage']['cert_http.pem'] = True
+            elif file_name == 'cert_stat.pem':
+                g_ruuvi_dict['storage']['cert_stat.pem'] = True
+            elif file_name == 'cert_remote.pem':
+                g_ruuvi_dict['storage']['cert_remote.pem'] = True
+            elif file_name == 'cert_mqtt.pem':
+                g_ruuvi_dict['storage']['cert_mqtt.pem'] = True
+            else:
+                self._on_post_resp_400()
+                return
+
+            content = '{}'
             content_encoded = content.encode('utf-8')
             resp = b''
             resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
@@ -935,7 +984,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_simulation_mode
         global g_ruuvi_dict
         global g_login_session
-        print('DELETE %s' % self.path)
+
+        parsed_url = urlparse(self.path)
+        query_params = parse_qs(parsed_url.query)
+
+        print(f'DELETE {parsed_url.path}, Query: {parsed_url.query}')
         if self.path == '/auth':
             if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI and g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_DEFAULT:
                 self._on_post_resp_401()
@@ -965,6 +1018,39 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         elif self.path == '/connect.json':
             g_timestamp = None
             g_simulation_mode = SIMULATION_MODE_USER_DISCONNECT
+
+            content = '{}'
+            content_encoded = content.encode('utf-8')
+            resp = b''
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            resp += content_encoded
+            self.wfile.write(resp)
+        elif parsed_url.path == '/ssl_cert':
+            file_name = query_params.get("file", [None])[0]
+            if file_name is None:
+                self._on_post_resp_400()
+                return
+
+            if file_name == 'client_cert.pem':
+                g_ruuvi_dict['storage']['client_cert.pem'] = False
+            elif file_name == 'client_key.pem':
+                g_ruuvi_dict['storage']['client_key.pem'] = False
+            elif file_name == 'cert_http.pem':
+                g_ruuvi_dict['storage']['cert_http.pem'] = False
+            elif file_name == 'cert_stat.pem':
+                g_ruuvi_dict['storage']['cert_stat.pem'] = False
+            elif file_name == 'cert_remote.pem':
+                g_ruuvi_dict['storage']['cert_remote.pem'] = False
+            elif file_name == 'cert_mqtt.pem':
+                g_ruuvi_dict['storage']['cert_mqtt.pem'] = False
+            else:
+                self._on_post_resp_400()
+                return
 
             content = '{}'
             content_encoded = content.encode('utf-8')
