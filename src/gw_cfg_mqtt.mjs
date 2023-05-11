@@ -76,6 +76,8 @@ export class GwCfgMqtt {
   mqtt_pass = undefined
   mqtt_prefix = null
   mqtt_client_id = null
+  mqtt_use_ssl_client_cert = null
+  mqtt_use_ssl_server_cert = null
 
   parse (data) {
     this.use_mqtt = utils.fetchBoolKeyFromData(data, 'use_mqtt', true)
@@ -86,6 +88,8 @@ export class GwCfgMqtt {
     this.mqtt_user = utils.fetchStringKeyFromData(data, 'mqtt_user', true)
     this.mqtt_prefix = utils.fetchStringKeyFromData(data, 'mqtt_prefix', true)
     this.mqtt_client_id = utils.fetchStringKeyFromData(data, 'mqtt_client_id', true)
+    this.mqtt_use_ssl_client_cert = utils.fetchBoolKeyFromData(data, 'mqtt_use_ssl_client_cert', false, false)
+    this.mqtt_use_ssl_server_cert = utils.fetchBoolKeyFromData(data, 'mqtt_use_ssl_server_cert', false, false)
   }
 
   is_default() {
@@ -99,5 +103,7 @@ export class GwCfgMqtt {
     this.mqtt_transport.setTCP()
     this.mqtt_user = ''
     this.mqtt_pass = ''
+    this.mqtt_use_ssl_client_cert = false
+    this.mqtt_use_ssl_server_cert = false
   }
 }
