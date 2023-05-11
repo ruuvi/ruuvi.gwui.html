@@ -298,6 +298,13 @@ progress {
 }
 
 /*============================================*/
+.line-container {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
 .button-container {
 	width: 100%;
 	display: flex;
@@ -309,10 +316,10 @@ progress {
 }
 
 .button-container-centered {
-	-webkit-box-pack: center;
-	-ms-flex-pack: center;
-	justify-content: center;
-	margin-top: 70px;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	width: 100%;
 }
 
 .btn {

@@ -856,10 +856,10 @@
                 <div id="remote_cfg-options" class="indent hidden">
                     <div id="remote_cfg-options_url_title">
                         <div class="info-icon-left-column">
-							<span lang="en">Specify the URL of the json file containing the configuration or
-								the URL of the folder containing the json files for each Ruuvi Gateway:</span>
+                            <span lang="en">Specify the URL of the json file containing the configuration or
+                                the URL of the folder containing the json files for each Ruuvi Gateway:</span>
                             <span lang="fi">Anna määritykset sisältävän json-tiedoston URL-osoite tai sen kansion
-								URL-osoite, jossa on json-tiedostot jokaiselle Ruuvi Gatewaylle:</span>
+                                URL-osoite, jossa on json-tiedostot jokaiselle Ruuvi Gatewaylle:</span>
                         </div>
                         <a class="info-icon-button" href="#popup-info-icon-button-remote_cfg">i</a>
                     </div>
@@ -938,7 +938,98 @@
                                 </label>
                             </div>
                         </div>
+
+                        <div>&nbsp;</div>
+                        <div class="border"></div>
+                        <div>&nbsp;</div>
+
+                        <div>
+                            <div class="font-bold">
+                                <span lang="en">Client SSL certificate and private key</span>
+                                <span lang="fi">Asiakkaan SSL-varmenne ja yksityinen avain</span>
+                            </div>
+
+                            <div class="line-container">
+                                <label class="control control-checkbox">
+                                    <span lang="en">Use client SSL certificate</span>
+                                    <span lang="fi">Käytä asiakkaan SSL-varmennetta</span>
+                                    <input id="remote_cfg-use_client_ssl_cert" type="checkbox">
+                                    <span class="control_indicator"></span>
+                                </label>
+                            </div>
+                            <div>&nbsp;</div>
+                            <div class="button-container-centered">
+                                <div class="button-upload">
+                                    <label>
+                                        <input type="file" accept=".pem" class="hidden" hidden>
+                                    </label>
+                                    <button class="btn" id="remote_cfg-button_upload_client_cert" type="button">
+                                        <span lang="en">Upload cert</span>
+                                        <span lang="fi">Lataa sert</span>
+                                    </button>
+                                </div>
+                                <div class="button-upload">
+                                    <label>
+                                        <input type="file" accept=".pem" class="hidden" hidden>
+                                    </label>
+                                    <button class="btn" id="remote_cfg-button_upload_client_key" type="button">
+                                        <span lang="en">Upload key</span>
+                                        <span lang="fi">Latausavain</span>
+                                    </button>
+                                </div>
+                                <div>
+                                    <button class="btn" id="remote_cfg-button_remove_client_cert_and_key" type="button">
+                                        <span lang="en">Remove cert & key</span>
+                                        <span lang="fi">Poista sert ja avain</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>&nbsp;</div>
+                        <div class="border"></div>
+                        <div>&nbsp;</div>
+
+                        <div>
+                            <div class="font-bold">
+                                <span lang="en">Server SSL certificate</span>
+                                <span lang="fi">Palvelimen SSL-sertifikaatti</span>
+                            </div>
+
+                            <div class="line-container">
+                                <label class="control control-checkbox">
+                                    <span lang="en">Use custom SSL certificate for the server</span>
+                                    <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle</span>
+                                    <input id="remote_cfg-use_server_ssl_cert" type="checkbox">
+                                    <span class="control_indicator"></span>
+                                </label>
+                            </div>
+                            <div class="button-container-centered">
+                                <div class="button-upload">
+                                    <label>
+                                        <input type="file" accept=".pem" class="hidden" hidden>
+                                    </label>
+                                    <button class="btn" id="remote_cfg-button_upload_server_cert" type="button">
+                                        <span lang="en">Upload cert</span>
+                                        <span lang="fi">Lataa sert</span>
+                                    </button>
+                                </div>
+                                <div class="button-upload">
+                                    <button class="btn" id="remote_cfg-button_remove_server_cert" type="button">
+                                        <span lang="en">Remove cert</span>
+                                        <span lang="fi">Poista sert</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+
+                    <div>&nbsp;</div>
+                    <div class="border"></div>
+                    <div>&nbsp;</div>
+                    <div>&nbsp;</div>
+                    <div>&nbsp;</div>
 
                     <div class="block-centered">
                         <button class="btn" id="remote_cfg-button-download" type="button">
@@ -1720,6 +1811,95 @@
                         </div>
                     </label>
                 </div>
+
+                <div>&nbsp;</div>
+                <div class="border"></div>
+                <div>&nbsp;</div>
+
+                <div>
+                    <div class="font-bold">
+                        <span lang="en">Client SSL certificate and private key</span>
+                        <span lang="fi">Asiakkaan SSL-varmenne ja yksityinen avain</span>
+                    </div>
+
+                    <div class="line-container">
+                        <label class="control control-checkbox">
+                            <span lang="en">Use client SSL certificate</span>
+                            <span lang="fi">Käytä asiakkaan SSL-varmennetta</span>
+                            <input id="http_use_client_ssl_cert" type="checkbox">
+                            <span class="control_indicator"></span>
+                        </label>
+                    </div>
+
+                    <div>&nbsp;</div>
+
+                    <div class="button-container-centered">
+                        <div class="button-upload">
+                            <label>
+                                <input type="file" accept=".pem" class="hidden" hidden>
+                            </label>
+                            <button class="btn" id="http-button_upload_client_cert" type="button">
+                                <span lang="en">Upload cert</span>
+                                <span lang="fi">Lataa sert</span>
+                            </button>
+                        </div>
+                        <div class="button-upload">
+                            <label>
+                                <input type="file" accept=".pem" class="hidden" hidden>
+                            </label>
+                            <button class="btn" id="http-button_upload_client_key" type="button">
+                                <span lang="en">Upload key</span>
+                                <span lang="fi">Latausavain</span>
+                            </button>
+                        </div>
+                        <div>
+                            <button class="btn" id="http-button_remove_client_cert_and_key" type="button">
+                                <span lang="en">Remove cert & key</span>
+                                <span lang="fi">Poista sert ja avain</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>&nbsp;</div>
+                <div class="border"></div>
+                <div>&nbsp;</div>
+
+                <div>
+                    <div class="font-bold">
+                        <span lang="en">Server SSL certificate</span>
+                        <span lang="fi">Palvelimen SSL-sertifikaatti</span>
+                    </div>
+
+                    <div class="line-container">
+                        <label class="control control-checkbox">
+                            <span lang="en">Use custom SSL certificate for the server</span>
+                            <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle</span>
+                            <input id="http_use_server_ssl_cert" type="checkbox">
+                            <span class="control_indicator"></span>
+                        </label>
+                    </div>
+
+                    <div>&nbsp;</div>
+
+                    <div class="button-container-centered">
+                        <div class="button-upload">
+                            <label>
+                                <input type="file" accept=".pem" class="hidden" hidden>
+                            </label>
+                            <button class="btn" id="http-button_upload_server_cert" type="button">
+                                <span lang="en">Upload cert</span>
+                                <span lang="fi">Lataa sert</span>
+                            </button>
+                        </div>
+                        <div class="button-upload">
+                            <button class="btn" id="http-button_remove_server_cert" type="button">
+                                <span lang="en">Remove cert</span>
+                                <span lang="fi">Poista sert</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div>&nbsp;</div>
@@ -1868,6 +2048,96 @@
                         <input id="mqtt_prefix_custom" type="text" placeholder="Custom MQTT topic prefix" value="">
                     </label>
                 </div>
+
+                <div>&nbsp;</div>
+                <div class="border"></div>
+                <div>&nbsp;</div>
+
+                <div>
+                    <div class="font-bold">
+                        <span lang="en">Client SSL certificate and private key</span>
+                        <span lang="fi">Asiakkaan SSL-varmenne ja yksityinen avain</span>
+                    </div>
+
+                    <div class="line-container">
+                        <label class="control control-checkbox">
+                            <span lang="en">Use client SSL certificate</span>
+                            <span lang="fi">Käytä asiakkaan SSL-varmennetta</span>
+                            <input id="mqtt_use_client_ssl_cert" type="checkbox">
+                            <span class="control_indicator"></span>
+                        </label>
+                    </div>
+
+                    <div>&nbsp;</div>
+
+                    <div class="button-container-centered">
+                        <div class="button-upload">
+                            <label>
+                                <input type="file" accept=".pem" class="hidden" hidden>
+                            </label>
+                            <button class="btn" id="mqtt-button_upload_client_cert" type="button">
+                                <span lang="en">Upload cert</span>
+                                <span lang="fi">Lataa sert</span>
+                            </button>
+                        </div>
+                        <div class="button-upload">
+                            <label>
+                                <input type="file" accept=".pem" class="hidden" hidden>
+                            </label>
+                            <button class="btn" id="mqtt-button_upload_client_key" type="button">
+                                <span lang="en">Upload key</span>
+                                <span lang="fi">Latausavain</span>
+                            </button>
+                        </div>
+                        <div>
+                            <button class="btn" id="mqtt-button_remove_client_cert_and_key" type="button">
+                                <span lang="en">Remove cert & key</span>
+                                <span lang="fi">Poista sert ja avain</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>&nbsp;</div>
+                <div class="border"></div>
+                <div>&nbsp;</div>
+
+                <div>
+                    <div class="font-bold">
+                        <span lang="en">Server SSL certificate</span>
+                        <span lang="fi">Palvelimen SSL-sertifikaatti</span>
+                    </div>
+
+                    <div class="line-container">
+                        <label class="control control-checkbox">
+                            <span lang="en">Use custom SSL certificate for the server</span>
+                            <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle</span>
+                            <input id="mqtt_use_server_ssl_cert" type="checkbox">
+                            <span class="control_indicator"></span>
+                        </label>
+                    </div>
+
+                    <div>&nbsp;</div>
+
+                    <div class="button-container-centered">
+                        <div class="button-upload">
+                            <label>
+                                <input type="file" accept=".pem" class="hidden" hidden>
+                            </label>
+                            <button class="btn" id="mqtt-button_upload_server_cert" type="button">
+                                <span lang="en">Upload cert</span>
+                                <span lang="fi">Lataa sert</span>
+                            </button>
+                        </div>
+                        <div class="button-upload">
+                            <button class="btn" id="mqtt-button_remove_server_cert" type="button">
+                                <span lang="en">Remove cert</span>
+                                <span lang="fi">Poista sert</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div>&nbsp;</div>
@@ -1937,6 +2207,96 @@
                             </div>
                         </div>
                     </label>
+
+                    <div>&nbsp;</div>
+                    <div class="border"></div>
+                    <div>&nbsp;</div>
+
+                    <div>
+                        <div class="font-bold">
+                            <span lang="en">Client SSL certificate and private key</span>
+                            <span lang="fi">Asiakkaan SSL-varmenne ja yksityinen avain</span>
+                        </div>
+
+                        <div class="line-container">
+                            <label class="control control-checkbox">
+                                <span lang="en">Use client SSL certificate</span>
+                                <span lang="fi">Käytä asiakkaan SSL-varmennetta</span>
+                                <input id="stat_use_client_ssl_cert" type="checkbox">
+                                <span class="control_indicator"></span>
+                            </label>
+                        </div>
+
+                        <div>&nbsp;</div>
+
+                        <div class="button-container-centered">
+                            <div class="button-upload">
+                                <label>
+                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                </label>
+                                <button class="btn" id="stat-button_upload_client_cert" type="button">
+                                    <span lang="en">Upload cert</span>
+                                    <span lang="fi">Lataa sert</span>
+                                </button>
+                            </div>
+                            <div class="button-upload">
+                                <label>
+                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                </label>
+                                <button class="btn" id="stat-button_upload_client_key" type="button">
+                                    <span lang="en">Upload key</span>
+                                    <span lang="fi">Latausavain</span>
+                                </button>
+                            </div>
+                            <div>
+                                <button class="btn" id="stat-button_remove_client_cert_and_key" type="button">
+                                    <span lang="en">Remove cert & key</span>
+                                    <span lang="fi">Poista sert ja avain</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>&nbsp;</div>
+                    <div class="border"></div>
+                    <div>&nbsp;</div>
+
+                    <div>
+                        <div class="font-bold">
+                            <span lang="en">Server SSL certificate</span>
+                            <span lang="fi">Palvelimen SSL-sertifikaatti</span>
+                        </div>
+
+                        <div class="line-container">
+                            <label class="control control-checkbox">
+                                <span lang="en">Use custom SSL certificate for the server</span>
+                                <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle</span>
+                                <input id="stat_use_server_ssl_cert" type="checkbox">
+                                <span class="control_indicator"></span>
+                            </label>
+                        </div>
+
+                        <div>&nbsp;</div>
+
+                        <div class="button-container-centered">
+                            <div class="button-upload">
+                                <label>
+                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                </label>
+                                <button class="btn" id="stat-button_upload_server_cert" type="button">
+                                    <span lang="en">Upload cert</span>
+                                    <span lang="fi">Lataa sert</span>
+                                </button>
+                            </div>
+                            <div class="button-upload">
+                                <button class="btn" id="stat-button_remove_server_cert" type="button">
+                                    <span lang="en">Remove cert</span>
+                                    <span lang="fi">Poista sert</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="page-custom_server-http_stat_validation_error" class="rd hidden">
                         <div class="block-centered">
                             <span lang="en">Validation failed</span>

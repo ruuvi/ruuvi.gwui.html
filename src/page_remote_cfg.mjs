@@ -20,6 +20,7 @@ import GuiText from './gui_text.mjs'
 import Network from './network.mjs'
 import GuiInputTokenWithValidation from './gui_input_token_with_validation.mjs'
 import GuiButton from './gui_button.mjs'
+import GuiButtonUpload from "./gui_button_upload.mjs";
 
 class PageRemoteCfg {
   /** @type GwCfg */
@@ -55,6 +56,18 @@ class PageRemoteCfg {
   #div_auth_basic_options = new GuiDiv($('#conf-remote_cfg-auth_basic-options'))
   #div_auth_bearer_options = new GuiDiv($('#conf-remote_cfg-auth_bearer-options'))
 
+  #checkbox_remote_cfg_use_client_ssl_cert = new GuiCheckbox($('#remote_cfg-use_client_ssl_cert'))
+  #button_remote_cfg_upload_client_cert = new GuiButtonUpload($('#remote_cfg-button_upload_client_cert'),
+      async (fileTextContent) => this.#onUploadClientCert(fileTextContent))
+  #button_remote_cfg_upload_client_key = new GuiButtonUpload($('#remote_cfg-button_upload_client_key'),
+      async (fileTextContent) => this.#onUploadClientKey(fileTextContent))
+  #button_remote_cfg_remove_client_cert_and_key = new GuiButton($('#remote_cfg-button_remove_client_cert_and_key'))
+
+  #checkbox_remote_cfg_use_server_ssl_cert = new GuiCheckbox($('#remote_cfg-use_server_ssl_cert'))
+  #button_remote_cfg_upload_server_cert = new GuiButtonUpload($('#remote_cfg-button_upload_server_cert'),
+      async (fileTextContent) => this.#onUploadServerCertRemote(fileTextContent))
+  #button_remote_cfg_remove_server_cert = new GuiButton($('#remote_cfg-button_remove_server_cert'))
+
   constructor (gwCfg, auth) {
     this.#gwCfg = gwCfg
     this.#auth = auth
@@ -81,6 +94,11 @@ class PageRemoteCfg {
     this.#input_auth_basic_pass.on_change(() => this.#onChangeAuthBasicPass())
     this.#input_auth_bearer_token.on_change(() => this.#onChangeAuthBearerToken())
 
+    this.#checkbox_remote_cfg_use_client_ssl_cert.on_change(() => this.#onChangeUseClientSslCertRemote())
+    this.#checkbox_remote_cfg_use_server_ssl_cert.on_change(() => this.#onChangeUseServerSslCertRemote())
+    this.#button_remote_cfg_remove_client_cert_and_key.on_click(async () => this.#onRemoveClientCertAndKey())
+    this.#button_remote_cfg_remove_server_cert.on_click( async () => this.#onRemoveServerCertRemote())
+
     this.#button_continue.on_click(() => Navigation.change_page_to_update_schedule())
     this.#button_check.on_click(() => this.#onButtonCheck())
     this.#button_download.on_click(async () => this.#onButtonDownload())
@@ -101,6 +119,18 @@ class PageRemoteCfg {
         this.#checkbox_remote_cfg_use_auth.setChecked()
         this.#radio_remote_cfg_auth_type_bearer.setChecked()
       }
+
+      this.#checkbox_remote_cfg_use_client_ssl_cert.setState(this.#gwCfg.remote_cfg.remote_cfg_use_ssl_client_cert)
+      this.#checkbox_remote_cfg_use_server_ssl_cert.setState(this.#gwCfg.remote_cfg.remote_cfg_use_ssl_server_cert)
+      if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key)
+      {
+        this.#checkbox_remote_cfg_use_client_ssl_cert.setUnchecked()
+      }
+      if (!this.#gwCfg.info.storage_cert_remote)
+      {
+        this.#checkbox_remote_cfg_use_server_ssl_cert.setUnchecked()
+      }
+
       this.#sect_advanced.show()
     } else {
       this.#sect_advanced.hide()
@@ -135,6 +165,8 @@ class PageRemoteCfg {
           throw new Error('Unsupported remote_cfg_auth_type')
         }
       }
+      this.#gwCfg.remote_cfg.remote_cfg_use_ssl_client_cert = this.#checkbox_remote_cfg_use_client_ssl_cert.isChecked()
+      this.#gwCfg.remote_cfg.remote_cfg_use_ssl_server_cert = this.#checkbox_remote_cfg_use_server_ssl_cert.isChecked()
     } else {
       this.#gwCfg.remote_cfg.remote_cfg_url = ''
       this.#gwCfg.remote_cfg.remote_cfg_refresh_interval_minutes = 0
@@ -142,6 +174,8 @@ class PageRemoteCfg {
       this.#gwCfg.remote_cfg.remote_cfg_auth_basic_user = ''
       this.#gwCfg.remote_cfg.remote_cfg_auth_basic_pass = ''
       this.#gwCfg.remote_cfg.remote_cfg_auth_bearer_token = ''
+      this.#gwCfg.remote_cfg.remote_cfg_use_ssl_client_cert = false
+      this.#gwCfg.remote_cfg.remote_cfg_use_ssl_server_cert = false
     }
   }
 
@@ -190,6 +224,116 @@ class PageRemoteCfg {
     this.#on_remote_cfg_changed()
   }
 
+  async #onUploadClientCert(fileTextContent) {
+    GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
+    try {
+      await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=client_cert.pem', 5000, fileTextContent)
+      console.log(log_wrap('POST /ssl_cert: successful'))
+      this.#gwCfg.info.storage_client_cert = true
+    } catch (err) {
+      console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+      throw err
+    } finally {
+      GwStatus.startCheckingStatus()
+    }
+    this.#input_base_url.setValidationRequired()
+    this.#on_remote_cfg_changed()
+  }
+
+  async #onUploadClientKey(fileTextContent) {
+    GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
+    try {
+      await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=client_key.pem', 5000, fileTextContent)
+      console.log(log_wrap('POST /ssl_cert: successful'))
+      this.#gwCfg.info.storage_client_key = true
+    } catch (err) {
+      console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+      throw err
+    } finally {
+      GwStatus.startCheckingStatus()
+    }
+    this.#input_base_url.setValidationRequired()
+    this.#on_remote_cfg_changed()
+  }
+
+  async #onRemoveClientCertAndKey() {
+    GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
+    try {
+      try {
+        const data = { 'timestamp': Date.now() }
+        await Network.httpDeleteJson('/ssl_cert?file=client_cert.pem', 5000, JSON.stringify(data))
+        console.log(log_wrap('DELETE /ssl_cert: successful'))
+        this.#gwCfg.info.storage_client_cert = false
+      } catch (err) {
+        console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
+      }
+      try {
+        const data = { 'timestamp': Date.now() }
+        await Network.httpDeleteJson('/ssl_cert?file=client_key.pem', 5000, JSON.stringify(data))
+        console.log(log_wrap('DELETE /ssl_key: successful'))
+        this.#gwCfg.info.storage_client_key = false
+      } catch (err) {
+        console.log(log_wrap(`DELETE /ssl_key: failure: ${err}`))
+      }
+    } finally {
+      GwStatus.startCheckingStatus()
+    }
+    this.#input_base_url.setValidationRequired()
+    this.#on_remote_cfg_changed()
+  }
+
+  async #onUploadServerCertRemote(fileTextContent) {
+    GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
+    try {
+      await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=cert_remote.pem', 5000, fileTextContent)
+      console.log(log_wrap('POST /ssl_cert: successful'))
+      this.#gwCfg.info.storage_cert_remote = true
+    } catch (err) {
+      console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+      throw err
+    } finally {
+      GwStatus.startCheckingStatus()
+    }
+    this.#input_base_url.setValidationRequired()
+    this.#on_remote_cfg_changed()
+  }
+
+  async #onRemoveServerCertRemote() {
+    GwStatus.stopCheckingStatus()
+    await Network.waitWhileInProgress()
+    try {
+      try {
+        const data = { 'timestamp': Date.now() }
+        await Network.httpDeleteJson('/ssl_cert?file=cert_remote.pem', 5000, JSON.stringify(data))
+        console.log(log_wrap('DELETE /ssl_cert: successful'))
+        this.#gwCfg.info.storage_cert_remote = false
+      } catch (err) {
+        console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
+      }
+    } finally {
+      GwStatus.startCheckingStatus()
+    }
+    this.#input_base_url.setValidationRequired()
+    this.#on_remote_cfg_changed()
+  }
+
+  #onChangeUseClientSslCertRemote()
+  {
+    this.#input_base_url.setValidationRequired()
+    this.#on_remote_cfg_changed()
+  }
+
+  #onChangeUseServerSslCertRemote()
+  {
+    this.#input_base_url.setValidationRequired()
+    this.#on_remote_cfg_changed()
+  }
+
+
   async #remote_cfg_validate_url () {
     gui_loading.bodyClassLoadingAdd()
     GwStatus.stopCheckingStatus()
@@ -199,6 +343,8 @@ class PageRemoteCfg {
 
     let params = {
       input_url: this.#input_base_url,
+      use_ssl_client_cert: this.#checkbox_remote_cfg_use_client_ssl_cert.isChecked(),
+      use_ssl_server_cert: this.#checkbox_remote_cfg_use_server_ssl_cert.isChecked(),
       error: this.#text_status_error_desc,
       div_status: this.#div_status_error,
     }
@@ -286,6 +432,22 @@ class PageRemoteCfg {
       this.#input_auth_basic_user.clearValidationIcon()
       this.#input_auth_basic_pass.clearValidationIcon()
       this.#input_auth_bearer_token.clearValidationIcon()
+    }
+
+    this.#checkbox_remote_cfg_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_client_cert && this.#gwCfg.info.storage_client_key)
+    this.#button_remote_cfg_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_client_cert)
+    this.#button_remote_cfg_upload_client_key.setEnabled(!this.#gwCfg.info.storage_client_key)
+    this.#button_remote_cfg_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_client_cert || this.#gwCfg.info.storage_client_key)
+    if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key)
+    {
+      this.#checkbox_remote_cfg_use_client_ssl_cert.setUnchecked()
+    }
+    this.#checkbox_remote_cfg_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_cert_remote)
+    this.#button_remote_cfg_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_cert_remote)
+    this.#button_remote_cfg_remove_server_cert.setEnabled(this.#gwCfg.info.storage_cert_remote)
+    if (!this.#gwCfg.info.storage_cert_remote)
+    {
+      this.#checkbox_remote_cfg_use_server_ssl_cert.setUnchecked()
     }
 
     let h = ''
