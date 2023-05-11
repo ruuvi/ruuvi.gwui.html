@@ -55,21 +55,6 @@ export function fetchObjectKeyFromData (data, keyName, flagRequired = false, def
       (val) => {return typeof val === 'object'}, 'object')
 }
 
-export function fetchWithTimeout (url, options, timeout = 15000) {
-  const abortController = new AbortController()
-  const signal = abortController.signal
-
-  const timeoutPromise = new Promise((_, reject) => {
-    const timeoutId = setTimeout(() => {
-      clearTimeout(timeoutId)
-      abortController.abort()
-      reject(new Error(`Request timed out after ${timeout}ms`))
-    }, timeout)
-  })
-
-  return Promise.race([fetch(url, { ...options, signal }), timeoutPromise])
-}
-
 export async function networkDisconnect () {
   GwAP.stopRefreshingAP()
   GwStatus.stopCheckingStatus()
