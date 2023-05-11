@@ -11,6 +11,16 @@ import logging
 import ssl
 import sys
 
+def create_ssl_context(cert_file, key_file, ca_file):
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    if cert_file == key_file:
+        context.load_cert_chain(cert_file)
+    else:
+        context.load_cert_chain(cert_file, key_file)
+    context.load_verify_locations(ca_file)
+    context.verify_mode = ssl.CERT_REQUIRED
+    return context
+
 
 class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
     """ Main class to present webpages and authentication. """
@@ -112,7 +122,7 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
 
 def httpd_run(HandlerClass=BaseHTTPRequestHandler,
               ServerClass=ThreadingHTTPServer,
-              protocol="HTTP/1.0", port=8000, bind="", ssl_cert=None):
+              protocol="HTTP/1.0", port=8000, bind="", ssl_cert=None, ssl_key=None, ca_cert=None):
     """Test the HTTP request handler class.
 
     This runs an HTTP server on port 8000 (or the port argument).
@@ -123,7 +133,12 @@ def httpd_run(HandlerClass=BaseHTTPRequestHandler,
     HandlerClass.protocol_version = protocol
     with ServerClass(server_address, HandlerClass) as httpd:
         if ssl_cert is not None:
-            httpd.socket = ssl.wrap_socket(httpd.socket, certfile=ssl_cert, server_side=True)
+            if ssl_key is not None and ca_cert is not None:
+                context = create_ssl_context(ssl_cert, ssl_key, ca_cert)
+                httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+            else:
+                httpd.socket = ssl.wrap_socket(httpd.socket, certfile=ssl_cert, server_side=True)
+
         sa = httpd.socket.getsockname()
         serve_message = "Serving {conn_type} on {host} port {port} ({conn_type2}://{host}:{port}/) ..."
         conn_type = "HTTP" if ssl_cert is None else "HTTPS"
@@ -164,7 +179,15 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--ssl_cert",
-        help="Path to server.pem (for HTTPS)",
+        help="Path to server.pem (for HTTPS), if it contains private key, then --ssl_key is not needed",
+    )
+    parser.add_argument(
+        "--ssl_key",
+        help="Path to server_key.pem (for HTTPS)",
+    )
+    parser.add_argument(
+        "--ca_cert",
+        help="Path to ca_cert.pem (for HTTPS)",
     )
     parser.add_argument("--username", "-u", metavar="USERNAME")
     parser.add_argument("--password", "-p", metavar="PASSWORD")
@@ -177,4 +200,9 @@ if __name__ == "__main__":
         bearer_token=args.bearer_token,
         directory=args.directory,
     )
-    httpd_run(HandlerClass=handler_class, port=args.port, bind=args.bind, ssl_cert=args.ssl_cert)
+    httpd_run(HandlerClass=handler_class,
+              port=args.port,
+              bind=args.bind,
+              ssl_cert=args.ssl_cert,
+              ssl_key=args.ssl_key if args.ssl_key is not None else args.ssl_cert,
+              ca_cert=args.ca_cert)
