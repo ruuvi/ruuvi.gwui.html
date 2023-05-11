@@ -21,6 +21,14 @@ class GuiCheckbox {
     this.#obj.prop('disabled', false)
   }
 
+  setEnabled (flagEnabled) {
+    if (flagEnabled) {
+      this.enable()
+    } else {
+      this.disable()
+    }
+  }
+
   show () {
     this.#obj.show()
   }
