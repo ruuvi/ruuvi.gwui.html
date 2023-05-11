@@ -64,8 +64,8 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         print('POST headers: %s' % str(self.headers))
         logging.debug("POST: %s\nHeaders:\n%s\n\nBody:\n%s\n", str(self.path), str(self.headers), post_data.decode('utf-8'))
         self.send_response(200)
-        self.send_header('Ruuvi-HMAC-KEY', 'new_key')
-        self.send_header('X-Ruuvi-Gateway-Rate', '5')
+        # self.send_header('Ruuvi-HMAC-KEY', 'new_key')
+        # self.send_header('X-Ruuvi-Gateway-Rate', '5')
         self.send_header('Content-Length', '0')
         self.end_headers()
 
