@@ -8,10 +8,10 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const config = {
-  mode: 'development',
-  devtool: 'source-map',
+  mode: 'production',
+  devtool: false,
   optimization: {
-    minimize: false,
+    minimize: true,
   },
   entry: {
     ruuvi: {
@@ -26,8 +26,15 @@ const config = {
   module: {
     rules: [
       {
+        test: /\.(js|mjs)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+        },
+      },
+      {
         test: /\.(woff|woff2)$/i,
-        type: 'asset/resource',
+        type: 'asset/inline'
       },
       {
         test: /\.s[ac]ss$/i,
@@ -46,6 +53,15 @@ const config = {
       scriptLoading: 'blocking',
       inject: 'head',
       favicon: path.resolve(__dirname, 'src/favicon.ico'),
+      minify: {
+        collapseWhitespace: true,
+        keepClosingSlash: true,
+        removeComments: true,
+        removeRedundantAttributes: false, // do not remove type="text"
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        useShortDoctype: true
+      }
     }),
   ]
 }
