@@ -10,6 +10,9 @@ const __dirname = dirname(__filename)
 const config = {
   mode: 'development',
   devtool: 'source-map',
+  optimization: {
+    minimize: false,
+  },
   entry: {
     ruuvi: {
       import: [path.resolve(__dirname, 'src/ruuvi.js')],
@@ -19,9 +22,6 @@ const config = {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js',
     clean: true,
-  },
-  optimization: {
-    minimize: true,
   },
   module: {
     rules: [

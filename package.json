@@ -9,7 +9,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js",
+    "build-dev": "webpack --config webpack.dev.js",
+    "build-prod": "webpack --config webpack.prod.js",
     "test": "mocha './src/**/*.test.js'"
   },
   "repository": {
