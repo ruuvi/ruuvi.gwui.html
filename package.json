@@ -43,7 +43,6 @@
   "devDependencies": {
     "@babel/core": "^7.21.8",
     "@babel/preset-env": "^7.21.5",
-    "babel-loader": "^9.1.2",
     "babel-plugin-transform-object-hasown": "^1.1.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
@@ -65,6 +64,7 @@
     "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",
     "elliptic": "^6.5.4",
-    "jquery": "^3.6.4"
+    "jquery": "^3.6.4",
+    "babel-loader": "^9.1.2"
   }
 }
