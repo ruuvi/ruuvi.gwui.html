@@ -8,8 +8,11 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const config = {
-  mode: 'development',
-  devtool: 'source-map',
+  mode: 'production',
+  devtool: false,
+  optimization: {
+    minimize: true,
+  },
   entry: {
     ruuvi: {
       import: [path.resolve(__dirname, 'src/ruuvi.js')],
@@ -19,9 +22,6 @@ const config = {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js',
     clean: true,
-  },
-  optimization: {
-    minimize: true,
   },
   module: {
     rules: [
@@ -34,7 +34,7 @@ const config = {
       },
       {
         test: /\.(woff|woff2)$/i,
-        type: 'asset/resource',
+        type: 'asset/inline'
       },
       {
         test: /\.s[ac]ss$/i,
@@ -53,6 +53,15 @@ const config = {
       scriptLoading: 'blocking',
       inject: 'head',
       favicon: path.resolve(__dirname, 'src/favicon.ico'),
+      minify: {
+        collapseWhitespace: true,
+        keepClosingSlash: true,
+        removeComments: true,
+        removeRedundantAttributes: false, // do not remove type="text"
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        useShortDoctype: true
+      }
     }),
   ]
 }
