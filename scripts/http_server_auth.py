@@ -17,8 +17,10 @@ def create_ssl_context(cert_file, key_file, ca_file):
         context.load_cert_chain(cert_file)
     else:
         context.load_cert_chain(cert_file, key_file)
-    context.load_verify_locations(ca_file)
-    context.verify_mode = ssl.CERT_REQUIRED
+
+    if ca_file is not None:
+        context.load_verify_locations(ca_file)
+        context.verify_mode = ssl.CERT_REQUIRED
     return context
 
 
@@ -64,8 +66,8 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         print('POST headers: %s' % str(self.headers))
         logging.debug("POST: %s\nHeaders:\n%s\n\nBody:\n%s\n", str(self.path), str(self.headers), post_data.decode('utf-8'))
         self.send_response(200)
-        # self.send_header('Ruuvi-HMAC-KEY', 'new_key')
-        # self.send_header('X-Ruuvi-Gateway-Rate', '5')
+        self.send_header('Ruuvi-HMAC-KEY', 'new_key')
+        self.send_header('X-Ruuvi-Gateway-Rate', '5')
         self.send_header('Content-Length', '0')
         self.end_headers()
 
@@ -133,11 +135,11 @@ def httpd_run(HandlerClass=BaseHTTPRequestHandler,
     HandlerClass.protocol_version = protocol
     with ServerClass(server_address, HandlerClass) as httpd:
         if ssl_cert is not None:
-            if ssl_key is not None and ca_cert is not None:
+            if ssl_key is not None:
                 context = create_ssl_context(ssl_cert, ssl_key, ca_cert)
-                httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
             else:
-                httpd.socket = ssl.wrap_socket(httpd.socket, certfile=ssl_cert, server_side=True)
+                context = create_ssl_context(ssl_cert, ssl_cert, ca_cert)
+            httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
 
         sa = httpd.socket.getsockname()
         serve_message = "Serving {conn_type} on {host} port {port} ({conn_type2}://{host}:{port}/) ..."
