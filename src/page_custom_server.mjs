@@ -967,13 +967,17 @@ class PageCustomServer {
         }
 
         this.#checkbox_http_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_client_cert && this.#gwCfg.info.storage_client_key)
+        this.#button_http_upload_client_cert.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_http_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_client_cert)
+
+        this.#button_http_upload_client_key.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_http_upload_client_key.setEnabled(!this.#gwCfg.info.storage_client_key)
         this.#button_http_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_client_cert || this.#gwCfg.info.storage_client_key)
         if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
             this.#checkbox_http_use_client_ssl_cert.setUnchecked()
         }
         this.#checkbox_http_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_cert_http)
+        this.#button_http_upload_server_cert.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_http_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_cert_http)
         this.#button_http_remove_server_cert.setEnabled(this.#gwCfg.info.storage_cert_http)
         if (!this.#gwCfg.info.storage_cert_http) {
@@ -981,13 +985,16 @@ class PageCustomServer {
         }
 
         this.#checkbox_stat_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_client_cert && this.#gwCfg.info.storage_client_key)
+        this.#button_stat_upload_client_cert.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_stat_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_client_cert)
+        this.#button_stat_upload_client_key.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_stat_upload_client_key.setEnabled(!this.#gwCfg.info.storage_client_key)
         this.#button_stat_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_client_cert || this.#gwCfg.info.storage_client_key)
         if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
             this.#checkbox_stat_use_client_ssl_cert.setUnchecked()
         }
         this.#checkbox_stat_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_cert_stat)
+        this.#button_stat_upload_server_cert.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_stat_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_cert_stat)
         this.#button_stat_remove_server_cert.setEnabled(this.#gwCfg.info.storage_cert_stat)
         if (!this.#gwCfg.info.storage_cert_stat) {
@@ -995,13 +1002,16 @@ class PageCustomServer {
         }
 
         this.#checkbox_mqtt_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_client_cert && this.#gwCfg.info.storage_client_key)
+        this.#button_mqtt_upload_client_cert.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_mqtt_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_client_cert)
+        this.#button_mqtt_upload_client_key.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_mqtt_upload_client_key.setEnabled(!this.#gwCfg.info.storage_client_key)
         this.#button_mqtt_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_client_cert || this.#gwCfg.info.storage_client_key)
         if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
             this.#checkbox_mqtt_use_client_ssl_cert.setUnchecked()
         }
         this.#checkbox_mqtt_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_cert_mqtt)
+        this.#button_mqtt_upload_server_cert.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_mqtt_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_cert_mqtt)
         this.#button_mqtt_remove_server_cert.setEnabled(this.#gwCfg.info.storage_cert_mqtt)
         if (!this.#gwCfg.info.storage_cert_mqtt) {

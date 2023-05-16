@@ -9,6 +9,7 @@ export class GwCfgInfo {
   fw_ver = null
   nrf52_fw_ver = null
   gw_mac = null
+  storage_ready = false
   storage_client_cert = false
   storage_client_key = false
   storage_cert_http = false
@@ -25,6 +26,7 @@ export class GwCfgInfo {
     if (null == storage) {
       return
     }
+    this.storage_ready = utils.fetchBoolKeyFromData(storage, 'storage_ready', false, false)
     this.storage_client_cert = utils.fetchBoolKeyFromData(storage, 'client_cert.pem', false, false)
     this.storage_client_key = utils.fetchBoolKeyFromData(storage, 'client_key.pem', false, false)
     this.storage_cert_http = utils.fetchBoolKeyFromData(storage, 'cert_http.pem', false, false)

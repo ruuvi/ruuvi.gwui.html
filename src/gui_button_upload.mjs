@@ -3,11 +3,13 @@
  * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
  */
 import GuiObj from "./gui_obj.mjs";
+import PageInitSslStorage from "./page_init_ssl_storage.mjs";
 
 class GuiButtonUpload extends GuiObj {
     #obj
     #input
     #cb_upload
+    #is_storage_ready = false
 
     constructor(obj, cb_upload) {
         super('GuiButtonUpload', obj, 'BUTTON', 'type', 'button')
@@ -49,8 +51,16 @@ class GuiButtonUpload extends GuiObj {
         this.#input.on("change", async (event) => this.#onChangeFileInput(event))
 
         this.#obj.click((e) => {
+            if (!this.#is_storage_ready) {
+                PageInitSslStorage.show()
+                return
+            }
             this.#input.click();
         })
+    }
+
+    setStorageReady(is_storage_ready) {
+        this.#is_storage_ready = is_storage_ready
     }
 
     #onChangeFileInput(event) {

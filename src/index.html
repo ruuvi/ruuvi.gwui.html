@@ -2652,6 +2652,71 @@
             </div>
         </section>
 
+        <section id="section-init_ssl_storage" class="info-icon-overlay hidden">
+            <div class="info-icon-popup">
+                <h1>
+                    <span lang="en">SSL certificate storage initialisation required</span>
+                    <span lang="fi">SSL-varmenteen tallennuksen alustus vaaditaan</span>
+                </h1>
+
+                <a href="" id="section-init_ssl_storage-button-close" class="btn-back info-icon-popup-close">&times;</a>
+
+                <div class="info-icon-content">
+                    <p>
+                        <span lang="en">The partition table must be overwritten in order to initialise
+                            the SSL certificate store. This is a potentially unsafe operation,
+                            please do not unplug or restart the gateway. It only takes a second to update
+                            the partition table and the gateway will automatically reboot.
+                        </span>
+                        <span lang="fi">Osiotaulukko on korvattava SSL-varmennevaraston alustamiseksi.
+                            Tämä on mahdollisesti vaarallinen toiminta, älä irrota tai käynnistä yhdyskäytävää
+                            uudelleen. Osiotaulukon päivittäminen kestää vain sekunnin ja yhdyskäytävä käynnistyy
+                            automaattisesti uudelleen.
+                        </span>
+                    </p>
+                </div>
+
+                <div>&nbsp;</div>
+                <div>&nbsp;</div>
+
+                <div id="section-init_ssl_storage-status-ok" class="gr hidden">
+                    <div class="block-centered">
+                        <span lang="en">SSL storage has been successfully initialised.</span>
+                        <span lang="fi">SSL-tallennus on alustettu onnistuneesti.</span>
+                    </div>
+                </div>
+                <div id="section-init_ssl_storage-status-rebooting" class="hidden">
+                    <div>&nbsp;</div>
+                    <div class="block-centered">
+                        <span lang="en">The gateway is now being rebooted. Reconnection will take place in
+                            <span class="section-init_ssl_storage-status-time_until_reconnect"></span> seconds.</span>
+                        <span lang="fi">Yhdyskäytävää käynnistetään nyt uudelleen. Uudelleenkytkentä tapahtuu
+                            <span class="section-init_ssl_storage-status-time_until_reconnect"></span> sekunnin kuluttua.</span>
+                    </div>
+                </div>
+                <div id="section-init_ssl_storage-status-error" class="rd hidden">
+                    <div class="block-centered">
+                        <span lang="en">Storage initialisation error.</span>
+                        <span lang="fi">Tallennustilan alustusvirhe.</span>
+                    </div>
+                    <div id="section-init_ssl_storage-status-error-desc" class="block-centered">
+                    </div>
+                </div>
+
+                <div id="section-init_ssl_storage-buttons" class="button-container-centered">
+                    <a href="" id="section-init_ssl_storage-button-back" class="btn-back">
+                        <span lang="en">Back</span>
+                        <span lang="fi">Edellinen</span>
+                    </a>
+                    <button id="section-init_ssl_storage-button-init_storage" class="btn">
+                        <span lang="en">Initialise storage</span>
+                        <span lang="fi">Alusta tallennus</span>
+                    </button>
+                </div>
+
+                <div>&nbsp;</div>
+            </div>
+        </section>
 
         <div class="hidden overlay-container" id="overlay-no_gateway_connection">
             <div class="overlay">

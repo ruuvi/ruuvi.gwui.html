@@ -432,13 +432,16 @@ class PageRemoteCfg {
         }
 
         this.#checkbox_remote_cfg_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_client_cert && this.#gwCfg.info.storage_client_key)
+        this.#button_remote_cfg_upload_client_cert.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_remote_cfg_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_client_cert)
+        this.#button_remote_cfg_upload_client_key.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_remote_cfg_upload_client_key.setEnabled(!this.#gwCfg.info.storage_client_key)
         this.#button_remote_cfg_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_client_cert || this.#gwCfg.info.storage_client_key)
         if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
             this.#checkbox_remote_cfg_use_client_ssl_cert.setUnchecked()
         }
         this.#checkbox_remote_cfg_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_cert_remote)
+        this.#button_remote_cfg_upload_server_cert.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_remote_cfg_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_cert_remote)
         this.#button_remote_cfg_remove_server_cert.setEnabled(this.#gwCfg.info.storage_cert_remote)
         if (!this.#gwCfg.info.storage_cert_remote) {

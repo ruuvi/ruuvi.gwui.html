@@ -100,6 +100,7 @@ g_ruuvi_dict = {
     'fw_ver': g_fw_ver,
     'nrf52_fw_ver': g_nrf52_fw_ver,
     'storage': {
+        'storage_ready': False,
         'client_cert.pem': False,
         'client_key.pem': False,
         'cert_http.pem': False,
@@ -907,6 +908,20 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
             resp += content_encoded
+            self.wfile.write(resp)
+        elif self.path == '/init_storage':
+            g_ruuvi_dict['storage']['storage_ready'] = True
+            resp = b''
+            content = '{}'
+            content_encoded = content.encode('utf-8')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            resp += content_encoded
+            time.sleep(1.5)
             self.wfile.write(resp)
         elif self.path == '/fw_update.json':
             content_length = int(self.headers['Content-Length'])
