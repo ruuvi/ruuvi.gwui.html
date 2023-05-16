@@ -5,11 +5,12 @@
 
 import $ from 'jquery'
 import GuiText from './gui_text.mjs'
+import GuiSpan from "./gui_span.mjs"
 
 class AppInfo {
   #app_header = new GuiText($('#app-header'))
-  #app_footer_fw_ver = new GuiText($('#app-footer-fw_ver'))
-  #app_footer_fw_ver_nrf52 = new GuiText($('#app-footer-fw_ver_nrf52'))
+  #app_footer_fw_ver = new GuiSpan($('#app-footer-fw_ver'))
+  #app_footer_fw_ver_nrf52 = new GuiSpan($('#app-footer-fw_ver_nrf52'))
   #app_document = document
 
   setGatewayNameSuffix (gatewayNameSuffix) {

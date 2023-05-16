@@ -100,16 +100,9 @@ header {
 			margin: 0;
 		}
 
-		div div {
-			display: inline-block;
+		div.app-footer-fw_ver {
+			font-size: x-small;
 		}
-	}
-
-	&-footer-fw_ver {
-		font-size: x-small;
-	}
-	&-footer-fw_ver_nrf52 {
-		font-size: x-small;
 	}
 }
 
