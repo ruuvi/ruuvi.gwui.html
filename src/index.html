@@ -2105,12 +2105,13 @@
             <div class="border"></div>
             <div id="page-scanning-advanced-button" class="btn-dropdown">
                 <h2 class="font-bold">
-                    <span lang="en">Customise</span>
-                    <span lang="fi">Mukauta</span>
+                    <span lang="en">Advanced settings</span>
+                    <span lang="fi">Edistyneet asetukset</span>
                 </h2>
                 <div class="btn-dropdown-arrow-down"></div>
                 <div class="btn-dropdown-arrow-up hidden"></div>
             </div>
+
             <div class="border"></div>
 
             <div id="page-scanning-advanced-dropdown" class="hidden">
@@ -2176,6 +2177,11 @@
 
                 <div class="border"></div>
 
+                <div class="font-bold">
+                    <span lang="en">Filtering</span>
+                    <span lang="fi">Suodatus</span>
+                </div>
+
                 <div>
                     <label class="control control-checkbox">
                         <span lang="en">Enable Bluetooth sensor filtering</span>
@@ -2183,20 +2189,36 @@
                         <input id="scan_filtering" type="checkbox">
                         <span class="control_indicator"></span>
                     </label>
+                    <div class="indent">
+                        <span lang="en">Bluetooth sensor filtering applies to the listening settings selected above.
+                            Enabling this feature allows you to whitelist or blacklist sensors based on their MAC addresses.
+                        </span>
+                        <span lang="fi">Bluetooth-anturin suodatus koskee yllä valittuja kuunteluasetuksia.
+                            Ottamalla tämän ominaisuuden käyttöön voit lisätä anturit sallittujen tai mustalle
+                            listalle niiden MAC-osoitteiden perusteella.
+                        </span>
+                    </div>
+
+                    <div>&nbsp;</div>
+                    <div>&nbsp;</div>
+
                     <div id="scan_filtering-options" class="indent hidden">
                         <div>
                             <div>
                                 <label class="control control-radio">
-                                    <span lang="en">Discard Listed Sensors</span>
-                                    <span lang="fi">Hävitä luetellut anturit</span>
-                                    <input type="radio" name="scan_filtering-type" value="scan_filtering-type_discard"
-                                           checked="checked">
+                                    <span lang="en">Use whitelist mode</span>
+                                    <span lang="fi">Käytä sallittujen luettelotilaa</span>
+                                    <input type="radio" name="scan_filtering-type" value="scan_filtering-type_allow">
                                     <span class="control_indicator"></span>
                                 </label>
                             </div>
-                            <div id="scan_filtering-type_discard-desc" class="indent">
-                                <span lang="en">Choose this mode to configure the gateway to collect data from all Bluetooth sensors, excluding those with MAC addresses in the excluded list.</span>
-                                <span lang="fi">Valitse tämä tila määrittääksesi yhdyskäytävän keräämään tietoja kaikista Bluetooth-antureista, pois lukien ne, joiden MAC-osoite on poissuljetussa luettelossa.</span>
+                            <div id="scan_filtering-type_allow-desc" class="indent">
+                                <span lang="en">In this mode, the Ruuvi Gateway only relays data from the selected
+                                    sensors and rejects all other Bluetooth devices or sensors it hears.
+                                </span>
+                                <span lang="fi">Tässä tilassa Ruuvi Gateway välittää tietoja vain valituista
+                                    antureista ja hylkää kaikki muut kuulemansa Bluetooth-laitteet tai anturit.
+                                </span>
                             </div>
                         </div>
 
@@ -2205,85 +2227,74 @@
                         <div>
                             <div>
                                 <label class="control control-radio">
-                                    <span lang="en">Allow Listed Sensors</span>
-                                    <span lang="fi">Salli luetellut anturit</span>
-                                    <input type="radio" name="scan_filtering-type" value="scan_filtering-type_allow">
+                                    <span lang="en">Use blacklist mode</span>
+                                    <span lang="fi">Käytä musta lista -tilaa</span>
+                                    <input type="radio" name="scan_filtering-type" value="scan_filtering-type_discard"
+                                           checked="checked">
                                     <span class="control_indicator"></span>
                                 </label>
                             </div>
-                            <div id="scan_filtering-type_allow-desc" class="indent">
-                                <span lang="en">Choose this mode to configure the gateway to collect data exclusively from Bluetooth sensors with specific MAC addresses in the permitted list.</span>
-                                <span lang="fi">Valitse tämä tila määrittääksesi yhdyskäytävän keräämään tietoja yksinomaan Bluetooth-antureista, joiden MAC-osoitteet ovat sallittujen luettelossa.</span>
+                            <div id="scan_filtering-type_discard-desc" class="indent">
+                                <span lang="en">In this mode, the Ruuvi Gateway rejects data from the selected sensors
+                                    and allows data from other Bluetooth devices or sensors
+                                    according to the listening selection.
+                                </span>
+                                <span lang="fi">Tässä tilassa Ruuvi Gateway hylkää datan valituilta antureilta ja
+                                    sallii tiedon muista Bluetooth-laitteista tai antureista kuunteluvalinnan mukaan.
+                                </span>
                             </div>
                         </div>
 
-                        <div class="border indent"></div>
+                        <div>&nbsp;</div>
+                        <div>&nbsp;</div>
 
-                        <div class="indent">
-                            <span lang="en">Configured filters:</span>
-                            <span lang="fi">Määritetyt suodattimet:</span>
+                        <div class="indent font-bold">
+                            <span lang="en">Filtered sensors (or other Bluetooth devices)</span>
+                            <span lang="fi">Suodatetut anturit (tai muut Bluetooth-laitteet)</span>
                         </div>
 
+                        <div>&nbsp;</div>
+
                         <div class="indent">
-                            <table id="page_scanning-list_of_configured_sensors">
+                            <span lang="en">Below you can see the list of Bluetooth devices heard by Ruuvi Gateway.
+                                Select the checkbox to assign the device to the filter list.
+                                Click the Refresh list button at the end of the list to update the list.
+                                You can also add a sensor to the list by entering its MAC address and clicking Add.
+                            </span>
+                            <span lang="fi">Alta näet listan Ruuvi Gatewayn kuulemista Bluetooth-laitteista.
+                                Valitse valintaruutu liittääksesi laitteen suodatinluetteloon.
+                                Päivitä luettelo napsauttamalla luettelon lopussa olevaa Päivitä luettelo -painiketta.
+                                Voit myös lisätä anturin luetteloon kirjoittamalla sen MAC-osoitteen
+                                ja napsauttamalla Lisää.
+                            </span>
+                        </div>
+
+                        <div>&nbsp;</div>
+
+                        <div class="indent">
+                            <table id="page_scanning-list_of_mac" class="page_scanning-list_of_mac">
                             </table>
-                        </div>
-
-                        <div class="border indent"></div>
-
-                        <div class="container indent">
-                            <div>
-                                <span lang="en">Bluetooth sensors online:</span>
-                                <span lang="fi">Bluetooth-anturit verkossa:</span>
-                            </div>
-                            <button class="btn" id="scan_filter_refresh" type="button">
-                                <span lang="en">REFRESH</span>
-                                <span lang="fi">VIRKISTÄÄ</span>
-                            </button>
-                        </div>
-
-                        <div class="container indent">
-                            <div>
-                                <span lang="en">Note that only sensors that have passed the filter
-                                    will be displayed in the Online Sensors list.
-                                    To view all sensors, you need to disable the filter and save the configuration.</span>
-                                <span lang="fi">Huomaa, että vain suodattimen läpäisseet anturit näkyvät
-                                    Online Sensors -luettelossa. Jos haluat tarkastella kaikkia antureita,
-                                    sinun on poistettava suodatin käytöstä ja tallennettava asetukset.</span>
-                            </div>
-                        </div>
-
-                        <div class="indent">
-                            <table id="page_scanning-list_of_online_sensors">
-                            </table>
-                        </div>
-
-                        <div class="border indent"></div>
-
-                        <div class="indent">
-                            <span lang="en">Adding Bluetooth sensors manually by MAC address:</span>
-                            <span lang="fi">Bluetooth-anturien lisääminen manuaalisesti MAC-osoitteen perusteella:</span>
                         </div>
 
                         <div class="indent">
                             <table id="page_scanning-add_filter_manually">
                                 <tr>
-                                    <td class="page_scanning-list_of_configured_sensors-column_mac">
+                                    <td class="page_scanning-list_of_mac-column_mac">
                                         <div class="input-with_validity_check">
                                             <div>
                                                 <label>
-                                                    <input id="scan_add_filter" type="text" value="">
+                                                    <input id="scan_filter_add_mac" type="text" value="">
                                                 </label>
                                             </div>
                                             <div class="input-with_validity_check-icon">
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="page_scanning-list_of_configured_sensors-column_button">
+                                    <td class="page_scanning-list_of_mac-column_checkbox">
                                         <div>
                                             <button id="scan_filter-button-add_manually" class="btn">
-                                                <span lang="en">ADD</span>
-                                                <span lang="fi">LISÄTÄ</span>
+                                                <span lang="en">Add</span>
+                                                <span lang="fi">Lisätä</span>
                                             </button>
                                         </div>
                                     </td>
@@ -2291,12 +2302,14 @@
                             </table>
                         </div>
 
+                        <div class="container indent">
+                            <button id="scan_filter_refresh" class="button-link underlined">
+                                <span lang="en">Refresh list</span>
+                                <span lang="fi">Päivitä lista</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-
-
-                <div class="border"></div>
-
             </div>
 
             <div id="popup-info-icon-scanning" class="info-icon-overlay">

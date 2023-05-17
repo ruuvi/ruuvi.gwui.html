@@ -159,9 +159,9 @@ g_ruuvi_dict = {
     'scan_channel_39': True,
     'scan_filter_allow_listed': False,
     'scan_filter_list': [
-        'AA:BB:CC:00:00:01',
+        # 'AA:BB:CC:00:00:01',
         # 'AA:BB:CC:00:00:03',
-        'AA:BB:CC:00:00:02'
+        # 'AA:BB:CC:00:00:02'
     ]
 }
 

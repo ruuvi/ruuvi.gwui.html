@@ -119,10 +119,14 @@ header {
 	cursor: pointer;
 	font-family: inherit;
 	font-size: inherit;
-	color: inherit;
+	color: var(--color-primary);
 	padding: 0;
 	margin: 0;
 	outline: none;
+}
+
+.underlined {
+	text-decoration: underline;
 }
 
 #language-switcher {
@@ -162,7 +166,6 @@ header {
 
 .language-switcher > ul > li > button {
 	cursor: default;
-	color: var(--color-primary);
 	padding: 0;
 	margin: 0;
 	border: 0;
@@ -898,8 +901,32 @@ table {
 	clear: both;
 }
 
-.page_scanning-list_of_configured_sensors-column_button {
+table.page_scanning-list_of_mac {
+	border-collapse: collapse;
+	border-spacing: 0 20px;
+}
+
+tr.page_scanning-list_of_mac-row {
+	border-bottom: 1px solid var(--color-divider);
+}
+
+td.page_scanning-list_of_mac-column_mac {
+	font-family: monospace;
+	font-weight: 600;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+td.page_scanning-list_of_mac-column_checkbox {
+	width: 16px;
 	text-align: right;
+	vertical-align: middle;
+}
+
+td.page_scanning-list_of_mac-column_checkbox span.control_indicator {
+	display: block;
+	position: absolute;
+	top: 0;
 }
 
 .page-software_update-version_info {
