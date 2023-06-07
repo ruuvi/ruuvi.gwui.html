@@ -101,12 +101,20 @@ g_ruuvi_dict = {
     'nrf52_fw_ver': g_nrf52_fw_ver,
     'storage': {
         'storage_ready': False,
-        'client_cert.pem': False,
-        'client_key.pem': False,
-        'cert_http.pem': False,
-        'cert_stat.pem': False,
-        'cert_remote.pem': False,
-        'cert_mqtt.pem': False,
+
+        'http_cli_cert': False,
+        'http_cli_key': False,
+        'stat_cli_cert': False,
+        'stat_cli_key': False,
+        'rcfg_cli_cert': False,
+        'rcfg_cli_key': False,
+        'mqtt_cli_cert': False,
+        'mqtt_cli_key': False,
+
+        'http_srv_cert': False,
+        'stat_srv_cert': False,
+        'rcfg_srv_cert': False,
+        'mqtt_srv_cert': False,
     },
     'use_eth': False,
     'eth_dhcp': True,
@@ -956,18 +964,30 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 return
             file_content = self._ecdh_decrypt_request(g_aes_key)
 
-            if file_name == 'client_cert.pem':
-                g_ruuvi_dict['storage']['client_cert.pem'] = True
-            elif file_name == 'client_key.pem':
-                g_ruuvi_dict['storage']['client_key.pem'] = True
-            elif file_name == 'cert_http.pem':
-                g_ruuvi_dict['storage']['cert_http.pem'] = True
-            elif file_name == 'cert_stat.pem':
-                g_ruuvi_dict['storage']['cert_stat.pem'] = True
-            elif file_name == 'cert_remote.pem':
-                g_ruuvi_dict['storage']['cert_remote.pem'] = True
-            elif file_name == 'cert_mqtt.pem':
-                g_ruuvi_dict['storage']['cert_mqtt.pem'] = True
+            if file_name == 'http_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = True
+            elif file_name == 'stat_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = True
+            elif file_name == 'rcfg_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = True
+            elif file_name == 'mqtt_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = True
+            elif file_name == 'http_cli_key':
+                g_ruuvi_dict['storage'][file_name] = True
+            elif file_name == 'stat_cli_key':
+                g_ruuvi_dict['storage'][file_name] = True
+            elif file_name == 'rcfg_cli_key':
+                g_ruuvi_dict['storage'][file_name] = True
+            elif file_name == 'mqtt_cli_key':
+                g_ruuvi_dict['storage'][file_name] = True
+            elif file_name == 'http_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = True
+            elif file_name == 'stat_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = True
+            elif file_name == 'rcfg_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = True
+            elif file_name == 'mqtt_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = True
             else:
                 self._on_post_resp_400()
                 return
@@ -1051,18 +1071,30 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 self._on_post_resp_400()
                 return
 
-            if file_name == 'client_cert.pem':
-                g_ruuvi_dict['storage']['client_cert.pem'] = False
-            elif file_name == 'client_key.pem':
-                g_ruuvi_dict['storage']['client_key.pem'] = False
-            elif file_name == 'cert_http.pem':
-                g_ruuvi_dict['storage']['cert_http.pem'] = False
-            elif file_name == 'cert_stat.pem':
-                g_ruuvi_dict['storage']['cert_stat.pem'] = False
-            elif file_name == 'cert_remote.pem':
-                g_ruuvi_dict['storage']['cert_remote.pem'] = False
-            elif file_name == 'cert_mqtt.pem':
-                g_ruuvi_dict['storage']['cert_mqtt.pem'] = False
+            if file_name == 'http_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'stat_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'rcfg_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'mqtt_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'http_cli_key':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'stat_cli_key':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'rcfg_cli_key':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'mqtt_cli_key':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'http_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'stat_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'rcfg_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'mqtt_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = False
             else:
                 self._on_post_resp_400()
                 return

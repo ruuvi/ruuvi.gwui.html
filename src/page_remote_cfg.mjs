@@ -122,10 +122,10 @@ class PageRemoteCfg {
 
             this.#checkbox_remote_cfg_use_client_ssl_cert.setState(this.#gwCfg.remote_cfg.remote_cfg_use_ssl_client_cert)
             this.#checkbox_remote_cfg_use_server_ssl_cert.setState(this.#gwCfg.remote_cfg.remote_cfg_use_ssl_server_cert)
-            if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
+            if (!this.#gwCfg.info.storage_remote_cfg_cli_cert || !this.#gwCfg.info.storage_remote_cfg_cli_key) {
                 this.#checkbox_remote_cfg_use_client_ssl_cert.setUnchecked()
             }
-            if (!this.#gwCfg.info.storage_cert_remote) {
+            if (!this.#gwCfg.info.storage_remote_cfg_srv_cert) {
                 this.#checkbox_remote_cfg_use_server_ssl_cert.setUnchecked()
             }
 
@@ -226,9 +226,9 @@ class PageRemoteCfg {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=client_cert.pem', 5000, fileTextContent)
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=rcfg_cli_cert', 5000, fileTextContent)
             console.log(log_wrap('POST /ssl_cert: successful'))
-            this.#gwCfg.info.storage_client_cert = true
+            this.#gwCfg.info.storage_remote_cfg_cli_cert = true
         } catch (err) {
             console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
             throw err
@@ -243,9 +243,9 @@ class PageRemoteCfg {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=client_key.pem', 5000, fileTextContent)
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=rcfg_cli_key', 5000, fileTextContent)
             console.log(log_wrap('POST /ssl_cert: successful'))
-            this.#gwCfg.info.storage_client_key = true
+            this.#gwCfg.info.storage_remote_cfg_cli_key = true
         } catch (err) {
             console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
             throw err
@@ -262,17 +262,17 @@ class PageRemoteCfg {
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=client_cert.pem', 5000, JSON.stringify(data))
+                await Network.httpDeleteJson('/ssl_cert?file=rcfg_cli_cert', 5000, JSON.stringify(data))
                 console.log(log_wrap('DELETE /ssl_cert: successful'))
-                this.#gwCfg.info.storage_client_cert = false
+                this.#gwCfg.info.storage_remote_cfg_cli_cert = false
             } catch (err) {
                 console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
             }
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=client_key.pem', 5000, JSON.stringify(data))
+                await Network.httpDeleteJson('/ssl_cert?file=rcfg_cli_key', 5000, JSON.stringify(data))
                 console.log(log_wrap('DELETE /ssl_key: successful'))
-                this.#gwCfg.info.storage_client_key = false
+                this.#gwCfg.info.storage_remote_cfg_cli_key = false
             } catch (err) {
                 console.log(log_wrap(`DELETE /ssl_key: failure: ${err}`))
             }
@@ -287,9 +287,9 @@ class PageRemoteCfg {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=cert_remote.pem', 5000, fileTextContent)
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=rcfg_srv_cert', 5000, fileTextContent)
             console.log(log_wrap('POST /ssl_cert: successful'))
-            this.#gwCfg.info.storage_cert_remote = true
+            this.#gwCfg.info.storage_remote_cfg_srv_cert = true
         } catch (err) {
             console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
             throw err
@@ -306,9 +306,9 @@ class PageRemoteCfg {
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=cert_remote.pem', 5000, JSON.stringify(data))
+                await Network.httpDeleteJson('/ssl_cert?file=rcfg_srv_cert', 5000, JSON.stringify(data))
                 console.log(log_wrap('DELETE /ssl_cert: successful'))
-                this.#gwCfg.info.storage_cert_remote = false
+                this.#gwCfg.info.storage_remote_cfg_srv_cert = false
             } catch (err) {
                 console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
             }
@@ -431,20 +431,20 @@ class PageRemoteCfg {
             this.#input_auth_bearer_token.clearValidationIcon()
         }
 
-        this.#checkbox_remote_cfg_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_client_cert && this.#gwCfg.info.storage_client_key)
+        this.#checkbox_remote_cfg_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_remote_cfg_cli_cert && this.#gwCfg.info.storage_remote_cfg_cli_key)
         this.#button_remote_cfg_upload_client_cert.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_remote_cfg_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_client_cert)
+        this.#button_remote_cfg_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_remote_cfg_cli_cert)
         this.#button_remote_cfg_upload_client_key.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_remote_cfg_upload_client_key.setEnabled(!this.#gwCfg.info.storage_client_key)
-        this.#button_remote_cfg_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_client_cert || this.#gwCfg.info.storage_client_key)
-        if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
+        this.#button_remote_cfg_upload_client_key.setEnabled(!this.#gwCfg.info.storage_remote_cfg_cli_key)
+        this.#button_remote_cfg_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_remote_cfg_cli_cert || this.#gwCfg.info.storage_remote_cfg_cli_key)
+        if (!this.#gwCfg.info.storage_remote_cfg_cli_cert || !this.#gwCfg.info.storage_remote_cfg_cli_key) {
             this.#checkbox_remote_cfg_use_client_ssl_cert.setUnchecked()
         }
-        this.#checkbox_remote_cfg_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_cert_remote)
+        this.#checkbox_remote_cfg_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_remote_cfg_srv_cert)
         this.#button_remote_cfg_upload_server_cert.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_remote_cfg_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_cert_remote)
-        this.#button_remote_cfg_remove_server_cert.setEnabled(this.#gwCfg.info.storage_cert_remote)
-        if (!this.#gwCfg.info.storage_cert_remote) {
+        this.#button_remote_cfg_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_remote_cfg_srv_cert)
+        this.#button_remote_cfg_remove_server_cert.setEnabled(this.#gwCfg.info.storage_remote_cfg_srv_cert)
+        if (!this.#gwCfg.info.storage_remote_cfg_srv_cert) {
             this.#checkbox_remote_cfg_use_server_ssl_cert.setUnchecked()
         }
 

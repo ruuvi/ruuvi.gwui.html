@@ -68,9 +68,9 @@ class PageCustomServer {
 
     #checkbox_http_use_client_ssl_cert = new GuiCheckbox($('#http_use_client_ssl_cert'))
     #button_http_upload_client_cert = new GuiButtonUpload($('#http-button_upload_client_cert'),
-        async (fileTextContent) => this.#onUploadClientCert(fileTextContent))
+        async (fileTextContent) => this.#onUploadClientCertHttp(fileTextContent))
     #button_http_upload_client_key = new GuiButtonUpload($('#http-button_upload_client_key'),
-        async (fileTextContent) => this.#onUploadClientKey(fileTextContent))
+        async (fileTextContent) => this.#onUploadClientKeyHttp(fileTextContent))
     #button_http_remove_client_cert_and_key = new GuiButton($('#http-button_remove_client_cert_and_key'))
     #checkbox_http_use_server_ssl_cert = new GuiCheckbox($('#http_use_server_ssl_cert'))
     #button_http_upload_server_cert = new GuiButtonUpload($('#http-button_upload_server_cert'),
@@ -107,9 +107,9 @@ class PageCustomServer {
 
     #checkbox_mqtt_use_client_ssl_cert = new GuiCheckbox($('#mqtt_use_client_ssl_cert'))
     #button_mqtt_upload_client_cert = new GuiButtonUpload($('#mqtt-button_upload_client_cert'),
-        async (fileTextContent) => this.#onUploadClientCert(fileTextContent))
+        async (fileTextContent) => this.#onUploadClientCertMqtt(fileTextContent))
     #button_mqtt_upload_client_key = new GuiButtonUpload($('#mqtt-button_upload_client_key'),
-        async (fileTextContent) => this.#onUploadClientKey(fileTextContent))
+        async (fileTextContent) => this.#onUploadClientKeyMqtt(fileTextContent))
     #button_mqtt_remove_client_cert_and_key = new GuiButton($('#mqtt-button_remove_client_cert_and_key'))
     #checkbox_mqtt_use_server_ssl_cert = new GuiCheckbox($('#mqtt_use_server_ssl_cert'))
     #button_mqtt_upload_server_cert = new GuiButtonUpload($('#mqtt-button_upload_server_cert'),
@@ -131,9 +131,9 @@ class PageCustomServer {
 
     #checkbox_stat_use_client_ssl_cert = new GuiCheckbox($('#stat_use_client_ssl_cert'))
     #button_stat_upload_client_cert = new GuiButtonUpload($('#stat-button_upload_client_cert'),
-        async (fileTextContent) => this.#onUploadClientCert(fileTextContent))
+        async (fileTextContent) => this.#onUploadClientCertStat(fileTextContent))
     #button_stat_upload_client_key = new GuiButtonUpload($('#stat-button_upload_client_key'),
-        async (fileTextContent) => this.#onUploadClientKey(fileTextContent))
+        async (fileTextContent) => this.#onUploadClientKeyStat(fileTextContent))
     #button_stat_remove_client_cert_and_key = new GuiButton($('#stat-button_remove_client_cert_and_key'))
 
     #checkbox_stat_use_server_ssl_cert = new GuiCheckbox($('#stat_use_server_ssl_cert'))
@@ -171,7 +171,7 @@ class PageCustomServer {
         this.#radio_http_auth_token = this.#radio_http_auth.addOption('http_auth_token', false)
         this.#checkbox_http_use_client_ssl_cert.on_change(() => this.#onChangeUseClientSslCertHttp())
         this.#checkbox_http_use_server_ssl_cert.on_change(() => this.#onChangeUseServerSslCertHttp())
-        this.#button_http_remove_client_cert_and_key.on_click(async () => this.#onRemoveClientCertAndKey())
+        this.#button_http_remove_client_cert_and_key.on_click(async () => this.#onRemoveClientCertAndKeyHttp())
         this.#button_http_remove_server_cert.on_click(async () => this.#onRemoveServerCertHttp())
 
         this.#radio_mqtt_transport_TCP = this.#radio_mqtt_transport.addOption('mqtt_transport_TCP', false)
@@ -180,7 +180,7 @@ class PageCustomServer {
         this.#radio_mqtt_transport_WSS = this.#radio_mqtt_transport.addOption('mqtt_transport_WSS', false)
         this.#checkbox_mqtt_use_client_ssl_cert.on_change(() => this.#onChangeUseClientSslCertMqtt())
         this.#checkbox_mqtt_use_server_ssl_cert.on_change(() => this.#onChangeUseServerSslCertMqtt())
-        this.#button_mqtt_remove_client_cert_and_key.on_click(async () => this.#onRemoveClientCertAndKey())
+        this.#button_mqtt_remove_client_cert_and_key.on_click(async () => this.#onRemoveClientCertAndKeyMqtt())
         this.#button_mqtt_remove_server_cert.on_click(async () => this.#onRemoveServerCertMqtt())
 
         this.#radio_statistics_use_ruuvi = this.#radio_statistics.addOption('statistics_use_ruuvi', false)
@@ -201,7 +201,7 @@ class PageCustomServer {
         this.#radio_statistics_no.on_click(() => this.#onChangeUseStatistics())
         this.#checkbox_stat_use_client_ssl_cert.on_change(() => this.#onChangeUseClientSslCertStat())
         this.#checkbox_stat_use_server_ssl_cert.on_change(() => this.#onChangeUseServerSslCertStat())
-        this.#button_stat_remove_client_cert_and_key.on_click(async () => this.#onRemoveClientCertAndKey())
+        this.#button_stat_remove_client_cert_and_key.on_click(async () => this.#onRemoveClientCertAndKeyStat())
         this.#button_stat_remove_server_cert.on_click(async () => this.#onRemoveServerCertStat())
 
         this.#input_http_url.on_change(() => this.#onChangeHttpUrl())
@@ -278,10 +278,10 @@ class PageCustomServer {
 
         this.#checkbox_http_use_client_ssl_cert.setState(this.#gwCfg.http.http_use_ssl_client_cert)
         this.#checkbox_http_use_server_ssl_cert.setState(this.#gwCfg.http.http_use_ssl_server_cert)
-        if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
+        if (!this.#gwCfg.info.storage_http_cli_cert || !this.#gwCfg.info.storage_http_cli_key) {
             this.#checkbox_http_use_client_ssl_cert.setUnchecked()
         }
-        if (!this.#gwCfg.info.storage_cert_http) {
+        if (!this.#gwCfg.info.storage_http_srv_cert) {
             this.#checkbox_http_use_server_ssl_cert.setUnchecked()
         }
 
@@ -300,10 +300,10 @@ class PageCustomServer {
 
         this.#checkbox_stat_use_client_ssl_cert.setState(this.#gwCfg.http_stat.http_stat_use_ssl_client_cert)
         this.#checkbox_stat_use_server_ssl_cert.setState(this.#gwCfg.http_stat.http_stat_use_ssl_server_cert)
-        if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
+        if (!this.#gwCfg.info.storage_stat_cli_cert || !this.#gwCfg.info.storage_stat_cli_key) {
             this.#checkbox_stat_use_client_ssl_cert.setUnchecked()
         }
-        if (!this.#gwCfg.info.storage_cert_stat) {
+        if (!this.#gwCfg.info.storage_stat_srv_cert) {
             this.#checkbox_stat_use_server_ssl_cert.setUnchecked()
         }
 
@@ -377,10 +377,10 @@ class PageCustomServer {
 
         this.#checkbox_mqtt_use_client_ssl_cert.setState(this.#gwCfg.mqtt.mqtt_use_ssl_client_cert)
         this.#checkbox_mqtt_use_server_ssl_cert.setState(this.#gwCfg.mqtt.mqtt_use_ssl_server_cert)
-        if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
+        if (!this.#gwCfg.info.storage_mqtt_cli_cert || !this.#gwCfg.info.storage_mqtt_cli_key) {
             this.#checkbox_mqtt_use_client_ssl_cert.setUnchecked()
         }
-        if (!this.#gwCfg.info.storage_cert_mqtt) {
+        if (!this.#gwCfg.info.storage_mqtt_srv_cert) {
             this.#checkbox_mqtt_use_server_ssl_cert.setUnchecked()
         }
 
@@ -481,13 +481,13 @@ class PageCustomServer {
         }
     }
 
-    async #onUploadClientCert(fileTextContent) {
+    async #onUploadClientCertHttp(fileTextContent) {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=client_cert.pem', 5000, fileTextContent)
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=http_cli_cert', 5000, fileTextContent)
             console.log(log_wrap('POST /ssl_cert: successful'))
-            this.#gwCfg.info.storage_client_cert = true
+            this.#gwCfg.info.storage_http_cli_cert = true
         } catch (err) {
             console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
             throw err
@@ -498,13 +498,47 @@ class PageCustomServer {
         this.#on_custom_server_url_changed()
     }
 
-    async #onUploadClientKey(fileTextContent) {
+    async #onUploadClientCertStat(fileTextContent) {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=client_key.pem', 5000, fileTextContent)
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=stat_cli_cert', 5000, fileTextContent)
             console.log(log_wrap('POST /ssl_cert: successful'))
-            this.#gwCfg.info.storage_client_key = true
+            this.#gwCfg.info.storage_stat_cli_cert = true
+        } catch (err) {
+            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            throw err
+        } finally {
+            GwStatus.startCheckingStatus()
+        }
+        this.#input_http_stat_url.setValidationRequired()
+        this.#on_custom_server_url_changed()
+    }
+
+    async #onUploadClientCertMqtt(fileTextContent) {
+        GwStatus.stopCheckingStatus()
+        await Network.waitWhileInProgress()
+        try {
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=mqtt_cli_cert', 5000, fileTextContent)
+            console.log(log_wrap('POST /ssl_cert: successful'))
+            this.#gwCfg.info.storage_mqtt_cli_cert = true
+        } catch (err) {
+            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            throw err
+        } finally {
+            GwStatus.startCheckingStatus()
+        }
+        this.#input_mqtt_server.setValidationRequired()
+        this.#on_custom_server_url_changed()
+    }
+
+    async #onUploadClientKeyHttp(fileTextContent) {
+        GwStatus.stopCheckingStatus()
+        await Network.waitWhileInProgress()
+        try {
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=http_cli_key', 5000, fileTextContent)
+            console.log(log_wrap('POST /ssl_cert: successful'))
+            this.#gwCfg.info.storage_http_cli_key = true
         } catch (err) {
             console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
             throw err
@@ -515,23 +549,57 @@ class PageCustomServer {
         this.#on_custom_server_url_changed()
     }
 
-    async #onRemoveClientCertAndKey() {
+    async #onUploadClientKeyStat(fileTextContent) {
+        GwStatus.stopCheckingStatus()
+        await Network.waitWhileInProgress()
+        try {
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=stat_cli_key', 5000, fileTextContent)
+            console.log(log_wrap('POST /ssl_cert: successful'))
+            this.#gwCfg.info.storage_stat_cli_key = true
+        } catch (err) {
+            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            throw err
+        } finally {
+            GwStatus.startCheckingStatus()
+        }
+        this.#input_http_stat_url.setValidationRequired()
+        this.#on_custom_server_url_changed()
+    }
+
+    async #onUploadClientKeyMqtt(fileTextContent) {
+        GwStatus.stopCheckingStatus()
+        await Network.waitWhileInProgress()
+        try {
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=mqtt_cli_key', 5000, fileTextContent)
+            console.log(log_wrap('POST /ssl_cert: successful'))
+            this.#gwCfg.info.storage_mqtt_cli_key = true
+        } catch (err) {
+            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            throw err
+        } finally {
+            GwStatus.startCheckingStatus()
+        }
+        this.#input_mqtt_server.setValidationRequired()
+        this.#on_custom_server_url_changed()
+    }
+
+    async #onRemoveClientCertAndKeyHttp() {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=client_cert.pem', 5000, JSON.stringify(data))
+                await Network.httpDeleteJson('/ssl_cert?file=http_cli_cert', 5000, JSON.stringify(data))
                 console.log(log_wrap('DELETE /ssl_cert: successful'))
-                this.#gwCfg.info.storage_client_cert = false
+                this.#gwCfg.info.storage_http_cli_cert = false
             } catch (err) {
                 console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
             }
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=client_key.pem', 5000, JSON.stringify(data))
+                await Network.httpDeleteJson('/ssl_cert?file=http_cli_key', 5000, JSON.stringify(data))
                 console.log(log_wrap('DELETE /ssl_key: successful'))
-                this.#gwCfg.info.storage_client_key = false
+                this.#gwCfg.info.storage_http_cli_key = false
             } catch (err) {
                 console.log(log_wrap(`DELETE /ssl_key: failure: ${err}`))
             }
@@ -542,13 +610,67 @@ class PageCustomServer {
         this.#on_custom_server_url_changed()
     }
 
+    async #onRemoveClientCertAndKeyStat() {
+        GwStatus.stopCheckingStatus()
+        await Network.waitWhileInProgress()
+        try {
+            try {
+                const data = {'timestamp': Date.now()}
+                await Network.httpDeleteJson('/ssl_cert?file=stat_cli_cert', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /ssl_cert: successful'))
+                this.#gwCfg.info.storage_stat_cli_cert = false
+            } catch (err) {
+                console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
+            }
+            try {
+                const data = {'timestamp': Date.now()}
+                await Network.httpDeleteJson('/ssl_cert?file=stat_cli_key', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /ssl_key: successful'))
+                this.#gwCfg.info.storage_stat_cli_key = false
+            } catch (err) {
+                console.log(log_wrap(`DELETE /ssl_key: failure: ${err}`))
+            }
+        } finally {
+            GwStatus.startCheckingStatus()
+        }
+        this.#input_http_stat_url.setValidationRequired()
+        this.#on_custom_server_url_changed()
+    }
+
+    async #onRemoveClientCertAndKeyMqtt() {
+        GwStatus.stopCheckingStatus()
+        await Network.waitWhileInProgress()
+        try {
+            try {
+                const data = {'timestamp': Date.now()}
+                await Network.httpDeleteJson('/ssl_cert?file=mqtt_cli_cert', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /ssl_cert: successful'))
+                this.#gwCfg.info.storage_mqtt_cli_cert = false
+            } catch (err) {
+                console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
+            }
+            try {
+                const data = {'timestamp': Date.now()}
+                await Network.httpDeleteJson('/ssl_cert?file=mqtt_cli_key', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /ssl_key: successful'))
+                this.#gwCfg.info.storage_mqtt_cli_key = false
+            } catch (err) {
+                console.log(log_wrap(`DELETE /ssl_key: failure: ${err}`))
+            }
+        } finally {
+            GwStatus.startCheckingStatus()
+        }
+        this.#input_mqtt_server.setValidationRequired()
+        this.#on_custom_server_url_changed()
+    }
+
     async #onUploadServerCertHttp(fileTextContent) {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=cert_http.pem', 5000, fileTextContent)
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=http_srv_cert', 5000, fileTextContent)
             console.log(log_wrap('POST /ssl_cert: successful'))
-            this.#gwCfg.info.storage_cert_http = true
+            this.#gwCfg.info.storage_http_srv_cert = true
         } catch (err) {
             console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
             throw err
@@ -563,9 +685,9 @@ class PageCustomServer {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=cert_stat.pem', 5000, fileTextContent)
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=stat_srv_cert', 5000, fileTextContent)
             console.log(log_wrap('POST /ssl_cert: successful'))
-            this.#gwCfg.info.storage_cert_stat = true
+            this.#gwCfg.info.storage_stat_srv_cert = true
         } catch (err) {
             console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
             throw err
@@ -580,9 +702,9 @@ class PageCustomServer {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=cert_mqtt.pem', 5000, fileTextContent)
+            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=mqtt_srv_cert', 5000, fileTextContent)
             console.log(log_wrap('POST /ssl_cert: successful'))
-            this.#gwCfg.info.storage_cert_mqtt = true
+            this.#gwCfg.info.storage_mqtt_srv_cert = true
         } catch (err) {
             console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
             throw err
@@ -599,9 +721,9 @@ class PageCustomServer {
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=cert_http.pem', 5000, JSON.stringify(data))
+                await Network.httpDeleteJson('/ssl_cert?file=http_srv_cert', 5000, JSON.stringify(data))
                 console.log(log_wrap('DELETE /ssl_cert: successful'))
-                this.#gwCfg.info.storage_cert_http = false
+                this.#gwCfg.info.storage_http_srv_cert = false
             } catch (err) {
                 console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
             }
@@ -618,9 +740,9 @@ class PageCustomServer {
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=cert_stat.pem', 5000, JSON.stringify(data))
+                await Network.httpDeleteJson('/ssl_cert?file=stat_srv_cert', 5000, JSON.stringify(data))
                 console.log(log_wrap('DELETE /ssl_cert: successful'))
-                this.#gwCfg.info.storage_cert_stat = false
+                this.#gwCfg.info.storage_stat_srv_cert = false
             } catch (err) {
                 console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
             }
@@ -637,9 +759,9 @@ class PageCustomServer {
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=cert_mqtt.pem', 5000, JSON.stringify(data))
+                await Network.httpDeleteJson('/ssl_cert?file=mqtt_srv_cert', 5000, JSON.stringify(data))
                 console.log(log_wrap('DELETE /ssl_cert: successful'))
-                this.#gwCfg.info.storage_cert_mqtt = false
+                this.#gwCfg.info.storage_mqtt_srv_cert = false
             } catch (err) {
                 console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
             }
@@ -972,55 +1094,55 @@ class PageCustomServer {
             this.#input_mqtt_pass.clearValidationIcon()
         }
 
-        this.#checkbox_http_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_client_cert && this.#gwCfg.info.storage_client_key)
+        this.#checkbox_http_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_http_cli_cert && this.#gwCfg.info.storage_http_cli_key)
         this.#button_http_upload_client_cert.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_http_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_client_cert)
+        this.#button_http_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_http_cli_cert)
 
         this.#button_http_upload_client_key.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_http_upload_client_key.setEnabled(!this.#gwCfg.info.storage_client_key)
-        this.#button_http_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_client_cert || this.#gwCfg.info.storage_client_key)
-        if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
+        this.#button_http_upload_client_key.setEnabled(!this.#gwCfg.info.storage_http_cli_key)
+        this.#button_http_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_http_cli_cert || this.#gwCfg.info.storage_http_cli_key)
+        if (!this.#gwCfg.info.storage_http_cli_cert || !this.#gwCfg.info.storage_http_cli_key) {
             this.#checkbox_http_use_client_ssl_cert.setUnchecked()
         }
-        this.#checkbox_http_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_cert_http)
+        this.#checkbox_http_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_http_srv_cert)
         this.#button_http_upload_server_cert.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_http_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_cert_http)
-        this.#button_http_remove_server_cert.setEnabled(this.#gwCfg.info.storage_cert_http)
-        if (!this.#gwCfg.info.storage_cert_http) {
+        this.#button_http_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_http_srv_cert)
+        this.#button_http_remove_server_cert.setEnabled(this.#gwCfg.info.storage_http_srv_cert)
+        if (!this.#gwCfg.info.storage_http_srv_cert) {
             this.#checkbox_http_use_server_ssl_cert.setUnchecked()
         }
 
-        this.#checkbox_stat_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_client_cert && this.#gwCfg.info.storage_client_key)
+        this.#checkbox_stat_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_stat_cli_cert && this.#gwCfg.info.storage_stat_cli_key)
         this.#button_stat_upload_client_cert.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_stat_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_client_cert)
+        this.#button_stat_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_stat_cli_cert)
         this.#button_stat_upload_client_key.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_stat_upload_client_key.setEnabled(!this.#gwCfg.info.storage_client_key)
-        this.#button_stat_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_client_cert || this.#gwCfg.info.storage_client_key)
-        if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
+        this.#button_stat_upload_client_key.setEnabled(!this.#gwCfg.info.storage_stat_cli_key)
+        this.#button_stat_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_stat_cli_cert || this.#gwCfg.info.storage_stat_cli_key)
+        if (!this.#gwCfg.info.storage_stat_cli_cert || !this.#gwCfg.info.storage_stat_cli_key) {
             this.#checkbox_stat_use_client_ssl_cert.setUnchecked()
         }
-        this.#checkbox_stat_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_cert_stat)
+        this.#checkbox_stat_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_stat_srv_cert)
         this.#button_stat_upload_server_cert.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_stat_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_cert_stat)
-        this.#button_stat_remove_server_cert.setEnabled(this.#gwCfg.info.storage_cert_stat)
-        if (!this.#gwCfg.info.storage_cert_stat) {
+        this.#button_stat_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_stat_srv_cert)
+        this.#button_stat_remove_server_cert.setEnabled(this.#gwCfg.info.storage_stat_srv_cert)
+        if (!this.#gwCfg.info.storage_stat_srv_cert) {
             this.#checkbox_stat_use_server_ssl_cert.setUnchecked()
         }
 
-        this.#checkbox_mqtt_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_client_cert && this.#gwCfg.info.storage_client_key)
+        this.#checkbox_mqtt_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_mqtt_cli_cert && this.#gwCfg.info.storage_mqtt_cli_key)
         this.#button_mqtt_upload_client_cert.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_mqtt_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_client_cert)
+        this.#button_mqtt_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_mqtt_cli_cert)
         this.#button_mqtt_upload_client_key.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_mqtt_upload_client_key.setEnabled(!this.#gwCfg.info.storage_client_key)
-        this.#button_mqtt_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_client_cert || this.#gwCfg.info.storage_client_key)
-        if (!this.#gwCfg.info.storage_client_cert || !this.#gwCfg.info.storage_client_key) {
+        this.#button_mqtt_upload_client_key.setEnabled(!this.#gwCfg.info.storage_mqtt_cli_key)
+        this.#button_mqtt_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_mqtt_cli_cert || this.#gwCfg.info.storage_mqtt_cli_key)
+        if (!this.#gwCfg.info.storage_mqtt_cli_cert || !this.#gwCfg.info.storage_mqtt_cli_key) {
             this.#checkbox_mqtt_use_client_ssl_cert.setUnchecked()
         }
-        this.#checkbox_mqtt_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_cert_mqtt)
+        this.#checkbox_mqtt_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_mqtt_srv_cert)
         this.#button_mqtt_upload_server_cert.setStorageReady(this.#gwCfg.info.storage_ready)
-        this.#button_mqtt_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_cert_mqtt)
-        this.#button_mqtt_remove_server_cert.setEnabled(this.#gwCfg.info.storage_cert_mqtt)
-        if (!this.#gwCfg.info.storage_cert_mqtt) {
+        this.#button_mqtt_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_mqtt_srv_cert)
+        this.#button_mqtt_remove_server_cert.setEnabled(this.#gwCfg.info.storage_mqtt_srv_cert)
+        if (!this.#gwCfg.info.storage_mqtt_srv_cert) {
             this.#checkbox_mqtt_use_server_ssl_cert.setUnchecked()
         }
 

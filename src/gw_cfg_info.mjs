@@ -10,12 +10,18 @@ export class GwCfgInfo {
   nrf52_fw_ver = null
   gw_mac = null
   storage_ready = false
-  storage_client_cert = false
-  storage_client_key = false
-  storage_cert_http = false
-  storage_cert_stat = false
-  storage_cert_remote = false
-  storage_cert_mqtt = false
+  storage_http_cli_cert = false
+  storage_http_cli_key = false
+  storage_http_srv_cert = false
+  storage_stat_cli_cert = false
+  storage_stat_cli_key = false
+  storage_stat_srv_cert = false
+  storage_remote_cfg_cli_cert = false
+  storage_remote_cfg_cli_key = false
+  storage_remote_cfg_srv_cert = false
+  storage_mqtt_cli_cert = false
+  storage_mqtt_cli_key = false
+  storage_mqtt_srv_cert = false
 
   parse (data) {
     this.fw_ver = utils.fetchStringKeyFromData(data, 'fw_ver', true)
@@ -27,12 +33,22 @@ export class GwCfgInfo {
       return
     }
     this.storage_ready = utils.fetchBoolKeyFromData(storage, 'storage_ready', false, false)
-    this.storage_client_cert = utils.fetchBoolKeyFromData(storage, 'client_cert.pem', false, false)
-    this.storage_client_key = utils.fetchBoolKeyFromData(storage, 'client_key.pem', false, false)
-    this.storage_cert_http = utils.fetchBoolKeyFromData(storage, 'cert_http.pem', false, false)
-    this.storage_cert_stat = utils.fetchBoolKeyFromData(storage, 'cert_stat.pem', false, false)
-    this.storage_cert_remote = utils.fetchBoolKeyFromData(storage, 'cert_remote.pem', false, false)
-    this.storage_cert_mqtt = utils.fetchBoolKeyFromData(storage, 'cert_mqtt.pem', false, false)
+
+    this.storage_http_cli_cert = utils.fetchBoolKeyFromData(storage, 'http_cli_cert', false, false)
+    this.storage_http_cli_key = utils.fetchBoolKeyFromData(storage, 'http_cli_key', false, false)
+    this.storage_http_srv_cert = utils.fetchBoolKeyFromData(storage, 'http_srv_cert', false, false)
+
+    this.storage_stat_cli_cert = utils.fetchBoolKeyFromData(storage, 'stat_cli_cert', false, false)
+    this.storage_stat_cli_key = utils.fetchBoolKeyFromData(storage, 'stat_cli_key', false, false)
+    this.storage_stat_srv_cert = utils.fetchBoolKeyFromData(storage, 'stat_srv_cert', false, false)
+
+    this.storage_remote_cfg_cli_cert = utils.fetchBoolKeyFromData(storage, 'rcfg_cli_cert', false, false)
+    this.storage_remote_cfg_cli_key = utils.fetchBoolKeyFromData(storage, 'rcfg_cli_key', false, false)
+    this.storage_remote_cfg_srv_cert = utils.fetchBoolKeyFromData(storage, 'rcfg_srv_cert', false, false)
+
+    this.storage_mqtt_cli_cert = utils.fetchBoolKeyFromData(storage, 'mqtt_cli_cert', false, false)
+    this.storage_mqtt_cli_key = utils.fetchBoolKeyFromData(storage, 'mqtt_cli_key', false, false)
+    this.storage_mqtt_srv_cert = utils.fetchBoolKeyFromData(storage, 'mqtt_srv_cert', false, false)
 
     if (Object.keys(storage).length !== 0) {
       throw Error(`Unhandled keys in gw_cfg.json:storage: ${JSON.stringify(storage)}`)
