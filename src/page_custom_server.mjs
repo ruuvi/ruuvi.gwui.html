@@ -229,6 +229,7 @@ class PageCustomServer {
         this.#checkbox_use_mqtt_prefix_gw_mac.on_change(() => this.#onChangeUseMqttPrefix())
         this.#checkbox_use_mqtt_prefix_custom.on_change(() => this.#onChangeUseMqttPrefix())
         this.#input_mqtt_prefix_custom.on_change(() => this.#onChangeUseMqttPrefix())
+        this.#checkbox_mqtt_disable_retained_messages.on_change(() => this.#onChangeMqttDisableRetainedMessages())
 
         this.#button_check.on_click(async () => this.#onButtonCheck())
         this.#button_continue.on_click(() => Navigation.change_url_ntp_config())
@@ -857,7 +858,12 @@ class PageCustomServer {
         } else {
             this.#div_mqtt_prefix_custom.hide()
         }
+        this.#input_mqtt_server.setValidationRequired()
         this.#on_edit_mqtt_settings()
+    }
+
+    #onChangeMqttDisableRetainedMessages() {
+        this.#input_mqtt_server.setValidationRequired()
     }
 
     async #onButtonCheck() {
@@ -1198,6 +1204,8 @@ class PageCustomServer {
         aux_params += encodeURIComponent(mqtt_topic_prefix)
         aux_params += '&mqtt_client_id='
         aux_params += encodeURIComponent(this.#input_mqtt_client_id.getVal())
+        aux_params += '&mqtt_disable_retained_messages='
+        aux_params += this.#checkbox_mqtt_disable_retained_messages.isChecked() ? "true" : "false"
 
         let auth_type = 'none'
         if (this.#input_mqtt_user.getVal() !== '') {
