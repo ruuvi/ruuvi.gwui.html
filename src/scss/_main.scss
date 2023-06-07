@@ -100,16 +100,9 @@ header {
 			margin: 0;
 		}
 
-		div div {
-			display: inline-block;
+		div.app-footer-fw_ver {
+			font-size: x-small;
 		}
-	}
-
-	&-footer-fw_ver {
-		font-size: x-small;
-	}
-	&-footer-fw_ver_nrf52 {
-		font-size: x-small;
 	}
 }
 
@@ -152,12 +145,15 @@ header {
 
 .language-switcher > ul > li {
 	margin: 0;
-	padding: 0 0.3em 0 0;
+	padding: 0;
 	list-style-type: none;
 	display: inline-block;
 	color: #0c3c3d;
 	border: 0;
-	border-right: 1px solid rgb(29, 180, 167);
+}
+
+.language-switcher > ul > li.language-switcher-separator {
+	color: rgb(29, 180, 167)
 }
 
 .language-switcher > ul > li:last-child {
