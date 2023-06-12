@@ -90,6 +90,20 @@ class PageScanning {
         this.#button_add_mac_filter_manually.on_click(() => this.#onClickButtonAddFilterManually())
 
         this.#button_continue.on_click(() => Navigation.change_page_to_finished(11))
+
+        if (this.#gwCfg.scan.scan_filter_list.length === 0) {
+            this.#checkbox_scan_filtering.setUnchecked()
+            this.#div_scan_filtering_options.hide()
+            this.#radio_scan_filtering_type_discard.setChecked()
+        } else {
+            this.#checkbox_scan_filtering.setChecked()
+            this.#div_scan_filtering_options.show()
+            if (this.#gwCfg.scan.scan_filter_allow_listed) {
+                this.#radio_scan_filtering_type_allow.setChecked()
+            } else {
+                this.#radio_scan_filtering_type_discard.setChecked()
+            }
+        }
     }
 
     async #onShow() {
@@ -112,20 +126,6 @@ class PageScanning {
             this.#checkbox_scan_channel_39.setChecked()
         }
         this.#on_settings_scan_filtering_changed()
-
-        if (this.#gwCfg.scan.scan_filter_list.length === 0) {
-            this.#checkbox_scan_filtering.setUnchecked()
-            this.#div_scan_filtering_options.hide()
-            this.#radio_scan_filtering_type_discard.setChecked()
-        } else {
-            this.#checkbox_scan_filtering.setChecked()
-            this.#div_scan_filtering_options.show()
-            if (this.#gwCfg.scan.scan_filter_allow_listed) {
-                this.#radio_scan_filtering_type_allow.setChecked()
-            } else {
-                this.#radio_scan_filtering_type_discard.setChecked()
-            }
-        }
 
         this.#onChangeInputFilter()
 
