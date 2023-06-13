@@ -1314,8 +1314,21 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         print(f'Response: {resp}')
         self.wfile.write(resp)
 
+    def _resp_500(self):
+        content = '{}'
+        resp = b''
+        resp += f'HTTP/1.0 500 Internal Server Error\r\n'.encode('ascii')
+        resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
+        resp += f'Content-Length: {len(content)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += content.encode('ascii')
+        print(f'Response: {resp}')
+        self.wfile.write(resp)
+
     def _validate_url_check_post_advs(self, url, user, password):
-        if url == 'http://qwe':
+        if url == 'http://':
+            return self._resp_500()
+        elif url == 'http://qwe':
             return
         elif url == 'http://asd':
             return self._resp_200_json_validate_url_status_incorrect_json(200)
