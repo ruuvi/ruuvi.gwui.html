@@ -286,27 +286,31 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
           set_error_message(params, 'Ruuvi Gateway connection failure')
           resolve(false)
         })
-        .then(function (resp) {
+        .then((resp) => {
           if (resp) {
             console.log(log_wrap(`URL validation result (${validate_type}): status=${resp.status}, message=${resp.message}`))
             validity_icons_clear(params)
-            if (resp.status === 200) {
-              validity_icons_set_valid(params)
-            } else if (resp.status === 401) {
-              validity_icons_set_invalid(params)
-            } else {
-              validity_icons_set_invalid({ input_url: params['input_url'] })
-              if (resp.status === 502) {
-                set_error_message(params, resp.message)
-              } else if (resp.status === 500) {
-                set_error_message(params, `Ruuvi Gateway internal error: ${resp.message}`)
+            if (response_status === 200 && resp.status !== undefined) {
+              if (resp.status === 200) {
+                validity_icons_set_valid(params)
+              } else if (resp.status === 401) {
+                validity_icons_set_invalid(params)
               } else {
-                if (resp.message.startsWith('HTTP response status:')) {
+                validity_icons_set_invalid({ input_url: params['input_url'] })
+                if (resp.status === 502) {
                   set_error_message(params, resp.message)
+                } else if (resp.status === 500) {
+                  set_error_message(params, `Ruuvi Gateway internal error: ${resp.message}`)
                 } else {
-                  set_error_message(params, `HTTP response status: ${resp.status}, Message: ${resp.message}`)
+                  if (resp.message !==undefined && resp.message.startsWith('HTTP response status:')) {
+                    set_error_message(params, resp.message)
+                  } else {
+                    set_error_message(params, `HTTP response status: ${resp.status}, Message: ${resp.message}`)
+                  }
                 }
               }
+            } else {
+              set_error_message(params, `HTTP response status: ${response_status}`)
             }
             resolve(true)
           }
