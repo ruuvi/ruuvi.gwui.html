@@ -113,6 +113,11 @@ class PageScanning {
 
         if (!this.#gwCfg.company_filter.company_use_filtering) {
             this.#radio_company_use_filtering_0.setChecked()
+            this.#checkbox_scan_1mbit_phy.setState(this.#gwCfg.scan.scan_1mbit_phy)
+            this.#checkbox_scan_extended_payload.setState(this.#gwCfg.scan.scan_extended_payload)
+            this.#checkbox_scan_channel_37.setState(this.#gwCfg.scan.scan_channel_37)
+            this.#checkbox_scan_channel_38.setState(this.#gwCfg.scan.scan_channel_38)
+            this.#checkbox_scan_channel_39.setState(this.#gwCfg.scan.scan_channel_39)
         } else {
             if (this.#gwCfg.scan.scan_coded_phy) {
                 this.#radio_company_use_filtering_2.setChecked()
