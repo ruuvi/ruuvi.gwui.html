@@ -1432,7 +1432,7 @@
                             </label>
                         </div>
                         <div id="settings_lan_auth-api_key" class="indent hidden">
-                            <label for="settings_lan_auth-api_key">
+                            <label for="lan_auth-api_key">
                                 <span lang="en">API key (bearer token):</span>
                                 <span lang="fi">API-avain (haltijatunnus):</span>
                                 <input id="lan_auth-api_key" type="text" value="">
@@ -1457,7 +1457,7 @@
                             </label>
                         </div>
                         <div id="settings_lan_auth-api_key_rw" class="indent hidden">
-                            <label for="settings_lan_auth-api_key_rw">
+                            <label for="lan_auth-api_key_rw">
                                 <span lang="en">API key (bearer token):</span>
                                 <span lang="fi">API-avain (haltijatunnus):</span>
                                 <input id="lan_auth-api_key_rw" type="text" value="">
@@ -1626,15 +1626,17 @@
 
                 <div>&nbsp;</div>
 
-                <label class="font-bold">
-                    <span lang="en">Base URL</span>
-                    <span lang="fi">Perus-URL-osoite</span>
+                <div class="font-bold">
+                    <label for="http_url">
+                        <span lang="en">Base URL</span>
+                        <span lang="fi">Perus-URL-osoite</span>
+                    </label>
                     <div class="input-with_validity_check">
                         <input id="http_url" type="text" placeholder="" value="">
                         <div class="input-with_validity_check-icon">
                         </div>
                     </div>
-                </label>
+                </div>
 
                 <div>&nbsp;</div>
 
@@ -1680,14 +1682,6 @@
                             </div>
                         </div>
                     </label>
-                    <div id="page-custom_server-http_validation_error" class="rd hidden">
-                        <div class="block-centered">
-                            <span lang="en">Validation failed</span>
-                            <span lang="fi">Vahvistus epäonnistui</span>
-                        </div>
-                        <div id="page-custom_server-http_validation_error-desc" class="block-centered">
-                        </div>
-                    </div>
                     <div>&nbsp;</div>
                 </div>
                 <label class="control control-radio">
@@ -1723,6 +1717,14 @@
                             </div>
                         </div>
                     </label>
+                </div>
+                <div id="page-custom_server-http_validation_error" class="rd hidden">
+                    <div class="block-centered">
+                        <span lang="en">Validation failed</span>
+                        <span lang="fi">Vahvistus epäonnistui</span>
+                    </div>
+                    <div id="page-custom_server-http_validation_error-desc" class="block-centered">
+                    </div>
                 </div>
             </div>
 
