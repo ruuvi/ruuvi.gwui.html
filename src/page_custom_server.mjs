@@ -811,7 +811,9 @@ class PageCustomServer {
         if (this.#checkbox_use_http.isChecked()) {
             if (this.#input_http_url.getVal() === GwCfgHttp.HTTP_URL_DEFAULT) {
                 this.#input_http_url.setVal('')
-                this.#input_http_url.setValidationRequired()
+            }
+            if (this.#input_http_url.getVal() === '') {
+                this.#input_http_url.setInvalid()
             }
             this.#input_http_url.setValidationRequired()
         }
@@ -821,6 +823,7 @@ class PageCustomServer {
 
     #onChangeHttpDataFormat() {
         this.#input_http_url.setValidationRequired()
+        this.#div_http_validation_error.hide()
         this.#input_http_auth_basic_pass.clear()
         this.#input_http_auth_bearer_token.clear()
         this.#input_http_auth_token_api_key.clear()
@@ -830,6 +833,7 @@ class PageCustomServer {
 
     #onChangeHttpAuth() {
         this.#input_http_url.setValidationRequired()
+        this.#div_http_validation_error.hide()
         this.#input_http_auth_basic_pass.clear()
         this.#input_http_auth_bearer_token.clear()
         this.#input_http_auth_token_api_key.clear()
@@ -856,43 +860,57 @@ class PageCustomServer {
 
     #onChangeHttpUrl() {
         this.#input_http_url.setValidationRequired()
+        this.#div_http_validation_error.hide()
+        if (this.#input_http_url.getVal() === '') {
+            this.#input_http_url.setInvalid()
+        }
         this.#on_custom_server_url_changed()
     }
 
     #onChangeHttpUser() {
         this.#input_http_auth_basic_pass.clear()
         this.#input_http_url.setValidationRequired()
+        this.#div_http_validation_error.hide()
         this.#on_custom_server_url_changed()
     }
 
     #onChangeHttpPass() {
         this.#input_http_url.setValidationRequired()
+        this.#div_http_validation_error.hide()
         this.#on_custom_server_url_changed()
     }
 
     #onChangeAuthBearerToken() {
         this.#input_http_url.setValidationRequired()
+        this.#div_http_validation_error.hide()
         this.#on_custom_server_url_changed()
     }
 
     #onChangeAuthTokenApiKey() {
         this.#input_http_url.setValidationRequired()
+        this.#div_http_validation_error.hide()
         this.#on_custom_server_url_changed()
     }
 
     #onChangeHttpStatUrl() {
         this.#input_http_stat_url.setValidationRequired()
+        this.#div_http_stat_validation_error.hide()
+        if (this.#input_http_stat_url.getVal() === '') {
+            this.#input_http_stat_url.setInvalid()
+        }
         this.#on_custom_server_url_changed()
     }
 
     #onChangeHttpStatUser() {
         this.#input_http_auth_basic_pass.clear()
         this.#input_http_stat_url.setValidationRequired()
+        this.#div_http_stat_validation_error.hide()
         this.#on_custom_server_url_changed()
     }
 
     #onChangeHttpStatPass() {
         this.#input_http_stat_url.setValidationRequired()
+        this.#div_http_stat_validation_error.hide()
         this.#on_custom_server_url_changed()
     }
 
@@ -946,18 +964,24 @@ class PageCustomServer {
             }
         }
         this.#input_mqtt_server.setValidationRequired()
+        this.#div_mqtt_validation_error.hide()
         this.#on_custom_server_url_changed()
     }
 
     #onChangeMqttServer() {
         this.#on_edit_mqtt_settings()
         this.#input_mqtt_server.setValidationRequired()
+        this.#div_mqtt_validation_error.hide()
+        if (this.#input_mqtt_server.getVal() === '') {
+            this.#input_mqtt_server.setInvalid()
+        }
         this.#on_custom_server_url_changed()
     }
 
     #onChangeMqttPort() {
         this.#on_edit_mqtt_settings()
         this.#input_mqtt_server.setValidationRequired()
+        this.#div_mqtt_validation_error.hide()
         this.#on_custom_server_url_changed()
     }
 
@@ -965,12 +989,14 @@ class PageCustomServer {
         this.#input_mqtt_pass.clear()
         this.#on_edit_mqtt_settings()
         this.#input_mqtt_server.setValidationRequired()
+        this.#div_mqtt_validation_error.hide()
         this.#on_custom_server_url_changed()
     }
 
     #onChangeMqttPass() {
         this.#on_edit_mqtt_settings()
         this.#input_mqtt_server.setValidationRequired()
+        this.#div_mqtt_validation_error.hide()
         this.#on_custom_server_url_changed()
     }
 

@@ -39,9 +39,9 @@ class GuiSectAdvanced {
     }
     this.#obj.click((e) => {
       if (this.#arrow_down.is(':hidden')) {
-        this.hide()
+        this.#fadeOut()
       } else {
-        this.show()
+        this.#fadeIn()
       }
     })
   }
@@ -68,10 +68,22 @@ class GuiSectAdvanced {
   show () {
     this.#arrow_down.hide()
     this.#arrow_up.show()
+    this.#dropdown_obj.show()
+  }
+
+  #fadeIn () {
+    this.#arrow_down.hide()
+    this.#arrow_up.show()
     this.#dropdown_obj.fadeIn()
   }
 
   hide () {
+    this.#arrow_up.hide()
+    this.#arrow_down.show()
+    this.#dropdown_obj.hide()
+  }
+
+  #fadeOut () {
     this.#arrow_up.hide()
     this.#arrow_down.show()
     this.#dropdown_obj.fadeOut()
