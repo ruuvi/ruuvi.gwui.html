@@ -16,10 +16,17 @@ import gui_loading from './gui_loading.mjs'
 import GuiButton from './gui_button.mjs'
 import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
 import {GwCfgScan} from './gw_cfg_scan.mjs'
+import {GwCfg} from "./gw_cfg.mjs";
+import GuiOverlay from "./gui_overlay.mjs";
+import GwStatus from "./gw_status.mjs";
+import Network from "./network.mjs";
 
 class PageScanning {
     /** @type GwCfg */
     #gwCfg
+
+    /** @type Auth */
+    #auth
 
     #section = $('section#page-scanning')
 
@@ -59,11 +66,15 @@ class PageScanning {
     #button_back = new GuiButtonBack($('#page-scanning-button-back'))
     #button_continue = new GuiButtonContinue($('#page-scanning-button-continue'))
 
+    #overlay_no_gateway_connection = new GuiOverlay($('#overlay-no_gateway_connection'))
+
     /**
      * @param {GwCfg} gwCfg
+     * @param {Auth} auth
      */
-    constructor(gwCfg) {
+    constructor(gwCfg, auth) {
         this.#gwCfg = gwCfg
+        this.#auth = auth
 
         this.#radio_company_use_filtering_0 = this.#radio_company_use_filtering.addOption('0', false)
         this.#radio_company_use_filtering_1 = this.#radio_company_use_filtering.addOption('1', false)
@@ -83,6 +94,14 @@ class PageScanning {
         this.#radio_company_use_filtering_0.on_click(() => this.#on_settings_scan_filtering_changed())
         this.#radio_company_use_filtering_1.on_click(() => this.#on_settings_scan_filtering_changed())
         this.#radio_company_use_filtering_2.on_click(() => this.#on_settings_scan_filtering_changed())
+
+        this.#checkbox_scan_coded_phy.on_change(() => this.#on_bluetooth_scanning_changed())
+        this.#checkbox_scan_1mbit_phy.on_change(() => this.#on_bluetooth_scanning_changed())
+        this.#checkbox_scan_extended_payload.on_change(() => this.#on_bluetooth_scanning_changed())
+        this.#checkbox_scan_channel_37.on_change(() => this.#on_bluetooth_scanning_changed())
+        this.#checkbox_scan_channel_38.on_change(() => this.#on_bluetooth_scanning_changed())
+        this.#checkbox_scan_channel_39.on_change(() => this.#on_bluetooth_scanning_changed())
+
 
         this.#checkbox_scan_filtering.on_change(() => this.#onChangeCheckboxScanFiltering())
         this.#button_refresh_list_of_mac.on_click(() => this.#refreshListOfMac())
@@ -186,6 +205,32 @@ class PageScanning {
         }
     }
 
+    #update_bluetooth_scanning_options(flag_refresh_list_of_mac = false) {
+        gui_loading.bodyClassLoadingAdd()
+        this.#gwCfg.saveBluetoothScanningConfig(this.#auth,
+            !this.#radio_company_use_filtering_0.isChecked(),
+            this.#checkbox_scan_coded_phy.isChecked(),
+            this.#checkbox_scan_1mbit_phy.isChecked(),
+            this.#checkbox_scan_extended_payload.isChecked(),
+            this.#checkbox_scan_channel_37.isChecked(),
+            this.#checkbox_scan_channel_38.isChecked(),
+            this.#checkbox_scan_channel_39.isChecked()).then(() => {
+            console.log(log_wrap(`saveBluetoothScanningConfig ok`))
+        }).catch((err) => {
+            console.log(log_wrap(`saveBluetoothScanningConfig failed: ${err}`))
+            this.#overlay_no_gateway_connection.fadeIn()
+        }).finally(() => {
+            if (flag_refresh_list_of_mac) {
+                setTimeout(() => {
+                    this.#refreshListOfMac()
+                    gui_loading.bodyClassLoadingRemove()
+                }, 2000)
+            } else {
+                gui_loading.bodyClassLoadingRemove()
+            }
+        })
+    }
+
     #on_settings_scan_filtering_changed() {
         if (this.#radio_company_use_filtering_0.isChecked()) {
             this.#div_all_nearby_beacons_scanning_options.show()
@@ -208,12 +253,22 @@ class PageScanning {
         } else {
             throw new Error('Unsupported scan_filtering')
         }
+
+        if (this.#checkbox_scan_filtering.isChecked()) {
+            this.#update_bluetooth_scanning_options()
+        }
+    }
+
+    #on_bluetooth_scanning_changed() {
+        if (this.#checkbox_scan_filtering.isChecked()) {
+            this.#update_bluetooth_scanning_options()
+        }
     }
 
     #onChangeCheckboxScanFiltering() {
         if (this.#checkbox_scan_filtering.isChecked()) {
             this.#div_scan_filtering_options.slideDown()
-            this.#refreshListOfMac()
+            this.#update_bluetooth_scanning_options(true)
         } else {
             this.#div_scan_filtering_options.slideUp()
         }

@@ -107,7 +107,7 @@ class PageUpdateSchedule {
     this.#select_period_to.setSelectedVal(`${this.#gwCfgAutoUpdate.auto_update_interval_to}`)
     this.#select_tz.setSelectedVal(`${this.#gwCfgAutoUpdate.auto_update_tz_offset_hours}`)
 
-    this.#on_auto_update_cycle_changed()
+    this.#on_auto_update_cycle_changed(true)
     this.#on_edit_automatic_update_settings()
   }
 
@@ -159,16 +159,32 @@ class PageUpdateSchedule {
   #onChangeTZ () {
   }
 
-  #on_auto_update_cycle_changed () {
+  #on_auto_update_cycle_changed (flagOnShow=false) {
     if (this.#radio_auto_update_cycle_regular.isChecked()) {
-      this.#div_schedule_options.slideDown()
+      if (flagOnShow) {
+        this.#div_schedule_options.show()
+      } else {
+        this.#div_schedule_options.slideDown()
+      }
     } else if (this.#radio_auto_update_cycle_beta.isChecked()) {
-      this.#div_schedule_options.slideDown()
+      if (flagOnShow) {
+        this.#div_schedule_options.show()
+      } else {
+        this.#div_schedule_options.slideDown()
+      }
     } else if (this.#radio_auto_update_cycle_manual.isChecked()) {
-      this.#div_schedule_options.slideUp()
+      if (flagOnShow) {
+        this.#div_schedule_options.hide()
+      } else {
+        this.#div_schedule_options.slideUp()
+      }
     } else {
       this.#radio_auto_update_cycle_regular.setChecked()
-      this.#div_schedule_options.slideDown()
+      if (flagOnShow) {
+        this.#div_schedule_options.show()
+      } else {
+        this.#div_schedule_options.slideDown()
+      }
     }
   }
 
