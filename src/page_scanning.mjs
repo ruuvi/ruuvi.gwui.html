@@ -104,7 +104,7 @@ class PageScanning {
 
 
         this.#checkbox_scan_filtering.on_change(() => this.#onChangeCheckboxScanFiltering())
-        this.#button_refresh_list_of_mac.on_click(() => this.#refreshListOfMac())
+        this.#button_refresh_list_of_mac.on_click(async () => this.#refreshListOfMac())
         this.#input_add_mac_filter.on_change(() => this.#onChangeInputFilter())
         this.#button_add_mac_filter_manually.on_click(() => this.#onClickButtonAddFilterManually())
 
@@ -160,7 +160,7 @@ class PageScanning {
         }
 
         if (this.#checkbox_scan_filtering.isChecked()) {
-            this.#refreshListOfMac()
+            await this.#refreshListOfMac()
         }
     }
 
@@ -205,29 +205,31 @@ class PageScanning {
         }
     }
 
-    #update_bluetooth_scanning_options(flag_refresh_list_of_mac = false) {
+    #update_bluetooth_scanning_options() {
         gui_loading.bodyClassLoadingAdd()
-        this.#gwCfg.saveBluetoothScanningConfig(this.#auth,
-            !this.#radio_company_use_filtering_0.isChecked(),
-            this.#checkbox_scan_coded_phy.isChecked(),
-            this.#checkbox_scan_1mbit_phy.isChecked(),
-            this.#checkbox_scan_extended_payload.isChecked(),
-            this.#checkbox_scan_channel_37.isChecked(),
-            this.#checkbox_scan_channel_38.isChecked(),
-            this.#checkbox_scan_channel_39.isChecked()).then(() => {
-            console.log(log_wrap(`saveBluetoothScanningConfig ok`))
-        }).catch((err) => {
-            console.log(log_wrap(`saveBluetoothScanningConfig failed: ${err}`))
-            this.#overlay_no_gateway_connection.fadeIn()
-        }).finally(() => {
-            if (flag_refresh_list_of_mac) {
+
+        GwStatus.stopCheckingStatus()
+        Network.waitWhileInProgress().then(() => {
+            this.#gwCfg.saveBluetoothScanningConfig(this.#auth,
+                !this.#radio_company_use_filtering_0.isChecked(),
+                this.#checkbox_scan_coded_phy.isChecked(),
+                this.#checkbox_scan_1mbit_phy.isChecked(),
+                this.#checkbox_scan_extended_payload.isChecked(),
+                this.#checkbox_scan_channel_37.isChecked(),
+                this.#checkbox_scan_channel_38.isChecked(),
+                this.#checkbox_scan_channel_39.isChecked()).then(() => {
+                console.log(log_wrap(`saveBluetoothScanningConfig ok`))
+            }).catch((err) => {
+                console.log(log_wrap(`saveBluetoothScanningConfig failed: ${err}`))
+                this.#overlay_no_gateway_connection.fadeIn()
+            }).finally(() => {
                 setTimeout(() => {
-                    this.#refreshListOfMac()
-                    gui_loading.bodyClassLoadingRemove()
-                }, 2000)
-            } else {
-                gui_loading.bodyClassLoadingRemove()
-            }
+                    this.#refreshListOfMac(false).then(() => {
+                        GwStatus.startCheckingStatus()
+                        gui_loading.bodyClassLoadingRemove()
+                    })
+                }, 3000)
+            })
         })
     }
 
@@ -268,21 +270,21 @@ class PageScanning {
     #onChangeCheckboxScanFiltering() {
         if (this.#checkbox_scan_filtering.isChecked()) {
             this.#div_scan_filtering_options.slideDown()
-            this.#update_bluetooth_scanning_options(true)
+            this.#update_bluetooth_scanning_options()
         } else {
             this.#div_scan_filtering_options.slideUp()
         }
     }
 
-    #refreshListOfMac() {
-        gui_loading.bodyClassLoadingAdd()
-        networkGetHistoryJson().then((history_json) => {
-            this.#updateListOfMac(history_json)
-        }).catch((err) => {
-            console.log(log_wrap(`refreshListOfMac error: ${err}`))
-        }).finally(() => {
+    async #refreshListOfMac(flag_show_loading = true) {
+        if (flag_show_loading) {
+            gui_loading.bodyClassLoadingAdd()
+        }
+        let history_json = await networkGetHistoryJson()
+        await this.#updateListOfMac(history_json)
+        if (flag_show_loading) {
             gui_loading.bodyClassLoadingRemove()
-        })
+        }
     }
 
     #updateListOfMac(history_json) {
