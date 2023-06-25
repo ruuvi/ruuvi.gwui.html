@@ -271,4 +271,61 @@ describe('Utils', () => {
     })
   })
 
+  describe('Utils.fetchListKeyFromData', () => {
+    it('should check fetchListKeyFromData with valid data', () => {
+      let data = {
+        key1: ['abc', 'def'],
+        key2: 'test',
+      }
+      expect(Object.keys(data).length).to.equal(2)
+
+      {
+        const res = utils.fetchListKeyFromData(data, 'key1', true)
+        expect(res).to.deep.equal(['abc', 'def'])
+        expect(Object.keys(data).length).to.equal(1)
+      }
+
+      {
+        const res = utils.fetchListKeyFromData(data, 'key3', false)
+        expect(res).to.deep.equal([])
+      }
+
+      {
+        const res = utils.fetchListKeyFromData(data, 'key3')
+        expect(res).to.deep.equal([])
+      }
+      {
+        const res = utils.fetchListKeyFromData(data, 'key3', false, ['qwe'])
+        expect(res).to.deep.equal(['qwe'])
+      }
+
+      expect(() => utils.fetchListKeyFromData(data, 'key3', false, false)).to.throw(Error,
+          'Value of defaultVal \'false\' must be a List.')
+      expect(() => utils.fetchListKeyFromData(data, 'key3', false, 123)).to.throw(Error,
+          'Value of defaultVal \'123\' must be a List.')
+      expect(() => utils.fetchListKeyFromData(data, 'key3', false, '')).to.throw(Error,
+          'Value of defaultVal \'\' must be a List.')
+    })
+
+    it('should check fetchListKeyFromData with invalid data', () => {
+      let data = {
+        key1: false,
+        key2: 0,
+        key3: '',
+      }
+
+      expect(() => utils.fetchListKeyFromData(data, 'key_x', true)).to.throw(Error,
+          'Missing \'key_x\' key in the data.')
+
+      expect(() => utils.fetchListKeyFromData(data, 'key1', false)).to.throw(Error,
+          'Value of \'key1\' must be a List.')
+
+      expect(() => utils.fetchListKeyFromData(data, 'key2', false)).to.throw(Error,
+          'Value of \'key2\' must be a List.')
+
+      expect(() => utils.fetchListKeyFromData(data, 'key3', false)).to.throw(Error,
+          'Value of \'key3\' must be a List.')
+    })
+  })
+
 })

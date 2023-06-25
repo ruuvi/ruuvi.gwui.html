@@ -95,6 +95,8 @@ describe('GwCfg', () => {
           'scan_channel_37': true,
           'scan_channel_38': true,
           'scan_channel_39': true,
+          'scan_filter_allow_listed': false,
+          'scan_filter_list': [],
           'coordinates': ''
         },
       })
@@ -174,6 +176,8 @@ describe('GwCfg', () => {
           'scan_channel_38': true,
           'scan_channel_39': true,
           'coordinates': '',
+          'scan_filter_allow_listed': false,
+          'scan_filter_list': [],
           'key123': '',
         },
       })

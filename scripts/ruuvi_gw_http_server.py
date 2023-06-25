@@ -32,6 +32,7 @@ from urllib.parse import urlparse
 from urllib.parse import parse_qs
 
 GET_AP_JSON_TIMEOUT = 1.0
+GET_HISTORY_JSON_TIMEOUT = 1.0
 NETWORK_CONNECTION_TIMEOUT = 1.0
 GET_LATEST_RELEASE_TIMEOUT = 1.0
 
@@ -84,6 +85,7 @@ g_saved_ssid = None
 g_password = None
 g_timestamp = None
 g_auto_toggle_cnt = 0
+g_flag_toggle_history_json = False
 g_gw_mac = "AA:BB:CC:DD:EE:FF"
 g_gw_unique_id = "00:11:22:33:44:55:66:77"
 g_flag_access_from_lan = False
@@ -155,6 +157,12 @@ g_ruuvi_dict = {
     'scan_channel_37': True,
     'scan_channel_38': True,
     'scan_channel_39': True,
+    'scan_filter_allow_listed': False,
+    'scan_filter_list': [
+        # 'AA:BB:CC:00:00:01',
+        # 'AA:BB:CC:00:00:03',
+        # 'AA:BB:CC:00:00:02'
+    ]
 }
 
 g_content_github_latest_release = '''{
@@ -659,106 +667,140 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             return None
         return req_dict
 
-    def do_POST(self):
-        global g_ssid
-        global g_password
-        global g_timestamp
+    def _write_json_response(self, content):
+        content_encoded = content.encode('utf-8')
+
+        resp = b''
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += content_encoded
+        self.wfile.write(resp)
+
+    def _do_post_auth(self):
         global g_ruuvi_dict
         global g_login_session
         global g_authorized_sessions
-        global g_simulation_mode
-        global g_software_update_url
-        global g_software_update_stage
-        global g_software_update_percentage
         global g_flag_access_from_lan
-        print('POST %s' % self.path)
-        if self.path == '/auth':
-            if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI and g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_DEFAULT:
-                self._on_post_resp_401()
-                return
-            cookie_str = self._get_value_from_headers('Cookie: ')
-            if cookie_str is None:
-                self._on_post_resp_401()
-                return
-            cookies_dict = self._parse_cookies(cookie_str)
-            if COOKIE_RUUVISESSION not in cookies_dict:
-                self._on_post_resp_401()
-                return
-            cookie_ruuvi_session = cookies_dict[COOKIE_RUUVISESSION]
+        if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI and g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_DEFAULT:
+            self._on_post_resp_401()
+            return
+        cookie_str = self._get_value_from_headers('Cookie: ')
+        if cookie_str is None:
+            self._on_post_resp_401()
+            return
+        cookies_dict = self._parse_cookies(cookie_str)
+        if COOKIE_RUUVISESSION not in cookies_dict:
+            self._on_post_resp_401()
+            return
+        cookie_ruuvi_session = cookies_dict[COOKIE_RUUVISESSION]
 
-            prev_url = None
-            if COOKIE_RUUVI_PREV_URL in cookies_dict:
-                prev_url = cookies_dict[COOKIE_RUUVI_PREV_URL]
+        prev_url = None
+        if COOKIE_RUUVI_PREV_URL in cookies_dict:
+            prev_url = cookies_dict[COOKIE_RUUVI_PREV_URL]
 
-            session = None
-            if g_login_session is not None:
-                if g_login_session.session_id == cookie_ruuvi_session:
-                    session = g_login_session
-            if session is None:
-                self._on_post_resp_401()
-                return
+        session = None
+        if g_login_session is not None:
+            if g_login_session.session_id == cookie_ruuvi_session:
+                session = g_login_session
+        if session is None:
+            self._on_post_resp_401()
+            return
 
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length).decode('ascii')
-            print(f'post_data: {post_data}')
-            post_dict = json.loads(post_data)
-            try:
-                login = post_dict['login']
-                password = post_dict['password']
-            except KeyError:
-                self._on_post_resp_401()
-                return
-            if login != g_ruuvi_dict['lan_auth_user']:
-                print(f'User "{login}" is unknown')
-                self._on_post_resp_401()
-                return
-            if login == '':
-                self._on_post_resp_401()
-                return
-            encrypted_password = g_ruuvi_dict['lan_auth_pass']
-            password_sha256 = hashlib.sha256(f'{session.challenge}:{encrypted_password}'.encode('ascii')).hexdigest()
-            if password != password_sha256:
-                print(f'User "{login}" password mismatch: expected {password_sha256}, got {password}')
-                self._on_post_resp_401(message='Incorrect username or password')
-                return
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length).decode('ascii')
+        print(f'post_data: {post_data}')
+        post_dict = json.loads(post_data)
+        try:
+            login = post_dict['login']
+            password = post_dict['password']
+        except KeyError:
+            self._on_post_resp_401()
+            return
+        if login != g_ruuvi_dict['lan_auth_user']:
+            print(f'User "{login}" is unknown')
+            self._on_post_resp_401()
+            return
+        if login == '':
+            self._on_post_resp_401()
+            return
+        encrypted_password = g_ruuvi_dict['lan_auth_pass']
+        password_sha256 = hashlib.sha256(f'{session.challenge}:{encrypted_password}'.encode('ascii')).hexdigest()
+        if password != password_sha256:
+            print(f'User "{login}" password mismatch: expected {password_sha256}, got {password}')
+            self._on_post_resp_401(message='Incorrect username or password')
+            return
 
-            g_authorized_sessions[session.session_id] = AuthorizedSession(login, session.session_id)
-            g_login_session = None
+        g_authorized_sessions[session.session_id] = AuthorizedSession(login, session.session_id)
+        g_login_session = None
 
-            cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
-            resp_content = self._gen_auth_resp_content(g_flag_access_from_lan)
+        cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+        resp_content = self._gen_auth_resp_content(g_flag_access_from_lan)
+        resp_content_encoded = resp_content.encode('utf-8')
+        resp = b''
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+        resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+        if prev_url is not None and prev_url != "":
+            resp += f'Ruuvi-prev-url: {prev_url}\r\n'.encode('ascii')
+            resp += f'Set-Cookie: {COOKIE_RUUVI_PREV_URL}=; Max-Age=-1; Expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n'.encode(
+                'ascii')
+        resp += f'Content-type: application/json\r\n'.encode('ascii')
+        resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += resp_content_encoded
+        print(f'Response: {resp}')
+        self.wfile.write(resp)
+
+    def _do_post_connect_json(self):
+        global g_ssid
+        global g_password
+        global g_timestamp
+        global g_simulation_mode
+        resp = b''
+        req_dict = self._ecdh_decrypt_request(g_aes_key)
+        if req_dict is None:
+            resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+            resp += f'Content-Length: 0\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            print(f'Response: {resp}')
+            self.wfile.write(resp)
+            return
+        ssid = req_dict['ssid']
+        password = req_dict['password']
+        if ssid is None and password is None:
+            print(f'Try to connect to Ethernet')
+            g_ssid = None
+            g_password = None
+            g_timestamp = time.time()
+            resp_content = f'{{}}'
             resp_content_encoded = resp_content.encode('utf-8')
-            resp = b''
             resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-            resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
-            resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
-            if prev_url is not None and prev_url != "":
-                resp += f'Ruuvi-prev-url: {prev_url}\r\n'.encode('ascii')
-                resp += f'Set-Cookie: {COOKIE_RUUVI_PREV_URL}=; Max-Age=-1; Expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n'.encode(
-                    'ascii')
             resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
             resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
             resp += resp_content_encoded
-            print(f'Response: {resp}')
-            self.wfile.write(resp)
-        elif self.path == '/connect.json':
-            resp = b''
-            req_dict = self._ecdh_decrypt_request(g_aes_key)
-            if req_dict is None:
+        elif ssid is None:
+            resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+            resp += f'Content-Length: 0\r\n'.encode('ascii')
+        else:
+            print(f'Try to connect to SSID:{ssid} with password:{password}')
+            if ssid == 'dlink-noauth-err-400':
                 resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
                 resp += f'Content-Length: 0\r\n'.encode('ascii')
-                resp += f'\r\n'.encode('ascii')
-                print(f'Response: {resp}')
-                self.wfile.write(resp)
-                return
-            ssid = req_dict['ssid']
-            password = req_dict['password']
-            if ssid is None and password is None:
-                print(f'Try to connect to Ethernet')
-                g_ssid = None
-                g_password = None
+            elif ssid == 'dlink-noauth-err-503':
+                resp += f'HTTP/1.0 503 Service Unavailable\r\n'.encode('ascii')
+                resp += f'Content-Length: 0\r\n'.encode('ascii')
+            else:
+                g_ssid = ssid
+                g_password = password
                 g_timestamp = time.time()
+                g_simulation_mode = SIMULATION_MODE_NO_CONNECTION
                 resp_content = f'{{}}'
                 resp_content_encoded = resp_content.encode('utf-8')
                 resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
@@ -768,157 +810,169 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
                 resp += f'\r\n'.encode('ascii')
                 resp += resp_content_encoded
-            elif ssid is None:
-                resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
-                resp += f'Content-Length: 0\r\n'.encode('ascii')
-            else:
-                print(f'Try to connect to SSID:{ssid} with password:{password}')
-                if ssid == 'dlink-noauth-err-400':
-                    resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
-                    resp += f'Content-Length: 0\r\n'.encode('ascii')
-                elif ssid == 'dlink-noauth-err-503':
-                    resp += f'HTTP/1.0 503 Service Unavailable\r\n'.encode('ascii')
-                    resp += f'Content-Length: 0\r\n'.encode('ascii')
+        print(f'Response: {resp}')
+        self.wfile.write(resp)
+
+    def _do_post_ruuvi_json(self):
+        global g_ruuvi_dict
+        global g_authorized_sessions
+        req_dict = self._ecdh_decrypt_request(g_aes_key)
+        if req_dict is None:
+            resp = b''
+            resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+            resp += f'Content-Length: {0}\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            self.wfile.write(resp)
+            return
+        lan_auth_type = None
+        lan_auth_user = None
+        lan_auth_pass = None
+        for key, value in req_dict.items():
+            if key == 'http_pass':
+                continue
+            if key == 'http_bearer_token':
+                continue
+            if key == 'http_api_key':
+                continue
+            if key == 'http_stat_pass':
+                continue
+            if key == 'mqtt_pass':
+                continue
+            if key == 'lan_auth_type':
+                lan_auth_type = value
+                if value == LAN_AUTH_TYPE_DEFAULT:
+                    lan_auth_user = LAN_AUTH_DEFAULT_USER
+                    lan_auth_pass = g_lan_auth_default_password_hashed
+                continue
+            if key == 'lan_auth_user':
+                if lan_auth_type != LAN_AUTH_TYPE_DEFAULT:
+                    lan_auth_user = value
+                continue
+            if key == 'lan_auth_pass':
+                if lan_auth_type != LAN_AUTH_TYPE_DEFAULT:
+                    lan_auth_pass = value
+                continue
+            g_ruuvi_dict[key] = value
+
+        if not g_ruuvi_dict['use_http']:
+            g_ruuvi_dict.pop('http_url', None)
+            g_ruuvi_dict.pop('http_auth', None)
+            g_ruuvi_dict.pop('http_data_format', None)
+            g_ruuvi_dict.pop('http_user', None)
+            g_ruuvi_dict.pop('http_bearer_token', None)
+            g_ruuvi_dict.pop('http_api_key', None)
+
+        if 'http_auth' in g_ruuvi_dict:
+            if g_ruuvi_dict['http_auth'] == 'none':
+                g_ruuvi_dict.pop('http_user', None)
+                g_ruuvi_dict.pop('http_bearer_token', None)
+                g_ruuvi_dict.pop('http_api_key', None)
+            elif g_ruuvi_dict['http_auth'] == 'basic':
+                g_ruuvi_dict.pop('http_bearer_token', None)
+                g_ruuvi_dict.pop('http_api_key', None)
+            elif g_ruuvi_dict['http_auth'] == 'bearer':
+                g_ruuvi_dict.pop('http_bearer_token', None)
+            elif g_ruuvi_dict['http_auth'] == 'token':
+                g_ruuvi_dict.pop('http_api_key', None)
+
+        if lan_auth_type is not None:
+            if g_ruuvi_dict['lan_auth_type'] != lan_auth_type or g_ruuvi_dict['lan_auth_user'] != lan_auth_user or \
+                    g_ruuvi_dict['lan_auth_pass'] != lan_auth_pass:
+                g_ruuvi_dict['lan_auth_type'] = lan_auth_type
+                g_ruuvi_dict['lan_auth_user'] = lan_auth_user
+                if lan_auth_pass is not None:
+                    g_ruuvi_dict['lan_auth_pass'] = lan_auth_pass
+                    print(f'Set LAN auth: {lan_auth_type}, {lan_auth_user}, {lan_auth_pass}')
                 else:
-                    g_ssid = ssid
-                    g_password = password
-                    g_timestamp = time.time()
-                    g_simulation_mode = SIMULATION_MODE_NO_CONNECTION
-                    resp_content = f'{{}}'
-                    resp_content_encoded = resp_content.encode('utf-8')
-                    resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-                    resp += f'Content-type: application/json\r\n'.encode('ascii')
-                    resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-                    resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                    resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
-                    resp += f'\r\n'.encode('ascii')
-                    resp += resp_content_encoded
-            print(f'Response: {resp}')
-            self.wfile.write(resp)
-        elif self.path == '/ruuvi.json':
-            req_dict = self._ecdh_decrypt_request(g_aes_key)
-            if req_dict is None:
-                resp = b''
-                resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
-                resp += f'Content-Length: {0}\r\n'.encode('ascii')
-                resp += f'\r\n'.encode('ascii')
-                self.wfile.write(resp)
-                return
-            lan_auth_type = None
-            lan_auth_user = None
-            lan_auth_pass = None
-            for key, value in req_dict.items():
-                if key == 'http_pass':
-                    continue
-                if key == 'http_bearer_token':
-                    continue
-                if key == 'http_api_key':
-                    continue
-                if key == 'http_stat_pass':
-                    continue
-                if key == 'mqtt_pass':
-                    continue
-                if key == 'lan_auth_type':
-                    lan_auth_type = value
-                    if value == LAN_AUTH_TYPE_DEFAULT:
-                        lan_auth_user = LAN_AUTH_DEFAULT_USER
-                        lan_auth_pass = g_lan_auth_default_password_hashed
-                    continue
-                if key == 'lan_auth_user':
-                    if lan_auth_type != LAN_AUTH_TYPE_DEFAULT:
-                        lan_auth_user = value
-                    continue
-                if key == 'lan_auth_pass':
-                    if lan_auth_type != LAN_AUTH_TYPE_DEFAULT:
-                        lan_auth_pass = value
-                    continue
-                g_ruuvi_dict[key] = value
+                    lan_auth_pass = g_ruuvi_dict['lan_auth_pass']
+                    print(f'Set LAN auth (prev password): {lan_auth_type}, {lan_auth_user}, {lan_auth_pass}')
+                g_authorized_sessions = dict()
 
-            if lan_auth_type is not None:
-                if g_ruuvi_dict['lan_auth_type'] != lan_auth_type or g_ruuvi_dict['lan_auth_user'] != lan_auth_user or \
-                        g_ruuvi_dict['lan_auth_pass'] != lan_auth_pass:
-                    g_ruuvi_dict['lan_auth_type'] = lan_auth_type
-                    g_ruuvi_dict['lan_auth_user'] = lan_auth_user
-                    if lan_auth_pass is not None:
-                        g_ruuvi_dict['lan_auth_pass'] = lan_auth_pass
-                        print(f'Set LAN auth: {lan_auth_type}, {lan_auth_user}, {lan_auth_pass}')
-                    else:
-                        lan_auth_pass = g_ruuvi_dict['lan_auth_pass']
-                        print(f'Set LAN auth (prev password): {lan_auth_type}, {lan_auth_user}, {lan_auth_pass}')
-                    g_authorized_sessions = dict()
+        content = '{}'
+        self._write_json_response(content)
 
-            content = '{}'
-            content_encoded = content.encode('utf-8')
+    def _do_post_bluetooth_scanning_json(self):
+        req_dict = self._ecdh_decrypt_request(g_aes_key)
+        if req_dict is None:
             resp = b''
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-            resp += f'Content-type: application/json\r\n'.encode('ascii')
-            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-            resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+            resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+            resp += f'Content-Length: {0}\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
-            resp += content_encoded
             self.wfile.write(resp)
-        elif self.path == '/gw_cfg_download':
-            resp = b''
-            try:
-                response = urllib.request.urlopen(g_ruuvi_dict['remote_cfg_url'])
-            except urllib.error.HTTPError as ex:
-                resp += f'HTTP/1.0 {ex.code} {ex.msg}\r\n'.encode('ascii')
-                resp += f'Content-Length: 0\r\n'.encode('ascii')
-                self.wfile.write(resp)
-                return
-            except:
-                resp += f'HTTP/1.0 503 Service Unavailable\r\n'.encode('ascii')
-                resp += f'Content-Length: 0\r\n'.encode('ascii')
-                self.wfile.write(resp)
-                return
-            response_data = response.read()
-            response_text = response_data.decode('utf-8')
-            content = '{}'
-            content_encoded = content.encode('utf-8')
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-            resp += f'Content-type: application/json\r\n'.encode('ascii')
-            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-            resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
-            resp += f'\r\n'.encode('ascii')
-            resp += content_encoded
+            return
+        for key, value in req_dict.items():
+            print(f'Bluetooth scanning: "{key}": "{value}"')
+        content = '{}'
+        self._write_json_response(content)
+
+    def _do_post_gw_cfg_download(self):
+        global g_ruuvi_dict
+        resp = b''
+        try:
+            response = urllib.request.urlopen(g_ruuvi_dict['remote_cfg_url'])
+        except urllib.error.HTTPError as ex:
+            resp += f'HTTP/1.0 {ex.code} {ex.msg}\r\n'.encode('ascii')
+            resp += f'Content-Length: 0\r\n'.encode('ascii')
             self.wfile.write(resp)
-        elif self.path == '/fw_update.json':
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length).decode('ascii')
-            new_dict = json.loads(post_data)
-            g_software_update_url = new_dict['url']
-            if g_software_update_url.startswith('http://'):
-                content = '{"status": 400, "message": "Invalid URL"}'
-            else:
-                g_software_update_stage = SOFTWARE_UPDATE_STAGE_1_DOWNLOAD_MAIN_FW
-                g_software_update_percentage = 0
-                content = '{"status": 200, "message": "OK"}'
-            content_encoded = content.encode('utf-8')
-            resp = b''
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-            resp += f'Content-type: application/json\r\n'.encode('ascii')
-            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-            resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
-            resp += f'\r\n'.encode('ascii')
-            resp += content_encoded
+            return
+        except:
+            resp += f'HTTP/1.0 503 Service Unavailable\r\n'.encode('ascii')
+            resp += f'Content-Length: 0\r\n'.encode('ascii')
             self.wfile.write(resp)
-        elif self.path == '/fw_update_reset':
-            g_software_update_stage = SOFTWARE_UPDATE_STAGE_0_NONE
+            return
+        response_data = response.read()
+        response_text = response_data.decode('utf-8')
+        content = '{}'
+        content_encoded = content.encode('utf-8')
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: application/json\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += content_encoded
+        self.wfile.write(resp)
+
+    def _do_post_fw_update_json(self):
+        global g_software_update_url
+        global g_software_update_stage
+        global g_software_update_percentage
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length).decode('ascii')
+        new_dict = json.loads(post_data)
+        g_software_update_url = new_dict['url']
+        if g_software_update_url.startswith('http://'):
+            content = '{"status": 400, "message": "Invalid URL"}'
+        else:
+            g_software_update_stage = SOFTWARE_UPDATE_STAGE_1_DOWNLOAD_MAIN_FW
             g_software_update_percentage = 0
-            content = '{}'
-            content_encoded = content.encode('utf-8')
-            resp = b''
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-            resp += f'Content-type: application/json\r\n'.encode('ascii')
-            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-            resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
-            resp += f'\r\n'.encode('ascii')
-            resp += content_encoded
-            self.wfile.write(resp)
+            content = '{"status": 200, "message": "OK"}'
+        self._write_json_response(content)
+
+    def _do_post_fw_update_reset(self):
+        global g_software_update_stage
+        global g_software_update_percentage
+        g_software_update_stage = SOFTWARE_UPDATE_STAGE_0_NONE
+        g_software_update_percentage = 0
+        content = '{}'
+        self._write_json_response(content)
+
+    def do_POST(self):
+        print('POST %s' % self.path)
+        if self.path == '/auth':
+            self._do_post_auth()
+        elif self.path == '/connect.json':
+            self._do_post_connect_json()
+        elif self.path == '/ruuvi.json':
+            self._do_post_ruuvi_json()
+        elif self.path == '/bluetooth_scanning.json':
+            self._do_post_bluetooth_scanning_json()
+        elif self.path == '/gw_cfg_download':
+            self._do_post_gw_cfg_download()
+        elif self.path == '/fw_update.json':
+            self._do_post_fw_update_json()
+        elif self.path == '/fw_update_reset':
+            self._do_post_fw_update_reset()
         else:
             resp = b''
             resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
@@ -935,6 +989,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_simulation_mode
         global g_ruuvi_dict
         global g_login_session
+        global g_authorized_sessions
         print('DELETE %s' % self.path)
         if self.path == '/auth':
             if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI and g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_DEFAULT:
@@ -967,16 +1022,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             g_simulation_mode = SIMULATION_MODE_USER_DISCONNECT
 
             content = '{}'
-            content_encoded = content.encode('utf-8')
-            resp = b''
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-            resp += f'Content-type: application/json\r\n'.encode('ascii')
-            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-            resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
-            resp += f'\r\n'.encode('ascii')
-            resp += content_encoded
-            self.wfile.write(resp)
+            self._write_json_response(content)
         else:
             resp = b''
             resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
@@ -1456,226 +1502,208 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             return self._validate_url_check_remote_cfg(url, user, password, parse_qs(parsed_url.query)['auth_type'][0])
         return self._resp_400()
 
-    def do_GET(self):
-        global g_ruuvi_dict
-        global g_login_session
-        global g_auto_toggle_cnt
-        print('GET %s' % self.path)
-        file_path = self.path.split('?')[0]
-        if file_path == '/auth':
-            self._do_get_auth()
-            return
-        elif file_path.endswith('.json'):
-            resp = b''
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-            resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
-            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-            resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            if file_path == '/ruuvi.json':
-                resp += f'\r\n'.encode('ascii')
+    def _do_get_ruuvi_json(self, resp):
+        resp += f'\r\n'.encode('ascii')
+        ruuvi_dict = copy.deepcopy(g_ruuvi_dict)
+        if 'http_pass' in ruuvi_dict:
+            del ruuvi_dict['http_pass']
+        if 'http_stat_pass' in ruuvi_dict:
+            del ruuvi_dict['http_stat_pass']
+        if 'mqtt_pass' in ruuvi_dict:
+            del ruuvi_dict['mqtt_pass']
+        if 'lan_auth_pass' in ruuvi_dict:
+            del ruuvi_dict['lan_auth_pass']
+        if 'remote_cfg_auth_basic_pass' in ruuvi_dict:
+            del ruuvi_dict['remote_cfg_auth_basic_pass']
+        if 'remote_cfg_auth_bearer_token' in ruuvi_dict:
+            del ruuvi_dict['remote_cfg_auth_bearer_token']
 
-                ruuvi_dict = copy.deepcopy(g_ruuvi_dict)
-                if 'http_pass' in ruuvi_dict:
-                    del ruuvi_dict['http_pass']
-                if 'http_stat_pass' in ruuvi_dict:
-                    del ruuvi_dict['http_stat_pass']
-                if 'mqtt_pass' in ruuvi_dict:
-                    del ruuvi_dict['mqtt_pass']
-                if 'lan_auth_pass' in ruuvi_dict:
-                    del ruuvi_dict['lan_auth_pass']
-                if 'remote_cfg_auth_basic_pass' in ruuvi_dict:
-                    del ruuvi_dict['remote_cfg_auth_basic_pass']
-                if 'remote_cfg_auth_bearer_token' in ruuvi_dict:
-                    del ruuvi_dict['remote_cfg_auth_bearer_token']
-
-                if 'lan_auth_type' in ruuvi_dict:
-                    if ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI and \
-                            g_ruuvi_dict['lan_auth_user'] == LAN_AUTH_DEFAULT_USER and \
-                            g_ruuvi_dict['lan_auth_pass'] == g_lan_auth_default_password_hashed:
-                        g_ruuvi_dict['lan_auth_type'] = LAN_AUTH_TYPE_DEFAULT
-                if 'lan_auth_api_key' in ruuvi_dict:
-                    if ruuvi_dict['lan_auth_api_key'] != "":
-                        ruuvi_dict['lan_auth_api_key_use'] = True
-                    else:
-                        ruuvi_dict['lan_auth_api_key_use'] = False
-                    del ruuvi_dict['lan_auth_api_key']
-                if 'lan_auth_api_key_rw' in ruuvi_dict:
-                    if ruuvi_dict['lan_auth_api_key_rw'] != "":
-                        ruuvi_dict['lan_auth_api_key_rw_use'] = True
-                    else:
-                        ruuvi_dict['lan_auth_api_key_rw_use'] = False
-                    del ruuvi_dict['lan_auth_api_key_rw']
-
-                content = json.dumps(ruuvi_dict)
-                print(f'Resp: {content}')
-                resp += content.encode('utf-8')
-                self.wfile.write(resp)
-            elif file_path == '/ap.json':
-                resp += f'\r\n'.encode('ascii')
-                if True or g_auto_toggle_cnt <= 3:
-                    content = '''[
-{"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
-{"ssid":"a0308","chan":1,"rssi":-56,"auth":3},
-{"ssid":"dlink-noauth","chan":11,"rssi":-82,"auth":0},
-{"ssid":"dlink-noauth-err-400","chan":7,"rssi":-85,"auth":0},
-{"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0},
-{"ssid":"SINGTEL-5171","chan":9,"rssi":-88,"auth":4},
-{"ssid":"1126-1","chan":11,"rssi":-89,"auth":4},
-{"ssid":"SINGTEL-5171","chan":10,"rssi":-88,"auth":0},
-{"ssid":"The Shah 5GHz-2","chan":1,"rssi":-90,"auth":3},
-{"ssid":"SINGTEL-1D28 (2G)","chan":11,"rssi":-91,"auth":3},
-{"ssid":"dlink-F864","chan":1,"rssi":-92,"auth":4},
-{"ssid":"dlink-74F0","chan":1,"rssi":-93,"auth":4}
-] '''
-                elif g_auto_toggle_cnt <= 6:
-                    content = '''[
-{"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
-{"ssid":"dlink-noauth","chan":11,"rssi":-82,"auth":0},
-{"ssid":"dlink-noauth-err-400","chan":7,"rssi":-85,"auth":0},
-{"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0},
-{"ssid":"SINGTEL-5171","chan":9,"rssi":-88,"auth":4},
-{"ssid":"1126-1","chan":11,"rssi":-89,"auth":4},
-{"ssid":"SINGTEL-5171","chan":10,"rssi":-88,"auth":0},
-{"ssid":"The Shah 5GHz-2","chan":1,"rssi":-90,"auth":3},
-{"ssid":"SINGTEL-1D28 (2G)","chan":11,"rssi":-91,"auth":3},
-{"ssid":"dlink-74F0","chan":1,"rssi":-93,"auth":4}
-] '''
-                else:
-                    content = '[]'
-                g_auto_toggle_cnt += 1
-                if g_auto_toggle_cnt >= 9:
-                    g_auto_toggle_cnt = 0
-                print(f'Resp: {content}')
-                resp += content.encode('utf-8')
-                time.sleep(GET_AP_JSON_TIMEOUT)
-                self.wfile.write(resp)
-            elif file_path == '/status.json':
-                global g_software_update_stage
-                global g_software_update_percentage
-
-                resp += f'\r\n'.encode('ascii')
-                if g_ssid is None:
-                    ssid_key_with_val = '"ssid":null'
-                else:
-                    ssid_key_with_val = f'"ssid":"{g_ssid}"'
-                if g_simulation_mode == SIMULATION_MODE_NO_CONNECTION:
-                    content = '{}'
-                elif g_simulation_mode == SIMULATION_MODE_ETH_CONNECTED or g_simulation_mode == SIMULATION_MODE_WIFI_CONNECTED:
-                    if g_simulation_mode == SIMULATION_MODE_ETH_CONNECTED:
-                        if g_ruuvi_dict['eth_dhcp']:
-                            ip = '192.168.100.119'
-                            netmask = '255.255.255.0'
-                            gw = '192.168.100.1'
-                        else:
-                            ip = g_ruuvi_dict['eth_static_ip']
-                            netmask = g_ruuvi_dict['eth_netmask']
-                            gw = g_ruuvi_dict['eth_gw']
-                    else:
-                        ip = '192.168.1.119'
-                        netmask = '255.255.255.0'
-                        gw = '192.168.1.1'
-
-                    fw_updating_msg = None
-                    if SOFTWARE_UPDATE_STAGE_0_NONE < g_software_update_stage <= SOFTWARE_UPDATE_STAGE_3_DOWNLOAD_NRF52:
-                        g_software_update_percentage += 10
-                        if g_software_update_percentage >= 100:
-                            g_software_update_percentage = 0
-                            g_software_update_stage += 1
-                            if g_software_update_stage == SOFTWARE_UPDATE_STAGE_4_FLASH_NRF52:
-                                g_software_update_stage = SOFTWARE_UPDATE_STAGE_5_COMPLETED_SUCCESSFULLY
-                    elif g_software_update_stage == SOFTWARE_UPDATE_STAGE_4_FLASH_NRF52:
-                        g_software_update_percentage += 10
-                        if g_software_update_percentage >= 100:
-                            g_software_update_percentage = 0
-                            g_software_update_stage = SOFTWARE_UPDATE_STAGE_7_FLASHING_NRF52_FAILED
-                    if g_software_update_stage == SOFTWARE_UPDATE_STAGE_6_DOWNLOADING_FAILED:
-                        fw_updating_msg = "Failed to download firmware"
-                    elif g_software_update_stage == SOFTWARE_UPDATE_STAGE_7_FLASHING_NRF52_FAILED:
-                        fw_updating_msg = "Failed to update nRF52 firmware"
-
-                    content = self._generate_status_json(STATUS_JSON_URC_CONNECTED,
-                                                         ssid_key_with_val, ip, netmask, gw, g_software_update_stage,
-                                                         g_software_update_percentage, fw_updating_msg=fw_updating_msg)
-
-                elif g_simulation_mode == SIMULATION_MODE_WIFI_FAILED_ATTEMPT:
-                    content = self._generate_status_json(STATUS_JSON_URC_WIFI_FAILED_ATTEMPT,
-                                                         ssid_key_with_val)
-                elif g_simulation_mode == SIMULATION_MODE_USER_DISCONNECT:
-                    content = self._generate_status_json(STATUS_JSON_URC_USER_DISCONNECT,
-                                                         ssid_key_with_val)
-                elif g_simulation_mode == SIMULATION_MODE_LOST_CONNECTION:
-                    content = self._generate_status_json(STATUS_JSON_URC_LOST_CONNECTION,
-                                                         ssid_key_with_val)
-                else:
-                    content = ''
-                print(f'Resp: {content}')
-                resp += content.encode('utf-8')
-                self.wfile.write(resp)
-
-            elif file_path == '/github_latest_release.json':
-                content = g_content_github_latest_release
-                time.sleep(GET_LATEST_RELEASE_TIMEOUT)
-                resp = b''
-                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-                resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
-                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-                resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                resp += f'Content-Length: {len(content)}\r\n'.encode('ascii')
-                resp += f'\r\n'.encode('ascii')
-
-                print(f'Resp: {content}')
-                resp += content.encode('utf-8')
-                self.wfile.write(resp)
-            elif file_path == '/github_latest_release_without_len.json':
-                content = g_content_github_latest_release
-                time.sleep(10.0)
-                resp = b''
-                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-                resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
-                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-                resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                resp += f'\r\n'.encode('ascii')
-
-                print(f'Resp: {content}')
-                resp += content.encode('utf-8')
-                self.wfile.write(resp)
-            elif file_path == '/github_latest_release_chunked.json':
-                chunk1 = g_content_github_latest_release[:10]
-                chunk2 = g_content_github_latest_release[10:5000]
-                chunk3 = g_content_github_latest_release[5000:]
-                content = ''
-                content += f'{len(chunk1):x}\r\n'
-                content += chunk1
-                content += '\r\n'
-                content += f'{len(chunk2):x}\r\n'
-                content += chunk2
-                content += '\r\n'
-                content += f'{len(chunk3):x}\r\n'
-                content += chunk3
-                content += '\r\n'
-                content += f'0\r\n\r\n'
-
-                time.sleep(10.0)
-                resp = b''
-                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-                resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
-                resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-                resp += f'Pragma: no-cache\r\n'.encode('ascii')
-                resp += f'Transfer-Encoding: chunked\r\n'.encode('ascii')
-                resp += f'\r\n'.encode('ascii')
-
-                print(f'Resp: {content}')
-                resp += content.encode('utf-8')
-                self.wfile.write(resp)
+        if 'lan_auth_type' in ruuvi_dict:
+            if ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_RUUVI and \
+                    g_ruuvi_dict['lan_auth_user'] == LAN_AUTH_DEFAULT_USER and \
+                    g_ruuvi_dict['lan_auth_pass'] == g_lan_auth_default_password_hashed:
+                g_ruuvi_dict['lan_auth_type'] = LAN_AUTH_TYPE_DEFAULT
+        if 'lan_auth_api_key' in ruuvi_dict:
+            if ruuvi_dict['lan_auth_api_key'] != "":
+                ruuvi_dict['lan_auth_api_key_use'] = True
             else:
-                resp = b''
-                resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
-                resp += f'Content-Length: {0}\r\n'.encode('ascii')
-                resp += f'\r\n'.encode('ascii')
-                self.wfile.write(resp)
-        elif file_path == '/validate_url':
-            self._validate_url(self.path)
-        elif file_path == '/metrics':
+                ruuvi_dict['lan_auth_api_key_use'] = False
+            del ruuvi_dict['lan_auth_api_key']
+        if 'lan_auth_api_key_rw' in ruuvi_dict:
+            if ruuvi_dict['lan_auth_api_key_rw'] != "":
+                ruuvi_dict['lan_auth_api_key_rw_use'] = True
+            else:
+                ruuvi_dict['lan_auth_api_key_rw_use'] = False
+            del ruuvi_dict['lan_auth_api_key_rw']
+
+        content = json.dumps(ruuvi_dict)
+        print(f'Resp: {content}')
+        resp += content.encode('utf-8')
+        self.wfile.write(resp)
+
+    def _do_get_ap_json(self, resp):
+        global g_auto_toggle_cnt
+        resp += f'\r\n'.encode('ascii')
+        if True or g_auto_toggle_cnt <= 3:
+            content = '''[
+        {"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
+        {"ssid":"a0308","chan":1,"rssi":-56,"auth":3},
+        {"ssid":"dlink-noauth","chan":11,"rssi":-82,"auth":0},
+        {"ssid":"dlink-noauth-err-400","chan":7,"rssi":-85,"auth":0},
+        {"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0},
+        {"ssid":"SINGTEL-5171","chan":9,"rssi":-88,"auth":4},
+        {"ssid":"1126-1","chan":11,"rssi":-89,"auth":4},
+        {"ssid":"SINGTEL-5171","chan":10,"rssi":-88,"auth":0},
+        {"ssid":"The Shah 5GHz-2","chan":1,"rssi":-90,"auth":3},
+        {"ssid":"SINGTEL-1D28 (2G)","chan":11,"rssi":-91,"auth":3},
+        {"ssid":"dlink-F864","chan":1,"rssi":-92,"auth":4},
+        {"ssid":"dlink-74F0","chan":1,"rssi":-93,"auth":4}
+        ] '''
+        elif g_auto_toggle_cnt <= 6:
+            content = '''[
+        {"ssid":"Pantum-AP-A6D49F","chan":11,"rssi":-55,"auth":4},
+        {"ssid":"dlink-noauth","chan":11,"rssi":-82,"auth":0},
+        {"ssid":"dlink-noauth-err-400","chan":7,"rssi":-85,"auth":0},
+        {"ssid":"dlink-noauth-err-503","chan":7,"rssi":-85,"auth":0},
+        {"ssid":"SINGTEL-5171","chan":9,"rssi":-88,"auth":4},
+        {"ssid":"1126-1","chan":11,"rssi":-89,"auth":4},
+        {"ssid":"SINGTEL-5171","chan":10,"rssi":-88,"auth":0},
+        {"ssid":"The Shah 5GHz-2","chan":1,"rssi":-90,"auth":3},
+        {"ssid":"SINGTEL-1D28 (2G)","chan":11,"rssi":-91,"auth":3},
+        {"ssid":"dlink-74F0","chan":1,"rssi":-93,"auth":4}
+        ] '''
+        else:
+            content = '[]'
+        g_auto_toggle_cnt += 1
+        if g_auto_toggle_cnt >= 9:
+            g_auto_toggle_cnt = 0
+        print(f'Resp: {content}')
+        resp += content.encode('utf-8')
+        time.sleep(GET_AP_JSON_TIMEOUT)
+        self.wfile.write(resp)
+
+    def _do_get_status_json(self, resp):
+        global g_software_update_stage
+        global g_software_update_percentage
+
+        resp += f'\r\n'.encode('ascii')
+        if g_ssid is None:
+            ssid_key_with_val = '"ssid":null'
+        else:
+            ssid_key_with_val = f'"ssid":"{g_ssid}"'
+        if g_simulation_mode == SIMULATION_MODE_NO_CONNECTION:
+            content = '{}'
+        elif g_simulation_mode == SIMULATION_MODE_ETH_CONNECTED or g_simulation_mode == SIMULATION_MODE_WIFI_CONNECTED:
+            if g_simulation_mode == SIMULATION_MODE_ETH_CONNECTED:
+                if g_ruuvi_dict['eth_dhcp']:
+                    ip = '192.168.100.119'
+                    netmask = '255.255.255.0'
+                    gw = '192.168.100.1'
+                else:
+                    ip = g_ruuvi_dict['eth_static_ip']
+                    netmask = g_ruuvi_dict['eth_netmask']
+                    gw = g_ruuvi_dict['eth_gw']
+            else:
+                ip = '192.168.1.119'
+                netmask = '255.255.255.0'
+                gw = '192.168.1.1'
+
+            fw_updating_msg = None
+            if SOFTWARE_UPDATE_STAGE_0_NONE < g_software_update_stage <= SOFTWARE_UPDATE_STAGE_3_DOWNLOAD_NRF52:
+                g_software_update_percentage += 10
+                if g_software_update_percentage >= 100:
+                    g_software_update_percentage = 0
+                    g_software_update_stage += 1
+                    if g_software_update_stage == SOFTWARE_UPDATE_STAGE_4_FLASH_NRF52:
+                        g_software_update_stage = SOFTWARE_UPDATE_STAGE_5_COMPLETED_SUCCESSFULLY
+            elif g_software_update_stage == SOFTWARE_UPDATE_STAGE_4_FLASH_NRF52:
+                g_software_update_percentage += 10
+                if g_software_update_percentage >= 100:
+                    g_software_update_percentage = 0
+                    g_software_update_stage = SOFTWARE_UPDATE_STAGE_7_FLASHING_NRF52_FAILED
+            if g_software_update_stage == SOFTWARE_UPDATE_STAGE_6_DOWNLOADING_FAILED:
+                fw_updating_msg = "Failed to download firmware"
+            elif g_software_update_stage == SOFTWARE_UPDATE_STAGE_7_FLASHING_NRF52_FAILED:
+                fw_updating_msg = "Failed to update nRF52 firmware"
+
+            content = self._generate_status_json(STATUS_JSON_URC_CONNECTED,
+                                                 ssid_key_with_val, ip, netmask, gw, g_software_update_stage,
+                                                 g_software_update_percentage, fw_updating_msg=fw_updating_msg)
+
+        elif g_simulation_mode == SIMULATION_MODE_WIFI_FAILED_ATTEMPT:
+            content = self._generate_status_json(STATUS_JSON_URC_WIFI_FAILED_ATTEMPT,
+                                                 ssid_key_with_val)
+        elif g_simulation_mode == SIMULATION_MODE_USER_DISCONNECT:
+            content = self._generate_status_json(STATUS_JSON_URC_USER_DISCONNECT,
+                                                 ssid_key_with_val)
+        elif g_simulation_mode == SIMULATION_MODE_LOST_CONNECTION:
+            content = self._generate_status_json(STATUS_JSON_URC_LOST_CONNECTION,
+                                                 ssid_key_with_val)
+        else:
+            content = ''
+        print(f'Resp: {content}')
+        resp += content.encode('utf-8')
+        self.wfile.write(resp)
+
+    def _do_get_github_latest_release_json(self, resp):
+        content = g_content_github_latest_release
+        time.sleep(GET_LATEST_RELEASE_TIMEOUT)
+        resp = b''
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'Content-Length: {len(content)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+
+        print(f'Resp: {content}')
+        resp += content.encode('utf-8')
+        self.wfile.write(resp)
+
+    def _do_get_github_latest_release_without_len_json(self, resp):
+        content = g_content_github_latest_release
+        time.sleep(10.0)
+        resp = b''
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+
+        print(f'Resp: {content}')
+        resp += content.encode('utf-8')
+        self.wfile.write(resp)
+
+    def _do_get_github_latest_release_chunked_json(self, resp):
+        chunk1 = g_content_github_latest_release[:10]
+        chunk2 = g_content_github_latest_release[10:5000]
+        chunk3 = g_content_github_latest_release[5000:]
+        content = ''
+        content += f'{len(chunk1):x}\r\n'
+        content += chunk1
+        content += '\r\n'
+        content += f'{len(chunk2):x}\r\n'
+        content += chunk2
+        content += '\r\n'
+        content += f'{len(chunk3):x}\r\n'
+        content += chunk3
+        content += '\r\n'
+        content += f'0\r\n\r\n'
+
+        time.sleep(10.0)
+        resp = b''
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'Transfer-Encoding: chunked\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+
+        print(f'Resp: {content}')
+        resp += content.encode('utf-8')
+        self.wfile.write(resp)
+
+    def _do_get_metrics(self, file_path):
             if not self._check_auth():
                 lan_auth_type = g_ruuvi_dict['lan_auth_type']
                 if lan_auth_type == LAN_AUTH_TYPE_RUUVI or lan_auth_type == LAN_AUTH_TYPE_DEFAULT \
@@ -1692,34 +1720,34 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     self._do_get_auth()
                     return
             content = '''ruuvigw_received_advertisements 18940
-ruuvigw_uptime_us 12721524523
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_EXEC"} 197596
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_32BIT"} 200392
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_8BIT"} 132212
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_DMA"} 132212
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID2"} 0
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID3"} 0
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID4"} 0
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID5"} 0
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID6"} 0
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID7"} 0
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_SPIRAM"} 0
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_INTERNAL"} 200392
-ruuvigw_heap_free_bytes{capability="MALLOC_CAP_DEFAULT"} 132212
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_EXEC"} 93756
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_32BIT"} 93756
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_8BIT"} 93756
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DMA"} 93756
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID2"} 0
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID3"} 0
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID4"} 0
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID5"} 0
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID6"} 0
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID7"} 0
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_SPIRAM"} 0
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_INTERNAL"} 93756
-ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DEFAULT"} 93756
-            '''
+    ruuvigw_uptime_us 12721524523
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_EXEC"} 197596
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_32BIT"} 200392
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_8BIT"} 132212
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_DMA"} 132212
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID2"} 0
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID3"} 0
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID4"} 0
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID5"} 0
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID6"} 0
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_PID7"} 0
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_SPIRAM"} 0
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_INTERNAL"} 200392
+    ruuvigw_heap_free_bytes{capability="MALLOC_CAP_DEFAULT"} 132212
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_EXEC"} 93756
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_32BIT"} 93756
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_8BIT"} 93756
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DMA"} 93756
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID2"} 0
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID3"} 0
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID4"} 0
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID5"} 0
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID6"} 0
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_PID7"} 0
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_SPIRAM"} 0
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_INTERNAL"} 93756
+    ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DEFAULT"} 93756
+                '''
             content_encoded = content.encode('utf-8')
             resp = b''
             resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
@@ -1728,6 +1756,100 @@ ruuvigw_heap_largest_free_block_bytes{capability="MALLOC_CAP_DEFAULT"} 93756
             resp += f'\r\n'.encode('ascii')
             resp += content_encoded
             self.wfile.write(resp)
+
+    def _do_get_history(self):
+        global g_flag_toggle_history_json
+        g_flag_toggle_history_json = not g_flag_toggle_history_json
+        if g_flag_toggle_history_json:
+            content = '''
+{
+	"data":	{
+		"coordinates":	"",
+		"timestamp":	"1683166503",
+		"gw_mac":	"C8:25:2D:8E:9C:2C",
+		"tags":	{
+			"F4:1F:0C:28:CB:D6":	{
+				"rssi":	-39,
+				"timestamp":	"1683166503",
+				"data":	"0201061BFF99040513CE4910C6F20004FFB803E069F6125BC3F41F0C28CBD6"
+			},
+			"C6:A5:B9:E0:AD:06":	{
+				"rssi":	-63,
+				"timestamp":	"1683166503",
+				"data":	"0201061BFF99040512E84A93C6C5002C0004041C9C76A87980C6A5B9E0AD06"
+			},
+			"E3:75:CF:37:4E:23":	{
+				"rssi":	-54,
+				"timestamp":	"1683166503",
+				"data":	"0201061BFF99040513384BFEC677FFEC001403E09C76023B97E375CF374E23"
+			}
+		}
+	}
+}        
+            '''
+        else:
+            content = '''
+        {
+        	"data":	{
+        		"coordinates":	"",
+        		"timestamp":	"1683166503",
+        		"gw_mac":	"C8:25:2D:8E:9C:2C",
+        		"tags":	{
+        			"F4:1F:0C:28:CB:D6":	{
+        				"rssi":	-39,
+        				"timestamp":	"1683166503",
+        				"data":	"0201061BFF99040513CE4910C6F20004FFB803E069F6125BC3F41F0C28CBD6"
+        			},
+        			"C6:A5:B9:E0:AD:06":	{
+        				"rssi":	-63,
+        				"timestamp":	"1683166503",
+        				"data":	"0201061BFF99040512E84A93C6C5002C0004041C9C76A87980C6A5B9E0AD06"
+        			}
+        		}
+        	}
+        }        
+                    '''
+        time.sleep(GET_HISTORY_JSON_TIMEOUT)
+        self._write_json_response(content)
+
+    def do_GET(self):
+        global g_ruuvi_dict
+        global g_login_session
+        print('GET %s' % self.path)
+        file_path = self.path.split('?')[0]
+        if file_path == '/auth':
+            self._do_get_auth()
+            return
+        elif file_path.endswith('.json'):
+            resp = b''
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            if file_path == '/ruuvi.json':
+                self._do_get_ruuvi_json(resp)
+            elif file_path == '/ap.json':
+                self._do_get_ap_json(resp)
+            elif file_path == '/status.json':
+                self._do_get_status_json(resp)
+            elif file_path == '/github_latest_release.json':
+                self._do_get_github_latest_release_json(resp)
+            elif file_path == '/github_latest_release_without_len.json':
+                self._do_get_github_latest_release_without_len_json(resp)
+            elif file_path == '/github_latest_release_chunked.json':
+                self._do_get_github_latest_release_chunked_json(resp)
+            else:
+                resp = b''
+                resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
+                resp += f'Content-Length: {0}\r\n'.encode('ascii')
+                resp += f'\r\n'.encode('ascii')
+                self.wfile.write(resp)
+        elif file_path == '/validate_url':
+            self._validate_url(self.path)
+        elif file_path == '/metrics':
+            self._do_get_metrics(file_path)
+        elif file_path == '/history':
+            self._do_get_history()
         else:
             if file_path == '/':
                 file_path = 'index.html'
