@@ -129,7 +129,7 @@ class Pages {
     this.page_cloud_options = new PageCloudOptions(gw_cfg)
     this.page_custom_server = new PageCustomServer(gw_cfg, auth)
     this.page_time_sync = new PageTimeSync(gw_cfg.ntp)
-    this.page_scanning = new PageScanning(gw_cfg)
+    this.page_scanning = new PageScanning(gw_cfg, auth)
     this.page_finished = new PageFinished(gw_cfg, auth)
     this.page_init_ssl_storage = new PageInitSslStorage()
   }

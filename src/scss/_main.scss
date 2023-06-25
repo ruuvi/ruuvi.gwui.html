@@ -119,10 +119,14 @@ header {
 	cursor: pointer;
 	font-family: inherit;
 	font-size: inherit;
-	color: inherit;
+	color: var(--color-primary);
 	padding: 0;
 	margin: 0;
 	outline: none;
+}
+
+.underlined {
+	text-decoration: underline;
 }
 
 #language-switcher {
@@ -162,7 +166,6 @@ header {
 
 .language-switcher > ul > li > button {
 	cursor: default;
-	color: var(--color-primary);
 	padding: 0;
 	margin: 0;
 	border: 0;
@@ -242,10 +245,6 @@ table {
 	font-weight: bold;
 }
 
-.indent {
-	margin-left: 28px;
-}
-
 fieldset {
 	border: none;
 	margin: 0;
@@ -294,6 +293,12 @@ progress {
 }
 
 /*============================================*/
+.container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
 .line-container {
 	width: 100%;
 	display: flex;
@@ -568,6 +573,10 @@ select {
 	}
 }
 
+input.input-row {
+	margin: 0 0 0;
+}
+
 .input-password {
 	position: relative
 }
@@ -615,6 +624,10 @@ select {
 	position: absolute;
 	top: calc(var(--input-margin-top) + var(--input-border) + var(--input-padding-top-and-bottom));
 	right: 0;
+}
+
+.input-with_validity_check-icon.input-row {
+	top: calc(var(--input-border) + var(--input-padding-top-and-bottom));
 }
 
 .input-valid {
@@ -782,6 +795,10 @@ select {
 	color: var(--color-primary-hover);
 }
 
+.indent {
+	margin-left: 28px;
+}
+
 table {
 	border-collapse: separate;
 	border-spacing: 0 8px;
@@ -889,6 +906,34 @@ table {
 	content: " ";
 	display: block;
 	clear: both;
+}
+
+table.page_scanning-list_of_mac {
+	border-collapse: collapse;
+	border-spacing: 0 20px;
+}
+
+tr.page_scanning-list_of_mac-row {
+	border-bottom: 1px solid var(--color-divider);
+}
+
+td.page_scanning-list_of_mac-column_mac {
+	font-family: monospace;
+	font-weight: 600;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+td.page_scanning-list_of_mac-column_checkbox {
+	width: 16px;
+	text-align: right;
+	vertical-align: middle;
+}
+
+td.page_scanning-list_of_mac-column_checkbox span.control_indicator {
+	display: block;
+	position: relative;
+	top: 0;
 }
 
 .page-software_update-version_info {

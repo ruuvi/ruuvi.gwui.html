@@ -178,6 +178,8 @@ export class GwCfg {
     data.scan_channel_37 = this.scan.scan_channel_37
     data.scan_channel_38 = this.scan.scan_channel_38
     data.scan_channel_39 = this.scan.scan_channel_39
+    data.scan_filter_allow_listed = this.scan.scan_filter_allow_listed
+    data.scan_filter_list = this.scan.scan_filter_list
 
     data.auto_update_cycle = this.auto_update.auto_update_cycle.getVal()
     data.auto_update_weekdays_bitmask = this.auto_update.auto_update_weekdays_bitmask
@@ -197,6 +199,38 @@ export class GwCfg {
     }
 
     return Network.httpEncryptAndPostJson(auth, '/ruuvi.json', 10000, data)
+  }
+
+  /**
+   * @param {Auth} auth
+   * @param {Boolean} company_use_filtering
+   * @param {Boolean} scan_coded_phy
+   * @param {Boolean} scan_1mbit_phy
+   * @param {Boolean} scan_extended_payload
+   * @param {Boolean} scan_channel_37
+   * @param {Boolean} scan_channel_38
+   * @param {Boolean} scan_channel_39
+   */
+  async saveBluetoothScanningConfig(auth,
+                                    company_use_filtering,
+                                    scan_coded_phy,
+                                    scan_1mbit_phy,
+                                    scan_extended_payload,
+                                    scan_channel_37,
+                                    scan_channel_38,
+                                    scan_channel_39) {
+    let data = {}
+
+    data.company_use_filtering = company_use_filtering
+
+    data.scan_coded_phy = scan_coded_phy
+    data.scan_1mbit_phy = scan_1mbit_phy
+    data.scan_extended_payload = scan_extended_payload
+    data.scan_channel_37 = scan_channel_37
+    data.scan_channel_38 = scan_channel_38
+    data.scan_channel_39 = scan_channel_39
+
+    return Network.httpEncryptAndPostJson(auth, '/bluetooth_scanning.json', 10000, data)
   }
 }
 
