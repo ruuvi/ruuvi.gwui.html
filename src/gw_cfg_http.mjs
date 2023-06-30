@@ -122,9 +122,7 @@ export class GwCfgHttp {
     this.http_data_format = new GwCfgHttpDataFormat(utils.fetchStringKeyFromData(data, 'http_data_format', false))
     this.http_auth = new GwCfgHttpAuth(utils.fetchStringKeyFromData(data, 'http_auth', false))
     if (this.use_http) {
-      if (this.http_auth.isBasic()) {
-        this.http_user = utils.fetchStringKeyFromData(data, 'http_user', false, '')
-      }
+      this.http_user = utils.fetchStringKeyFromData(data, 'http_user', false, '')
     }
     this.http_use_ssl_client_cert = utils.fetchBoolKeyFromData(data, 'http_use_ssl_client_cert', false, false)
     this.http_use_ssl_server_cert = utils.fetchBoolKeyFromData(data, 'http_use_ssl_server_cert', false, false)

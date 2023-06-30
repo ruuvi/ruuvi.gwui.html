@@ -1729,114 +1729,91 @@
 
                 <div>&nbsp;</div>
 
-                <label class="font-bold">
-                    <span lang="en">Authentication</span>
-                    <span lang="fi">Todennus</span>
-                </label>
-
-                <label class="control control-radio">
-                    <span lang="en">No authentication</span>
-                    <span lang="fi">Ei todennusta</span>
-                    <input id="http_auth_none" name="http_auth" type="radio" value="http_auth_none" checked="checked"/>
+                <label class="control control-checkbox">
+                    <span lang="en">Use authentication</span>
+                    <span lang="fi">Käytä todennusta</span>
+                    <input id="use_http_auth" type="checkbox">
                     <span class="control_indicator"></span>
                 </label>
-                <label class="control control-radio">
-                    <span lang="en">Basic authentication</span>
-                    <span lang="fi">Käyttäjätunnus ja salasana</span>
-                    <input id="http_auth_basic" name="http_auth" type="radio" value="http_auth_basic"/>
-                    <span class="control_indicator"></span>
-                </label>
-                <div id="http_auth_basic_params" class="indent">
-                    <label class="font-bold">
-                        <span lang="en">Username (optional)</span>
-                        <span lang="fi">Käyttäjänimi (valinnainen)</span>
-                        <div class="input-with_validity_check">
-                            <input id="http_user" type="text" placeholder="" value="">
-                            <div class="input-with_validity_check-icon">
-                            </div>
-                        </div>
+                <div id="http_auth_options" class="indent">
+                    <label class="control control-radio">
+                        <span lang="en">Basic authentication</span>
+                        <span lang="fi">Käyttäjätunnus ja salasana</span>
+                        <input id="http_auth_basic" name="http_auth" type="radio" value="http_auth_basic"/>
+                        <span class="control_indicator"></span>
                     </label>
-                    <label class="font-bold">
-                        <span lang="en">Password (optional)</span>
-                        <span lang="fi">Salasana (valinnainen)</span>
-                        <div class="input-password input-with_validity_check">
-                            <input id="http_pass" type="password" placeholder="" value="">
-                            <div class="input-password-eye">
-                                <div class="eye">
-                                </div>
-                                <div class="eye-slash hidden">
+                    <div id="http_auth_basic_params" class="indent">
+                        <label class="font-bold">
+                            <span lang="en">Username (optional)</span>
+                            <span lang="fi">Käyttäjänimi (valinnainen)</span>
+                            <div class="input-with_validity_check">
+                                <input id="http_user" type="text" placeholder="" value="">
+                                <div class="input-with_validity_check-icon">
                                 </div>
                             </div>
-                            <div class="input-with_validity_check-icon">
+                        </label>
+                        <label class="font-bold">
+                            <span lang="en">Password (optional)</span>
+                            <span lang="fi">Salasana (valinnainen)</span>
+                            <div class="input-password input-with_validity_check">
+                                <input id="http_pass" type="password" placeholder="" value="">
+                                <div class="input-password-eye">
+                                    <div class="eye">
+                                    </div>
+                                    <div class="eye-slash hidden">
+                                    </div>
+                                </div>
+                                <div class="input-with_validity_check-icon">
+                                </div>
                             </div>
-                        </div>
+                        </label>
+                        <div>&nbsp;</div>
+                    </div>
+                    <label class="control control-radio">
+                        <span lang="en">Bearer authentication</span>
+                        <span lang="fi">Bearer-token</span>
+                        <input id="http_auth_bearer" name="http_auth" type="radio" value="http_auth_bearer"/>
+                        <span class="control_indicator"></span>
                     </label>
-                    <div>&nbsp;</div>
-                </div>
-                <label class="control control-radio">
-                    <span lang="en">Bearer authentication</span>
-                    <span lang="fi">Bearer-token</span>
-                    <input id="http_auth_bearer" name="http_auth" type="radio" value="http_auth_bearer"/>
-                    <span class="control_indicator"></span>
-                </label>
-                <div id="http_auth_bearer_params">
-                    <label class="font-bold">
-                        <span lang="en">API key (bearer token):</span>
-                        <span lang="fi">API-avain (bearer token):</span>
-                        <div class="input-password input-with_validity_check">
-                            <input id="http_auth_bearer_api_key" type="text" placeholder="" value="">
-                            <div class="input-with_validity_check-icon">
+                    <div id="http_auth_bearer_params" class="indent">
+                        <label class="font-bold">
+                            <span lang="en">API key (bearer token):</span>
+                            <span lang="fi">API-avain (bearer token):</span>
+                            <div class="input-password input-with_validity_check">
+                                <input id="http_auth_bearer_api_key" type="text" placeholder="" value="">
+                                <div class="input-with_validity_check-icon">
+                                </div>
                             </div>
-                        </div>
-                    </label>
-                </div>
-                <label class="control control-radio">
-                    <span lang="en">Token</span>
-                    <span lang="fi">Token</span>
-                    <input id="http_auth_token" name="http_auth" type="radio" value="http_auth_token"/>
-                    <span class="control_indicator"></span>
-                </label>
-                <div id="http_auth_token_params">
-                    <label class="font-bold">
-                        <span lang="en">API key (token):</span>
-                        <span lang="fi">API-avain (token):</span>
-                        <div class="input-password input-with_validity_check">
-                            <input id="http_auth_token_api_key" type="text" placeholder="" value="">
-                            <div class="input-with_validity_check-icon">
-                            </div>
-                        </div>
-                    </label>
-                </div>
-                <div id="page-custom_server-http_validation_error" class="rd hidden">
-                    <div class="block-centered">
-                        <span lang="en">Validation failed</span>
-                        <span lang="fi">Vahvistus epäonnistui</span>
-                    </div>
-                    <div id="page-custom_server-http_validation_error-desc" class="block-centered">
-                    </div>
-                </div>
-
-                <div>&nbsp;</div>
-                <div class="border"></div>
-                <div>&nbsp;</div>
-
-                <div>
-                    <div class="font-bold">
-                        <span lang="en">Client SSL certificate and private key</span>
-                        <span lang="fi">Asiakkaan SSL-varmenne ja yksityinen avain</span>
-                    </div>
-
-                    <div class="line-container">
-                        <label class="control control-checkbox">
-                            <span lang="en">Use client SSL certificate (*.pem)</span>
-                            <span lang="fi">Käytä asiakkaan SSL-varmennetta (*.pem)</span>
-                            <input id="http_use_client_ssl_cert" type="checkbox">
-                            <span class="control_indicator"></span>
                         </label>
                     </div>
-
+                    <label class="control control-radio">
+                        <span lang="en">Token</span>
+                        <span lang="fi">Token</span>
+                        <input id="http_auth_token" name="http_auth" type="radio" value="http_auth_token"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                    <div id="http_auth_token_params" class="indent">
+                        <label class="font-bold">
+                            <span lang="en">API key (token):</span>
+                            <span lang="fi">API-avain (token):</span>
+                            <div class="input-password input-with_validity_check">
+                                <input id="http_auth_token_api_key" type="text" placeholder="" value="">
+                                <div class="input-with_validity_check-icon">
+                                </div>
+                            </div>
+                        </label>
+                    </div>
                     <div>&nbsp;</div>
-
+                    <div class="border"></div>
+                </div>
+                <div>&nbsp;</div>
+                <label class="control control-checkbox">
+                    <span lang="en">Use client SSL certificate (*.pem)</span>
+                    <span lang="fi">Käytä asiakkaan SSL-varmennetta (*.pem)</span>
+                    <input id="http_use_client_ssl_cert" type="checkbox">
+                    <span class="control_indicator"></span>
+                </label>
+                <div id="http_use_client_ssl_cert_options" class="hidden indent">
                     <div class="button-container-centered">
                         <div class="button-upload">
                             <label>
@@ -1852,8 +1829,8 @@
                                 <input type="file" accept=".pem" class="hidden" hidden>
                             </label>
                             <button class="btn" id="http-button_upload_client_key" type="button">
-                                <span lang="en">Upload key</span>
-                                <span lang="fi">Latausavain</span>
+                                <span lang="en">Upload private key</span>
+                                <span lang="fi">Lataa yksityinen avain</span>
                             </button>
                         </div>
                         <div>
@@ -1864,28 +1841,14 @@
                         </div>
                     </div>
                 </div>
-
                 <div>&nbsp;</div>
-                <div class="border"></div>
-                <div>&nbsp;</div>
-
-                <div>
-                    <div class="font-bold">
-                        <span lang="en">Server SSL certificate (*.pem)</span>
-                        <span lang="fi">Palvelimen SSL-sertifikaatti (*.pem)</span>
-                    </div>
-
-                    <div class="line-container">
-                        <label class="control control-checkbox">
-                            <span lang="en">Use custom SSL certificate for the server</span>
-                            <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle</span>
-                            <input id="http_use_server_ssl_cert" type="checkbox">
-                            <span class="control_indicator"></span>
-                        </label>
-                    </div>
-
-                    <div>&nbsp;</div>
-
+                <label class="control control-checkbox">
+                    <span lang="en">Use custom SSL certificate for the server (*.pem)</span>
+                    <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle (*.pem)</span>
+                    <input id="http_use_server_ssl_cert" type="checkbox">
+                    <span class="control_indicator"></span>
+                </label>
+                <div id="http_use_server_ssl_cert_options" class="hidden indent">
                     <div class="button-container-centered">
                         <div class="button-upload">
                             <label>
@@ -1902,6 +1865,15 @@
                                 <span lang="fi">Poista sert</span>
                             </button>
                         </div>
+                    </div>
+                </div>
+
+                <div id="page-custom_server-http_validation_error" class="rd hidden">
+                    <div class="block-centered">
+                        <span lang="en">Validation failed</span>
+                        <span lang="fi">Vahvistus epäonnistui</span>
+                    </div>
+                    <div id="page-custom_server-http_validation_error-desc" class="block-centered">
                     </div>
                 </div>
             </div>
@@ -2054,26 +2026,17 @@
                 </div>
 
                 <div>&nbsp;</div>
-                <div class="border"></div>
-                <div>&nbsp;</div>
 
-                <div>
-                    <div class="font-bold">
-                        <span lang="en">Client SSL certificate and private key</span>
-                        <span lang="fi">Asiakkaan SSL-varmenne ja yksityinen avain</span>
-                    </div>
+                <div class="line-container">
+                    <label class="control control-checkbox">
+                        <span lang="en">Use client SSL certificate (*.pem)</span>
+                        <span lang="fi">Käytä asiakkaan SSL-varmennetta (*.pem)</span>
+                        <input id="mqtt_use_client_ssl_cert" type="checkbox">
+                        <span class="control_indicator"></span>
+                    </label>
+                </div>
 
-                    <div class="line-container">
-                        <label class="control control-checkbox">
-                            <span lang="en">Use client SSL certificate (*.pem)</span>
-                            <span lang="fi">Käytä asiakkaan SSL-varmennetta (*.pem)</span>
-                            <input id="mqtt_use_client_ssl_cert" type="checkbox">
-                            <span class="control_indicator"></span>
-                        </label>
-                    </div>
-
-                    <div>&nbsp;</div>
-
+                <div id="mqtt_use_client_ssl_cert_options" class="indent hidden">
                     <div class="button-container-centered">
                         <div class="button-upload">
                             <label>
@@ -2089,8 +2052,8 @@
                                 <input type="file" accept=".pem" class="hidden" hidden>
                             </label>
                             <button class="btn" id="mqtt-button_upload_client_key" type="button">
-                                <span lang="en">Upload key</span>
-                                <span lang="fi">Latausavain</span>
+                                <span lang="en">Upload private key</span>
+                                <span lang="fi">Lataa yksityinen avain</span>
                             </button>
                         </div>
                         <div>
@@ -2103,26 +2066,16 @@
                 </div>
 
                 <div>&nbsp;</div>
-                <div class="border"></div>
-                <div>&nbsp;</div>
 
-                <div>
-                    <div class="font-bold">
-                        <span lang="en">Server SSL certificate (*.pem)</span>
-                        <span lang="fi">Palvelimen SSL-sertifikaatti (*.pem)</span>
-                    </div>
-
-                    <div class="line-container">
-                        <label class="control control-checkbox">
-                            <span lang="en">Use custom SSL certificate for the server</span>
-                            <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle</span>
-                            <input id="mqtt_use_server_ssl_cert" type="checkbox">
-                            <span class="control_indicator"></span>
-                        </label>
-                    </div>
-
-                    <div>&nbsp;</div>
-
+                <div class="line-container">
+                    <label class="control control-checkbox">
+                        <span lang="en">Use custom SSL certificate for the server</span>
+                        <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle</span>
+                        <input id="mqtt_use_server_ssl_cert" type="checkbox">
+                        <span class="control_indicator"></span>
+                    </label>
+                </div>
+                <div id="mqtt_use_server_ssl_cert_options" class="indent hidden">
                     <div class="button-container-centered">
                         <div class="button-upload">
                             <label>
@@ -2141,7 +2094,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div>&nbsp;</div>
@@ -2213,26 +2165,16 @@
                     </label>
 
                     <div>&nbsp;</div>
-                    <div class="border"></div>
-                    <div>&nbsp;</div>
 
-                    <div>
-                        <div class="font-bold">
-                            <span lang="en">Client SSL certificate and private key</span>
-                            <span lang="fi">Asiakkaan SSL-varmenne ja yksityinen avain</span>
-                        </div>
-
-                        <div class="line-container">
-                            <label class="control control-checkbox">
-                                <span lang="en">Use client SSL certificate (*.pem)</span>
-                                <span lang="fi">Käytä asiakkaan SSL-varmennetta (*.pem)</span>
-                                <input id="stat_use_client_ssl_cert" type="checkbox">
-                                <span class="control_indicator"></span>
-                            </label>
-                        </div>
-
-                        <div>&nbsp;</div>
-
+                    <div class="line-container">
+                        <label class="control control-checkbox">
+                            <span lang="en">Use client SSL certificate (*.pem)</span>
+                            <span lang="fi">Käytä asiakkaan SSL-varmennetta (*.pem)</span>
+                            <input id="stat_use_client_ssl_cert" type="checkbox">
+                            <span class="control_indicator"></span>
+                        </label>
+                    </div>
+                    <div id="stat_use_client_ssl_cert_options" class="indent hidden">
                         <div class="button-container-centered">
                             <div class="button-upload">
                                 <label>
@@ -2248,8 +2190,8 @@
                                     <input type="file" accept=".pem" class="hidden" hidden>
                                 </label>
                                 <button class="btn" id="stat-button_upload_client_key" type="button">
-                                    <span lang="en">Upload key</span>
-                                    <span lang="fi">Latausavain</span>
+                                    <span lang="en">Upload private key</span>
+                                    <span lang="fi">Lataa yksityinen avain</span>
                                 </button>
                             </div>
                             <div>
@@ -2262,26 +2204,17 @@
                     </div>
 
                     <div>&nbsp;</div>
-                    <div class="border"></div>
-                    <div>&nbsp;</div>
 
-                    <div>
-                        <div class="font-bold">
-                            <span lang="en">Server SSL certificate (*.pem)</span>
-                            <span lang="fi">Palvelimen SSL-sertifikaatti (*.pem)</span>
-                        </div>
+                    <div class="line-container">
+                        <label class="control control-checkbox">
+                            <span lang="en">Use custom SSL certificate for the server (*.pem)</span>
+                            <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle (*.pem)</span>
+                            <input id="stat_use_server_ssl_cert" type="checkbox">
+                            <span class="control_indicator"></span>
+                        </label>
+                    </div>
 
-                        <div class="line-container">
-                            <label class="control control-checkbox">
-                                <span lang="en">Use custom SSL certificate for the server</span>
-                                <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle</span>
-                                <input id="stat_use_server_ssl_cert" type="checkbox">
-                                <span class="control_indicator"></span>
-                            </label>
-                        </div>
-
-                        <div>&nbsp;</div>
-
+                    <div id="stat_use_server_ssl_cert_options" class="indent hidden">
                         <div class="button-container-centered">
                             <div class="button-upload">
                                 <label>
