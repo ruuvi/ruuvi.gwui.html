@@ -12,11 +12,15 @@ export class GwCfgHttpStat {
   http_stat_url = null
   http_stat_user = null
   http_stat_pass = undefined
+  http_stat_use_ssl_client_cert = null
+  http_stat_use_ssl_server_cert = null
 
   parse (data) {
     this.use_http_stat = utils.fetchBoolKeyFromData(data, 'use_http_stat', true)
     this.http_stat_url = utils.fetchStringKeyFromData(data, 'http_stat_url', false, '')
     this.http_stat_user = utils.fetchStringKeyFromData(data, 'http_stat_user', false, '')
+    this.http_stat_use_ssl_client_cert = utils.fetchBoolKeyFromData(data, 'http_stat_use_ssl_client_cert', false, false)
+    this.http_stat_use_ssl_server_cert = utils.fetchBoolKeyFromData(data, 'http_stat_use_ssl_server_cert', false, false)
   }
 
   is_default () {
@@ -29,5 +33,7 @@ export class GwCfgHttpStat {
     this.http_stat_url = GwCfgHttpStat.HTTP_STAT_URL_DEFAULT
     this.http_stat_user = ''
     this.http_stat_pass = ''
+    this.http_stat_use_ssl_client_cert = false
+    this.http_stat_use_ssl_server_cert = false
   }
 }

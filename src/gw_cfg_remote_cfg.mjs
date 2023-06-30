@@ -65,6 +65,8 @@ export class GwCfgRemoteCfg {
   remote_cfg_auth_basic_pass = undefined
   remote_cfg_auth_bearer_token = undefined
   remote_cfg_refresh_interval_minutes = null
+  remote_cfg_use_ssl_client_cert = null
+  remote_cfg_use_ssl_server_cert = null
 
   parse (data) {
     this.remote_cfg_use = utils.fetchBoolKeyFromData(data, 'remote_cfg_use', true)
@@ -77,5 +79,7 @@ export class GwCfgRemoteCfg {
     this.remote_cfg_refresh_interval_minutes = utils.fetchIntKeyFromData(data,
         'remote_cfg_refresh_interval_minutes',
         this.remote_cfg_use)
+    this.remote_cfg_use_ssl_client_cert = utils.fetchBoolKeyFromData(data, 'remote_cfg_use_ssl_client_cert', false, false)
+    this.remote_cfg_use_ssl_server_cert = utils.fetchBoolKeyFromData(data, 'remote_cfg_use_ssl_server_cert', false, false)
   }
 }

@@ -161,6 +161,12 @@ class Network {
         { 'extra_headers': { 'ruuvi_ecdh_encrypted': true } })
   }
 
+  static async httpEncryptAndPostFile (auth, url, timeout, file_data, options) {
+    const data_encrypted = auth.ecdhEncrypt(file_data)
+    return Network.httpPostJson(url, timeout, data_encrypted,
+        { 'extra_headers': { 'ruuvi_ecdh_encrypted': true } })
+  }
+
   static async httpDeleteJson (url, timeout, json_data, options) {
     return this.fetch_json('DELETE', url, timeout, json_data, options)
   }

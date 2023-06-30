@@ -113,6 +113,8 @@ export class GwCfg {
     } else {
       data.remote_cfg_auth_type = REMOTE_CFG_AUTH_TYPE.NONE
     }
+    data.remote_cfg_use_ssl_client_cert = this.remote_cfg.remote_cfg_use_ssl_client_cert
+    data.remote_cfg_use_ssl_server_cert = this.remote_cfg.remote_cfg_use_ssl_server_cert
 
     data.use_http_ruuvi = this.http.use_http_ruuvi
     data.use_http = this.http.use_http
@@ -129,6 +131,8 @@ export class GwCfg {
     } else if (this.http.http_auth.isToken()) {
       data.http_api_key = this.http.http_api_key
     }
+    data.http_use_ssl_client_cert = this.http.http_use_ssl_client_cert
+    data.http_use_ssl_server_cert = this.http.http_use_ssl_server_cert
 
     data.use_http_stat = this.http_stat.use_http_stat
     data.http_stat_url = this.http_stat.http_stat_url
@@ -136,6 +140,8 @@ export class GwCfg {
     if (this.http_stat.http_stat_pass !== undefined) {
       data.http_stat_pass = this.http_stat.http_stat_pass
     }
+    data.http_stat_use_ssl_client_cert = this.http_stat.http_stat_use_ssl_client_cert
+    data.http_stat_use_ssl_server_cert = this.http_stat.http_stat_use_ssl_server_cert
 
     data.use_mqtt = this.mqtt.use_mqtt
 
@@ -149,6 +155,8 @@ export class GwCfg {
     if (this.mqtt.mqtt_pass !== undefined) {
       data.mqtt_pass = this.mqtt.mqtt_pass
     }
+    data.mqtt_use_ssl_client_cert = this.mqtt.mqtt_use_ssl_client_cert
+    data.mqtt_use_ssl_server_cert = this.mqtt.mqtt_use_ssl_server_cert
 
     data.lan_auth_type = this.lan_auth.lan_auth_type.getVal()
     data.lan_auth_user = this.lan_auth.lan_auth_user

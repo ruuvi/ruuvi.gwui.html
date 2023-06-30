@@ -43,19 +43,62 @@ To test connection from the Gateway to HTTP server, use `http_server_auth.py`
 
 To run HTTP server without auth:
 
-`python http_server_auth.py --bind <IP>`
+`python http_server_auth.py --bind 0.0.0.0 --port 8000`
 
 To run HTTP server with auth:
 
-`python http_server_auth.py --bind <IP> -u <username> -p <password>`
+`python http_server_auth.py --bind 0.0.0.0 --port 8000 -u <username> -p <password>`
 
-To run HTTPS server with auth:
+To run HTTPS server:
 
-`python http_server_auth.py --bind <IP> --ssl_cert=./server.pem -u <username> -p <password>`
+`python http_server_auth.py --bind 0.0.0.0 --port 8000 --ssl_cert=./server_cert.pem --ssl_key=./server_key.pem`
 
-To generate certificate for HTTPS (`server.pem`):
+To run HTTPS server with the client SSL certificate checking:
 
-`openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes`
+`python http_server_auth.py --bind 0.0.0.0 --port 8000 --ssl_cert=./server_cert.pem --ssl_key=./server_key.pem --ca_cert=./client_cert.pem`
+
+To generate a certificate and a private key for HTTPS server (2048-bit RSA key) (`server_cert.pem` and `server_key.pem`):
+
+* Generate a private key :
+
+  `openssl genrsa -out server_key.pem 2048`
+
+* Create a Certificate Signing Request (CSR): Generate a CSR using the private key created in the previous step.
+  The CSR contains information about your client that the Certificate Authority (CA) will use to create the client certificate.
+
+  `openssl req -new -key server_key.pem -out server_csr.pem`
+
+* Generate the client certificate: You have two options for generating the client certificate:
+  * Option A: Self-signed certificate - You can create a self-signed client certificate using the CSR and the client's private key.
+    Note that self-signed certificates might not be trusted by all servers and are generally not recommended for production environments.
+
+    `openssl x509 -req -in server_csr.pem -signkey server_key.pem -out server_cert.pem -days 365`
+
+  * Option B: Certificate signed by a Certificate Authority (CA) - If you need a trusted client certificate,
+    you should send the CSR (client_csr.pem) to a Certificate Authority (CA) and request them to sign the certificate.
+    The CA will provide you with a signed client certificate (usually in PEM format) upon approval.
+
+
+To generate a certificate and a private key for the client (2048-bit RSA key) (`client_cert.pem` and `client_key.pem`):
+
+* Generate a private key:
+  
+  `openssl genrsa -out client_key.pem 2048`
+
+* Create a Certificate Signing Request (CSR): Generate a CSR using the private key created in the previous step. 
+  The CSR contains information about your client that the Certificate Authority (CA) will use to create the client certificate.
+ 
+  `openssl req -new -key client_key.pem -out client_csr.pem`
+
+* Generate the client certificate: You have two options for generating the client certificate:
+  * Option A: Self-signed certificate - You can create a self-signed client certificate using the CSR and the client's private key. 
+    Note that self-signed certificates might not be trusted by all servers and are generally not recommended for production environments.
+
+    `openssl x509 -req -in client_csr.pem -signkey client_key.pem -out client_cert.pem -days 365`
+
+  * Option B: Certificate signed by a Certificate Authority (CA) - If you need a trusted client certificate, 
+    you should send the CSR (client_csr.pem) to a Certificate Authority (CA) and request them to sign the certificate. 
+    The CA will provide you with a signed client certificate (usually in PEM format) upon approval.
 
 ## Example of testing a gateway configured to transfer data via HTTP
 

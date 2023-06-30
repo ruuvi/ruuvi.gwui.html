@@ -56,7 +56,7 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_data_format.isRuuvi()).to.be.true
     expect(cfg_http.http_auth.isNone()).to.be.true
     expect(cfg_http.http_url).to.equal('https://network.ruuvi.com/record')
-    expect(cfg_http.http_user).to.be.null
+    expect(cfg_http.http_user).to.equal('')
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
     expect(cfg_http.http_api_key).to.be.undefined
@@ -101,7 +101,7 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_data_format.isRuuvi()).to.be.true
     expect(cfg_http.http_auth.isBearer()).to.be.true
     expect(cfg_http.http_url).to.equal('https://myserver.com:8080/record')
-    expect(cfg_http.http_user).to.be.null
+    expect(cfg_http.http_user).to.equal('')
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
     expect(cfg_http.http_api_key).to.be.undefined
@@ -123,7 +123,7 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_data_format.isRuuvi()).to.be.true
     expect(cfg_http.http_auth.isToken()).to.be.true
     expect(cfg_http.http_url).to.equal('https://myserver.com:8080/record')
-    expect(cfg_http.http_user).to.be.null
+    expect(cfg_http.http_user).to.equal('')
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
     expect(cfg_http.http_api_key).to.be.undefined

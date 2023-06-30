@@ -30,6 +30,7 @@ import PageTimeSync from './page_time_sync.mjs'
 import PageScanning from './page_scanning.mjs'
 import PageFinished from './page_finished.mjs'
 import { log_wrap } from './utils.mjs'
+import PageInitSslStorage from "./page_init_ssl_storage.mjs";
 
 let g_auth
 let g_gw_cfg
@@ -130,6 +131,7 @@ class Pages {
     this.page_time_sync = new PageTimeSync(gw_cfg.ntp)
     this.page_scanning = new PageScanning(gw_cfg, auth)
     this.page_finished = new PageFinished(gw_cfg, auth)
+    this.page_init_ssl_storage = new PageInitSslStorage()
   }
 
 }

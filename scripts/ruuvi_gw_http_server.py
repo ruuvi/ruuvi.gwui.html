@@ -101,6 +101,23 @@ g_nrf52_fw_ver = 'v1.0.0'
 g_ruuvi_dict = {
     'fw_ver': g_fw_ver,
     'nrf52_fw_ver': g_nrf52_fw_ver,
+    'storage': {
+        'storage_ready': False,
+
+        'http_cli_cert': False,
+        'http_cli_key': False,
+        'stat_cli_cert': False,
+        'stat_cli_key': False,
+        'rcfg_cli_cert': False,
+        'rcfg_cli_key': False,
+        'mqtt_cli_cert': False,
+        'mqtt_cli_key': False,
+
+        'http_srv_cert': False,
+        'stat_srv_cert': False,
+        'rcfg_srv_cert': False,
+        'mqtt_srv_cert': False,
+    },
     'use_eth': False,
     'eth_dhcp': True,
     'eth_static_ip': "",
@@ -112,17 +129,23 @@ g_ruuvi_dict = {
     'remote_cfg_url': '',
     'remote_cfg_auth_type': 'none',
     'remote_cfg_refresh_interval_minutes': 0,
+    'remote_cfg_use_ssl_client_cert': False,
+    'remote_cfg_use_ssl_server_cert': False,
     'use_http_ruuvi': True,
     'use_http': True,
     'http_url': 'https://network.ruuvi.com/record',
     'http_auth': 'none',
     'http_data_format': 'ruuvi',
+    'http_use_ssl_client_cert': False,
+    'http_use_ssl_server_cert': False,
     # 'http_user': '',
     # 'http_bearer_token': '',
     # 'http_api_key': '',
     'use_http_stat': True,
     'http_stat_url': 'https://network.ruuvi.com/status',
     'http_stat_user': '',
+    'http_stat_use_ssl_client_cert': False,
+    'http_stat_use_ssl_server_cert': False,
     'use_mqtt': False,
     'mqtt_disable_retained_messages': False,
     'mqtt_transport': 'TCP',
@@ -131,6 +154,8 @@ g_ruuvi_dict = {
     'mqtt_prefix': 'ruuvi/AA:BB:CC:DD:EE:FF/',
     'mqtt_client_id': 'AA:BB:CC:DD:EE:FF',
     'mqtt_user': '',
+    'mqtt_use_ssl_client_cert': False,
+    'mqtt_use_ssl_server_cert': False,
     'lan_auth_type': LAN_AUTH_TYPE_DEFAULT,
     'lan_auth_user': LAN_AUTH_DEFAULT_USER,
     'lan_auth_pass': g_lan_auth_default_password_hashed,
@@ -658,7 +683,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             print(f'Error: Bad encrypted json: {ex}')
             return None
 
-        req_decrypted = self._ecdh_decrypt(aes_key, req_encrypted, req_iv, req_hash)
+        return self._ecdh_decrypt(aes_key, req_encrypted, req_iv, req_hash)
+
+
+    def _ecdh_decrypt_request_json(self, aes_key):
+        req_decrypted = self._ecdh_decrypt_request(aes_key)
 
         try:
             req_dict = json.loads(req_decrypted)
@@ -761,7 +790,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_timestamp
         global g_simulation_mode
         resp = b''
-        req_dict = self._ecdh_decrypt_request(g_aes_key)
+        req_dict = self._ecdh_decrypt_request_json(g_aes_key)
         if req_dict is None:
             resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
             resp += f'Content-Length: 0\r\n'.encode('ascii')
@@ -816,7 +845,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     def _do_post_ruuvi_json(self):
         global g_ruuvi_dict
         global g_authorized_sessions
-        req_dict = self._ecdh_decrypt_request(g_aes_key)
+        req_dict = self._ecdh_decrypt_request_json(g_aes_key)
         if req_dict is None:
             resp = b''
             resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
@@ -892,7 +921,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self._write_json_response(content)
 
     def _do_post_bluetooth_scanning_json(self):
-        req_dict = self._ecdh_decrypt_request(g_aes_key)
+        req_dict = self._ecdh_decrypt_request_json(g_aes_key)
         if req_dict is None:
             resp = b''
             resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
@@ -957,8 +986,73 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         content = '{}'
         self._write_json_response(content)
 
+    def _do_post_init_storage(self):
+        g_ruuvi_dict['storage']['storage_ready'] = True
+        resp = b''
+        content = '{}'
+        content_encoded = content.encode('utf-8')
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: application/json\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += content_encoded
+        time.sleep(1.5)
+        self.wfile.write(resp)
+
+    def _do_post_ssl_cert(self, query_params):
+        file_name = query_params.get("file", [None])[0]
+        if file_name is None:
+            self._on_post_resp_400()
+            return
+        file_content = self._ecdh_decrypt_request(g_aes_key)
+
+        if file_name == 'http_cli_cert':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'stat_cli_cert':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'rcfg_cli_cert':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'mqtt_cli_cert':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'http_cli_key':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'stat_cli_key':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'rcfg_cli_key':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'mqtt_cli_key':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'http_srv_cert':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'stat_srv_cert':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'rcfg_srv_cert':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'mqtt_srv_cert':
+            g_ruuvi_dict['storage'][file_name] = True
+        else:
+            self._on_post_resp_400()
+            return
+
+        content = '{}'
+        content_encoded = content.encode('utf-8')
+        resp = b''
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: application/json\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += content_encoded
+        self.wfile.write(resp)
+
     def do_POST(self):
-        print('POST %s' % self.path)
+        parsed_url = urlparse(self.path)
+        query_params = parse_qs(parsed_url.query)
+
+        print(f'POST {parsed_url.path}, Query: {parsed_url.query}')
         if self.path == '/auth':
             self._do_post_auth()
         elif self.path == '/connect.json':
@@ -973,6 +1067,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self._do_post_fw_update_json()
         elif self.path == '/fw_update_reset':
             self._do_post_fw_update_reset()
+        elif self.path == '/init_storage':
+            self._do_post_init_storage()
+        elif parsed_url.path == '/ssl_cert':
+            self._do_post_ssl_cert(query_params)
         else:
             resp = b''
             resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
@@ -990,7 +1088,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_ruuvi_dict
         global g_login_session
         global g_authorized_sessions
-        print('DELETE %s' % self.path)
+        
+        parsed_url = urlparse(self.path)
+        query_params = parse_qs(parsed_url.query)
+
+        print(f'DELETE {parsed_url.path}, Query: {parsed_url.query}')
         if self.path == '/auth':
             if g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_RUUVI and g_ruuvi_dict['lan_auth_type'] != LAN_AUTH_TYPE_DEFAULT:
                 self._on_post_resp_401()
@@ -1023,6 +1125,51 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
             content = '{}'
             self._write_json_response(content)
+        elif parsed_url.path == '/ssl_cert':
+            file_name = query_params.get("file", [None])[0]
+            if file_name is None:
+                self._on_post_resp_400()
+                return
+
+            if file_name == 'http_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'stat_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'rcfg_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'mqtt_cli_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'http_cli_key':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'stat_cli_key':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'rcfg_cli_key':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'mqtt_cli_key':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'http_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'stat_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'rcfg_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            elif file_name == 'mqtt_srv_cert':
+                g_ruuvi_dict['storage'][file_name] = False
+            else:
+                self._on_post_resp_400()
+                return
+
+            content = '{}'
+            content_encoded = content.encode('utf-8')
+            resp = b''
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            resp += content_encoded
+            self.wfile.write(resp)
         else:
             resp = b''
             resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')

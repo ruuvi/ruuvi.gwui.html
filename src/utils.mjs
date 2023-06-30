@@ -64,21 +64,6 @@ export function fetchListKeyFromData (data, keyName, flagRequired = false, defau
   return res
 }
 
-export function fetchWithTimeout (url, options, timeout = 15000) {
-  const abortController = new AbortController()
-  const signal = abortController.signal
-
-  const timeoutPromise = new Promise((_, reject) => {
-    const timeoutId = setTimeout(() => {
-      clearTimeout(timeoutId)
-      abortController.abort()
-      reject(new Error(`Request timed out after ${timeout}ms`))
-    }, timeout)
-  })
-
-  return Promise.race([fetch(url, { ...options, signal }), timeoutPromise])
-}
-
 export async function networkDisconnect () {
   GwAP.stopRefreshingAP()
   GwStatus.stopCheckingStatus()
@@ -171,6 +156,18 @@ function generate_url_for_validation (auth, url_to_validate, validate_type, auth
   url += encodeURIComponent(url_to_validate)
   url += '&validate_type=' + validate_type
   url += '&auth_type=' + auth_type
+
+  let flag_use_ssl_client_cert = false
+  if ('use_ssl_client_cert' in params) {
+    flag_use_ssl_client_cert = params['use_ssl_client_cert']
+  }
+  url += '&use_ssl_client_cert=' + flag_use_ssl_client_cert
+
+  let flag_use_ssl_server_cert = false
+  if ('use_ssl_server_cert' in params) {
+    flag_use_ssl_server_cert = params['use_ssl_server_cert']
+  }
+  url += '&use_ssl_server_cert=' + flag_use_ssl_server_cert
 
   if ('input_user' in params && 'input_pass' in params) {
     let input_user = params['input_user']
