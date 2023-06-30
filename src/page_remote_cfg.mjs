@@ -57,6 +57,7 @@ class PageRemoteCfg {
     #div_auth_bearer_options = new GuiDiv($('#conf-remote_cfg-auth_bearer-options'))
 
     #checkbox_remote_cfg_use_client_ssl_cert = new GuiCheckbox($('#remote_cfg-use_client_ssl_cert'))
+    #div_remote_cfg_use_client_ssl_cert_options = new GuiDiv($('#remote_cfg-use_client_ssl_cert_options'))
     #button_remote_cfg_upload_client_cert = new GuiButtonUpload($('#remote_cfg-button_upload_client_cert'),
         async (fileTextContent) => this.#onUploadClientCert(fileTextContent))
     #button_remote_cfg_upload_client_key = new GuiButtonUpload($('#remote_cfg-button_upload_client_key'),
@@ -64,6 +65,7 @@ class PageRemoteCfg {
     #button_remote_cfg_remove_client_cert_and_key = new GuiButton($('#remote_cfg-button_remove_client_cert_and_key'))
 
     #checkbox_remote_cfg_use_server_ssl_cert = new GuiCheckbox($('#remote_cfg-use_server_ssl_cert'))
+    #div_remote_cfg_use_server_ssl_cert_options = new GuiDiv($('#remote_cfg-use_server_ssl_cert_options'))
     #button_remote_cfg_upload_server_cert = new GuiButtonUpload($('#remote_cfg-button_upload_server_cert'),
         async (fileTextContent) => this.#onUploadServerCertRemote(fileTextContent))
     #button_remote_cfg_remove_server_cert = new GuiButton($('#remote_cfg-button_remove_server_cert'))
@@ -122,12 +124,6 @@ class PageRemoteCfg {
 
             this.#checkbox_remote_cfg_use_client_ssl_cert.setState(this.#gwCfg.remote_cfg.remote_cfg_use_ssl_client_cert)
             this.#checkbox_remote_cfg_use_server_ssl_cert.setState(this.#gwCfg.remote_cfg.remote_cfg_use_ssl_server_cert)
-            if (!this.#gwCfg.info.storage_remote_cfg_cli_cert || !this.#gwCfg.info.storage_remote_cfg_cli_key) {
-                this.#checkbox_remote_cfg_use_client_ssl_cert.setUnchecked()
-            }
-            if (!this.#gwCfg.info.storage_remote_cfg_srv_cert) {
-                this.#checkbox_remote_cfg_use_server_ssl_cert.setUnchecked()
-            }
 
             this.#sect_advanced.show()
         } else {
@@ -431,21 +427,24 @@ class PageRemoteCfg {
             this.#input_auth_bearer_token.clearValidationIcon()
         }
 
-        this.#checkbox_remote_cfg_use_client_ssl_cert.setEnabled(this.#gwCfg.info.storage_remote_cfg_cli_cert && this.#gwCfg.info.storage_remote_cfg_cli_key)
         this.#button_remote_cfg_upload_client_cert.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_remote_cfg_upload_client_cert.setEnabled(!this.#gwCfg.info.storage_remote_cfg_cli_cert)
         this.#button_remote_cfg_upload_client_key.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_remote_cfg_upload_client_key.setEnabled(!this.#gwCfg.info.storage_remote_cfg_cli_key)
         this.#button_remote_cfg_remove_client_cert_and_key.setEnabled(this.#gwCfg.info.storage_remote_cfg_cli_cert || this.#gwCfg.info.storage_remote_cfg_cli_key)
-        if (!this.#gwCfg.info.storage_remote_cfg_cli_cert || !this.#gwCfg.info.storage_remote_cfg_cli_key) {
-            this.#checkbox_remote_cfg_use_client_ssl_cert.setUnchecked()
+        if (this.#checkbox_remote_cfg_use_client_ssl_cert.isChecked()) {
+            this.#div_remote_cfg_use_client_ssl_cert_options.show()
+        } else {
+            this.#div_remote_cfg_use_client_ssl_cert_options.hide()
         }
-        this.#checkbox_remote_cfg_use_server_ssl_cert.setEnabled(this.#gwCfg.info.storage_remote_cfg_srv_cert)
+
         this.#button_remote_cfg_upload_server_cert.setStorageReady(this.#gwCfg.info.storage_ready)
         this.#button_remote_cfg_upload_server_cert.setEnabled(!this.#gwCfg.info.storage_remote_cfg_srv_cert)
         this.#button_remote_cfg_remove_server_cert.setEnabled(this.#gwCfg.info.storage_remote_cfg_srv_cert)
-        if (!this.#gwCfg.info.storage_remote_cfg_srv_cert) {
-            this.#checkbox_remote_cfg_use_server_ssl_cert.setUnchecked()
+        if (this.#checkbox_remote_cfg_use_server_ssl_cert.isChecked()) {
+            this.#div_remote_cfg_use_server_ssl_cert_options.show()
+        } else {
+            this.#div_remote_cfg_use_server_ssl_cert_options.hide()
         }
 
         let h = ''

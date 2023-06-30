@@ -945,21 +945,16 @@
                         <div class="border"></div>
                         <div>&nbsp;</div>
 
-                        <div>
-                            <div class="font-bold">
-                                <span lang="en">Client SSL certificate and private key</span>
-                                <span lang="fi">Asiakkaan SSL-varmenne ja yksityinen avain</span>
-                            </div>
-
-                            <div class="line-container">
-                                <label class="control control-checkbox">
-                                    <span lang="en">Use client SSL certificate (*.pem)</span>
-                                    <span lang="fi">Käytä asiakkaan SSL-varmennetta (*.pem)</span>
-                                    <input id="remote_cfg-use_client_ssl_cert" type="checkbox">
-                                    <span class="control_indicator"></span>
-                                </label>
-                            </div>
-                            <div>&nbsp;</div>
+                        <div class="line-container">
+                            <label class="control control-checkbox">
+                                <span lang="en">Use client SSL certificate (*.pem)</span>
+                                <span lang="fi">Käytä asiakkaan SSL-varmennetta (*.pem)</span>
+                                <input id="remote_cfg-use_client_ssl_cert" type="checkbox">
+                                <span class="control_indicator"></span>
+                            </label>
+                        </div>
+                        <div>&nbsp;</div>
+                        <div id="remote_cfg-use_client_ssl_cert_options" class="indent hidden">
                             <div class="button-container-centered">
                                 <div class="button-upload">
                                     <label>
@@ -986,26 +981,21 @@
                                     </button>
                                 </div>
                             </div>
+                            <div>&nbsp;</div>
+                            <div class="border"></div>
+                            <div>&nbsp;</div>
                         </div>
 
+                        <div class="line-container">
+                            <label class="control control-checkbox">
+                                <span lang="en">Use custom SSL certificate for the server (*.pem)</span>
+                                <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle (*.pem)</span>
+                                <input id="remote_cfg-use_server_ssl_cert" type="checkbox">
+                                <span class="control_indicator"></span>
+                            </label>
+                        </div>
                         <div>&nbsp;</div>
-                        <div class="border"></div>
-                        <div>&nbsp;</div>
-
-                        <div>
-                            <div class="font-bold">
-                                <span lang="en">Server SSL certificate (*.pem)</span>
-                                <span lang="fi">Palvelimen SSL-sertifikaatti (*.pem)</span>
-                            </div>
-
-                            <div class="line-container">
-                                <label class="control control-checkbox">
-                                    <span lang="en">Use custom SSL certificate for the server</span>
-                                    <span lang="fi">Käytä mukautettua SSL-varmennetta palvelimelle</span>
-                                    <input id="remote_cfg-use_server_ssl_cert" type="checkbox">
-                                    <span class="control_indicator"></span>
-                                </label>
-                            </div>
+                        <div id="remote_cfg-use_server_ssl_cert_options" class="indent hidden">
                             <div class="button-container-centered">
                                 <div class="button-upload">
                                     <label>
@@ -1024,7 +1014,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <div>&nbsp;</div>
