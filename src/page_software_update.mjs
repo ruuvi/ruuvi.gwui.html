@@ -19,7 +19,8 @@ import GuiButtonBack from './gui_button_back.mjs'
 import GuiButton from './gui_button.mjs'
 
 class PageSoftwareUpdate {
-  #firmwareUpdatingBaseURL = 'https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/'
+  #latest_version = null
+  #latest_url = null
   #flagLatestFirmwareVersionSupported = false
   #section = $('section#page-software_update')
   #checkbox_software_update_set_url_manually = new GuiCheckbox($('#software_update-set-url-manually'))
@@ -65,8 +66,7 @@ class PageSoftwareUpdate {
     console.log(log_wrap('section#page-software_update: onShow'))
     this.#checkbox_software_update_set_url_manually.setUnchecked()
     if (this.#text_version_latest.getVal() !== '') {
-      const software_update_url = this.#firmwareUpdatingBaseURL + this.#text_version_latest.getVal()
-      this.#input_software_update_url.setVal(software_update_url)
+      this.#input_software_update_url.setVal(this.#latest_url)
       return
     }
     this.#button_upgrade.disable()
@@ -122,8 +122,19 @@ class PageSoftwareUpdate {
   }
 
   #on_get_latest_release_info (data) {
-    const latest_release_version = data.tag_name
-    let m = latest_release_version.match(/v(\d+)\.(\d+)\.(\d+)/)
+    const { latest = {}, beta = {}, alpha = {} } = data
+    if (!('version' in latest) || !('url' in latest)) {
+      console.warn("'latest' object should have 'version' and 'url' properties");
+      return;
+    }
+    this.#latest_version = latest.version
+    this.#latest_url = latest.url
+    const beta_version = beta?.version;
+    const beta_url = beta?.url;
+    const alpha_version = alpha?.version;
+    const alpha_url = alpha?.url;
+
+    let m = this.#latest_version.match(/v(\d+)\.(\d+)\.(\d+)/)
     this.#flagLatestFirmwareVersionSupported = false
     if (m) {
       let latest_release_version_bin = (parseInt(m[1]) << 16) + (parseInt(m[2]) << 8) + parseInt(m[3])
@@ -133,8 +144,8 @@ class PageSoftwareUpdate {
     }
 
     this.#div_in_progress.hide()
-    this.#text_version_latest.setVal(latest_release_version)
-    if (latest_release_version !== this.#text_version_current.getVal()) {
+    this.#text_version_latest.setVal(this.#latest_version)
+    if (this.#latest_version !== this.#text_version_current.getVal()) {
       this.#div_in_button_continue_no_update.hide()
       this.#div_in_button_continue_without_update.show()
     } else {
@@ -142,7 +153,7 @@ class PageSoftwareUpdate {
       this.#div_in_button_continue_without_update.hide()
     }
 
-    this.#input_software_update_url.setVal(this.#firmwareUpdatingBaseURL + latest_release_version)
+    this.#input_software_update_url.setVal(this.#latest_url)
 
     this.#sect_advanced.enable()
 
@@ -180,7 +191,7 @@ class PageSoftwareUpdate {
       this.#button_continue.hide()
     } else {
       if (this.#text_version_latest.getVal() !== '') {
-        this.#input_software_update_url.setVal(this.#firmwareUpdatingBaseURL + this.#text_version_latest.getVal())
+        this.#input_software_update_url.setVal(this.#latest_url)
         if (this.#text_version_latest.getVal() === '' || this.#text_version_current.getVal() === this.#text_version_latest.getVal()) {
           this.#button_upgrade.disable()
         } else {
