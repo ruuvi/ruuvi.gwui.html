@@ -97,14 +97,16 @@
                     </div>
                 </div>
                 <div class="border-hidden"></div>
-                <a href="" id="auth-button-login" class="btn">
-                    <span lang="en">Log in</span>
-                    <span lang="fi">Kirjaudu sisään</span>
-                </a>
+                <div class="button-container-centered">
+                    <a href="" id="auth-button-login" class="btn">
+                        <span lang="en">Log in</span>
+                        <span lang="fi">Kirjaudu sisään</span>
+                    </a>
+                </div>
             </div>
 
             <div id="auth-home" class="hidden">
-                <div class="block-centered">
+                <div class="button-container-centered">
                     <a href="" id="auth-button-home" class="btn">
                         <span lang="en">Go to home page</span>
                         <span lang="fi">Mene kotisivulle</span>
@@ -960,7 +962,7 @@
                                     <label>
                                         <input type="file" accept=".pem" class="hidden" hidden>
                                     </label>
-                                    <button class="btn" id="remote_cfg-button_upload_client_cert" type="button">
+                                    <button class="btn btn-narrow btn-two-rows" id="remote_cfg-button_upload_client_cert" type="button">
                                         <span lang="en">Upload cert</span>
                                         <span lang="fi">Lataa sert</span>
                                     </button>
@@ -969,13 +971,13 @@
                                     <label>
                                         <input type="file" accept=".pem" class="hidden" hidden>
                                     </label>
-                                    <button class="btn" id="remote_cfg-button_upload_client_key" type="button">
+                                    <button class="btn btn-narrow btn-two-rows" id="remote_cfg-button_upload_client_key" type="button">
                                         <span lang="en">Upload private key</span>
                                         <span lang="fi">Lataa yksityinen avain</span>
                                     </button>
                                 </div>
                                 <div>
-                                    <button class="btn" id="remote_cfg-button_remove_client_cert_and_key" type="button">
+                                    <button class="btn btn-narrow btn-two-rows" id="remote_cfg-button_remove_client_cert_and_key" type="button">
                                         <span lang="en">Remove cert & key</span>
                                         <span lang="fi">Poista sert ja avain</span>
                                     </button>
@@ -1001,13 +1003,13 @@
                                     <label>
                                         <input type="file" accept=".pem" class="hidden" hidden>
                                     </label>
-                                    <button class="btn" id="remote_cfg-button_upload_server_cert" type="button">
+                                    <button class="btn btn-narrow btn-two-rows" id="remote_cfg-button_upload_server_cert" type="button">
                                         <span lang="en">Upload cert</span>
                                         <span lang="fi">Lataa sert</span>
                                     </button>
                                 </div>
                                 <div class="button-upload">
-                                    <button class="btn" id="remote_cfg-button_remove_server_cert" type="button">
+                                    <button class="btn btn-narrow btn-two-rows" id="remote_cfg-button_remove_server_cert" type="button">
                                         <span lang="en">Remove cert</span>
                                         <span lang="fi">Poista sert</span>
                                     </button>
@@ -1809,7 +1811,7 @@
                             <label>
                                 <input type="file" accept=".pem" class="hidden" hidden>
                             </label>
-                            <button class="btn" id="http-button_upload_client_cert" type="button">
+                            <button class="btn btn-narrow btn-two-rows" id="http-button_upload_client_cert" type="button">
                                 <span lang="en">Upload cert</span>
                                 <span lang="fi">Lataa sert</span>
                             </button>
@@ -1818,13 +1820,13 @@
                             <label>
                                 <input type="file" accept=".pem" class="hidden" hidden>
                             </label>
-                            <button class="btn" id="http-button_upload_client_key" type="button">
+                            <button class="btn btn-narrow btn-two-rows" id="http-button_upload_client_key" type="button">
                                 <span lang="en">Upload private key</span>
                                 <span lang="fi">Lataa yksityinen avain</span>
                             </button>
                         </div>
                         <div>
-                            <button class="btn" id="http-button_remove_client_cert_and_key" type="button">
+                            <button class="btn btn-narrow btn-two-rows" id="http-button_remove_client_cert_and_key" type="button">
                                 <span lang="en">Remove cert & key</span>
                                 <span lang="fi">Poista sert ja avain</span>
                             </button>
@@ -1847,13 +1849,13 @@
                             <label>
                                 <input type="file" accept=".pem" class="hidden" hidden>
                             </label>
-                            <button class="btn" id="http-button_upload_server_cert" type="button">
+                            <button class="btn btn-narrow btn-two-rows" id="http-button_upload_server_cert" type="button">
                                 <span lang="en">Upload cert</span>
                                 <span lang="fi">Lataa sert</span>
                             </button>
                         </div>
                         <div class="button-upload">
-                            <button class="btn" id="http-button_remove_server_cert" type="button">
+                            <button class="btn btn-narrow btn-two-rows" id="http-button_remove_server_cert" type="button">
                                 <span lang="en">Remove cert</span>
                                 <span lang="fi">Poista sert</span>
                             </button>
@@ -2035,7 +2037,7 @@
                             <label>
                                 <input type="file" accept=".pem" class="hidden" hidden>
                             </label>
-                            <button class="btn" id="mqtt-button_upload_client_cert" type="button">
+                            <button class="btn btn-narrow btn-two-rows" id="mqtt-button_upload_client_cert" type="button">
                                 <span lang="en">Upload cert</span>
                                 <span lang="fi">Lataa sert</span>
                             </button>
@@ -2044,13 +2046,13 @@
                             <label>
                                 <input type="file" accept=".pem" class="hidden" hidden>
                             </label>
-                            <button class="btn" id="mqtt-button_upload_client_key" type="button">
+                            <button class="btn btn-narrow btn-two-rows" id="mqtt-button_upload_client_key" type="button">
                                 <span lang="en">Upload private key</span>
                                 <span lang="fi">Lataa yksityinen avain</span>
                             </button>
                         </div>
                         <div>
-                            <button class="btn" id="mqtt-button_remove_client_cert_and_key" type="button">
+                            <button class="btn btn-narrow btn-two-rows" id="mqtt-button_remove_client_cert_and_key" type="button">
                                 <span lang="en">Remove cert & key</span>
                                 <span lang="fi">Poista sert ja avain</span>
                             </button>
@@ -2076,13 +2078,13 @@
                             <label>
                                 <input type="file" accept=".pem" class="hidden" hidden>
                             </label>
-                            <button class="btn" id="mqtt-button_upload_server_cert" type="button">
+                            <button class="btn btn-narrow btn-two-rows" id="mqtt-button_upload_server_cert" type="button">
                                 <span lang="en">Upload cert</span>
                                 <span lang="fi">Lataa sert</span>
                             </button>
                         </div>
                         <div class="button-upload">
-                            <button class="btn" id="mqtt-button_remove_server_cert" type="button">
+                            <button class="btn btn-narrow btn-two-rows" id="mqtt-button_remove_server_cert" type="button">
                                 <span lang="en">Remove cert</span>
                                 <span lang="fi">Poista sert</span>
                             </button>
@@ -2177,7 +2179,7 @@
                                 <label>
                                     <input type="file" accept=".pem" class="hidden" hidden>
                                 </label>
-                                <button class="btn" id="stat-button_upload_client_cert" type="button">
+                                <button class="btn btn-narrow btn-two-rows" id="stat-button_upload_client_cert" type="button">
                                     <span lang="en">Upload cert</span>
                                     <span lang="fi">Lataa sert</span>
                                 </button>
@@ -2186,13 +2188,13 @@
                                 <label>
                                     <input type="file" accept=".pem" class="hidden" hidden>
                                 </label>
-                                <button class="btn" id="stat-button_upload_client_key" type="button">
+                                <button class="btn btn-narrow btn-two-rows" id="stat-button_upload_client_key" type="button">
                                     <span lang="en">Upload private key</span>
                                     <span lang="fi">Lataa yksityinen avain</span>
                                 </button>
                             </div>
                             <div>
-                                <button class="btn" id="stat-button_remove_client_cert_and_key" type="button">
+                                <button class="btn btn-narrow btn-two-rows" id="stat-button_remove_client_cert_and_key" type="button">
                                     <span lang="en">Remove cert & key</span>
                                     <span lang="fi">Poista sert ja avain</span>
                                 </button>
@@ -2218,13 +2220,13 @@
                                 <label>
                                     <input type="file" accept=".pem" class="hidden" hidden>
                                 </label>
-                                <button class="btn" id="stat-button_upload_server_cert" type="button">
+                                <button class="btn btn-narrow btn-two-rows" id="stat-button_upload_server_cert" type="button">
                                     <span lang="en">Upload cert</span>
                                     <span lang="fi">Lataa sert</span>
                                 </button>
                             </div>
                             <div class="button-upload">
-                                <button class="btn" id="stat-button_remove_server_cert" type="button">
+                                <button class="btn btn-narrow btn-two-rows" id="stat-button_remove_server_cert" type="button">
                                     <span lang="en">Remove cert</span>
                                     <span lang="fi">Poista sert</span>
                                 </button>

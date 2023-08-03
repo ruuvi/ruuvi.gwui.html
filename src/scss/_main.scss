@@ -295,6 +295,7 @@ progress {
 /*============================================*/
 .container {
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-between;
 	align-items: center;
 }
@@ -302,6 +303,7 @@ progress {
 .line-container {
 	width: 100%;
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
 }
@@ -309,6 +311,7 @@ progress {
 .button-container {
 	width: 100%;
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
 	position: absolute;
@@ -318,9 +321,14 @@ progress {
 
 .button-container-centered {
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-around;
 	align-items: center;
 	width: 100%;
+}
+
+.btn-two-rows {
+	min-height: 56px;
 }
 
 .btn {
@@ -328,6 +336,7 @@ progress {
 	padding: 14px 30px;
 	margin-left: 10px;
 	margin-right: 10px;
+	margin-top: 10px;
 
 	display: inline-block;
 	background-color: var(--color-primary);
@@ -359,17 +368,19 @@ progress {
 }
 
 .btn-narrow {
+	max-width: 160px;
+	padding: 14px 20px;
 	@include max(sm) {
 		min-width: 110px;
-		padding: 14px 20px;
+		padding: 14px 15px;
 	}
 	@include max(xs) {
 		min-width: 100px;
-		padding: 14px 15px;
+		padding: 14px 10px;
 	}
 	@include max(xxs) {
 		min-width: 90px;
-		padding: 14px 10px;
+		padding: 14px 5px;
 	}
 }
 
