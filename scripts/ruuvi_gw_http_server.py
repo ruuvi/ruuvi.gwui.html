@@ -34,7 +34,7 @@ from urllib.parse import parse_qs
 GET_AP_JSON_TIMEOUT = 1.0
 GET_HISTORY_JSON_TIMEOUT = 1.0
 NETWORK_CONNECTION_TIMEOUT = 1.0
-GET_LATEST_RELEASE_TIMEOUT = 1.0
+GET_FIRMWARE_UPDATE_TIMEOUT = 1.0
 
 LAN_AUTH_TYPE_DEFAULT = 'lan_auth_default'
 LAN_AUTH_TYPE_DENY = 'lan_auth_deny'
@@ -190,7 +190,7 @@ g_ruuvi_dict = {
     ]
 }
 
-g_content_github_latest_release = '''{
+g_content_firmware_update_json = '''{
   "latest": {
     "version": "v1.13.1",
     "url": "https://s3.eu-central-1.amazonaws.com/dev.network.ruuvi.com/firmwareupdate/v1.13.1",
@@ -894,7 +894,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_ruuvi_dict
         global g_login_session
         global g_authorized_sessions
-        
+
         parsed_url = urlparse(self.path)
         query_params = parse_qs(parsed_url.query)
 
@@ -1598,9 +1598,9 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         resp += content.encode('utf-8')
         self.wfile.write(resp)
 
-    def _do_get_github_latest_release_json(self, resp):
-        content = g_content_github_latest_release
-        time.sleep(GET_LATEST_RELEASE_TIMEOUT)
+    def _do_get_firmware_update_json(self):
+        content = g_content_firmware_update_json
+        time.sleep(GET_FIRMWARE_UPDATE_TIMEOUT)
         resp = b''
         resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
         resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
@@ -1613,8 +1613,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         resp += content.encode('utf-8')
         self.wfile.write(resp)
 
-    def _do_get_github_latest_release_without_len_json(self, resp):
-        content = g_content_github_latest_release
+    def _do_get_firmware_update_without_len_json(self):
+        content = g_content_firmware_update_json
         time.sleep(10.0)
         resp = b''
         resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
@@ -1627,10 +1627,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         resp += content.encode('utf-8')
         self.wfile.write(resp)
 
-    def _do_get_github_latest_release_chunked_json(self, resp):
-        chunk1 = g_content_github_latest_release[:10]
-        chunk2 = g_content_github_latest_release[10:5000]
-        chunk3 = g_content_github_latest_release[5000:]
+    def _do_get_firmware_update_chunked_json(self):
+        chunk1 = g_content_firmware_update_json[:10]
+        chunk2 = g_content_firmware_update_json[10:5000]
+        chunk3 = g_content_firmware_update_json[5000:]
         content = ''
         content += f'{len(chunk1):x}\r\n'
         content += chunk1
@@ -1738,7 +1738,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 			}
 		}
 	}
-}        
+}
             '''
         else:
             content = '''
@@ -1760,7 +1760,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         			}
         		}
         	}
-        }        
+        }
                     '''
         time.sleep(GET_HISTORY_JSON_TIMEOUT)
         self._write_json_response(content)
@@ -1785,12 +1785,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 self._do_get_ap_json(resp)
             elif file_path == '/status.json':
                 self._do_get_status_json(resp)
-            elif file_path == '/github_latest_release.json':
-                self._do_get_github_latest_release_json(resp)
-            elif file_path == '/github_latest_release_without_len.json':
-                self._do_get_github_latest_release_without_len_json(resp)
-            elif file_path == '/github_latest_release_chunked.json':
-                self._do_get_github_latest_release_chunked_json(resp)
+            elif file_path == '/firmware_update.json':
+                self._do_get_firmware_update_json()
+            elif file_path == '/firmware_update_without_len.json':
+                self._do_get_firmware_update_without_len_json()
+            elif file_path == '/firmware_update_chunked.json':
+                self._do_get_firmware_update_chunked_json()
             else:
                 resp = b''
                 resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')

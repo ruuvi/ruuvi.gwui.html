@@ -86,10 +86,10 @@ class PageSoftwareUpdate {
     GwStatus.stopCheckingStatus()
     await Network.waitWhileInProgress()
 
-    Network.httpGetJson('/github_latest_release.json', 40000).then((data) => {
+    Network.httpGetJson('/firmware_update.json', 40000).then((data) => {
       this.#on_get_latest_release_info(data)
     }).catch((err) => {
-      console.log(log_wrap(`GET github_latest_release.json failed: ${err}`))
+      console.log(log_wrap(`GET firmware_update.json failed: ${err}`))
       this.#div_in_progress.hide()
       this.#sect_advanced.enable()
       this.#div_status_ok_update_available.hide()
