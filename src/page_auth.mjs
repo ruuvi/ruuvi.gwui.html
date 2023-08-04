@@ -70,6 +70,7 @@ class PageAuth {
   }
 
   on_auth_successful () {
+    this.#auth_user_login.hide()
     this.#auth_yes.show()
     this.#auth_home.show()
   }
