@@ -226,6 +226,7 @@ class PageLanAuth {
     if (this.#checkbox_use_api_key.isChecked()) {
       this.#input_api_key.setNewTokenIfEmpty()
       this.#div_api_key.show()
+      this.#input_api_key.put_cursor_at_end();
     } else {
       this.#div_api_key.hide()
     }
@@ -235,6 +236,7 @@ class PageLanAuth {
     if (this.#checkbox_use_api_key_rw.isChecked()) {
       this.#input_api_key_rw.setNewTokenIfEmpty()
       this.#div_api_key_rw.show()
+      this.#input_api_key_rw.put_cursor_at_end();
     } else {
       this.#div_api_key_rw.hide()
     }
