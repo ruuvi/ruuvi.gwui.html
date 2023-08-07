@@ -13,6 +13,9 @@ class Navigation {
       return
     }
     window.location.hash = url
+    setTimeout(function() {
+      window.scrollTo(0, 0);
+    }, 0);
   }
 
   static change_page_to_network_type () {
