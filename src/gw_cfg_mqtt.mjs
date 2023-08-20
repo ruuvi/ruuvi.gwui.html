@@ -72,6 +72,7 @@ export class GwCfgMqtt {
 
   mqtt_server = null
   mqtt_port = null
+  mqtt_sending_interval = null
   mqtt_user = null
   mqtt_pass = undefined
   mqtt_prefix = null
@@ -85,6 +86,7 @@ export class GwCfgMqtt {
     this.mqtt_transport = new GwCfgMqttTransport(utils.fetchStringKeyFromData(data, 'mqtt_transport', true))
     this.mqtt_server = utils.fetchStringKeyFromData(data, 'mqtt_server', true)
     this.mqtt_port = utils.fetchIntKeyFromData(data, 'mqtt_port', true)
+    this.mqtt_sending_interval = utils.fetchIntKeyFromData(data, 'mqtt_sending_interval', false, 0)
     this.mqtt_user = utils.fetchStringKeyFromData(data, 'mqtt_user', true)
     this.mqtt_prefix = utils.fetchStringKeyFromData(data, 'mqtt_prefix', true)
     this.mqtt_client_id = utils.fetchStringKeyFromData(data, 'mqtt_client_id', true)
@@ -100,6 +102,7 @@ export class GwCfgMqtt {
     this.use_mqtt = false
     this.mqtt_server = GwCfgMqtt.MQTT_SERVER_DEFAULT
     this.mqtt_port = GwCfgMqtt.MQTT_PORT_DEFAULT
+    this.mqtt_sending_interval = 0
     this.mqtt_transport.setTCP()
     this.mqtt_user = ''
     this.mqtt_pass = ''

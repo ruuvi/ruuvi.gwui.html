@@ -308,6 +308,20 @@ progress {
 	justify-content: space-between;
 }
 
+.label-container {
+	font-weight: 600;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.text-container {
+	white-space: nowrap;
+	flex-shrink: 0;
+	margin-right: 10px;
+}
+
 .button-container {
 	width: 100%;
 	display: flex;
@@ -618,8 +632,20 @@ input.input-row {
 	cursor: default;
 }
 
+.input-server {
+	position: relative;
+	flex-grow: 1; /* Take up remaining space */
+	display: flex;
+	align-items: center;
+	margin-right: 10px;
+}
+
 .input-with_validity_check {
-	position: relative
+	position: relative;
+	display: flex;
+	align-items: center;
+	flex-grow: 1; /* Take up remaining space */
+	//width: auto; /* Automatically adjust to content */
 }
 
 .input-with_validity_check .input-password-eye {

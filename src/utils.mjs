@@ -347,3 +347,9 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
   })
 }
 
+export function parseIntegerString(value) {
+  if (Number.isInteger(parseFloat(value)) && value.trim() === parseInt(value, 10).toString()) {
+    return parseInt(value, 10)
+  }
+  return null
+}
