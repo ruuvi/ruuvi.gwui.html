@@ -612,8 +612,8 @@
             <div class="border"></div>
 
             <div id="page-software_update-advanced-dropdown" class="hidden">
-                <div id="software_update-url_title">
-                    <label class="control control-checkbox info-icon-container">
+                <div id="software_update-url_title" class="control control-checkbox info-icon-container">
+                    <label for="software_update-set-url-manually">
                         <div class="info-icon-left-column">
                             <span lang="en">Specify a URL that contains the required firmware update binaries.</span>
                             <span lang="fi">Anna URL-osoite, josta tarvittavat laiteohjelmistotiedostot ladataan.</span>
@@ -623,14 +623,14 @@
                         <a class="info-icon-button" href="#popup-info-icon-software_update">i</a>
                     </label>
                 </div>
-                <div id="software_update-url-div">
-                    <label for="software_update-url" class="info-icon-container">
-                        <div class="input-with_validity_check">
-                            <input id="software_update-url" type="text" value="">
-                            <div class="input-with_validity_check-icon">
-                            </div>
-                        </div>
+                <div id="software_update-url-div" class="font-bold input-container indent">
+                    <label for="software_update-url">
                     </label>
+                    <div class="input-with_validity_check">
+                        <input id="software_update-url" type="text" value="">
+                        <div class="input-with_validity_check-icon">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1918,37 +1918,59 @@
 
                 <div class="border-hidden"></div>
 
-                <label class="font-bold">
-                    <span lang="en">Server</span>
-                    <span lang="fi">Palvelin</span>
-                    <div class="input-with_validity_check">
+                <label class="label-container">
+                    <span class="text-container">
+                        <span lang="en">Server</span>
+                        <span lang="fi">Palvelin</span>
+                    </span>
+                    <div class="input-server">
                         <input id="mqtt_server" type="text">
-                        <div class="input-with_validity_check-icon">
-                        </div>
                     </div>
-                </label>
-                <label class="font-bold">
-                    <span lang="en">Port</span>
-                    <span lang="fi">Portti</span>
-                    <div class="input-with_validity_check">
-                        <input id="mqtt_port" type="text" placeholder="">
+                    <div class="input-with_validity_check" style="flex-grow: unset; width: auto;">
+                        <input id="mqtt_port" type="text" placeholder="Port" style="width: calc(5ch + 4px + 2 * var(--input-padding-right-and-left));">
                         <div class="input-with_validity_check-icon">
                         </div>
                     </div>
                 </label>
 
-                <label class="font-bold">
-                    <span lang="en">Username (optional)</span>
-                    <span lang="fi">Käyttäjänimi (valinnainen)</span>
+                <label class="control control-checkbox">
+                    <span lang="en">Use periodic sending (maximum 100 messages)</span>
+                    <span lang="fi">Käytä säännöllistä lähetystä (enintään 100 viestiä)</span>
+                    <input id="use_mqtt_periodic_sending" type="checkbox">
+                    <span class="control_indicator"></span>
+                </label>
+                <div id="mqtt_sending_interval_div" class="indent">
+                    <label class="label-container">
+                        <span class="text-container">
+                            <span lang="en">Sending interval (seconds)</span>
+                            <span lang="fi">Lähetysväli (sekuntia)</span>
+                        </span>
+                        <div class="input-with_validity_check" style="width: 100%">
+                            <input id="mqtt_sending_interval" type="text" value="">
+                            <div class="input-with_validity_check-icon">
+                            </div>
+                        </div>
+                    </label>
+                    <div class="border"></div>
+                    <div>&nbsp;</div>
+                </div>
+
+                <label class="label-container">
+                    <span class="text-container">
+                        <span lang="en">Username (optional)</span>
+                        <span lang="fi">Käyttäjänimi (valinnainen)</span>
+                    </span>
                     <div class="input-with_validity_check">
                         <input id="mqtt_user" type="text" placeholder="User" value="">
                         <div class="input-with_validity_check-icon">
                         </div>
                     </div>
                 </label>
-                <label class="font-bold">
-                    <span lang="en">Password (optional)</span>
-                    <span lang="fi">Salasana (valinnainen)</span>
+                <label class="label-container">
+                    <span class="text-container">
+                        <span lang="en">Password (optional)</span>
+                        <span lang="fi">Salasana (valinnainen)</span>
+                    </span>
                     <div class="input-password input-with_validity_check">
                         <input id="mqtt_pass" type="password" placeholder="Password" value="">
                         <div class="input-password-eye">
@@ -1969,9 +1991,11 @@
                     <div id="page-custom_server-mqtt_validation_error-desc" class="block-centered">
                     </div>
                 </div>
-                <label class="font-bold">
-                    <span lang="en">Client name</span>
-                    <span lang="fi">Asiakastunnus</span>
+                <label class="label-container">
+                    <span class="text-container">
+                        <span lang="en">Client name</span>
+                        <span lang="fi">Asiakastunnus</span>
+                    </span>
                     <div class="input-with_validity_check">
                         <input id="mqtt_client_id" type="text" placeholder="MAC-address is used if empty" value="">
                         <div class="input-with_validity_check-icon">

@@ -46,6 +46,7 @@ describe('GwCfgMqtt', () => {
 
     expect(mqtt.mqtt_server).to.equal('test.mosquitto.org')
     expect(mqtt.mqtt_port).to.equal(1883)
+    expect(mqtt.mqtt_sending_interval).to.equal(0)
     expect(mqtt.mqtt_user).to.equal('')
     expect(mqtt.mqtt_pass).to.be.undefined
     expect(mqtt.mqtt_prefix).to.equal('prefix123')
@@ -77,6 +78,7 @@ describe('GwCfgMqtt', () => {
 
     expect(mqtt.mqtt_server).to.equal('my_server.com')
     expect(mqtt.mqtt_port).to.equal(2883)
+    expect(mqtt.mqtt_sending_interval).to.equal(0)
     expect(mqtt.mqtt_user).to.equal('user1')
     expect(mqtt.mqtt_pass).to.be.undefined
     expect(mqtt.mqtt_prefix).to.equal('prefix123')
@@ -108,6 +110,7 @@ describe('GwCfgMqtt', () => {
 
     expect(mqtt.mqtt_server).to.equal('my_server.com')
     expect(mqtt.mqtt_port).to.equal(2883)
+    expect(mqtt.mqtt_sending_interval).to.equal(0)
     expect(mqtt.mqtt_user).to.equal('')
     expect(mqtt.mqtt_pass).to.be.undefined
     expect(mqtt.mqtt_prefix).to.equal('prefix123')
@@ -139,6 +142,7 @@ describe('GwCfgMqtt', () => {
 
     expect(mqtt.mqtt_server).to.equal('my_server.com')
     expect(mqtt.mqtt_port).to.equal(2884)
+    expect(mqtt.mqtt_sending_interval).to.equal(0)
     expect(mqtt.mqtt_user).to.equal('user1')
     expect(mqtt.mqtt_pass).to.be.undefined
     expect(mqtt.mqtt_prefix).to.equal('prefix124')
@@ -170,6 +174,7 @@ describe('GwCfgMqtt', () => {
 
     expect(mqtt.mqtt_server).to.equal('my_server.com')
     expect(mqtt.mqtt_port).to.equal(2885)
+    expect(mqtt.mqtt_sending_interval).to.equal(0)
     expect(mqtt.mqtt_user).to.equal('')
     expect(mqtt.mqtt_pass).to.be.undefined
     expect(mqtt.mqtt_prefix).to.equal('prefix125')
@@ -201,6 +206,40 @@ describe('GwCfgMqtt', () => {
 
     expect(mqtt.mqtt_server).to.equal('my_server.com')
     expect(mqtt.mqtt_port).to.equal(2886)
+    expect(mqtt.mqtt_sending_interval).to.equal(0)
+    expect(mqtt.mqtt_user).to.equal('')
+    expect(mqtt.mqtt_pass).to.be.undefined
+    expect(mqtt.mqtt_prefix).to.equal('prefix126')
+    expect(mqtt.mqtt_client_id).to.equal('client126')
+    expect(Object.keys(data).length).to.equal(0)
+  })
+
+  it('should check use_mqtt=true, mqtt_sending_interval=60', () => {
+    let data = {
+      use_mqtt: true,
+      mqtt_disable_retained_messages: false,
+      mqtt_transport: 'WSS',
+      mqtt_server: 'my_server.com',
+      mqtt_port: 2886,
+      mqtt_sending_interval: 60,
+      mqtt_user: '',
+      mqtt_prefix: 'prefix126',
+      mqtt_client_id: 'client126',
+    }
+    let mqtt = new GwCfgMqtt()
+    mqtt.parse(data)
+    expect(mqtt.use_mqtt).to.be.true
+    expect(mqtt.mqtt_disable_retained_messages).to.be.false
+
+    expect(mqtt.mqtt_transport).to.be.instanceOf(GwCfgMqttTransport)
+    expect(mqtt.mqtt_transport.isTCP()).to.be.false
+    expect(mqtt.mqtt_transport.isSSL()).to.be.false
+    expect(mqtt.mqtt_transport.isWS()).to.be.false
+    expect(mqtt.mqtt_transport.isWSS()).to.be.true
+
+    expect(mqtt.mqtt_server).to.equal('my_server.com')
+    expect(mqtt.mqtt_port).to.equal(2886)
+    expect(mqtt.mqtt_sending_interval).to.equal(60)
     expect(mqtt.mqtt_user).to.equal('')
     expect(mqtt.mqtt_pass).to.be.undefined
     expect(mqtt.mqtt_prefix).to.equal('prefix126')

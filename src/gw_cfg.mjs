@@ -149,6 +149,7 @@ export class GwCfg {
     data.mqtt_transport = this.mqtt.mqtt_transport.getVal()
     data.mqtt_server = this.mqtt.mqtt_server
     data.mqtt_port = this.mqtt.mqtt_port
+    data.mqtt_sending_interval = this.mqtt.mqtt_sending_interval
     data.mqtt_prefix = this.mqtt.mqtt_prefix
     data.mqtt_client_id = this.mqtt.mqtt_client_id
     data.mqtt_user = this.mqtt.mqtt_user
