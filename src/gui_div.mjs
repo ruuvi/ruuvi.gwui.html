@@ -28,6 +28,22 @@ class GuiDiv {
   slideDown () {
     this.#obj.slideDown()
   }
+
+  setVisibility(isVisible) {
+    if (isVisible) {
+      this.#obj.removeClass('invisible')
+    } else {
+      this.#obj.addClass('invisible')
+    }
+  }
+
+  setInvisible() {
+    this.setVisibility(false)
+  }
+
+  setVisible() {
+    this.setVisibility(true)
+  }
 }
 
 export default GuiDiv

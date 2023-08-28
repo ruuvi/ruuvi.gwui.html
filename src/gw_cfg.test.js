@@ -97,7 +97,8 @@ describe('GwCfg', () => {
           'scan_channel_39': true,
           'scan_filter_allow_listed': false,
           'scan_filter_list': [],
-          'coordinates': ''
+          'coordinates': '',
+          'fw_update_url': 'https://network.ruuvi.com/firmwareupdate'
         },
       })
 

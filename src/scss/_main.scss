@@ -947,6 +947,10 @@ table {
 	display: none;
 }
 
+.invisible {
+	visibility: hidden;
+}
+
 #remote_cfg-options_url_title:after {
 	content: " ";
 	display: block;

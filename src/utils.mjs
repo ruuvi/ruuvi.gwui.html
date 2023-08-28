@@ -314,9 +314,13 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
           if (resp) {
             console.log(log_wrap(`URL validation result (${validate_type}): status=${resp.status}, message=${resp.message}`))
             validity_icons_clear(params)
+            let result = true
             if (response_status === 200 && resp.status !== undefined) {
               if (resp.status === 200) {
                 validity_icons_set_valid(params)
+                if (resp.json !== undefined) {
+                  result = resp.json
+                }
               } else if (resp.status === 401) {
                 validity_icons_set_invalid(params)
               } else {
@@ -336,9 +340,9 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
             } else {
               set_error_message(params, `HTTP response status: ${response_status}`)
             }
-            resolve(true)
+            resolve(result)
           }
-        }, function (error) {
+        }, (error) =>  {
           console.log(log_wrap(`Failed to parse JSON response from Ruuvi Gateway: ${error}`))
           input_url.setInvalid()
           set_error_message(params, `HTTP response status: ${response_status}, Failed to parse JSON response from Ruuvi Gateway`)
