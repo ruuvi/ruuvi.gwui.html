@@ -63,6 +63,50 @@ describe('GwCfgHttp', () => {
     expect(Object.keys(data).length).to.equal(0)
   })
 
+  it('should check use_http=true with http_data_format=ruuvi_raw_and_decoded', () => {
+    let data = {
+      use_http_ruuvi: false,
+      use_http: true,
+      http_url: 'https://myserver.com:8080/record',
+      http_data_format: 'ruuvi_raw_and_decoded',
+      http_auth: 'none',
+    }
+    let cfg_http = new GwCfgHttp()
+    cfg_http.parse(data)
+    expect(cfg_http.use_http_ruuvi).to.be.false
+    expect(cfg_http.use_http).to.be.true
+    expect(cfg_http.http_data_format.isRuuviRawAndDecoded()).to.be.true
+    expect(cfg_http.http_auth.isNone()).to.be.true
+    expect(cfg_http.http_url).to.equal('https://myserver.com:8080/record')
+    expect(cfg_http.http_user).to.equal('')
+    expect(cfg_http.http_pass).to.be.undefined
+    expect(cfg_http.http_bearer_token).to.be.undefined
+    expect(cfg_http.http_api_key).to.be.undefined
+    expect(Object.keys(data).length).to.equal(0)
+  })
+
+  it('should check use_http=true with http_data_format=ruuvi_decoded', () => {
+    let data = {
+      use_http_ruuvi: false,
+      use_http: true,
+      http_url: 'https://myserver.com:8080/record',
+      http_data_format: 'ruuvi_decoded',
+      http_auth: 'none',
+    }
+    let cfg_http = new GwCfgHttp()
+    cfg_http.parse(data)
+    expect(cfg_http.use_http_ruuvi).to.be.false
+    expect(cfg_http.use_http).to.be.true
+    expect(cfg_http.http_data_format.isRuuviDecoded()).to.be.true
+    expect(cfg_http.http_auth.isNone()).to.be.true
+    expect(cfg_http.http_url).to.equal('https://myserver.com:8080/record')
+    expect(cfg_http.http_user).to.equal('')
+    expect(cfg_http.http_pass).to.be.undefined
+    expect(cfg_http.http_bearer_token).to.be.undefined
+    expect(cfg_http.http_api_key).to.be.undefined
+    expect(Object.keys(data).length).to.equal(0)
+  })
+
   it('should check use_http=true with http_auth=basic', () => {
     let data = {
       use_http_ruuvi: false,

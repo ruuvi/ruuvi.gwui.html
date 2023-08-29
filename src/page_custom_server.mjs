@@ -46,6 +46,8 @@ class PageCustomServer {
 
     /** @type GuiRadioButtonOption */
     #radio_http_data_format_ruuvi
+    #radio_http_data_format_ruuvi_raw_and_decoded
+    #radio_http_data_format_ruuvi_decoded
 
     #checkbox_use_http_auth = new GuiCheckbox($('#use_http_auth'))
     #radio_http_auth = new GuiRadioButton('http_auth')
@@ -173,6 +175,8 @@ class PageCustomServer {
         this.#section.bind('onHide', async () => this.#onHide())
 
         this.#radio_http_data_format_ruuvi = this.#radio_http_data_format.addOption('http_data_format_ruuvi', false)
+        this.#radio_http_data_format_ruuvi_raw_and_decoded = this.#radio_http_data_format.addOption('http_data_format_ruuvi_raw_and_decoded', false)
+        this.#radio_http_data_format_ruuvi_decoded = this.#radio_http_data_format.addOption('http_data_format_ruuvi_decoded', false)
 
         this.#checkbox_use_http_auth.on_change(() => this.#onChangeUseHttpAuth())
 
@@ -201,6 +205,8 @@ class PageCustomServer {
         this.#checkbox_use_http.on_change(() => this.#onChangeUseHttpCustom())
 
         this.#radio_http_data_format_ruuvi.on_click(() => this.#onChangeHttpDataFormat())
+        this.#radio_http_data_format_ruuvi_raw_and_decoded.on_click(() => this.#onChangeHttpDataFormat())
+        this.#radio_http_data_format_ruuvi_decoded.on_click(() => this.#onChangeHttpDataFormat())
         this.#radio_http_auth_basic.on_click(() => this.#onChangeHttpAuth())
         this.#radio_http_auth_bearer.on_click(() => this.#onChangeHttpAuth())
         this.#radio_http_auth_token.on_click(() => this.#onChangeHttpAuth())
@@ -274,6 +280,10 @@ class PageCustomServer {
 
         if (this.#gwCfg.http.http_data_format.isRuuvi()) {
             this.#radio_http_data_format_ruuvi.setChecked()
+        } else if (this.#gwCfg.http.http_data_format.isRuuviRawAndDecoded()) {
+            this.#radio_http_data_format_ruuvi_raw_and_decoded.setChecked()
+        } else if (this.#gwCfg.http.http_data_format.isRuuviDecoded()) {
+            this.#radio_http_data_format_ruuvi_decoded.setChecked()
         }
 
         this.#input_http_auth_basic_user.setVal(this.#gwCfg.http.http_user)
@@ -408,6 +418,10 @@ class PageCustomServer {
             this.#gwCfg.http.http_url = this.#input_http_url.getVal()
             if (this.#radio_http_data_format_ruuvi.isChecked()) {
                 this.#gwCfg.http.http_data_format.setRuuvi()
+            } else if (this.#radio_http_data_format_ruuvi_raw_and_decoded.isChecked()) {
+                this.#gwCfg.http.http_data_format.setRuuviRawAndDecoded()
+            } else if (this.#radio_http_data_format_ruuvi_decoded.isChecked()) {
+                this.#gwCfg.http.http_data_format.setRuuviDecoded()
             } else {
                 throw new Error(`Unsupported http_data_format`)
             }
