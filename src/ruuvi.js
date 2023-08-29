@@ -121,7 +121,7 @@ class Pages {
     this.page_network_type = new PageNetworkType(flagAccessFromLAN, gw_cfg.eth)
     this.page_ethernet_connection = new PageEthernetConnection(gw_cfg, auth)
     this.page_wifi_connection = new PageWiFiConnection(gw_cfg, auth)
-    this.page_software_update = new PageSoftwareUpdate(gw_cfg.info.fw_ver)
+    this.page_software_update = new PageSoftwareUpdate(gw_cfg, auth)
     this.page_software_update_progress = new PageSoftwareUpdateProgress()
     this.page_remote_cfg = new PageRemoteCfg(gw_cfg, auth)
     this.page_update_schedule = new PageUpdateSchedule(gw_cfg.auto_update)

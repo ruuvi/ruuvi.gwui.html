@@ -570,6 +570,9 @@
 
             <div id="page-software_update-status">
                 <div class="block-centered">
+                    <div id="software_update-status-empty" class="software_update-status">
+                        <span>&nbsp;</span>
+                    </div>
                     <div id="software_update-status-ok-already_latest" class="software_update-status gr hidden">
                         <span lang="en">You already have the latest release installed</span>
                         <span lang="fi">Sinulla on jo uusin versio asennettuna</span>
@@ -612,6 +615,49 @@
             <div class="border"></div>
 
             <div id="page-software_update-advanced-dropdown" class="hidden">
+                <div id="page-software_update-fw_update_url-div">
+                    <div class="info-icon-left-column">
+                        <span lang="en">URL of the json file containing the latest firmware version information:</span>
+                        <span lang="fi">Uusimmat laiteohjelmistoversiotiedot sisältävän json-tiedoston URL-osoite:</span>
+                    </div>
+                    <a class="info-icon-button" href="#popup-info-icon-button-fw_update_url_title">i</a>
+                </div>
+                <div class="font-bold input-container">
+                    <label for="page-software_update-fw_update_url" class="info-icon-container">
+                    </label>
+                    <div class="input-with_validity_check">
+                        <input id="page-software_update-fw_update_url" type="text" value="">
+                        <div class="input-with_validity_check-icon">
+                        </div>
+                    </div>
+                </div>
+                <div>&nbsp;</div>
+                <div class="button-container-centered">
+                    <button class="btn" id="page-software_update-button-fw_update_url-check" type="button">
+                        <span lang="en">Check</span>
+                        <span lang="fi">Tarkasta</span>
+                    </button>
+                    <button class="btn" id="page-software_update-button-fw_update_url-save" type="button">
+                        <span lang="en">Save</span>
+                        <span lang="fi">Tallentaa</span>
+                    </button>
+                </div>
+
+                <div>&nbsp;</div>
+
+                <div id="page-software_update-fw_update-status-error" class="rd hidden">
+                    <div class="block-centered">
+                        <span lang="en">Failed to retrieve json file with firmware update information.</span>
+                        <span lang="fi">Laiteohjelmiston päivitystietoja sisältävän json-tiedoston hakeminen epäonnistui.</span>
+                    </div>
+                    <div id="page-software_update-fw_update-status-error-desc" class="block-centered">
+                    </div>
+                </div>
+
+                <div>&nbsp;</div>
+                <div class="border"></div>
+                <div>&nbsp;</div>
+
                 <div id="software_update-url_title" class="control control-checkbox info-icon-container">
                     <label for="software_update-set-url-manually">
                         <div class="info-icon-left-column">
@@ -640,6 +686,35 @@
                     <span lang="fi">Virhe käynnistettäessä laiteohjelmiston päivitysprosessia.</span>
                 </div>
                 <div id="page-software_update-updating-status-error-desc" class="block-centered">
+                </div>
+            </div>
+
+            <div id="popup-info-icon-button-fw_update_url_title" class="info-icon-overlay">
+                <div class="info-icon-popup">
+                    <h1>
+                        <span lang="en">How to change the server for auto installation of firmware updates</span>
+                        <span lang="fi">Palvelimen vaihtaminen laiteohjelmistopäivitysten automaattista asennusta varten
+                        </span>
+                    </h1>
+                    <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
+                    <div class="info-icon-content">
+                        <p>
+                            <span lang="en">You need to specify a URL that will return a json file with information
+                                about the latest version and links to download the binary files.
+                            </span>
+                            <span lang="fi">Sinun on määritettävä URL-osoite, joka palauttaa json-tiedoston,
+                                joka sisältää tiedot uusimmasta versiosta ja linkit binaaritiedostojen lataamiseen.
+                            </span>
+                        </p>
+                        <p>
+                            <span lang="en">You can find more detailed instructions here:
+                                https://docs.ruuvi.com/ruuvi-gateway-firmware/gw-install-custom-firmware
+                            </span>
+                            <span lang="fi">Tarkemmat ohjeet löydät täältä:
+                                https://docs.ruuvi.com/ruuvi-gateway-firmware/gw-install-custom-firmware
+                            </span>
+                        </p>
+                    </div>
                 </div>
             </div>
 

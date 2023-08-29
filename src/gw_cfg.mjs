@@ -18,6 +18,7 @@ import { GwCfgScan } from './gw_cfg_scan.mjs'
 import { GwCfgCoordinates } from './gw_cfg_coordinates.mjs'
 import { GwCfgWifiAPCfg } from './gw_cfg_wifi_ap_config.mjs'
 import { GwCfgWifiStaCfg } from './gw_cfg_wifi_sta_config.mjs'
+import { GwCfgFwUpdateUrl } from "./gw_cfg_fw_update_url.mjs";
 
 export class GwCfg {
   info = new GwCfgInfo()
@@ -32,6 +33,7 @@ export class GwCfg {
   company_filter = new GwCfgCompanyFilter()
   scan = new GwCfgScan()
   coordinates = new GwCfgCoordinates()
+  fw_update_url = new GwCfgFwUpdateUrl()
   wifi_ap_cfg = new GwCfgWifiAPCfg()
   wifi_sta_cfg = new GwCfgWifiStaCfg()
 
@@ -60,6 +62,7 @@ export class GwCfg {
     this.company_filter.parse(data)
     this.scan.parse(data)
     this.coordinates.parse(data)
+    this.fw_update_url.parse(data)
     this.wifi_ap_cfg.parse(data)
     this.wifi_sta_cfg.parse(data)
 
@@ -90,6 +93,12 @@ export class GwCfg {
       data.wifi_ap_config = {}
       data.wifi_ap_config.channel = this.wifi_ap_cfg.channel
     }
+    return Network.httpEncryptAndPostJson(auth, '/ruuvi.json', 5000, data)
+  }
+
+  async saveFwUpdateUrl (auth) {
+    let data = {}
+    data.fw_update_url = this.fw_update_url.fw_update_url
     return Network.httpEncryptAndPostJson(auth, '/ruuvi.json', 5000, data)
   }
 

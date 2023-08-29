@@ -31,10 +31,10 @@ from Crypto.Hash import SHA256
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 
-GET_AP_JSON_TIMEOUT = 1.0
-GET_HISTORY_JSON_TIMEOUT = 1.0
-NETWORK_CONNECTION_TIMEOUT = 1.0
-GET_FIRMWARE_UPDATE_TIMEOUT = 1.0
+GET_AP_JSON_TIMEOUT = 0.25
+GET_HISTORY_JSON_TIMEOUT = 0.25
+NETWORK_CONNECTION_TIMEOUT = 0.25
+GET_FIRMWARE_UPDATE_TIMEOUT = 0.25
 
 LAN_AUTH_TYPE_DEFAULT = 'lan_auth_default'
 LAN_AUTH_TYPE_DENY = 'lan_auth_deny'
@@ -187,10 +187,12 @@ g_ruuvi_dict = {
         # 'AA:BB:CC:00:00:01',
         # 'AA:BB:CC:00:00:03',
         # 'AA:BB:CC:00:00:02'
-    ]
+    ],
+    'fw_update_url': 'https://network.ruuvi.com/firmwareupdate'
 }
 
-g_content_firmware_update_json = '''{
+g_content_firmware_update_json = '''
+{
   "latest": {
     "version": "v1.13.1",
     "url": "https://s3.eu-central-1.amazonaws.com/dev.network.ruuvi.com/firmwareupdate/v1.13.1",
@@ -208,6 +210,24 @@ g_content_firmware_update_json = '''{
 }
  '''
 
+g_content_firmware_update_json2 = '''
+{
+    "latest":{
+        "version":"v1.14.1",
+        "url":"https://fwupdate.ruuvi.com/v1.14.1",
+        "created_at":"2023-08-24T14:54:34Z"
+    },
+    "alpha":{
+        "version":"1056",
+        "url":"https://jenkins.ruuvi.com/job/ruuvi_gateway_esp-PR/1056/artifact/build/"
+    },
+    "beta":{
+        "version":"v1.14.1",
+        "url":"https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.14.1",
+        "created_at":"2023-08-21T13:10:34Z"
+    }
+}
+'''
 
 def ecdh_compute_shared_secret(priv_key: ECC.EccKey, pub_key: ECC.EccKey):
     return (priv_key.d * pub_key.pointQ).x % priv_key._curve.order
@@ -784,6 +804,15 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             content = '{"status": 200, "message": "OK"}'
         self._write_json_response(content)
 
+    def _do_post_fw_update_url_json(self):
+        global g_ruuvi_dict
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length).decode('ascii')
+        new_dict = json.loads(post_data)
+        g_ruuvi_dict['fw_update_url'] = new_dict['url']
+        content = '{"status": 200, "message": "OK"}'
+        self._write_json_response(content)
+
     def _do_post_fw_update_reset(self):
         global g_software_update_stage
         global g_software_update_percentage
@@ -871,6 +900,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self._do_post_gw_cfg_download()
         elif self.path == '/fw_update.json':
             self._do_post_fw_update_json()
+        elif self.path == '/fw_update_url.json':
+            self._do_post_fw_update_url_json()
         elif self.path == '/fw_update_reset':
             self._do_post_fw_update_reset()
         elif self.path == '/init_storage':
@@ -1256,7 +1287,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         resp += content.encode('utf-8')
         self.wfile.write(resp)
 
-    def _resp_200_json_validate_url_status(self, status, message=None):
+    def _resp_200_json_validate_url_status(self, status, message=None, json=None):
         resp = b''
         resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
         resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
@@ -1266,10 +1297,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         resp += f'Pragma: no-cache\r\n'.encode('ascii')
         content_type = 'application/json'
         resp += f'Content-type: {content_type}\r\n'.encode('ascii')
-        if message is None:
-            content = f'{{"status": {status}}}'
-        else:
+        if message is not None:
             content = f'{{"status": {status}, "message": "{message}"}}'
+        elif json is not None:
+            content = f'{{"status": {status}, "json": {json}}}'
+        else:
+            content = f'{{"status": {status}}}'
         resp += f'Content-Length: {len(content)}\r\n'.encode('ascii')
         resp += f'\r\n'.encode('ascii')
         print(f'Resp: {content}')
@@ -1420,6 +1453,17 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
         return self._resp_200_json_validate_url_status(400, "Error description")
 
+    def _validate_url_check_check_fw_update_url(self, url):
+        if url == 'https://network.ruuvi.com/firmwareupdate':
+            return self._resp_200_json_validate_url_status(200, json=g_content_firmware_update_json)
+        if url == 'https://network2.ruuvi.com/firmwareupdate':
+            return self._resp_200_json_validate_url_status(200, json=g_content_firmware_update_json2)
+        elif url == 'https://network.ruuvi.com/firmwareupdate2':
+            return self._resp_200_json_validate_url_status(404, "{\\\"message\\\":\\\"Not Found\\\"}" )
+        elif url == 'https://network.ruuvi2.com/firmwareupdate':
+            return self._resp_200_json_validate_url_status(502, "Failed to resolve hostname")
+        return self._resp_200_json_validate_url_status(400, "Error description")
+
     def _validate_url(self, url_with_params):
         parsed_url = urlparse(url_with_params)
         url = parse_qs(parsed_url.query)['url'][0]
@@ -1453,6 +1497,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                                                  parse_qs(parsed_url.query)['mqtt_client_id'][0])
         elif validate_type == 'check_remote_cfg':
             return self._validate_url_check_remote_cfg(url, user, password, parse_qs(parsed_url.query)['auth_type'][0])
+        elif validate_type == 'check_fw_update_url':
+            return self._validate_url_check_check_fw_update_url(url)
         return self._resp_400()
 
     def _do_get_ruuvi_json(self, resp):
