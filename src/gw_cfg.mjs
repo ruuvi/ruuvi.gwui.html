@@ -128,6 +128,7 @@ export class GwCfg {
     data.use_http_ruuvi = this.http.use_http_ruuvi
     data.use_http = this.http.use_http
     data.http_url = this.http.http_url
+    data.http_period = this.http.http_period
     data.http_data_format = this.http.http_data_format.getVal()
     data.http_auth = this.http.http_auth.getVal()
     if (this.http.http_auth.isNone()) {

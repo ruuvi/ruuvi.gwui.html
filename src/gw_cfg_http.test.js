@@ -34,6 +34,7 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_data_format.isRuuvi()).to.be.true
     expect(cfg_http.http_auth.isNone()).to.be.true
     expect(cfg_http.http_url).to.equal('')
+    expect(cfg_http.http_period).to.equal(30)
     expect(cfg_http.http_user).to.be.null
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
@@ -56,6 +57,7 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_data_format.isRuuvi()).to.be.true
     expect(cfg_http.http_auth.isNone()).to.be.true
     expect(cfg_http.http_url).to.equal('https://network.ruuvi.com/record')
+    expect(cfg_http.http_period).to.equal(30)
     expect(cfg_http.http_user).to.equal('')
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
@@ -68,6 +70,7 @@ describe('GwCfgHttp', () => {
       use_http_ruuvi: false,
       use_http: true,
       http_url: 'https://myserver.com:8080/record',
+      http_period: 25,
       http_data_format: 'ruuvi_raw_and_decoded',
       http_auth: 'none',
     }
@@ -78,6 +81,7 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_data_format.isRuuviRawAndDecoded()).to.be.true
     expect(cfg_http.http_auth.isNone()).to.be.true
     expect(cfg_http.http_url).to.equal('https://myserver.com:8080/record')
+    expect(cfg_http.http_period).to.equal(25)
     expect(cfg_http.http_user).to.equal('')
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
@@ -100,6 +104,7 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_data_format.isRuuviDecoded()).to.be.true
     expect(cfg_http.http_auth.isNone()).to.be.true
     expect(cfg_http.http_url).to.equal('https://myserver.com:8080/record')
+    expect(cfg_http.http_period).to.equal(30)
     expect(cfg_http.http_user).to.equal('')
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
@@ -123,6 +128,7 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_data_format.isRuuvi()).to.be.true
     expect(cfg_http.http_auth.isBasic()).to.be.true
     expect(cfg_http.http_url).to.equal('https://myserver.com:8080/record')
+    expect(cfg_http.http_period).to.equal(30)
     expect(cfg_http.http_user).to.equal('user1')
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
@@ -145,6 +151,7 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_data_format.isRuuvi()).to.be.true
     expect(cfg_http.http_auth.isBearer()).to.be.true
     expect(cfg_http.http_url).to.equal('https://myserver.com:8080/record')
+    expect(cfg_http.http_period).to.equal(30)
     expect(cfg_http.http_user).to.equal('')
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
@@ -167,6 +174,7 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_data_format.isRuuvi()).to.be.true
     expect(cfg_http.http_auth.isToken()).to.be.true
     expect(cfg_http.http_url).to.equal('https://myserver.com:8080/record')
+    expect(cfg_http.http_period).to.equal(30)
     expect(cfg_http.http_user).to.equal('')
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
