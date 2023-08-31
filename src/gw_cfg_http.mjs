@@ -7,6 +7,8 @@ import * as utils from './utils.mjs'
 
 export const HTTP_DATA_FORMAT = Object.freeze({
   'ruuvi': 'ruuvi',
+  'ruuvi_raw_and_decoded': 'ruuvi_raw_and_decoded',
+  'ruuvi_decoded': 'ruuvi_decoded',
 })
 
 export const HTTP_AUTH = Object.freeze({
@@ -38,8 +40,24 @@ export class GwCfgHttpDataFormat {
     return this.http_data_format === HTTP_DATA_FORMAT.ruuvi
   }
 
+  isRuuviRawAndDecoded () {
+    return this.http_data_format === HTTP_DATA_FORMAT.ruuvi_raw_and_decoded
+  }
+
+  isRuuviDecoded () {
+    return this.http_data_format === HTTP_DATA_FORMAT.ruuvi_decoded
+  }
+
   setRuuvi () {
     this.http_data_format = HTTP_DATA_FORMAT.ruuvi
+  }
+
+  setRuuviRawAndDecoded () {
+    this.http_data_format = HTTP_DATA_FORMAT.ruuvi_raw_and_decoded
+  }
+
+  setRuuviDecoded () {
+    this.http_data_format = HTTP_DATA_FORMAT.ruuvi_decoded
   }
 }
 

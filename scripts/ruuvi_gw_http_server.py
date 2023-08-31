@@ -1366,6 +1366,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             return self._resp_200_json_validate_url_status_incorrect_json(200)
         elif url == 'https://network.ruuvi.com/record':
             return self._resp_200_json_validate_url_status(200)
+        elif url == 'https://network2.ruuvi.com/record':
+            return self._resp_200_json_validate_url_status(200)
         elif url == 'https://network.ruuvi.com/record1':
             if user is None or password is None:
                 return self._resp_200_json_validate_url_status(401)

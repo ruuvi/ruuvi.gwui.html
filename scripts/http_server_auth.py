@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 # Extended python -m http.serve with --username and --password parameters for
 # basic auth, based on https://gist.github.com/fxsjy/5465353
@@ -162,7 +163,7 @@ if __name__ == "__main__":
         "--bind",
         "-b",
         metavar="ADDRESS",
-        default="127.0.0.1",
+        default="0.0.0.0",
         help="Specify alternate bind address " "[default: all interfaces]",
     )
     parser.add_argument(
