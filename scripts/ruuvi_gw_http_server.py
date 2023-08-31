@@ -134,6 +134,7 @@ g_ruuvi_dict = {
     'use_http_ruuvi': True,
     'use_http': True,
     'http_url': 'https://network.ruuvi.com/record',
+    'http_period': 10,
     'http_auth': 'none',
     'http_data_format': 'ruuvi',
     'http_use_ssl_client_cert': False,

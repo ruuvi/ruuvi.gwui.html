@@ -118,6 +118,7 @@ export class GwCfgHttp {
   use_http_ruuvi = null
   use_http = null
   http_url = null
+  http_period = null
 
   /** @type GwCfgHttpDataFormat */
   http_data_format = null
@@ -137,6 +138,7 @@ export class GwCfgHttp {
     this.use_http_ruuvi = utils.fetchBoolKeyFromData(data, 'use_http_ruuvi', true)
     this.use_http = utils.fetchBoolKeyFromData(data, 'use_http', true)
     this.http_url = utils.fetchStringKeyFromData(data, 'http_url', false, '')
+    this.http_period = utils.fetchIntKeyFromData(data, 'http_period', false, 30)
     this.http_data_format = new GwCfgHttpDataFormat(utils.fetchStringKeyFromData(data, 'http_data_format', false))
     this.http_auth = new GwCfgHttpAuth(utils.fetchStringKeyFromData(data, 'http_auth', false))
     if (this.use_http) {
@@ -158,6 +160,7 @@ export class GwCfgHttp {
     this.use_http_ruuvi = true
     this.use_http = false
     this.http_url = ''
+    this.http_period = 30
     this.http_data_format.setRuuvi()
     this.http_auth.setNone()
     this.http_user = ''

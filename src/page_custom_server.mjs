@@ -41,6 +41,7 @@ class PageCustomServer {
     #input_http_url = new GuiInputTextWithValidation($('#http_url'))
     #div_http_validation_error = new GuiDiv($('#page-custom_server-http_validation_error'))
     #text_http_validation_error_desc = new GuiText($('#page-custom_server-http_validation_error-desc'))
+    #input_http_period = new GuiInputTextWithValidation($('#http_period'))
 
     #radio_http_data_format = new GuiRadioButton('http_data_format')
 
@@ -220,6 +221,7 @@ class PageCustomServer {
         this.#button_stat_remove_server_cert.on_click(async () => this.#onRemoveServerCertStat())
 
         this.#input_http_url.on_change(() => this.#onChangeHttpUrl())
+        this.#input_http_period.on_change(() => this.#onChangeHttpPeriod())
         this.#input_http_auth_basic_user.on_change(() => this.#onChangeHttpUser())
         this.#input_http_auth_basic_pass.on_change(() => this.#onChangeHttpPass())
         this.#input_http_auth_bearer_token.on_change(() => this.#onChangeAuthBearerToken())
@@ -277,6 +279,7 @@ class PageCustomServer {
         }
 
         this.#input_http_url.setVal(this.#gwCfg.http.http_url)
+        this.#input_http_period.setVal(this.#gwCfg.http.http_period)
 
         if (this.#gwCfg.http.http_data_format.isRuuvi()) {
             this.#radio_http_data_format_ruuvi.setChecked()
@@ -416,6 +419,7 @@ class PageCustomServer {
         this.#gwCfg.http.use_http = this.#checkbox_use_http.isChecked()
         if (this.#checkbox_use_http.isChecked()) {
             this.#gwCfg.http.http_url = this.#input_http_url.getVal()
+            this.#gwCfg.http.http_period = parseInt(this.#input_http_period.getVal())
             if (this.#radio_http_data_format_ruuvi.isChecked()) {
                 this.#gwCfg.http.http_data_format.setRuuvi()
             } else if (this.#radio_http_data_format_ruuvi_raw_and_decoded.isChecked()) {
@@ -904,6 +908,10 @@ class PageCustomServer {
         this.#on_custom_server_url_changed()
     }
 
+    #onChangeHttpPeriod() {
+        this.#on_custom_server_url_changed()
+    }
+
     #onChangeHttpUser() {
         this.#input_http_auth_basic_pass.clear()
         this.#input_http_url.setValidationRequired()
@@ -1242,10 +1250,19 @@ class PageCustomServer {
             }
         }
 
+        let flag_http_period_valid = true
+        let http_period = parseIntegerString(this.#input_http_period.getVal())
+        if (!http_period || (http_period < 10) || (http_period > 60 * 60)) {
+            this.#input_http_period.setInvalid()
+            flag_http_period_valid = false
+        } else {
+            this.#input_http_period.setValid()
+        }
+
         if (flag_url_modified || this.#input_http_url.isInvalid() || this.#input_http_stat_url.isInvalid() ||
-            this.#input_mqtt_port.isInvalid() || !flag_mqtt_periodic_sending_valid) {
+            this.#input_mqtt_port.isInvalid() || !flag_mqtt_periodic_sending_valid || !flag_http_period_valid) {
             this.#button_continue.disable()
-            if (!flag_mqtt_periodic_sending_valid) {
+            if (!flag_mqtt_periodic_sending_valid || !flag_http_period_valid) {
                 this.#button_check.disable()
             } else {
                 this.#button_check.enable()
