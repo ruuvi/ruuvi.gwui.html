@@ -150,6 +150,7 @@ g_ruuvi_dict = {
     'use_mqtt': False,
     'mqtt_disable_retained_messages': False,
     'mqtt_transport': 'TCP',
+    'mqtt_data_format': 'ruuvi_raw',
     'mqtt_server': 'test.mosquitto.org',
     'mqtt_port': 1883,
     'mqtt_prefix': 'ruuvi/AA:BB:CC:DD:EE:FF/',

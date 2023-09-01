@@ -47,7 +47,9 @@ class PageCustomServer {
 
     /** @type GuiRadioButtonOption */
     #radio_http_data_format_ruuvi
+    /** @type GuiRadioButtonOption */
     #radio_http_data_format_ruuvi_raw_and_decoded
+    /** @type GuiRadioButtonOption */
     #radio_http_data_format_ruuvi_decoded
 
     #checkbox_use_http_auth = new GuiCheckbox($('#use_http_auth'))
@@ -94,6 +96,15 @@ class PageCustomServer {
     #radio_mqtt_transport_WS
     /** @type GuiRadioButtonOption */
     #radio_mqtt_transport_WSS
+
+    #radio_mqtt_data_format = new GuiRadioButton('mqtt_data_format')
+
+    /** @type GuiRadioButtonOption */
+    #radio_mqtt_data_format_ruuvi_raw
+    /** @type GuiRadioButtonOption */
+    #radio_mqtt_data_format_ruuvi_raw_and_decoded
+    /** @type GuiRadioButtonOption */
+    #radio_mqtt_data_format_ruuvi_decoded
 
     #input_mqtt_server = new GuiInputText($('#mqtt_server'))
     #input_mqtt_port = new GuiInputTextWithValidation($('#mqtt_port'))
@@ -193,6 +204,9 @@ class PageCustomServer {
         this.#radio_mqtt_transport_SSL = this.#radio_mqtt_transport.addOption('mqtt_transport_SSL', false)
         this.#radio_mqtt_transport_WS = this.#radio_mqtt_transport.addOption('mqtt_transport_WS', false)
         this.#radio_mqtt_transport_WSS = this.#radio_mqtt_transport.addOption('mqtt_transport_WSS', false)
+        this.#radio_mqtt_data_format_ruuvi_raw = this.#radio_mqtt_data_format.addOption('mqtt_data_format_ruuvi_raw', false)
+        this.#radio_mqtt_data_format_ruuvi_raw_and_decoded = this.#radio_mqtt_data_format.addOption('mqtt_data_format_ruuvi_raw_and_decoded', false)
+        this.#radio_mqtt_data_format_ruuvi_decoded = this.#radio_mqtt_data_format.addOption('mqtt_data_format_ruuvi_decoded', false)
         this.#checkbox_mqtt_use_client_ssl_cert.on_change(() => this.#onChangeUseClientSslCertMqtt())
         this.#checkbox_mqtt_use_server_ssl_cert.on_change(() => this.#onChangeUseServerSslCertMqtt())
         this.#button_mqtt_remove_client_cert_and_key.on_click(async () => this.#onRemoveClientCertAndKeyMqtt())
@@ -236,6 +250,10 @@ class PageCustomServer {
         this.#radio_mqtt_transport_SSL.on_click(() => this.#onChangeMqttTransport())
         this.#radio_mqtt_transport_WS.on_click(() => this.#onChangeMqttTransport())
         this.#radio_mqtt_transport_WSS.on_click(() => this.#onChangeMqttTransport())
+
+        this.#radio_mqtt_data_format_ruuvi_raw.on_click(() => this.#onChangeMqttDataFormat())
+        this.#radio_mqtt_data_format_ruuvi_raw_and_decoded.on_click(() => this.#onChangeMqttDataFormat())
+        this.#radio_mqtt_data_format_ruuvi_decoded.on_click(() => this.#onChangeMqttDataFormat())
 
         this.#input_mqtt_server.on_change(() => this.#onChangeMqttServer())
         this.#input_mqtt_port.on_change(() => this.#onChangeMqttPort())
@@ -332,6 +350,13 @@ class PageCustomServer {
             this.#radio_mqtt_transport_WS.setChecked()
         } else if (this.#gwCfg.mqtt.mqtt_transport.isWSS()) {
             this.#radio_mqtt_transport_WSS.setChecked()
+        }
+        if (this.#gwCfg.mqtt.mqtt_data_format.isRuuviRaw()) {
+            this.#radio_mqtt_data_format_ruuvi_raw.setChecked()
+        } else if (this.#gwCfg.mqtt.mqtt_data_format.isRuuviRawAndDecoded()) {
+            this.#radio_mqtt_data_format_ruuvi_raw_and_decoded.setChecked()
+        } else if (this.#gwCfg.mqtt.mqtt_data_format.isRuuviDecoded()) {
+            this.#radio_mqtt_data_format_ruuvi_decoded.setChecked()
         }
 
         this.#input_mqtt_server.setVal(this.#gwCfg.mqtt.mqtt_server)
@@ -491,6 +516,15 @@ class PageCustomServer {
                 this.#gwCfg.mqtt.mqtt_transport.setWSS()
             } else {
                 throw new Error('Unsupported MQTT transport')
+            }
+            if (this.#radio_mqtt_data_format_ruuvi_raw.isChecked()) {
+                this.#gwCfg.mqtt.mqtt_data_format.setRuuviRaw()
+            } else if (this.#radio_mqtt_data_format_ruuvi_raw_and_decoded.isChecked()) {
+                this.#gwCfg.mqtt.mqtt_data_format.setRuuviRawAndDecoded()
+            } else if (this.#radio_mqtt_data_format_ruuvi_decoded.isChecked()) {
+                this.#gwCfg.mqtt.mqtt_data_format.setRuuviDecoded()
+            } else {
+                throw new Error(`Unsupported mqtt_data_format`)
             }
             this.#gwCfg.mqtt.mqtt_server = this.#input_mqtt_server.getVal()
             this.#gwCfg.mqtt.mqtt_port = parseInt(this.#input_mqtt_port.getVal())
@@ -1008,6 +1042,12 @@ class PageCustomServer {
                 this.#input_mqtt_pass.clear()
             }
         }
+        this.#input_mqtt_port.setValidationRequired()
+        this.#div_mqtt_validation_error.hide()
+        this.#on_custom_server_url_changed()
+    }
+
+    #onChangeMqttDataFormat() {
         this.#input_mqtt_port.setValidationRequired()
         this.#div_mqtt_validation_error.hide()
         this.#on_custom_server_url_changed()
