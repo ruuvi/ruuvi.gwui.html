@@ -1773,7 +1773,7 @@
                 </label>
                 <label class="control control-radio">
                     <span lang="en">Ruuvi raw data</span>
-                    <span lang="fi">Ruuvi raakadataa</span>
+                    <span lang="fi">Ruuvi raakadata</span>
                     <input id="http_data_format_ruuvi" name="http_data_format" type="radio"
                            value="http_data_format_ruuvi"/>
                     <span class="control_indicator"></span>
@@ -1986,35 +1986,67 @@
             <div>&nbsp;</div>
             <div id="conf-settings-mqtt" class="indent hidden">
 
-                <label class="font-bold">
-                    <span lang="en">MQTT transport type</span>
-                    <span lang="fi">MQTT-kuljetustyyppi</span>
-                </label>
-                <label class="control control-radio">
-                    <span lang="en">MQTT over unencrypted TCP</span>
-                    <span lang="fi">MQTT salaamattoman TCP kautta</span>
-                    <input id="mqtt_transport_TCP" name="mqtt_transport" type="radio" value="mqtt_transport_TCP"
-                           checked="checked"/>
-                    <span class="control_indicator"></span>
-                </label>
-                <label class="control control-radio">
-                    <span lang="en">MQTT over SSL</span>
-                    <span lang="fi">MQTT SSL kautta</span>
-                    <input id="mqtt_transport_SSL" name="mqtt_transport" type="radio" value="mqtt_transport_SSL"/>
-                    <span class="control_indicator"></span>
-                </label>
-                <label class="control control-radio">
-                    <span lang="en">MQTT over WebSocket</span>
-                    <span lang="fi">MQTT WebSocketin kautta</span>
-                    <input id="mqtt_transport_WS" name="mqtt_transport" type="radio" value="mqtt_transport_WS"/>
-                    <span class="control_indicator"></span>
-                </label>
-                <label class="control control-radio">
-                    <span lang="en">MQTT over Secure WebSocket</span>
-                    <span lang="fi">MQTT Secure WebSocketin kautta</span>
-                    <input id="mqtt_transport_WSS" name="mqtt_transport" type="radio" value="mqtt_transport_WSS"/>
-                    <span class="control_indicator"></span>
-                </label>
+                <div>
+                    <label class="font-bold">
+                        <span lang="en">MQTT transport type</span>
+                        <span lang="fi">MQTT-kuljetustyyppi</span>
+                    </label>
+                    <label class="control control-radio">
+                        <span lang="en">MQTT over unencrypted TCP</span>
+                        <span lang="fi">MQTT salaamattoman TCP kautta</span>
+                        <input id="mqtt_transport_TCP" name="mqtt_transport" type="radio" value="mqtt_transport_TCP"
+                               checked="checked"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                    <label class="control control-radio">
+                        <span lang="en">MQTT over SSL</span>
+                        <span lang="fi">MQTT SSL kautta</span>
+                        <input id="mqtt_transport_SSL" name="mqtt_transport" type="radio" value="mqtt_transport_SSL"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                    <label class="control control-radio">
+                        <span lang="en">MQTT over WebSocket</span>
+                        <span lang="fi">MQTT WebSocketin kautta</span>
+                        <input id="mqtt_transport_WS" name="mqtt_transport" type="radio" value="mqtt_transport_WS"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                    <label class="control control-radio">
+                        <span lang="en">MQTT over Secure WebSocket</span>
+                        <span lang="fi">MQTT Secure WebSocketin kautta</span>
+                        <input id="mqtt_transport_WSS" name="mqtt_transport" type="radio" value="mqtt_transport_WSS"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                </div>
+
+                <div class="border-hidden"></div>
+
+                <div>
+                    <label class="font-bold">
+                        <span lang="en">Data format</span>
+                        <span lang="fi">Tietojen muoto</span>
+                    </label>
+                    <label class="control control-radio">
+                        <span lang="en">Ruuvi raw data</span>
+                        <span lang="fi">Ruuvi raakadataa</span>
+                        <input id="mqtt_data_format_ruuvi" name="mqtt_data_format" type="radio"
+                               value="mqtt_data_format_ruuvi_raw"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                    <label class="control control-radio">
+                        <span lang="en">Ruuvi raw and decoded data</span>
+                        <span lang="fi">Ruuvi raaka ja dekoodattu data</span>
+                        <input id="mqtt_data_format_ruuvi_raw_and_decoded" name="mqtt_data_format" type="radio"
+                               value="mqtt_data_format_ruuvi_raw_and_decoded"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                    <label class="control control-radio">
+                        <span lang="en">Ruuvi decoded data</span>
+                        <span lang="fi">Ruuvi dekoodattu data</span>
+                        <input id="mqtt_data_format_ruuvi_decoded" name="mqtt_data_format" type="radio"
+                               value="mqtt_data_format_ruuvi_decoded"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                </div>
 
                 <div class="border-hidden"></div>
 

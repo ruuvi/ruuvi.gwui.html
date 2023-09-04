@@ -4,12 +4,19 @@
  */
 
 import * as utils from './utils.mjs'
+import {GwCfgHttpDataFormat, HTTP_DATA_FORMAT} from "./gw_cfg_http.mjs";
 
 export const MQTT_TRANSPORT_TYPE = Object.freeze({
   'TCP': 'TCP',
   'SSL': 'SSL',
   'WS': 'WS',
   'WSS': 'WSS',
+})
+
+export const MQTT_DATA_FORMAT = Object.freeze({
+  'ruuvi_raw': 'ruuvi_raw',
+  'ruuvi_raw_and_decoded': 'ruuvi_raw_and_decoded',
+  'ruuvi_decoded': 'ruuvi_decoded',
 })
 
 export class GwCfgMqttTransport {
@@ -59,6 +66,49 @@ export class GwCfgMqttTransport {
   }
 }
 
+export class GwCfgMqttDataFormat {
+  constructor (val) {
+    if (!val) {
+      this.mqtt_data_format = MQTT_DATA_FORMAT.ruuvi_raw
+      return
+    }
+    const allowedValues = Object.values(MQTT_DATA_FORMAT)
+    if (allowedValues.includes(val)) {
+      this.mqtt_data_format = val
+    } else {
+      throw new Error(`Invalid value for 'mqtt_data_format': ${val}. Allowed values are '${allowedValues.join('\', \'')}'.`)
+    }
+  }
+
+  getVal() {
+    return this.mqtt_data_format
+  }
+
+  isRuuviRaw () {
+    return this.mqtt_data_format === MQTT_DATA_FORMAT.ruuvi_raw
+  }
+
+  isRuuviRawAndDecoded () {
+    return this.mqtt_data_format === MQTT_DATA_FORMAT.ruuvi_raw_and_decoded
+  }
+
+  isRuuviDecoded () {
+    return this.mqtt_data_format === MQTT_DATA_FORMAT.ruuvi_decoded
+  }
+
+  setRuuviRaw () {
+    this.mqtt_data_format = MQTT_DATA_FORMAT.ruuvi_raw
+  }
+
+  setRuuviRawAndDecoded () {
+    this.mqtt_data_format = MQTT_DATA_FORMAT.ruuvi_raw_and_decoded
+  }
+
+  setRuuviDecoded () {
+    this.mqtt_data_format = MQTT_DATA_FORMAT.ruuvi_decoded
+  }
+}
+
 export class GwCfgMqtt {
   static MQTT_SERVER_DEFAULT = 'test.mosquitto.org'
   static MQTT_PORT_DEFAULT = 1883
@@ -69,6 +119,9 @@ export class GwCfgMqtt {
 
   /** @type GwCfgMqttTransport */
   mqtt_transport = null
+
+  /** @type GwCfgMqttDataFormat */
+  mqtt_data_format = null
 
   mqtt_server = null
   mqtt_port = null
@@ -84,6 +137,7 @@ export class GwCfgMqtt {
     this.use_mqtt = utils.fetchBoolKeyFromData(data, 'use_mqtt', true)
     this.mqtt_disable_retained_messages = utils.fetchBoolKeyFromData(data, 'mqtt_disable_retained_messages', true)
     this.mqtt_transport = new GwCfgMqttTransport(utils.fetchStringKeyFromData(data, 'mqtt_transport', true))
+    this.mqtt_data_format = new GwCfgMqttDataFormat(utils.fetchStringKeyFromData(data, 'mqtt_data_format', false))
     this.mqtt_server = utils.fetchStringKeyFromData(data, 'mqtt_server', true)
     this.mqtt_port = utils.fetchIntKeyFromData(data, 'mqtt_port', true)
     this.mqtt_sending_interval = utils.fetchIntKeyFromData(data, 'mqtt_sending_interval', false, 0)
@@ -104,6 +158,7 @@ export class GwCfgMqtt {
     this.mqtt_port = GwCfgMqtt.MQTT_PORT_DEFAULT
     this.mqtt_sending_interval = 0
     this.mqtt_transport.setTCP()
+    this.mqtt_data_format.setRuuviRaw()
     this.mqtt_user = ''
     this.mqtt_pass = ''
     this.mqtt_use_ssl_client_cert = false

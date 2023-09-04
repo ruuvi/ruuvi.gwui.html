@@ -157,6 +157,7 @@ export class GwCfg {
 
     data.mqtt_disable_retained_messages = this.mqtt.mqtt_disable_retained_messages
     data.mqtt_transport = this.mqtt.mqtt_transport.getVal()
+    data.mqtt_data_format = this.mqtt.mqtt_data_format.getVal()
     data.mqtt_server = this.mqtt.mqtt_server
     data.mqtt_port = this.mqtt.mqtt_port
     data.mqtt_sending_interval = this.mqtt.mqtt_sending_interval
