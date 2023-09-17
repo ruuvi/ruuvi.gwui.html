@@ -141,7 +141,7 @@ class Auth {
 
   #handleResponseHeader_ruuvi_ecdh_pub_key () {
     let response = Network.getResponse()
-    const ecdh_pub_key_srv_b64 = response?.headers.get('ruuvi_ecdh_pub_key')
+    const ecdh_pub_key_srv_b64 = response?.headers.get('Ruuvi-Ecdh-Pub-Key')
     if (ecdh_pub_key_srv_b64) {
       logger.info(`ECDH PubKey(Srv): ${ecdh_pub_key_srv_b64}`)
       const shared_secret = this.ecdh.computeSecret(ecdh_pub_key_srv_b64, 'base64')
@@ -170,7 +170,7 @@ class Auth {
       try {
         data = await Network.httpGetJson('/auth', timeout, {
           extra_headers: {
-            'ruuvi_ecdh_pub_key': pub_key_cli
+            'Ruuvi-Ecdh-Pub-Key': pub_key_cli
           },
           list_of_allowed_statuses: [200, 401, 403]
         })

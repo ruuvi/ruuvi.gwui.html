@@ -66,7 +66,7 @@ describe('Auth', () => {
         },
         headers: {
           'Content-Type': 'application/json',
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64'),
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
         },
       })
 
@@ -108,7 +108,7 @@ describe('Auth', () => {
         },
         headers: {
           'Content-Type': 'application/json',
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64'),
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
         },
       })
 
@@ -154,7 +154,7 @@ describe('Auth', () => {
         },
         headers: {
           'Content-Type': 'application/json',
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64'),
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
         },
       })
 
@@ -196,7 +196,7 @@ describe('Auth', () => {
         },
         headers: {
           'Content-Type': 'application/json',
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64'),
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
         },
       })
 
@@ -238,7 +238,7 @@ describe('Auth', () => {
         },
         headers: {
           'Content-Type': 'application/json',
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64'),
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
         },
       })
 
@@ -279,7 +279,7 @@ describe('Auth', () => {
         },
         headers: {
           'Content-Type': 'application/json',
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64'),
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
         },
       })
 
@@ -318,7 +318,7 @@ describe('Auth', () => {
         body: 'This is not a json',
         headers: {
           'Content-Type': 'application/json',
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64'),
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
         },
       })
 
@@ -530,7 +530,7 @@ describe('Auth', () => {
         },
         headers: {
           'WWW-Authenticate': `x-ruuvi-interactive realm="${gateway_name}" challenge="${challenge}" session_cookie="COOKIE_RUUVISESSION" session_id="session_id"`,
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64')
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64')
         },
       })
       fetchMock.postOnce('/auth', {
@@ -539,7 +539,7 @@ describe('Auth', () => {
           gateway_name: 'RuuviGatewayAABB', fw_ver: '1.13.0', nrf52_fw_ver: '1.0.0', lan_auth_type: 'default'
         },
         headers: {
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64')
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64')
         },
       })
 
@@ -619,7 +619,7 @@ describe('Auth', () => {
         },
         headers: {
           'WWW-Authenticate': `x-ruuvi-interactive realm="${gateway_name}" challenge="${challenge}" session_cookie="COOKIE_RUUVISESSION" session_id="session_id"`,
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64')
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64')
         },
       })
       fetchMock.post('/auth', {
@@ -640,7 +640,7 @@ describe('Auth', () => {
           gateway_name: 'RuuviGatewayAABB', fw_ver: '1.13.0', nrf52_fw_ver: '1.0.0', lan_auth_type: 'default'
         },
         headers: {
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64')
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64')
         },
       }, { repeat: 1, overwriteRoutes: false })
 
@@ -738,7 +738,7 @@ describe('Auth', () => {
           gateway_name: 'RuuviGatewayAABB', fw_ver: '1.13.0', nrf52_fw_ver: '1.0.0', lan_auth_type: 'default'
         },
         headers: {
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64')
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64')
         },
       })
 
@@ -778,7 +778,7 @@ describe('Auth', () => {
           gateway_name: 'RuuviGatewayAABB', fw_ver: '1.13.0', nrf52_fw_ver: '1.0.0', lan_auth_type: 'lan_auth_deny'
         },
         headers: {
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64')
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64')
         },
       })
 
@@ -834,7 +834,7 @@ describe('Auth', () => {
         },
         headers: {
           'WWW-Authenticate': `x-ruuvi-interactive realm="${gateway_name}" challenge="${challenge}" session_cookie="COOKIE_RUUVISESSION" session_id="session_id"`,
-          'ruuvi_ecdh_pub_key': ecdhInstanceSrv.getPublicKey('base64'),
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
         },
       })
       fetchMock.post('/auth', {

@@ -158,13 +158,13 @@ class Network {
   static async httpEncryptAndPostJson (auth, url, timeout, json_data, options) {
     const data_encrypted = auth.ecdhEncrypt(JSON.stringify(json_data))
     return Network.httpPostJson(url, timeout, data_encrypted,
-        { 'extra_headers': { 'ruuvi_ecdh_encrypted': true } })
+        { 'extra_headers': { 'Ruuvi-Ecdh-Encrypted': true } })
   }
 
   static async httpEncryptAndPostFile (auth, url, timeout, file_data, options) {
     const data_encrypted = auth.ecdhEncrypt(file_data)
     return Network.httpPostJson(url, timeout, data_encrypted,
-        { 'extra_headers': { 'ruuvi_ecdh_encrypted': true } })
+        { 'extra_headers': { 'Ruuvi-Ecdh-Encrypted': true } })
   }
 
   static async httpDeleteJson (url, timeout, json_data, options) {
