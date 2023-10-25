@@ -1,6 +1,7 @@
 # ruuvi.gwui.html
 
 ## Ruuvi Gateway web UI
+
 This repository contains files related to the web interface of the Gateway configurator. 
 
 ### Pre-requisites:
@@ -18,15 +19,48 @@ This repository contains files related to the web interface of the Gateway confi
 For the UI testing, a Gateway simulator can be used.
 
 ### Pre-requisites:
-* python 3.8
 
-To start simulator run: 
+* python 3.10
 
-`python ./ruuvi_gw_http_server.py`
+### Setup venv
+
+* Create venv:
+
+  `python3 -m venv .venv`
+ 
+* Activate venv:
+
+  `source .venv/bin/activate`
+ 
+* Upgrade pip:
+
+  `pip install --upgrade pip`
+
+* Install dependencies:
+
+  `pip install -r requirements.txt`
+
+### Run simulator
+
+* `source .venv/bin/activate`
+* `python3 scripts/ruuvi_gw_http_server.py`
 
 To test UI, open in web-browser: http://127.0.0.1:8001
+Use default password to access the UI: `00:11:22:33:44:55:66:77`
 
-You can choose any Wi-Fi from the list, the valid password is `12345678`
+On the 'Wi-Fi Networks' page you can simulate connection to Wi-Fi network. 
+Choose Wi-Fi 'Pantum-AP-A6D49F' with password `12345678`.
+
+On the 'Custom Server' page use URL 'https://network2.ruuvi.com/record' to simulate connection with a custom HTTP server.
+To check authentication use URL 'https://network.ruuvi.com/record1' with username 'user1' and password 'pass1'.
+
+On the 'Software Update' page under 'Advanced settings' you can use one of the following URLs to simulate checking for firmware updates:
+'https://network.ruuvi.com/firmwareupdate', 'https://network2.ruuvi.com/firmwareupdate'.
+
+On the 'Automatic Configuration Download' page you can use one of the following URLs to simulate downloading configuration from the remote server:
+* 'http://192.168.1.100' - to download without authentication
+* 'http://192.168.1.101' - to download with 'basic' authentication, username 'user1' and password 'pass1'
+* 'http://192.168.1.102' - to download with 'bearer' authentication, token 'token123'
 
 ======================================
 
@@ -37,25 +71,26 @@ To test connection from the Gateway to HTTP server you need to run an HTTP serve
 You can use `http_server_auth.py` script to run HTTP server. 
 
 ### Pre-requisites:
-* python 3.8
+
+* python 3.10
 
 To test connection from the Gateway to HTTP server, use `http_server_auth.py`
 
 To run HTTP server without auth:
 
-`python http_server_auth.py --bind 0.0.0.0 --port 8000`
+`python3 scripts/http_server_auth.py --port 8000`
 
 To run HTTP server with auth:
 
-`python http_server_auth.py --bind 0.0.0.0 --port 8000 -u <username> -p <password>`
+`python3 scripts/http_server_auth.py --port 8000 -u <username> -p <password>`
 
 To run HTTPS server:
 
-`python http_server_auth.py --bind 0.0.0.0 --port 8000 --ssl_cert=./server_cert.pem --ssl_key=./server_key.pem`
+`python3 scripts/http_server_auth.py --port 8000 --ssl_cert=./server_cert.pem --ssl_key=./server_key.pem`
 
 To run HTTPS server with the client SSL certificate checking:
 
-`python http_server_auth.py --bind 0.0.0.0 --port 8000 --ssl_cert=./server_cert.pem --ssl_key=./server_key.pem --ca_cert=./client_cert.pem`
+`python3 scripts/http_server_auth.py --port 8000 --ssl_cert=./server_cert.pem --ssl_key=./server_key.pem --ca_cert=./client_cert.pem`
 
 To generate a certificate and a private key for HTTPS server (2048-bit RSA key) (`server_cert.pem` and `server_key.pem`):
 
@@ -111,19 +146,15 @@ To generate a certificate and a private key for the client (2048-bit RSA key) (`
 * Connect your PC to the Gateway's Wi-Fi access point, 
   the Gateway configuration page will be automatically opened in your web-browser
   
-* On the "SERVER SETTINGS" page select "Use Custom Server" option: 
+* On the "Cloud Options" page under "Advanced settings" select "Use Ruuvi Cloud and/or a custom server and configure other advanced settings" option: 
   
   ![server_settings](docs/ruuvi_server_settings.png)
   
-* On the next page set URL to `http://<IP>:8000/record`, leave the 'User' and 'Pass' fields blank:
+* On the next page configure custom HTTP and set URL to `http://<IP>:8000/record`:
   
   ![ruuvi_custom_server_settings_http](docs/ruuvi_custom_server_settings_http.png)
-  
-* On the next page select which devices to scan
-  
-* On the next page (`INTERNET CONNECTION`) select Wi-Fi
-  
-* On the next page choose WiFi-network and connect to it, after the connection will be established you should see the following page:
+
+* Configure the required options on the following pages and complete the configuration:
   
   ![ruuvi_configuring_finished](docs/ruuvi_configuring_finished.png)
   
@@ -134,9 +165,12 @@ To generate a certificate and a private key for the client (2048-bit RSA key) (`
 * Check that your PC can communicate with the Gateway via Wi-Fi - use `ping <gateway-IP>`
   
 * Run HTTP server on your PC:
-  `python http_server_auth.py --port 8000 --bind <IP>`
-  
-  in this example: `python http_server_auth.py --port 8000 --bind 192.168.1.38`
+ 
+  `python3 ./scripts/http_server_auth.py --port 8000`
+ 
+  or if you want to test with authentication:
+ 
+  `python3 ./scripts/http_server_auth.py --port 8000 -u user -p pass`
   
 * Wait at least 10 seconds until the Gateway to send the accumulated data
 
@@ -150,20 +184,16 @@ To generate a certificate and a private key for the client (2048-bit RSA key) (`
   
 * Connect your PC to the Gateway's Wi-Fi access point,
   the Gateway configuration page will be automatically opened in your web-browser
-  
-* On the "SERVER SETTINGS" page select "Use Custom Server" option:
+
+* On the "Cloud Options" page under "Advanced settings" select "Use Ruuvi Cloud and/or a custom server and configure other advanced settings" option: 
 
   ![ruuvi_server_settings](docs/ruuvi_server_settings.png)
-  
-* On the next page set URL to `https://<IP>:8000/record`, 
-  fill the 'User' and 'Pass' fields with `user` and `pass` accordingly:
+
+* On the next page configure custom HTTP and set URL to `https://<IP>:8000/record`:
 
   ![ruuvi_custom_server_settings_https](docs/ruuvi_custom_server_settings_https.png)
-* On the next page select which devices to scan
-  
-* On the next page (`INTERNET CONNECTION`) select Wi-Fi
-  
-* On the next page choose WiFi-network and connect to it, after the connection will be established you should see the following page:
+ 
+* Configure the required options on the following pages and complete the configuration:
 
   ![ruuvi_configuring_finished](docs/ruuvi_configuring_finished.png)
   
@@ -174,8 +204,11 @@ To generate a certificate and a private key for the client (2048-bit RSA key) (`
 * Check that your PC can communicate with the Gateway via Wi-Fi - use `ping <gateway-IP>`
   
 * Run HTTPS server on your PC:
-  `python http_server_auth.py --port 8000 --bind <IP> --ssl_cert=./server.pem -u user -p pass`
-  
-  in this example: `python http_server_auth.py --port 8000 --bind 192.168.1.38`
+ 
+  `python3 ./scripts/http_server_auth.py --port 8000 --ssl_cert=./server.pem`
+ 
+  or if you want to test with authentication:
+ 
+  `python3 ./scripts/http_server_auth.py --port 8000 --ssl_cert=./server.pem -u user -p pass`
   
 * Wait at least 10 seconds until the Gateway to send the accumulated data
