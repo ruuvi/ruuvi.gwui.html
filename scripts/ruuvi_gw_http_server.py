@@ -95,7 +95,7 @@ RUUVI_AUTH_REALM = 'RuuviGateway' + g_gw_mac[-5:-3] + g_gw_mac[-2:]
 
 g_lan_auth_default_password_hashed = hashlib.md5(f'{LAN_AUTH_DEFAULT_USER}:{RUUVI_AUTH_REALM}:{g_gw_unique_id}'.encode('utf-8')).hexdigest()
 
-g_fw_ver = 'v1.14.0'
+g_fw_ver = 'v1.14.3'
 g_nrf52_fw_ver = 'v1.0.0'
 
 g_ruuvi_dict = {
@@ -196,13 +196,13 @@ g_ruuvi_dict = {
 g_content_firmware_update_json = '''
 {
   "latest": {
-    "version": "v1.13.1",
-    "url": "https://s3.eu-central-1.amazonaws.com/dev.network.ruuvi.com/firmwareupdate/v1.13.1",
+    "version": "v1.15.0",
+    "url": "https://fwupdate.ruuvi.com/v1.15.0",
     "created_at": "2023-03-15T14:54:34Z"
   },
   "beta": {
-    "version": "v1.13.1",
-    "url": "https://s3.eu-central-1.amazonaws.com/dev.network.ruuvi.com/firmwareupdate/v1.13.1",
+    "version": "v1.16.0",
+    "url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.16.0/",
     "created_at": "2023-03-15T14:54:34Z"
   },
   "alpha": {

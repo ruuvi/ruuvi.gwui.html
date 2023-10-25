@@ -1,5 +1,7 @@
 .DS_Store
 .idea
+.venv
+venv
 node_modules
 build
 *.pem
