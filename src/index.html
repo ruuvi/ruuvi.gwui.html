@@ -1059,8 +1059,6 @@
                                 </div>
                             </div>
                             <div>&nbsp;</div>
-                            <div class="border"></div>
-                            <div>&nbsp;</div>
                         </div>
 
                         <div class="line-container">
@@ -1797,8 +1795,8 @@
 
                 <div class="font-bold">
                     <label for="http_url">
-                        <span lang="en">Base URL</span>
-                        <span lang="fi">Perus-URL-osoite</span>
+                        <span lang="en">URL address</span>
+                        <span lang="fi">URL-osoite</span>
                     </label>
                     <div class="input-with_validity_check">
                         <input id="http_url" type="text" placeholder="" value="">
@@ -1807,10 +1805,10 @@
                     </div>
                 </div>
                 <div id="http_http_period_div">
-                    <label class="label-container">
+                    <label class="font-bold">
                         <span class="text-container">
-                            <span lang="en">Default sending interval (seconds)</span>
-                            <span lang="fi">Oletuslähetysväli (sekuntia)</span>
+                            <span lang="en">Sending interval (seconds)</span>
+                            <span lang="fi">Lähetysväli (sekuntia)</span>
                         </span>
                         <div class="input-with_validity_check" style="width: 100%">
                             <input id="http_period" type="text" value="">
@@ -1898,13 +1896,20 @@
                     <div class="border"></div>
                 </div>
                 <div>&nbsp;</div>
+
+                <label class="font-bold">
+                    <span lang="en">SSL certificate</span>
+                    <span lang="fi">SSL-sertifikaatti</span>
+                </label>
+
+                <div>&nbsp;</div>
+
                 <label class="control control-checkbox">
                     <span lang="en">Use client SSL certificate (*.pem)</span>
                     <span lang="fi">Käytä asiakkaan SSL-varmennetta (*.pem)</span>
                     <input id="http_use_client_ssl_cert" type="checkbox">
                     <span class="control_indicator"></span>
                 </label>
-                <div>&nbsp;</div>
                 <div id="http_use_client_ssl_cert_options" class="hidden indent">
                     <div class="button-container-centered">
                         <div class="button-upload">
@@ -1933,8 +1938,6 @@
                         </div>
                     </div>
                     <div>&nbsp;</div>
-                    <div class="border"></div>
-                    <div>&nbsp;</div>
                 </div>
                 <label class="control control-checkbox">
                     <span lang="en">Use custom SSL certificate for the server (*.pem)</span>
@@ -1942,7 +1945,6 @@
                     <input id="http_use_server_ssl_cert" type="checkbox">
                     <span class="control_indicator"></span>
                 </label>
-                <div>&nbsp;</div>
                 <div id="http_use_server_ssl_cert_options" class="hidden indent">
                     <div class="button-container-centered">
                         <div class="button-upload">
@@ -1961,8 +1963,9 @@
                             </button>
                         </div>
                     </div>
-                    <div>&nbsp;</div>
                 </div>
+
+                <div>&nbsp;</div>
 
                 <div id="page-custom_server-http_validation_error" class="rd hidden">
                     <div class="block-centered">
@@ -2050,7 +2053,7 @@
 
                 <div class="border-hidden"></div>
 
-                <label class="label-container">
+                <label class="font-bold">
                     <span class="text-container">
                         <span lang="en">Server</span>
                         <span lang="fi">Palvelin</span>
@@ -2058,6 +2061,12 @@
                     <div class="input-server">
                         <input id="mqtt_server" type="text">
                     </div>
+                </label>
+                <label class="font-bold">
+                    <span class="text-container">
+                        <span lang="en">Port</span>
+                        <span lang="fi">Portti</span>
+                    </span>
                     <div class="input-with_validity_check" style="flex-grow: unset; width: auto;">
                         <input id="mqtt_port" type="text" placeholder="Port" style="width: calc(5ch + 4px + 2 * var(--input-padding-right-and-left));">
                         <div class="input-with_validity_check-icon">
@@ -2066,16 +2075,16 @@
                 </label>
 
                 <label class="control control-checkbox">
-                    <span lang="en">Use periodic sending (maximum 100 messages)</span>
-                    <span lang="fi">Käytä säännöllistä lähetystä (enintään 100 viestiä)</span>
+                    <span lang="en">Define sending interval instead of relaying messages instantly</span>
+                    <span lang="fi">Määritä lähetysväli, älä käytä välitöntä lähetystä</span>
                     <input id="use_mqtt_periodic_sending" type="checkbox">
                     <span class="control_indicator"></span>
                 </label>
                 <div id="mqtt_sending_interval_div" class="indent">
-                    <label class="label-container">
+                    <label class="font-bold">
                         <span class="text-container">
                             <span lang="en">Sending interval (seconds)</span>
-                            <span lang="fi">Lähetysväli (sekuntia)</span>
+                            <span lang="fi">Lähetysväli</span>
                         </span>
                         <div class="input-with_validity_check" style="width: 100%">
                             <input id="mqtt_sending_interval" type="text" value="">
@@ -2083,12 +2092,12 @@
                             </div>
                         </div>
                     </label>
-                    <div class="border"></div>
-                    <div>&nbsp;</div>
                 </div>
 
-                <label class="label-container">
-                    <span class="text-container">
+                <div>&nbsp;</div>
+
+                <label>
+                    <span class="font-bold">
                         <span lang="en">Username (optional)</span>
                         <span lang="fi">Käyttäjänimi (valinnainen)</span>
                     </span>
@@ -2098,8 +2107,8 @@
                         </div>
                     </div>
                 </label>
-                <label class="label-container">
-                    <span class="text-container">
+                <label>
+                    <span class="font-bold">
                         <span lang="en">Password (optional)</span>
                         <span lang="fi">Salasana (valinnainen)</span>
                     </span>
@@ -2123,7 +2132,7 @@
                     <div id="page-custom_server-mqtt_validation_error-desc" class="block-centered">
                     </div>
                 </div>
-                <label class="label-container">
+                <label class="font-bold">
                     <span class="text-container">
                         <span lang="en">Client name</span>
                         <span lang="fi">Asiakastunnus</span>
@@ -2145,12 +2154,16 @@
                 <div>&nbsp;</div>
 
                 <label class="font-bold">
-                    <span lang="en">Topic prefix:</span>
-                    <span lang="fi">Aiheen etuliite:</span>
+                    <span lang="en">Topic prefix</span>
+                    <span lang="fi">Aiheen etuliite</span>
                 </label>
+
+                <div>&nbsp;</div>
 
                 <div id="mqtt_prefix" class="input-primary">
                 </div>
+
+                <div>&nbsp;</div>
 
                 <label class="conf-settings-checkbox control control-checkbox">
                     <span lang="en">Use ‘ruuvi’ on the prefix</span>
@@ -2178,6 +2191,13 @@
 
                 <div>&nbsp;</div>
 
+                <label class="font-bold">
+                    <span lang="en">SSL certificate</span>
+                    <span lang="fi">SSL-sertifikaatti</span>
+                </label>
+
+                <div>&nbsp;</div>
+
                 <div class="line-container">
                     <label class="control control-checkbox">
                         <span lang="en">Use client SSL certificate (*.pem)</span>
@@ -2186,7 +2206,6 @@
                         <span class="control_indicator"></span>
                     </label>
                 </div>
-                <div>&nbsp;</div>
                 <div id="mqtt_use_client_ssl_cert_options" class="indent hidden">
                     <div class="button-container-centered">
                         <div class="button-upload">
@@ -2215,8 +2234,6 @@
                         </div>
                     </div>
                     <div>&nbsp;</div>
-                    <div class="border"></div>
-                    <div>&nbsp;</div>
                 </div>
 
                 <div class="line-container">
@@ -2227,7 +2244,6 @@
                         <span class="control_indicator"></span>
                     </label>
                 </div>
-                <div>&nbsp;</div>
                 <div id="mqtt_use_server_ssl_cert_options" class="indent hidden">
                     <div class="button-container-centered">
                         <div class="button-upload">
@@ -2246,8 +2262,8 @@
                             </button>
                         </div>
                     </div>
-                    <div>&nbsp;</div>
                 </div>
+                <div>&nbsp;</div>
             </div>
 
             <div class="border"></div>
@@ -2320,6 +2336,13 @@
 
                     <div>&nbsp;</div>
 
+                    <label class="font-bold">
+                        <span lang="en">SSL certificate</span>
+                        <span lang="fi">SSL-sertifikaatti</span>
+                    </label>
+
+                    <div>&nbsp;</div>
+
                     <div class="line-container">
                         <label class="control control-checkbox">
                             <span lang="en">Use client SSL certificate (*.pem)</span>
@@ -2328,7 +2351,6 @@
                             <span class="control_indicator"></span>
                         </label>
                     </div>
-                    <div>&nbsp;</div>
                     <div id="stat_use_client_ssl_cert_options" class="indent hidden">
                         <div class="button-container-centered">
                             <div class="button-upload">
@@ -2356,8 +2378,6 @@
                                 </button>
                             </div>
                         </div>
-                        <div>&nbsp;</div>
-                        <div class="border"></div>
                         <div>&nbsp;</div>
                     </div>
 
@@ -2452,52 +2472,73 @@
                 </ul>
             </div>
 
+            <div class="ingress">
+                <p lang="en">dummy text...</p>
+                <p lang="fi">dummy text...</p>
+            </div>
+
             <label class="control control-radio">
                 <span lang="en">Use default set of NTP servers for time synchronisation</span>
                 <span lang="fi">Käytä oletusarvoisia NTP-palvelimia ajan synkronointiin</span>
                 <input id="ntp_sync_default" name="ntp_sync" value="ntp_sync_default" type="radio"/>
                 <span class="control_indicator"></span>
             </label>
-            <label class="control control-radio">
-                <span lang="en">Use custom set of NTP servers for time synchronisation</span>
-                <span lang="fi">Käytä mukautettuja NTP-palvelimia ajan synkronointiin</span>
-                <input id="ntp_sync_custom" name="ntp_sync" value="ntp_sync_custom" type="radio"/>
-                <span class="control_indicator"></span>
-            </label>
-            <div id="page-ntp_config-custom_options" class="indent hidden">
-                <label class="font-bold">
-                    <span lang="en">Server 1</span>
-                    <span lang="fi">Palvelin 1</span>
-                    <input id="ntp_server1" type="text" value="time.google.com">
+
+            <div>&nbsp;</div>
+
+            <div class="border"></div>
+            <div id="page-ntp_config-advanced-button" class="btn-dropdown">
+                <h2>
+                    <span lang="en">Advanced settings</span>
+                    <span lang="fi">Edistyneet asetukset</span>
+                </h2>
+                <div class="btn-dropdown-arrow-down"></div>
+                <div class="btn-dropdown-arrow-up hidden"></div>
+            </div>
+            <div class="border"></div>
+
+            <div id="page-ntp_config-advanced-dropdown" class="hidden">
+                <label class="control control-radio">
+                    <span lang="en">Use custom set of NTP servers for time synchronisation</span>
+                    <span lang="fi">Käytä mukautettuja NTP-palvelimia ajan synkronointiin</span>
+                    <input id="ntp_sync_custom" name="ntp_sync" value="ntp_sync_custom" type="radio"/>
+                    <span class="control_indicator"></span>
                 </label>
-                <label class="font-bold">
-                    <span lang="en">Server 2</span>
-                    <span lang="fi">Palvelin 2</span>
-                    <input id="ntp_server2" type="text" value="time.cloudflare.com">
+                <div id="page-ntp_config-custom_options" class="indent hidden">
+                    <label class="font-bold">
+                        <span lang="en">Server 1</span>
+                        <span lang="fi">Palvelin 1</span>
+                        <input id="ntp_server1" type="text" value="time.google.com">
+                    </label>
+                    <label class="font-bold">
+                        <span lang="en">Server 2</span>
+                        <span lang="fi">Palvelin 2</span>
+                        <input id="ntp_server2" type="text" value="time.cloudflare.com">
+                    </label>
+                    <label class="font-bold">
+                        <span lang="en">Server 3</span>
+                        <span lang="fi">Palvelin 3</span>
+                        <input id="ntp_server3" type="text" value="time.nist.gov">
+                    </label>
+                    <label class="font-bold">
+                        <span lang="en">Server 4</span>
+                        <span lang="fi">Palvelin 4</span>
+                        <input id="ntp_server4" type="text" value="pool.ntp.org">
+                    </label>
+                </div>
+                <label class="control control-radio">
+                    <span lang="en">Use DHCP to get a set of NTP servers for time synchronisation</span>
+                    <span lang="fi">Käytä DHCP:tä saadaksesi joukon NTP-palvelimia ajan synkronointia varten</span>
+                    <input id="ntp_sync_dhcp" name="ntp_sync" value="ntp_sync_dhcp" type="radio"/>
+                    <span class="control_indicator"></span>
                 </label>
-                <label class="font-bold">
-                    <span lang="en">Server 3</span>
-                    <span lang="fi">Palvelin 3</span>
-                    <input id="ntp_server3" type="text" value="time.nist.gov">
-                </label>
-                <label class="font-bold">
-                    <span lang="en">Server 4</span>
-                    <span lang="fi">Palvelin 4</span>
-                    <input id="ntp_server4" type="text" value="pool.ntp.org">
+                <label class="control control-radio">
+                    <span lang="en">Do not use time synchronisation</span>
+                    <span lang="fi">Älä käytä ajan synkronointia</span>
+                    <input id="ntp_sync_disabled" name="ntp_sync" value="ntp_sync_disabled" type="radio"/>
+                    <span class="control_indicator"></span>
                 </label>
             </div>
-            <label class="control control-radio">
-                <span lang="en">Use DHCP to get a set of NTP servers for time synchronisation</span>
-                <span lang="fi">Käytä DHCP:tä saadaksesi joukon NTP-palvelimia ajan synkronointia varten</span>
-                <input id="ntp_sync_dhcp" name="ntp_sync" value="ntp_sync_dhcp" type="radio"/>
-                <span class="control_indicator"></span>
-            </label>
-            <label class="control control-radio">
-                <span lang="en">Do not use time synchronisation</span>
-                <span lang="fi">Älä käytä ajan synkronointia</span>
-                <input id="ntp_sync_disabled" name="ntp_sync" value="ntp_sync_disabled" type="radio"/>
-                <span class="control_indicator"></span>
-            </label>
 
             <div class="button-container">
                 <a href="" id="page-ntp_config-button-back" class="btn-back">
@@ -2565,7 +2606,6 @@
             <div class="border"></div>
 
             <div id="page-scanning-advanced-dropdown" class="hidden">
-                <div>&nbsp;</div>
                 <label class="control control-radio info-icon-container">
                     <div class="info-icon-left-column">
                         <span lang="en">Ruuvi sensors (including experimental long range sensors)</span>
@@ -2577,7 +2617,6 @@
                     <a class="info-icon-button" href="#popup-info-icon-scanning">i</a>
                 </label>
 
-                <div>&nbsp;</div>
                 <label class="control control-radio">
                     <div>
                         <span lang="en">All (including third party beacons)</span>
@@ -2631,6 +2670,15 @@
                     <span lang="en">Filtering</span>
                     <span lang="fi">Suodatus</span>
                 </div>
+                <div>
+                    <span lang="en">Bluetooth sensor filtering applies to the listening settings selected above.
+                        Enabling this feature allows you to whitelist or blacklist sensors based on their MAC addresses.
+                    </span>
+                    <span lang="fi">Bluetooth-anturin suodatus koskee yllä valittuja kuunteluasetuksia.
+                        Ottamalla tämän ominaisuuden käyttöön voit lisätä anturit sallittujen tai mustalle
+                        listalle niiden MAC-osoitteiden perusteella.
+                    </span>
+                </div>
 
                 <div>
                     <label class="control control-checkbox">
@@ -2639,18 +2687,6 @@
                         <input id="scan_filtering" type="checkbox">
                         <span class="control_indicator"></span>
                     </label>
-                    <div class="indent">
-                        <span lang="en">Bluetooth sensor filtering applies to the listening settings selected above.
-                            Enabling this feature allows you to whitelist or blacklist sensors based on their MAC addresses.
-                        </span>
-                        <span lang="fi">Bluetooth-anturin suodatus koskee yllä valittuja kuunteluasetuksia.
-                            Ottamalla tämän ominaisuuden käyttöön voit lisätä anturit sallittujen tai mustalle
-                            listalle niiden MAC-osoitteiden perusteella.
-                        </span>
-                    </div>
-
-                    <div>&nbsp;</div>
-                    <div>&nbsp;</div>
 
                     <div id="scan_filtering-options" class="indent hidden">
                         <div>

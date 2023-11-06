@@ -12,6 +12,7 @@ import GuiButtonBack from './gui_button_back.mjs'
 import GuiButtonContinue from './gui_button_continue.mjs'
 import Navigation from './navigation.mjs'
 import { GwCfgNtp } from './gw_cfg_ntp.mjs'
+import GuiSectAdvanced from './gui_sect_advanced.mjs'
 
 class PageTimeSync {
   /** @type GwCfgNtp */
@@ -38,6 +39,8 @@ class PageTimeSync {
 
   #button_back = new GuiButtonBack($('#page-ntp_config-button-back'))
   #button_continue = new GuiButtonContinue($('#page-ntp_config-button-continue'))
+
+  #sect_advanced = new GuiSectAdvanced($('#page-ntp_config-advanced-button'))
 
   /**
    * @param {GwCfgNtp} gwCfgNtp
