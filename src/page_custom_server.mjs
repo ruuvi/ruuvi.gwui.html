@@ -365,6 +365,11 @@ class PageCustomServer {
             this.#input_mqtt_sending_interval.setVal("")
             this.#div_mqtt_sending_interval.hide()
             this.#checkbox_use_mqtt_periodic_sending.setUnchecked()
+            if (this.#gwCfg.mqtt.mqtt_sending_interval) {
+                this.#input_mqtt_sending_interval.setVal(this.#gwCfg.mqtt.mqtt_sending_interval)
+            } else {
+                this.#input_mqtt_sending_interval.setVal(10)
+            }
         } else {
             this.#input_mqtt_sending_interval.setVal(this.#gwCfg.mqtt.mqtt_sending_interval)
             this.#div_mqtt_sending_interval.show()
