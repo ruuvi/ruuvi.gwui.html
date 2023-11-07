@@ -13,7 +13,6 @@ class PageAuth {
   #auth_forbidden = $('#auth-forbidden')
   #auth_denied = $('#auth-denied')
   #auth_error = $('#auth-error')
-  #auth_error_msg = $('#auth-error-msg')
   #auth_default = $('#auth-default')
   #auth_reconfigure = $('#auth-reconfigure')
   #auth_user_login = $('#auth-user_login')
@@ -91,7 +90,6 @@ class PageAuth {
 
   show_error_message (error) {
     logger.info(`PageAuth: show error message: ${error}`)
-    this.#auth_error_msg.text(error)
     this.#auth_error.show()
   }
 

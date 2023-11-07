@@ -66,7 +66,7 @@ header {
 
 #app {
 	width: 100%;
-	max-width: 650px;
+	max-width: var(--max-width);
 	min-height: 600px;
 	height: auto;
 	display: flex;
@@ -207,7 +207,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-	font-size: 18px;
+	font-size: 20px;
 	font-weight: 600;
 	font-style: italic;
 	margin-bottom: 32px;
@@ -215,19 +215,17 @@ h1 {
 }
 
 h2, .h2 {
-	font-size: 16px;
+	font-size: 18px;
 	font-weight: 800;
+	margin-top: 0.75em;
 	margin-bottom: 0.75em;
 }
 
 h3, .h3 {
 	font-size: 16px;
 	font-weight: 700;
+	margin-top: 0.5em;
 	margin-bottom: 0.5em;
-}
-
-p {
-	margin-top: 0;
 }
 
 [lang=fi] {
@@ -324,6 +322,7 @@ progress {
 	position: absolute;
 	bottom: 0;
 	left: 0;
+	margin-bottom: 16px;
 }
 
 .button-container-centered {
@@ -332,6 +331,8 @@ progress {
 	justify-content: space-around;
 	align-items: center;
 	width: 100%;
+	margin-top: 8px;
+	margin-bottom: 16px;
 }
 
 .btn-two-rows {
@@ -631,6 +632,8 @@ input.input-row {
 	align-items: center;
 	flex-grow: 1; /* Take up remaining space */
 	//width: auto; /* Automatically adjust to content */
+	margin-top: 8px;
+	margin-bottom: 8px;
 }
 
 .input-with_validity_check .input-password-eye {
@@ -772,12 +775,6 @@ select {
 }
 
 .info-icon-button:hover {
-	width: calc(var(--info-size) + 2 * var(--info-border-width));
-	height: calc(var(--info-size) + 2 * var(--info-border-width));
-	border: var(--info-border-width) solid #EDF2F7;
-	margin-top: calc(var(--info-margin-top) - var(--info-border-width));
-	margin-bottom: calc(var(--info-margin-bottom) - var(--info-border-width));
-	margin-right: 0;
 	cursor: pointer;
 }
 
@@ -803,6 +800,7 @@ select {
 	background: var(--color-background);
 	border-radius: 10px;
 	width: 70%;
+	max-width: var(--max-width);
 	position: relative;
 	transition: all 5s ease-in-out;
 }
@@ -916,7 +914,7 @@ table {
 }
 
 .software_update-status {
-	font-weight: 600;
+	font-weight: 700;
 }
 
 #software_update_progress-status-completed_successfully {

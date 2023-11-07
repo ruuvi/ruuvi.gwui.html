@@ -32,51 +32,38 @@
             </h1>
             <div id="gateway_name" class="gateway_name"></div>
             <div>
-                <div id="auth-yes" class="hidden">
-                    <span lang="en">Authorisation successful.</span>
-                    <span lang="fi">Sisäänkirjautuminen onnistui.</span>
-                </div>
-                <div id="auth-forbidden" class="rd hidden">
-                    <span lang="en">Access from LAN is forbidden - wrong username or password.</span>
-                    <span lang="fi">Pääsy lähiverkosta on kielletty - väärä käyttäjätunnus tai salasana.</span>
-                </div>
-                <div id="auth-denied" class="rd hidden">
-                    <span lang="en">Access from LAN is denied.</span>
-                    <span lang="fi">Pääsy lähiverkosta on estetty.</span>
-                </div>
-                <div id="auth-error" class="rd hidden">
-                    <span lang="en">Authentication error.</span>
-                    <span lang="fi">Todennusvirhe.</span>
-                    <div id="auth-error-msg" class="rd"></div>
-                </div>
                 <div id="auth-default" class="hidden">
-                    <span lang="en">This Ruuvi Gateway is configured for access from LAN with a default password (Unique ID in format XX:XX:XX:XX:XX:XX:XX:XX which is printed on the bottom of the Ruuvi Gateway).</span>
-                    <span lang="fi">Tämä Ruuvi Gateway on määritetty käytettäväksi lähiverkosta oletussalasanalla (yksilöllinen tunnus muodossa XX:XX:XX:XX:XX:XX:XX:XX, joka on painettu Ruuvi Gatewayn pohjaan).</span>
+                    <p>
+                        <span lang="en">This Ruuvi Gateway is configured for access from LAN with a default password (Unique ID in format XX:XX:XX:XX:XX:XX:XX:XX which is printed on the bottom of the Ruuvi Gateway).</span>
+                        <span lang="fi">Tämä Ruuvi Gateway on määritetty käytettäväksi lähiverkosta oletussalasanalla (yksilöllinen tunnus muodossa XX:XX:XX:XX:XX:XX:XX:XX, joka on painettu Ruuvi Gatewayn pohjaan).</span>
+                    </p>
                 </div>
                 <div id="auth-reconfigure" class="hidden">
-                    <span lang="en">
-                        In order to change the access settings, please reconfigure the Gateway using its Wi-Fi hotspot.
-                        To start the hotspot, press the small configuration button for a short time,
-                        found under the power socket.
-                    </span>
-                    <span lang="fi">
-                        Voit vaihtaa pääsyasetukset Gatewayn Wi-Fi-yhteyspisteen kautta.
-                        Paina lyhyesti virtaliittimen alla sijaitsevaa nappia ohjatun käyttöönoton aloittamiseksi.
-                    </span>
+                    <p>
+                        <span lang="en">
+                            In order to change the access settings, please reconfigure the Gateway using its Wi-Fi hotspot.
+                            To start the hotspot, press the small configuration button for a short time,
+                            found under the power socket.
+                        </span>
+                        <span lang="fi">
+                            Voit vaihtaa pääsyasetukset Gatewayn Wi-Fi-yhteyspisteen kautta.
+                            Paina lyhyesti virtaliittimen alla sijaitsevaa nappia ohjatun käyttöönoton aloittamiseksi.
+                        </span>
+                    </p>
                 </div>
             </div>
 
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
-
-            <div class="border-hidden"></div>
-
             <div id="auth-user_login" class="hidden indent" style="max-width: 300px">
-                <label class="bold">
-                    <span lang="en">Login:</span>
-                    <span lang="fi">Kirjaudu sisään:</span>
+                <div>
+                    <h3>
+                        <label for="auth-user">
+                            <span lang="en">Username:</span>
+                            <span lang="fi">Käyttäjätunnus:</span>
+                        </label>
+                    </h3>
                     <input id="auth-user" type="text" placeholder="" value="">
-                </label>
+                </div>
+
                 <div>
                     <h3>
                         <label for="auth-pass">
@@ -94,13 +81,24 @@
                         </div>
                     </div>
                 </div>
-                <div style="height: 30px">
-                    <div id="auth-err-message" class="rd hidden">
-                        <span lang="en">Incorrect username or password</span>
-                        <span lang="fi">Väärä käyttäjätunnus tai salasana</span>
+                <div>
+                    <div id="auth-yes" class="hidden">
+                        <span lang="en">Authorisation successful.</span>
+                        <span lang="fi">Sisäänkirjautuminen onnistui.</span>
+                    </div>
+                    <div id="auth-forbidden" class="auth-err-message hidden">
+                        <span lang="en">Access from LAN is forbidden - wrong username or password.</span>
+                        <span lang="fi">Pääsy lähiverkosta on kielletty - väärä käyttäjätunnus tai salasana.</span>
+                    </div>
+                    <div id="auth-denied" class="auth-err-message hidden">
+                        <span lang="en">Access from LAN is denied.</span>
+                        <span lang="fi">Pääsy lähiverkosta on estetty.</span>
+                    </div>
+                    <div id="auth-error" class="auth-err-message hidden">
+                        <span lang="en">Wrong username or password.</span>
+                        <span lang="fi">Väärä käyttäjätunnus tai salasana.</span>
                     </div>
                 </div>
-                <div class="border-hidden"></div>
                 <div class="button-container-centered">
                     <a href="" id="auth-button-login" class="btn">
                         <span lang="en">Log in</span>
@@ -215,39 +213,36 @@
                 </div>
             </div>
 
-            <div class="border-hidden"></div>
-
             <div id="page-network_type-access_from_lan">
                 <div>
-                    <span lang="en">
+                    <p lang="en">
                         You're accessing the Ruuvi Gateway setup wizard from your local area network.
                         You cannot adjust the connection type at this time.
                         In order to change the connection type, please reconfigure the Ruuvi Gateway using its Wi-Fi hotspot.
                         To restart the Wi-Fi hotspot, locate the pinhole button under the power socket and press the button
                         briefly using a paperclip.
-                    </span>
-                    <span lang="fi">
+                    </p>
+                    <p lang="fi">
                         Olet avannut Ruuvi Gatewayn käyttöönottosivun kiinteän lähiverkkoyhteyden kautta. Tästä johtuen
                         et voi vaihtaa tapaa, jolla Ruuvi Gateway on yhteydessä internetiin.
                         Voit vaihtaa yhteystyyppiä Ruuvi Gatewayn Wi-Fi-yhteyspisteen ohjatun käyttöönoton kautta.
                         Käynnistä Wi-Fi-yhteyspiste uudelleen painamalla paperiliittimellä lyhyesti virtaliittimen alla
                         sijaitsevaa painiketta.
-                    </span>
+                    </p>
                 </div>
-                <div class="border-hidden"></div>
                 <div>
-                    <span lang="en">
+                    <p lang="en">
                         Next, connect to a Wi-Fi hotspot named Configure Ruuvi Gateway XXXX.
                         After connecting to the hotspot, your device may ask you to sign in to the network.
                         Next, a captive portal window showing the setup wizard will open.
                         If the page doesn't open automatically open your web browser, type 10.10.0.1 and press enter.
-                    </span>
-                    <span lang="fi">
+                    </p>
+                    <p lang="fi">
                         Liity seuraavaksi päätelaitteellasi Wi-Fi-verkkoon Configure Ruuvi Gateway XXXX.
                         Ruuvi Gatewayn käyttöönottosivu avautuu uuteen selainikkunaan yhteyden muodostuttua.
                         Mikäli ikkuna ei avaudu automaattisesti, voit avata käyttöönottosivun kirjoittamalla
                         selaimesi osoitekenttään 10.10.0.1 ja painamalla enter.
-                    </span>
+                    </p>
                 </div>
             </div>
 
@@ -272,8 +267,8 @@
         <!-- ETHERNET CONFIGURATION -->
         <section id="page-ethernet_connection" class="hidden">
             <h1>
-                <span lang="en">Ethernet Settings</span>
-                <span lang="fi">Ethernet-asetukset</span>
+                <span lang="en">IP address settings</span>
+                <span lang="fi">IP-osoiteasetukset</span>
             </h1>
 
             <div class="progressbar-container">
@@ -289,12 +284,10 @@
                 </ul>
             </div>
 
-            <h2>
-                <span lang="en">IP address configuration</span>
-                <span lang="fi">IP-osoitteen määritys</span>
-            </h2>
-
-            <div>&nbsp;</div>
+            <div class="ingress">
+                <span lang="en">dummy text...</span>
+                <span lang="fi">dummy text...</span>
+            </div>
 
             <div id="page-ethernet_connection-ask_user" class="hidden">
                 <div class="block-centered">
@@ -304,12 +297,12 @@
             </div>
             <div id="page-ethernet_connection-no_cable" class="hidden">
                 <div class="block-centered rd">
-                    <span lang="en">Ethernet cable is not connected or there is some other problem with the connection.</span>
-                    <span lang="fi">Lähiverkkokaapelia ei ole liitetty tai yhteydessä on jokin muu ongelma.</span>
+                    <p>
+                        <span lang="en">Ethernet cable is not connected or there is some other problem with the connection.</span>
+                        <span lang="fi">Lähiverkkokaapelia ei ole liitetty tai yhteydessä on jokin muu ongelma.</span>
+                    </p>
                 </div>
             </div>
-
-            <div>&nbsp;</div>
 
             <div>
                 <label class="control control-checkbox">
@@ -320,7 +313,7 @@
                 </label>
             </div>
 
-            <div>&nbsp;</div>
+
 
             <div id="page-ethernet_connection-section-manual_settings" class="indent hidden">
                 <h3>
@@ -457,12 +450,10 @@
             <div class="border"></div>
 
             <div id="page-wifi_connection-advanced-dropdown" class="hidden">
-                <div class="">
+                <p>
                     <span lang="en">If your network is hidden, you can connect manually.</span>
                     <span lang="fi">Voit muodostaa yhdeyden manuaalisesti, mikäli verkko on piilotettu.</span>
-                </div>
-
-                <div class="border-hidden"></div>
+                </p>
 
                 <label class="control control-radio">
                     <span lang="en">Connect manually</span>
@@ -509,7 +500,7 @@
                         <span lang="fi">Yhteyden muodostaminen epäonnistui. Yritä uudelleen.</span>
                     </div>
                 </div>
-                <div>&nbsp;</div>
+
             </div>
 
             <div class="button-container">
@@ -578,42 +569,48 @@
                 </div>
             </div>
 
-            <div>&nbsp;</div>
+
 
             <div id="page-software_update-status">
                 <div class="block-centered">
                     <div id="software_update-status-empty" class="software_update-status">
-                        <span>&nbsp;</span>
+                        <p>
+                            <span>&nbsp;</span>
+                        </p>
                     </div>
                     <div id="software_update-status-ok-already_latest" class="software_update-status gr hidden">
-                        <span lang="en">You already have the latest release installed</span>
-                        <span lang="fi">Sinulla on jo uusin versio asennettuna</span>
+                        <p>
+                            <span lang="en">You already have the latest release installed</span>
+                            <span lang="fi">Sinulla on jo uusin versio asennettuna</span>
+                        </p>
                     </div>
                     <div id="software_update-status-ok-latest_not_supported" class="software_update-status bl hidden">
-                        <span lang="en">The latest version is not supported. Try updating manually.</span>
-                        <span lang="fi">Uusinta versiota ei tueta. Kokeile päivitystä manuaalisesti.</span>
+                        <p>
+                            <span lang="en">The latest version is not supported. Try updating manually.</span>
+                            <span lang="fi">Uusinta versiota ei tueta. Kokeile päivitystä manuaalisesti.</span>
+                        </p>
                     </div>
                     <div id="software_update-status-ok-update_available" class="software_update-status bl hidden">
-                        <span lang="en">An update is available! Press UPDATE to start the firmware update.</span>
-                        <span lang="fi">Päivitys on saatavilla! Aloita laiteohjelman päivitys valitsemalla PÄIVITÄ.</span>
+                        <p>
+                            <span lang="en">An update is available! Press UPDATE to start the firmware update.</span>
+                            <span lang="fi">Päivitys on saatavilla! Aloita laiteohjelman päivitys valitsemalla PÄIVITÄ.</span>
+                        </p>
                     </div>
                     <div id="software_update-status-error" class="software_update-status rd hidden">
-                        <span lang="en">Unable to get the latest firmware version from the server.</span>
-                        <span lang="fi">Uusinta laiteohjelmistoversiota ei voitu ladata palvelimelta.</span>
+                        <p>
+                            <span lang="en">Unable to get the latest firmware version from the server.</span>
+                            <span lang="fi">Uusinta laiteohjelmistoversiota ei voitu ladata palvelimelta.</span>
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <div>&nbsp;</div>
-
-            <div class="block-centered">
+            <div class="button-container-centered">
                 <button class="btn" id="software_update-button-upgrade" type="button">
                     <span lang="en">Update</span>
                     <span lang="fi">Päivitä</span>
                 </button>
             </div>
-
-            <div>&nbsp;</div>
 
             <div class="border"></div>
             <div id="page-software_update-advanced-button" class="btn-dropdown">
@@ -646,8 +643,6 @@
                     </div>
                 </div>
 
-                <div class="border-hidden"></div>
-
                 <div class="button-container-centered">
                     <button class="btn" id="page-software_update-button-fw_update_url-check" type="button">
                         <span lang="en">Check</span>
@@ -659,7 +654,7 @@
                     </button>
                 </div>
 
-                <div>&nbsp;</div>
+
 
                 <div id="page-software_update-fw_update-status-error" class="rd hidden">
                     <div class="block-centered">
@@ -670,9 +665,9 @@
                     </div>
                 </div>
 
-                <div>&nbsp;</div>
+
                 <div class="border"></div>
-                <div>&nbsp;</div>
+
 
                 <div id="software_update-url_title" class="control control-checkbox info-icon-container">
                     <label for="software_update-set-url-manually">
@@ -806,12 +801,12 @@
 
             <div id="page-software_update_progress-info" class="hidden">
                 <div class="block-centered">
-                    <span lang="en">Please wait. Do not power off the Ruuvi Gateway during the update!</span>
-                    <span lang="fi">Odota päivityksen valmistumista! Älä sammuta Ruuvi Gateway laitetta päivityksen aikana.</span>
+                    <p>
+                        <span lang="en">Please wait. Do not power off the Ruuvi Gateway during the update!</span>
+                        <span lang="fi">Odota päivityksen valmistumista! Älä sammuta Ruuvi Gateway laitetta päivityksen aikana.</span>
+                    </p>
                 </div>
 
-                <div>&nbsp;</div>
-                <div>&nbsp;</div>
                 <div class="block-centered">
                     <h2>
                         <span lang="en">Downloading the main processor software</span>
@@ -822,7 +817,6 @@
                     <progress id="software_update_progress-stage1" max="100" value="0"></progress>
                 </div>
 
-                <div>&nbsp;</div>
                 <div class="block-centered">
                     <h2>
                         <span lang="en">Downloading the user interface</span>
@@ -833,7 +827,6 @@
                     <progress id="software_update_progress-stage2" max="100" value="0"></progress>
                 </div>
 
-                <div>&nbsp;</div>
                 <div class="block-centered">
                     <h2>
                         <span lang="en">Downloading the coprocessor software</span>
@@ -844,7 +837,6 @@
                     <progress id="software_update_progress-stage3" max="100" value="0"></progress>
                 </div>
 
-                <div>&nbsp;</div>
                 <div class="block-centered">
                     <h2>
                         <span lang="en">Finishing the setup</span>
@@ -856,23 +848,27 @@
                 </div>
             </div>
 
-            <div>&nbsp;</div>
-
             <div id="software_update_progress-status-completed_successfully" class="hidden">
                 <div class="block-centered gr">
-                    <span lang="en">All good! Update was successful.</span>
-                    <span lang="fi">Valmista! Päivitys onnistui.</span>
+                    <p>
+                        <span lang="en">All good! Update was successful.</span>
+                        <span lang="fi">Valmista! Päivitys onnistui.</span>
+                    </p>
                 </div>
-                <div>&nbsp;</div>
+
                 <div class="block-left">
-                    <span lang="en">The device will restart automatically after a few seconds.
-                        Continue with the configuration by reconnecting to the device's Wi-Fi hotspot.
-                        If the Wi-Fi hotspot doesn't appear automatically, locate the pinhole button under the power
-                        socket and press the button briefly using a paperclip.</span>
-                    <span lang="fi">Laite käynnistyy automaattisesti uudelleen muutaman sekunnin kuluttua.
-                        Jatka asetusten määrittämistä muodostamalla yhteys uudelleen laitteen luomaan Wi-Fi
-                        verkkoon. Mikäli verkko ei ilmesty näkyviin automaattisesti, paina paperiliittimellä
-                        lyhyesti virtaliittimen alla olevaa painiketta.</span>
+                    <p>
+                        <span lang="en">The device will restart automatically after a few seconds.
+                            Continue with the configuration by reconnecting to the device's Wi-Fi hotspot.
+                            If the Wi-Fi hotspot doesn't appear automatically, locate the pinhole button under the power
+                            socket and press the button briefly using a paperclip.
+                        </span>
+                        <span lang="fi">Laite käynnistyy automaattisesti uudelleen muutaman sekunnin kuluttua.
+                            Jatka asetusten määrittämistä muodostamalla yhteys uudelleen laitteen luomaan Wi-Fi
+                            verkkoon. Mikäli verkko ei ilmesty näkyviin automaattisesti, paina paperiliittimellä
+                            lyhyesti virtaliittimen alla olevaa painiketta.
+                        </span>
+                    </p>
                 </div>
             </div>
 
@@ -889,14 +885,14 @@
                         <span lang="fi">Ruuvi Gateway käynnistyi yhtäkkiä uudelleen laiteohjelmistopäivityksen aikana. Yritä uudelleen.</span>
                     </div>
                 </div>
-                <div>&nbsp;</div>
+
                 <div class="block-left">
                     <span lang="en">Please reboot the device. Locate the pinhole button under the power socket and press the button briefly using a paperclip. </span>
                     <span lang="fi">Käynnistä laite uudelleen painamalla paperiliittimellä lyhyesti virtaliittimen
                         alla olevaa painiketta.</span>
                 </div>
             </div>
-            <div>&nbsp;</div>
+
             <div id="page-software_update_progress-button_container-configure" class="hidden">
                 <div class="button-container button-container-centered">
                     <a href="" id="page-software_update_progress-button-configure" class="btn">
@@ -957,7 +953,7 @@
                         <span class="control_indicator"></span>
                     </label>
                 </div>
-                <div>&nbsp;</div>
+
                 <div id="remote_cfg-options" class="indent hidden">
                     <div id="remote_cfg-options_url_title">
                         <div class="info-icon-left-column">
@@ -971,15 +967,15 @@
 
                     <div>
                         <label for="remote_cfg-base_url" class="info-icon-container">
-                            <div class="input-with_validity_check">
-                                <input id="remote_cfg-base_url" type="text" value="">
-                                <div class="input-with_validity_check-icon">
-                                </div>
-                            </div>
                         </label>
+                        <div class="input-with_validity_check">
+                            <input id="remote_cfg-base_url" type="text" value="">
+                            <div class="input-with_validity_check-icon">
+                            </div>
+                        </div>
                     </div>
 
-                    <div>&nbsp;</div>
+
 
                     <div>
                         <label class="control control-checkbox">
@@ -1044,9 +1040,10 @@
                             </div>
                         </div>
 
-                        <div>&nbsp;</div>
-                        <div class="border"></div>
-                        <div>&nbsp;</div>
+                        <h3>
+                            <span lang="en">SSL certificate</span>
+                            <span lang="fi">SSL-sertifikaatti</span>
+                        </h3>
 
                         <div class="line-container">
                             <label class="control control-checkbox">
@@ -1056,7 +1053,7 @@
                                 <span class="control_indicator"></span>
                             </label>
                         </div>
-                        <div>&nbsp;</div>
+
                         <div id="remote_cfg-use_client_ssl_cert_options" class="indent hidden">
                             <div class="button-container-centered">
                                 <div class="button-upload">
@@ -1084,7 +1081,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div>&nbsp;</div>
+
                         </div>
 
                         <div class="line-container">
@@ -1095,7 +1092,7 @@
                                 <span class="control_indicator"></span>
                             </label>
                         </div>
-                        <div>&nbsp;</div>
+
                         <div id="remote_cfg-use_server_ssl_cert_options" class="indent hidden">
                             <div class="button-container-centered">
                                 <div class="button-upload">
@@ -1117,13 +1114,7 @@
                         </div>
                     </div>
 
-                    <div>&nbsp;</div>
-                    <div class="border"></div>
-                    <div>&nbsp;</div>
-                    <div>&nbsp;</div>
-                    <div>&nbsp;</div>
-
-                    <div class="block-centered">
+                    <div class="button-container-centered">
                         <button class="btn" id="remote_cfg-button-download" type="button">
                             <span lang="en">Download</span>
                             <span lang="fi">Lataa</span>
@@ -1133,8 +1124,6 @@
                             <span lang="fi">Tarkasta</span>
                         </button>
                     </div>
-
-                    <div>&nbsp;</div>
 
                     <div id="page-remote_cfg-status-error" class="rd hidden">
                         <div class="block-centered">
@@ -1149,6 +1138,10 @@
 
             <div id="popup-info-icon-button-remote_cfg" class="info-icon-overlay">
                 <div class="info-icon-popup">
+                    <h1>
+                        <span lang="en">Specify location</span>
+                        <span lang="fi">Määritä sijainti</span>
+                    </h1>
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
                     <div class="info-icon-content">
                         <p>
@@ -1241,7 +1234,7 @@
                     <span class="control_indicator"></span>
                 </label>
             </div>
-            <div>&nbsp;</div>
+
 
             <div class="border"></div>
             <div id="page-update_schedule-advanced-button" class="btn-dropdown">
@@ -1253,7 +1246,7 @@
                 <div class="btn-dropdown-arrow-up hidden"></div>
             </div>
             <div class="border"></div>
-            <div>&nbsp;</div>
+
 
             <div id="page-update_schedule-advanced-dropdown" class="hidden">
                 <label class="control control-radio">
@@ -1272,8 +1265,8 @@
                 </label>
 
                 <div id="conf-auto_update_schedule">
-                    <div>&nbsp;</div>
-                    <div>&nbsp;</div>
+
+
 
                     <h2>
                         <span lang="en">Define when to update</span>
@@ -1363,7 +1356,7 @@
                         </div>
                     </div>
 
-                    <div>&nbsp;</div>
+
 
                     <h3>
                         <span lang="en">Time range</span>
@@ -1524,8 +1517,6 @@
                 </p>
             </div>
 
-            <div>&nbsp;</div>
-
             <label class="control control-radio">
                 <span lang="en">Password protected with the default password (default, safe)</span>
                 <span lang="fi">Salasanasuojattu oletussalasanalla (oletus, turvallinen)</span>
@@ -1547,54 +1538,8 @@
                 </div>
             </div>
 
-            <label class="control control-radio">
-                <span lang="en">Protected with a custom password (advanced, safe with a strong password)</span>
-                <span lang="fi">Salasanasuojattu valinnaisella salasanalla (edistynyt, turvallinen vahvaa salasanaa käytettäessä)</span>
-                <input id="lan_auth_type_ruuvi" name="lan_auth_type" value="lan_auth_ruuvi" type="radio"/>
-                <span class="control_indicator"></span>
-            </label>
-            <div id="conf-lan_auth-login-password" class="hidden indent">
-                <h3>
-                    <label for="lan_auth-user">
-                        <span lang="en">Login:</span>
-                        <span lang="fi">Käyttäjätunnus:</span>
-                    </label>
-                </h3>
-                <input id="lan_auth-user" type="text" placeholder="" value="">
-
-                <h3>
-                    <label for="lan_auth-pass">
-                        <span lang="en">Password:</span>
-                        <span lang="fi">Salasana:</span>
-                    </label>
-                </h3>
-                <div class="input-password">
-                    <input id="lan_auth-pass" type="password" placeholder="" value="">
-                    <div class="input-password-eye">
-                        <div class="eye">
-                        </div>
-                        <div class="eye-slash hidden">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <label class="control control-radio">
-                <span lang="en">Not configurable via remote connection (extremely safe)</span>
-                <span lang="fi">Ei määritettävissä etäyhteyden kautta (erittäin turvallinen)</span>
-                <input id="lan_auth_type_deny" name="lan_auth_type" value="lan_auth_deny" type="radio"/>
-                <span class="control_indicator"></span>
-            </label>
-
-            <label class="control control-radio">
-                <span lang="en">Remote configurable without a password (unsafe, not recommended)</span>
-                <span lang="fi">Määritettävissä etäyhteyden kautta ilman salasanaa (turvaton, ei suositella)</span>
-                <input id="lan_auth_type_allow" name="lan_auth_type" value="lan_auth_allow" type="radio"/>
-                <span class="control_indicator"></span>
-            </label>
-
             <div id="page-settings_lan_auth-advanced">
-                <div>&nbsp;</div>
+
                 <div class="border"></div>
                 <div id="page-settings_lan_auth-advanced-button" class="btn-dropdown">
                     <h2>
@@ -1605,13 +1550,66 @@
                     <div class="btn-dropdown-arrow-up hidden"></div>
                 </div>
                 <div class="border"></div>
-                <div>&nbsp;</div>
+
 
                 <div id="page-settings_lan_auth-advanced-dropdown" class="hidden">
                     <div>
+                        <label class="control control-radio">
+                            <span lang="en">Protected with a custom password (advanced, safe with a strong password)</span>
+                            <span lang="fi">Salasanasuojattu valinnaisella salasanalla (edistynyt, turvallinen vahvaa salasanaa käytettäessä)</span>
+                            <input id="lan_auth_type_ruuvi" name="lan_auth_type" value="lan_auth_ruuvi" type="radio"/>
+                            <span class="control_indicator"></span>
+                        </label>
+                        <div id="conf-lan_auth-login-password" class="hidden indent">
+                            <h3>
+                                <label for="lan_auth-user">
+                                    <span lang="en">Login:</span>
+                                    <span lang="fi">Käyttäjätunnus:</span>
+                                </label>
+                            </h3>
+                            <input id="lan_auth-user" type="text" placeholder="" value="">
+
+                            <h3>
+                                <label for="lan_auth-pass">
+                                    <span lang="en">Password:</span>
+                                    <span lang="fi">Salasana:</span>
+                                </label>
+                            </h3>
+                            <div class="input-password">
+                                <input id="lan_auth-pass" type="password" placeholder="" value="">
+                                <div class="input-password-eye">
+                                    <div class="eye">
+                                    </div>
+                                    <div class="eye-slash hidden">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <label class="control control-radio">
+                            <span lang="en">Not configurable via remote connection (extremely safe)</span>
+                            <span lang="fi">Ei määritettävissä etäyhteyden kautta (erittäin turvallinen)</span>
+                            <input id="lan_auth_type_deny" name="lan_auth_type" value="lan_auth_deny" type="radio"/>
+                            <span class="control_indicator"></span>
+                        </label>
+
+                        <label class="control control-radio">
+                            <span lang="en">Remote configurable without a password (unsafe, not recommended)</span>
+                            <span lang="fi">Määritettävissä etäyhteyden kautta ilman salasanaa (turvaton, ei suositella)</span>
+                            <input id="lan_auth_type_allow" name="lan_auth_type" value="lan_auth_allow" type="radio"/>
+                            <span class="control_indicator"></span>
+                        </label>
+
+                    </div>
+
+                    <div>
+                        <h3>
+                            <span lang="en">Configure access using API key</span>
+                            <span lang="fi">Salli pääsy API-avaimella</span>
+                        </h3>
                         <div>
                             <label class="control control-checkbox">
-                                <span lang="en">Enable read-only access to "/history" using API-key</span>
+                                <span lang="en">Enable read-only access to "/history" using API key</span>
                                 <span lang="fi">Ota käyttöön vain luku -API-avain "/history" -sivulle</span>
                                 <input type="checkbox" id="settings_lan_auth-use_api_key">
                                 <span class="control_indicator"></span>
@@ -1713,7 +1711,7 @@
                     <span class="control_indicator"></span>
                 </label>
             </div>
-            <div>&nbsp;</div>
+
 
             <div class="border"></div>
             <div id="page-cloud_options-advanced-button" class="btn-dropdown">
@@ -1725,7 +1723,7 @@
                 <div class="btn-dropdown-arrow-up hidden"></div>
             </div>
             <div class="border"></div>
-            <div>&nbsp;</div>
+
 
             <div id="page-cloud_options-advanced-dropdown" class="hidden">
                 <p>
@@ -1791,9 +1789,9 @@
                 <span class="control_indicator"></span>
             </label>
 
-            <div>&nbsp;</div>
+
             <div class="border"></div>
-            <div>&nbsp;</div>
+
 
             <label class="control control-checkbox">
                 <span lang="en">HTTP(S)</span>
@@ -1801,8 +1799,6 @@
                 <input id="use_http" type="checkbox">
                 <span class="control_indicator"></span>
             </label>
-
-            <div class="border-hidden"></div>
 
             <div id="conf-settings-http" class="indent hidden">
                 <h3>
@@ -1830,8 +1826,6 @@
                            value="http_data_format_ruuvi_decoded"/>
                     <span class="control_indicator"></span>
                 </label>
-
-                <div class="border-hidden"></div>
 
                 <div>
                     <h3>
@@ -1905,7 +1899,7 @@
                                     <div class="input-with_validity_check-icon">
                                     </div>
                                 </div>
-                                <div>&nbsp;</div>
+
                             </div>
                         </div>
                         <div>
@@ -1950,12 +1944,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="border-hidden"></div>
                         <div class="border"></div>
                     </div>
                 </div>
-
-                <div class="border-hidden"></div>
 
                 <h2>
                     <span lang="en">SSL certificate</span>
@@ -1996,7 +1987,6 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="border-hidden"></div>
                     </div>
                 </div>
 
@@ -2028,8 +2018,6 @@
                     </div>
                 </div>
 
-                <div class="border-hidden"></div>
-
                 <div id="page-custom_server-http_validation_error" class="rd hidden">
                     <div class="block-centered">
                         <span lang="en">Validation failed</span>
@@ -2041,7 +2029,6 @@
             </div>
 
             <div class="border"></div>
-            <div class="border-hidden"></div>
 
             <label class="control control-checkbox">
                 <span lang="en">MQTT(S)</span>
@@ -2049,8 +2036,6 @@
                 <input id="use_mqtt" type="checkbox">
                 <span class="control_indicator"></span>
             </label>
-
-            <div class="border-hidden"></div>
 
             <div id="conf-settings-mqtt" class="indent hidden">
                 <div>
@@ -2085,8 +2070,6 @@
                     </label>
                 </div>
 
-                <div class="border-hidden"></div>
-
                 <div>
                     <h3>
                         <span lang="en">Data format</span>
@@ -2114,8 +2097,6 @@
                         <span class="control_indicator"></span>
                     </label>
                 </div>
-
-                <div class="border-hidden"></div>
 
                 <div>
                     <h3>
@@ -2164,8 +2145,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="border-hidden"></div>
 
                 <div>
                     <h3>
@@ -2231,19 +2210,13 @@
                     <span class="control_indicator"></span>
                 </label>
 
-                <div class="border-hidden"></div>
-
                 <h3>
                     <span lang="en">Topic prefix</span>
                     <span lang="fi">Aiheen etuliite</span>
                 </h3>
 
-                <div class="border-hidden"></div>
-
                 <div id="mqtt_prefix" class="input-primary">
                 </div>
-
-                <div class="border-hidden"></div>
 
                 <label class="conf-settings-checkbox control control-checkbox">
                     <span lang="en">Use ‘ruuvi’ on the prefix</span>
@@ -2269,14 +2242,10 @@
                     </label>
                 </div>
 
-                <div class="border-hidden"></div>
-
                 <h2>
                     <span lang="en">SSL certificate</span>
                     <span lang="fi">SSL-sertifikaatti</span>
                 </h2>
-
-                <div class="border-hidden"></div>
 
                 <div class="line-container">
                     <label class="control control-checkbox">
@@ -2313,7 +2282,7 @@
                             </button>
                         </div>
                     </div>
-                    <div>&nbsp;</div>
+
                 </div>
 
                 <div class="line-container">
@@ -2343,7 +2312,7 @@
                         </div>
                     </div>
                 </div>
-                <div>&nbsp;</div>
+
             </div>
 
             <div class="border"></div>
@@ -2376,8 +2345,6 @@
                 </label>
 
                 <div id="conf-settings-http_stat" class="indent hidden">
-                    <div class="border-hidden"></div>
-
                     <div class="border"></div>
 
                     <div>
@@ -2428,14 +2395,10 @@
                         </div>
                     </div>
 
-                    <div class="border-hidden"></div>
-
                     <h2>
                         <span lang="en">SSL certificate</span>
                         <span lang="fi">SSL-sertifikaatti</span>
                     </h2>
-
-                    <div class="border-hidden"></div>
 
                     <div class="line-container">
                         <label class="control control-checkbox">
@@ -2473,7 +2436,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div>&nbsp;</div>
+
                     </div>
 
                     <div class="line-container">
@@ -2484,8 +2447,6 @@
                             <span class="control_indicator"></span>
                         </label>
                     </div>
-
-                    <div class="border-hidden"></div>
 
                     <div id="stat_use_server_ssl_cert_options" class="indent hidden">
                         <div class="button-container-centered">
@@ -2505,7 +2466,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div>&nbsp;</div>
+
                     </div>
 
                     <div id="page-custom_server-http_stat_validation_error" class="rd hidden">
@@ -2517,7 +2478,7 @@
                         </div>
                     </div>
                     <div class="border"></div>
-                    <div>&nbsp;</div>
+
                 </div>
 
                 <label class="control control-radio">
@@ -2580,8 +2541,6 @@
                 <input id="ntp_sync_default" name="ntp_sync" value="ntp_sync_default" type="radio"/>
                 <span class="control_indicator"></span>
             </label>
-
-            <div class="border-hidden"></div>
 
             <div class="border"></div>
             <div id="page-ntp_config-advanced-button" class="btn-dropdown">
@@ -2707,7 +2666,6 @@
                 <span class="control_indicator"></span>
             </label>
 
-            <div class="border-hidden"></div>
             <div class="border"></div>
 
             <div id="page-scanning-advanced-button" class="btn-dropdown">
@@ -2825,8 +2783,6 @@
                             </div>
                         </div>
 
-                        <div class="border-hidden"></div>
-
                         <div>
                             <div>
                                 <label class="control control-radio">
@@ -2848,15 +2804,10 @@
                             </div>
                         </div>
 
-                        <div class="border-hidden"></div>
-                        <div class="border-hidden"></div>
-
                         <h3>
                             <span lang="en">Filtered sensors (or other Bluetooth devices)</span>
                             <span lang="fi">Suodatetut anturit (tai muut Bluetooth-laitteet)</span>
                         </h3>
-
-                        <div class="border-hidden"></div>
 
                         <div class="indent">
                             <span lang="en">Below you can see the list of Bluetooth devices heard by Ruuvi Gateway.
@@ -2871,8 +2822,6 @@
                                 ja napauttamalla Lisää.
                             </span>
                         </div>
-
-                        <div class="border-hidden"></div>
 
                         <div class="indent">
                             <table id="page_scanning-list_of_mac" class="page_scanning-list_of_mac">
@@ -2917,6 +2866,10 @@
 
             <div id="popup-info-icon-scanning" class="info-icon-overlay">
                 <div class="info-icon-popup">
+                    <h1>
+                        <span lang="en">Bluetooth long range</span>
+                        <span lang="fi">Pitkän kantaman Bluetooth</span>
+                    </h1>
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
                     <div class="info-icon-content">
                         <p>
@@ -2960,17 +2913,17 @@
                 </h2>
             </div>
 
-            <div>&nbsp;</div>
+
 
             <div class="block-centered">
                 <span lang="en">You can now close this window and disconnect from the Ruuvi Gateway's Wi-Fi hotspot.</span>
                 <span lang="fi">Voit nyt sulkea tämän ikkunan ja katkaista yhteyden Ruuvi Gatewayn Wi-Fi-yhteyspisteeseen.</span>
             </div>
 
-            <div>&nbsp;</div>
+
             <div class="border"></div>
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
+
+
 
             <h2>
                 <span lang="en">Connected to:</span>
@@ -3012,8 +2965,8 @@
                 <div id="dhcp"></div>
             </div>
 
-            <div>&nbsp;</div>
-            <div>&nbsp;</div>
+
+
 
             <h2>
                 <span lang="en">How to reconfigure?</span>
@@ -3062,8 +3015,8 @@
                     </p>
                 </div>
 
-                <div>&nbsp;</div>
-                <div>&nbsp;</div>
+
+
 
                 <div id="section-init_ssl_storage-status-ok" class="gr hidden">
                     <div class="block-centered">
@@ -3072,7 +3025,7 @@
                     </div>
                 </div>
                 <div id="section-init_ssl_storage-status-rebooting" class="hidden">
-                    <div>&nbsp;</div>
+
                     <div class="block-centered">
                         <span lang="en">The gateway is now being rebooted. Reconnection will take place in
                             <span class="section-init_ssl_storage-status-time_until_reconnect"></span> seconds.</span>
@@ -3100,7 +3053,7 @@
                     </button>
                 </div>
 
-                <div>&nbsp;</div>
+
             </div>
         </section>
 
