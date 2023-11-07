@@ -109,6 +109,10 @@ class PageLanAuth {
 
     let flag_show_advanced_dropdown = false
 
+    if (!this.#gwCfgLanAuth.lan_auth_type.isAuthDefault()) {
+      flag_show_advanced_dropdown = true
+    }
+
     this.#checkbox_use_api_key.setState(this.#gwCfgLanAuth.lan_auth_api_key_use)
     if (this.#gwCfgLanAuth.lan_auth_api_key_use) {
       flag_show_advanced_dropdown = true
@@ -246,7 +250,6 @@ class PageLanAuth {
     if (this.#radio_lan_auth_type_allow.isChecked()) {
       this.#checkbox_use_api_key.disable()
       this.#checkbox_use_api_key_rw.disable()
-      this.#sect_advanced.hide()
     } else {
       this.#checkbox_use_api_key.enable()
       this.#checkbox_use_api_key_rw.enable()
