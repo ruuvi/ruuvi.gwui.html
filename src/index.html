@@ -77,9 +77,13 @@
                     <span lang="fi">Kirjaudu sisään:</span>
                     <input id="auth-user" type="text" placeholder="" value="">
                 </label>
-                <label class="bold">
-                    <span lang="en">Password:</span>
-                    <span lang="fi">Salasana:</span>
+                <div>
+                    <h3>
+                        <label for="auth-pass">
+                            <span lang="en">Password:</span>
+                            <span lang="fi">Salasana:</span>
+                        </label>
+                    </h3>
                     <div class="input-password">
                         <input id="auth-pass" type="password" placeholder="" value="">
                         <div class="input-password-eye">
@@ -89,7 +93,7 @@
                             </div>
                         </div>
                     </div>
-                </label>
+                </div>
                 <div style="height: 30px">
                     <div id="auth-err-message" class="rd hidden">
                         <span lang="en">Incorrect username or password</span>
@@ -192,19 +196,23 @@
             </h2>
 
             <div>
-                <label class="control control-radio">
-                    <span lang="en">Ethernet</span>
-                    <span lang="fi">Ethernet</span>
-                    <input id="network_type_cable" name="network_type" value="cable" type="radio"/>
-                    <span class="control_indicator"></span>
-                </label>
+                <div class="control control-radio">
+                    <label>
+                        <span lang="en">Ethernet</span>
+                        <span lang="fi">Ethernet</span>
+                        <input id="network_type_cable" name="network_type" value="cable" type="radio"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                </div>
 
-                <label class="control control-radio">
-                    <span lang="en">Wi-Fi</span>
-                    <span lang="fi">Wi-Fi</span>
-                    <input id="network_type_wifi" name="network_type" value="wifi" type="radio" checked="checked"/>
-                    <span class="control_indicator"></span>
-                </label>
+                <div class="control control-radio">
+                    <label>
+                        <span lang="en">Wi-Fi</span>
+                        <span lang="fi">Wi-Fi</span>
+                        <input id="network_type_wifi" name="network_type" value="wifi" type="radio" checked="checked"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                </div>
             </div>
 
             <div class="border-hidden"></div>
@@ -315,51 +323,55 @@
             <div>&nbsp;</div>
 
             <div id="page-ethernet_connection-section-manual_settings" class="indent hidden">
-                <label class="font-bold">
+                <h3>
                     <span lang="en">Static IP address</span>
                     <span lang="fi">Kiinteä IP-osoite</span>
-                    <div class="input-with_validity_check">
-                        <input id="eth_static_ip" type="text" placeholder="" value="">
-                        <div class="input-with_validity_check-icon">
-                        </div>
+                </h3>
+                <div class="input-with_validity_check">
+                    <input id="eth_static_ip" type="text" placeholder="" value="">
+                    <div class="input-with_validity_check-icon">
                     </div>
-                </label>
-                <label class="font-bold">
+                </div>
+
+                <h3>
                     <span lang="en">Subnet mask</span>
                     <span lang="fi">Aliverkon peite</span>
-                    <div class="input-with_validity_check">
-                        <input id="eth_netmask" type="text" placeholder="" value="">
-                        <div class="input-with_validity_check-icon">
-                        </div>
+                </h3>
+                <div class="input-with_validity_check">
+                    <input id="eth_netmask" type="text" placeholder="" value="">
+                    <div class="input-with_validity_check-icon">
                     </div>
-                </label>
-                <label class="font-bold">
+                </div>
+
+                <h3>
                     <span lang="en">Gateway</span>
                     <span lang="fi">Yhdyskäytävä</span>
-                    <div class="input-with_validity_check">
-                        <input id="eth_gw" type="text" placeholder="" value="">
-                        <div class="input-with_validity_check-icon">
-                        </div>
+                </h3>
+                <div class="input-with_validity_check">
+                    <input id="eth_gw" type="text" placeholder="" value="">
+                    <div class="input-with_validity_check-icon">
                     </div>
-                </label>
-                <label class="font-bold">
+                </div>
+
+                <h3>
                     <span lang="en">Primary DNS IP address</span>
                     <span lang="fi">Ensisijaisen nimipalvelimen IP-osoite</span>
-                    <div class="input-with_validity_check">
-                        <input id="eth_dns1" type="text" placeholder="DNS 1" value="">
-                        <div class="input-with_validity_check-icon">
-                        </div>
+                </h3>
+                <div class="input-with_validity_check">
+                    <input id="eth_dns1" type="text" placeholder="DNS 1" value="">
+                    <div class="input-with_validity_check-icon">
                     </div>
-                </label>
-                <label class="font-bold">
+                </div>
+
+                <h3>
                     <span lang="en">Secondary DNS IP address</span>
                     <span lang="fi">Toissijaisen nimipalvelimen IP-osoite</span>
-                    <div class="input-with_validity_check">
-                        <input id="eth_dns2" type="text" placeholder="DNS 2" value="">
-                        <div class="input-with_validity_check-icon">
-                        </div>
+                </h3>
+                <div class="input-with_validity_check">
+                    <input id="eth_dns2" type="text" placeholder="DNS 2" value="">
+                    <div class="input-with_validity_check-icon">
                     </div>
-                </label>
+                </div>
             </div>
 
             <div class="button-container">
@@ -464,22 +476,22 @@
 
             <div style="position: absolute" id="page-wifi_connection-ssid_password" class="indent hidden">
                 <div id="input_ssid_block">
-                    <div class="border-hidden"></div>
-                    <div>
-                        <label for="manual_ssid" class="font-bold-wifi-ssid-password">SSID</label>
-                    </div>
-                    <div>
-                        <input id="manual_ssid" class="connection-field-manual" type="text" value="">
-                    </div>
+                    <h3>
+                        <label for="manual_ssid">
+                            <span lang="en">SSID</span>
+                            <span lang="fi">SSID</span>
+                        </label>
+                    </h3>
+                    <input id="manual_ssid" class="connection-field-manual" type="text" value="">
                 </div>
 
                 <div id="input_password_block" class="hidden">
-                    <div>
-                        <label for="pwd" class="font-bold-wifi-ssid-password">
+                    <h3>
+                        <label for="pwd">
                             <span lang="en">Password</span>
                             <span lang="fi">Salasana</span>
                         </label>
-                    </div>
+                    </h3>
                     <div class="input-password">
                         <input id="pwd" type="password" placeholder="Password" class="connection-field" value="">
                         <div class="input-password-eye">
@@ -622,16 +634,20 @@
                     </div>
                     <a class="info-icon-button" href="#popup-info-icon-button-fw_update_url_title">i</a>
                 </div>
-                <div class="font-bold input-container">
-                    <label for="page-software_update-fw_update_url" class="info-icon-container">
-                    </label>
+                <div class="input-container">
+                    <h3>
+                        <label for="page-software_update-fw_update_url" class="info-icon-container">
+                        </label>
+                    </h3>
                     <div class="input-with_validity_check">
                         <input id="page-software_update-fw_update_url" type="text" value="">
                         <div class="input-with_validity_check-icon">
                         </div>
                     </div>
                 </div>
-                <div>&nbsp;</div>
+
+                <div class="border-hidden"></div>
+
                 <div class="button-container-centered">
                     <button class="btn" id="page-software_update-button-fw_update_url-check" type="button">
                         <span lang="en">Check</span>
@@ -669,9 +685,11 @@
                         <a class="info-icon-button" href="#popup-info-icon-software_update">i</a>
                     </label>
                 </div>
-                <div id="software_update-url-div" class="font-bold input-container indent">
-                    <label for="software_update-url">
-                    </label>
+                <div id="software_update-url-div" class="input-container indent">
+                    <h3>
+                        <label for="software_update-url">
+                        </label>
+                    </h3>
                     <div class="input-with_validity_check">
                         <input id="software_update-url" type="text" value="">
                         <div class="input-with_validity_check-icon">
@@ -794,36 +812,44 @@
 
                 <div>&nbsp;</div>
                 <div>&nbsp;</div>
-                <div class="block-centered font-bold">
-                    <span lang="en">Downloading the main processor software</span>
-                    <span lang="fi">Ladataan pääsuoritinohjelmistoa</span>
+                <div class="block-centered">
+                    <h2>
+                        <span lang="en">Downloading the main processor software</span>
+                        <span lang="fi">Ladataan pääsuoritinohjelmistoa</span>
+                    </h2>
                 </div>
                 <div class="block-centered">
                     <progress id="software_update_progress-stage1" max="100" value="0"></progress>
                 </div>
 
                 <div>&nbsp;</div>
-                <div class="block-centered font-bold">
-                    <span lang="en">Downloading the user interface</span>
-                    <span lang="fi">Ladataan käyttöliittymätiedostoja</span>
+                <div class="block-centered">
+                    <h2>
+                        <span lang="en">Downloading the user interface</span>
+                        <span lang="fi">Ladataan käyttöliittymätiedostoja</span>
+                    </h2>
                 </div>
                 <div class="block-centered">
                     <progress id="software_update_progress-stage2" max="100" value="0"></progress>
                 </div>
 
                 <div>&nbsp;</div>
-                <div class="block-centered font-bold">
-                    <span lang="en">Downloading the coprocessor software</span>
-                    <span lang="fi">Ladataan apusuoritinohjelmistoa</span>
+                <div class="block-centered">
+                    <h2>
+                        <span lang="en">Downloading the coprocessor software</span>
+                        <span lang="fi">Ladataan apusuoritinohjelmistoa</span>
+                    </h2>
                 </div>
                 <div class="block-centered">
                     <progress id="software_update_progress-stage3" max="100" value="0"></progress>
                 </div>
 
                 <div>&nbsp;</div>
-                <div class="block-centered font-bold">
-                    <span lang="en">Finishing the setup</span>
-                    <span lang="fi">Viimeistellään asennusta</span>
+                <div class="block-centered">
+                    <h2>
+                        <span lang="en">Finishing the setup</span>
+                        <span lang="fi">Viimeistellään asennusta</span>
+                    </h2>
                 </div>
                 <div class="block-centered">
                     <progress id="software_update_progress-stage4" max="100" value="0"></progress>
@@ -1265,7 +1291,7 @@
                         <span lang="fi">Viikonpäivät</span>
                     </h3>
 
-                    <div class="weekday-btn-group">
+                    <div>
                         <div>
                             <label class="control control-checkbox">
                                 <span lang="en">Monday</span>
@@ -1336,6 +1362,8 @@
                             </label>
                         </div>
                     </div>
+
+                    <div>&nbsp;</div>
 
                     <h3>
                         <span lang="en">Time range</span>
@@ -1526,24 +1554,29 @@
                 <span class="control_indicator"></span>
             </label>
             <div id="conf-lan_auth-login-password" class="hidden indent">
-                <label>
-                    <span lang="en">Login:</span>
-                    <span lang="fi">Käyttäjätunnus:</span>
-                    <input id="lan_auth-user" type="text" placeholder="" value="">
-                </label>
-                <label>
-                    <span lang="en">Password:</span>
-                    <span lang="fi">Salasana:</span>
-                    <div class="input-password">
-                        <input id="lan_auth-pass" type="password" placeholder="" value="">
-                        <div class="input-password-eye">
-                            <div class="eye">
-                            </div>
-                            <div class="eye-slash hidden">
-                            </div>
+                <h3>
+                    <label for="lan_auth-user">
+                        <span lang="en">Login:</span>
+                        <span lang="fi">Käyttäjätunnus:</span>
+                    </label>
+                </h3>
+                <input id="lan_auth-user" type="text" placeholder="" value="">
+
+                <h3>
+                    <label for="lan_auth-pass">
+                        <span lang="en">Password:</span>
+                        <span lang="fi">Salasana:</span>
+                    </label>
+                </h3>
+                <div class="input-password">
+                    <input id="lan_auth-pass" type="password" placeholder="" value="">
+                    <div class="input-password-eye">
+                        <div class="eye">
+                        </div>
+                        <div class="eye-slash hidden">
                         </div>
                     </div>
-                </label>
+                </div>
             </div>
 
             <label class="control control-radio">
@@ -1585,11 +1618,14 @@
                             </label>
                         </div>
                         <div id="settings_lan_auth-api_key" class="indent hidden">
-                            <label for="lan_auth-api_key">
-                                <span lang="en">API key (bearer token):</span>
-                                <span lang="fi">API-avain (haltijatunnus):</span>
-                                <input id="lan_auth-api_key" type="text" value="">
-                            </label>
+                            <h3>
+                                <label for="lan_auth-api_key">
+                                    <span lang="en">API key (bearer token):</span>
+                                    <span lang="fi">API-avain (haltijatunnus):</span>
+                                </label>
+                            </h3>
+                            <input id="lan_auth-api_key" type="text" value="">
+
                             <div class="ingress">
                                 <p lang="en">
                                     Store this token securely if you want to use this API programmatically.
@@ -1610,11 +1646,14 @@
                             </label>
                         </div>
                         <div id="settings_lan_auth-api_key_rw" class="indent hidden">
-                            <label for="lan_auth-api_key_rw">
-                                <span lang="en">API key (bearer token):</span>
-                                <span lang="fi">API-avain (haltijatunnus):</span>
-                                <input id="lan_auth-api_key_rw" type="text" value="">
-                            </label>
+                            <h3>
+                                <label for="lan_auth-api_key_rw">
+                                    <span lang="en">API key (bearer token):</span>
+                                    <span lang="fi">API-avain (haltijatunnus):</span>
+                                </label>
+                            </h3>
+                            <input id="lan_auth-api_key_rw" type="text" value="">
+
                             <div class="ingress">
                                 <p lang="en">
                                     Store this token securely if you want to use the configuration interface
@@ -1762,13 +1801,14 @@
                 <input id="use_http" type="checkbox">
                 <span class="control_indicator"></span>
             </label>
-            <div>&nbsp;</div>
+
+            <div class="border-hidden"></div>
 
             <div id="conf-settings-http" class="indent hidden">
-                <label class="font-bold">
+                <h3>
                     <span lang="en">Data format</span>
                     <span lang="fi">Tietojen muoto</span>
-                </label>
+                </h3>
                 <label class="control control-radio">
                     <span lang="en">Ruuvi raw data</span>
                     <span lang="fi">Ruuvi raakadata</span>
@@ -1791,181 +1831,204 @@
                     <span class="control_indicator"></span>
                 </label>
 
-                <div>&nbsp;</div>
+                <div class="border-hidden"></div>
 
-                <div class="font-bold">
-                    <label for="http_url">
-                        <span lang="en">URL address</span>
-                        <span lang="fi">URL-osoite</span>
-                    </label>
+                <div>
+                    <h3>
+                        <label for="http_url">
+                            <span lang="en">URL address</span>
+                            <span lang="fi">URL-osoite</span>
+                        </label>
+                    </h3>
                     <div class="input-with_validity_check">
                         <input id="http_url" type="text" placeholder="" value="">
                         <div class="input-with_validity_check-icon">
                         </div>
                     </div>
                 </div>
+
                 <div id="http_http_period_div">
-                    <label class="font-bold">
-                        <span class="text-container">
+                    <h3>
+                        <label for="http_period">
                             <span lang="en">Sending interval (seconds)</span>
                             <span lang="fi">Lähetysväli (sekuntia)</span>
-                        </span>
-                        <div class="input-with_validity_check" style="width: 100%">
-                            <input id="http_period" type="text" value="">
-                            <div class="input-with_validity_check-icon">
-                            </div>
+                        </label>
+                    </h3>
+                    <div class="input-with_validity_check" style="width: 100%">
+                        <input id="http_period" type="text" value="">
+                        <div class="input-with_validity_check-icon">
                         </div>
-                    </label>
+                    </div>
                 </div>
 
-                <label class="control control-checkbox">
-                    <span lang="en">Use authentication</span>
-                    <span lang="fi">Käytä todennusta</span>
-                    <input id="use_http_auth" type="checkbox">
-                    <span class="control_indicator"></span>
-                </label>
-                <div id="http_auth_options" class="indent">
-                    <label class="control control-radio">
-                        <span lang="en">Basic authentication</span>
-                        <span lang="fi">Käyttäjätunnus ja salasana</span>
-                        <input id="http_auth_basic" name="http_auth" type="radio" value="http_auth_basic"/>
+                <div>
+                    <label class="control control-checkbox">
+                        <span lang="en">Use authentication</span>
+                        <span lang="fi">Käytä todennusta</span>
+                        <input id="use_http_auth" type="checkbox">
                         <span class="control_indicator"></span>
                     </label>
-                    <div id="http_auth_basic_params" class="indent">
-                        <label class="font-bold">
-                            <span lang="en">Username (optional)</span>
-                            <span lang="fi">Käyttäjänimi (valinnainen)</span>
-                            <div class="input-with_validity_check">
-                                <input id="http_user" type="text" placeholder="" value="">
-                                <div class="input-with_validity_check-icon">
-                                </div>
-                            </div>
-                        </label>
-                        <label class="font-bold">
-                            <span lang="en">Password (optional)</span>
-                            <span lang="fi">Salasana (valinnainen)</span>
-                            <div class="input-password input-with_validity_check">
-                                <input id="http_pass" type="password" placeholder="" value="">
-                                <div class="input-password-eye">
-                                    <div class="eye">
-                                    </div>
-                                    <div class="eye-slash hidden">
+                    <div id="http_auth_options" class="indent">
+                        <div>
+                            <label class="control control-radio">
+                                <span lang="en">Basic authentication</span>
+                                <span lang="fi">Käyttäjätunnus ja salasana</span>
+                                <input id="http_auth_basic" name="http_auth" type="radio" value="http_auth_basic"/>
+                                <span class="control_indicator"></span>
+                            </label>
+                            <div id="http_auth_basic_params" class="indent">
+                                <h3>
+                                    <label for="http_user">
+                                        <span lang="en">Username (optional)</span>
+                                        <span lang="fi">Käyttäjänimi (valinnainen)</span>
+                                    </label>
+                                </h3>
+                                <div class="input-with_validity_check">
+                                    <input id="http_user" type="text" placeholder="" value="">
+                                    <div class="input-with_validity_check-icon">
                                     </div>
                                 </div>
-                                <div class="input-with_validity_check-icon">
+                                <h3>
+                                    <label for="http_pass">
+                                        <span lang="en">Password (optional)</span>
+                                        <span lang="fi">Salasana (valinnainen)</span>
+                                    </label>
+                                </h3>
+                                <div class="input-password input-with_validity_check">
+                                    <input id="http_pass" type="password" placeholder="" value="">
+                                    <div class="input-password-eye">
+                                        <div class="eye">
+                                        </div>
+                                        <div class="eye-slash hidden">
+                                        </div>
+                                    </div>
+                                    <div class="input-with_validity_check-icon">
+                                    </div>
                                 </div>
+                                <div>&nbsp;</div>
                             </div>
-                        </label>
-                        <div>&nbsp;</div>
-                    </div>
-                    <label class="control control-radio">
-                        <span lang="en">Bearer authentication</span>
-                        <span lang="fi">Bearer-token</span>
-                        <input id="http_auth_bearer" name="http_auth" type="radio" value="http_auth_bearer"/>
-                        <span class="control_indicator"></span>
-                    </label>
-                    <div id="http_auth_bearer_params" class="indent">
-                        <label class="font-bold">
-                            <span lang="en">API key (bearer token):</span>
-                            <span lang="fi">API-avain (bearer token):</span>
-                            <div class="input-password input-with_validity_check">
-                                <input id="http_auth_bearer_api_key" type="text" placeholder="" value="">
-                                <div class="input-with_validity_check-icon">
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                    <label class="control control-radio">
-                        <span lang="en">Token</span>
-                        <span lang="fi">Token</span>
-                        <input id="http_auth_token" name="http_auth" type="radio" value="http_auth_token"/>
-                        <span class="control_indicator"></span>
-                    </label>
-                    <div id="http_auth_token_params" class="indent">
-                        <label class="font-bold">
-                            <span lang="en">API key (token):</span>
-                            <span lang="fi">API-avain (token):</span>
-                            <div class="input-password input-with_validity_check">
-                                <input id="http_auth_token_api_key" type="text" placeholder="" value="">
-                                <div class="input-with_validity_check-icon">
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                    <div>&nbsp;</div>
-                    <div class="border"></div>
-                </div>
-                <div>&nbsp;</div>
-
-                <label class="font-bold">
-                    <span lang="en">SSL certificate</span>
-                    <span lang="fi">SSL-sertifikaatti</span>
-                </label>
-
-                <div>&nbsp;</div>
-
-                <label class="control control-checkbox">
-                    <span lang="en">Use client SSL certificate (*.pem)</span>
-                    <span lang="fi">Käytä asiakkaan SSL-varmennetta (*.pem)</span>
-                    <input id="http_use_client_ssl_cert" type="checkbox">
-                    <span class="control_indicator"></span>
-                </label>
-                <div id="http_use_client_ssl_cert_options" class="hidden indent">
-                    <div class="button-container-centered">
-                        <div class="button-upload">
-                            <label>
-                                <input type="file" accept=".pem" class="hidden" hidden>
-                            </label>
-                            <button class="btn btn-narrow btn-two-rows" id="http-button_upload_client_cert" type="button">
-                                <span lang="en">Upload cert</span>
-                                <span lang="fi">Lataa sert</span>
-                            </button>
-                        </div>
-                        <div class="button-upload">
-                            <label>
-                                <input type="file" accept=".pem" class="hidden" hidden>
-                            </label>
-                            <button class="btn btn-narrow btn-two-rows" id="http-button_upload_client_key" type="button">
-                                <span lang="en">Upload private key</span>
-                                <span lang="fi">Lataa yksityinen avain</span>
-                            </button>
                         </div>
                         <div>
-                            <button class="btn btn-narrow btn-two-rows" id="http-button_remove_client_cert_and_key" type="button">
-                                <span lang="en">Remove cert & key</span>
-                                <span lang="fi">Poista sert ja avain</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div>&nbsp;</div>
-                </div>
-                <label class="control control-checkbox">
-                    <span lang="en">Use custom SSL certificate for the server (*.pem)</span>
-                    <span lang="fi">Käytä omaa SSL-varmennetta palvelimelle (*.pem)</span>
-                    <input id="http_use_server_ssl_cert" type="checkbox">
-                    <span class="control_indicator"></span>
-                </label>
-                <div id="http_use_server_ssl_cert_options" class="hidden indent">
-                    <div class="button-container-centered">
-                        <div class="button-upload">
-                            <label>
-                                <input type="file" accept=".pem" class="hidden" hidden>
+                            <label class="control control-radio">
+                                <span lang="en">Bearer authentication</span>
+                                <span lang="fi">Bearer-token</span>
+                                <input id="http_auth_bearer" name="http_auth" type="radio" value="http_auth_bearer"/>
+                                <span class="control_indicator"></span>
                             </label>
-                            <button class="btn btn-narrow btn-two-rows" id="http-button_upload_server_cert" type="button">
-                                <span lang="en">Upload cert</span>
-                                <span lang="fi">Lataa sert</span>
-                            </button>
+                            <div id="http_auth_bearer_params" class="indent">
+                                <h3>
+                                    <label for="http_auth_bearer_api_key">
+                                        <span lang="en">API key (bearer token):</span>
+                                        <span lang="fi">API-avain (bearer token):</span>
+                                    </label>
+                                </h3>
+                                <div class="input-password input-with_validity_check">
+                                    <input id="http_auth_bearer_api_key" type="text" placeholder="" value="">
+                                    <div class="input-with_validity_check-icon">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="button-upload">
-                            <button class="btn btn-narrow btn-two-rows" id="http-button_remove_server_cert" type="button">
-                                <span lang="en">Remove cert</span>
-                                <span lang="fi">Poista sert</span>
-                            </button>
+                        <div>
+                            <label class="control control-radio">
+                                <span lang="en">Token</span>
+                                <span lang="fi">Token</span>
+                                <input id="http_auth_token" name="http_auth" type="radio" value="http_auth_token"/>
+                                <span class="control_indicator"></span>
+                            </label>
+                            <div id="http_auth_token_params" class="indent">
+                                <h3>
+                                    <label for="http_auth_token_api_key">
+                                        <span lang="en">API key (token):</span>
+                                        <span lang="fi">API-avain (token):</span>
+                                    </label>
+                                </h3>
+                                <div class="input-password input-with_validity_check">
+                                    <input id="http_auth_token_api_key" type="text" placeholder="" value="">
+                                    <div class="input-with_validity_check-icon">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-hidden"></div>
+                        <div class="border"></div>
+                    </div>
+                </div>
+
+                <div class="border-hidden"></div>
+
+                <h2>
+                    <span lang="en">SSL certificate</span>
+                    <span lang="fi">SSL-sertifikaatti</span>
+                </h2>
+
+                <div>
+                    <label class="control control-checkbox">
+                        <span lang="en">Use client SSL certificate (*.pem)</span>
+                        <span lang="fi">Käytä asiakkaan SSL-varmennetta (*.pem)</span>
+                        <input id="http_use_client_ssl_cert" type="checkbox">
+                        <span class="control_indicator"></span>
+                    </label>
+                    <div id="http_use_client_ssl_cert_options" class="hidden indent">
+                        <div class="button-container-centered">
+                            <div class="button-upload">
+                                <label>
+                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                </label>
+                                <button class="btn btn-narrow btn-two-rows" id="http-button_upload_client_cert" type="button">
+                                    <span lang="en">Upload cert</span>
+                                    <span lang="fi">Lataa sert</span>
+                                </button>
+                            </div>
+                            <div class="button-upload">
+                                <label>
+                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                </label>
+                                <button class="btn btn-narrow btn-two-rows" id="http-button_upload_client_key" type="button">
+                                    <span lang="en">Upload private key</span>
+                                    <span lang="fi">Lataa yksityinen avain</span>
+                                </button>
+                            </div>
+                            <div>
+                                <button class="btn btn-narrow btn-two-rows" id="http-button_remove_client_cert_and_key" type="button">
+                                    <span lang="en">Remove cert & key</span>
+                                    <span lang="fi">Poista sert ja avain</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="border-hidden"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="control control-checkbox">
+                        <span lang="en">Use custom SSL certificate for the server (*.pem)</span>
+                        <span lang="fi">Käytä omaa SSL-varmennetta palvelimelle (*.pem)</span>
+                        <input id="http_use_server_ssl_cert" type="checkbox">
+                        <span class="control_indicator"></span>
+                    </label>
+                    <div id="http_use_server_ssl_cert_options" class="hidden indent">
+                        <div class="button-container-centered">
+                            <div class="button-upload">
+                                <label>
+                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                </label>
+                                <button class="btn btn-narrow btn-two-rows" id="http-button_upload_server_cert" type="button">
+                                    <span lang="en">Upload cert</span>
+                                    <span lang="fi">Lataa sert</span>
+                                </button>
+                            </div>
+                            <div class="button-upload">
+                                <button class="btn btn-narrow btn-two-rows" id="http-button_remove_server_cert" type="button">
+                                    <span lang="en">Remove cert</span>
+                                    <span lang="fi">Poista sert</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div>&nbsp;</div>
+                <div class="border-hidden"></div>
 
                 <div id="page-custom_server-http_validation_error" class="rd hidden">
                     <div class="block-centered">
@@ -1978,7 +2041,7 @@
             </div>
 
             <div class="border"></div>
-            <div>&nbsp;</div>
+            <div class="border-hidden"></div>
 
             <label class="control control-checkbox">
                 <span lang="en">MQTT(S)</span>
@@ -1986,14 +2049,15 @@
                 <input id="use_mqtt" type="checkbox">
                 <span class="control_indicator"></span>
             </label>
-            <div>&nbsp;</div>
-            <div id="conf-settings-mqtt" class="indent hidden">
 
+            <div class="border-hidden"></div>
+
+            <div id="conf-settings-mqtt" class="indent hidden">
                 <div>
-                    <label class="font-bold">
+                    <h3>
                         <span lang="en">MQTT transport type</span>
                         <span lang="fi">MQTT-kuljetustyyppi</span>
-                    </label>
+                    </h3>
                     <label class="control control-radio">
                         <span lang="en">MQTT over unencrypted TCP</span>
                         <span lang="fi">MQTT salaamattoman TCP kautta</span>
@@ -2024,10 +2088,10 @@
                 <div class="border-hidden"></div>
 
                 <div>
-                    <label class="font-bold">
+                    <h3>
                         <span lang="en">Data format</span>
                         <span lang="fi">Tietojen muoto</span>
-                    </label>
+                    </h3>
                     <label class="control control-radio">
                         <span lang="en">Ruuvi raw data</span>
                         <span lang="fi">Ruuvi raakadataa</span>
@@ -2053,65 +2117,77 @@
 
                 <div class="border-hidden"></div>
 
-                <label class="font-bold">
-                    <span class="text-container">
-                        <span lang="en">Server</span>
-                        <span lang="fi">Palvelin</span>
-                    </span>
+                <div>
+                    <h3>
+                        <label for="mqtt_server">
+                            <span lang="en">Server</span>
+                            <span lang="fi">Palvelin</span>
+                        </label>
+                    </h3>
                     <div class="input-server">
                         <input id="mqtt_server" type="text">
                     </div>
-                </label>
-                <label class="font-bold">
-                    <span class="text-container">
-                        <span lang="en">Port</span>
-                        <span lang="fi">Portti</span>
-                    </span>
+                </div>
+
+                <div>
+                    <h3>
+                        <label for="mqtt_port">
+                            <span lang="en">Port</span>
+                            <span lang="fi">Portti</span>
+                        </label>
+                    </h3>
                     <div class="input-with_validity_check" style="flex-grow: unset; width: auto;">
                         <input id="mqtt_port" type="text" placeholder="Port" style="width: calc(5ch + 4px + 2 * var(--input-padding-right-and-left));">
                         <div class="input-with_validity_check-icon">
                         </div>
                     </div>
-                </label>
+                </div>
 
-                <label class="control control-checkbox">
-                    <span lang="en">Define sending interval instead of relaying messages instantly</span>
-                    <span lang="fi">Määritä lähetysväli, älä käytä välitöntä lähetystä</span>
-                    <input id="use_mqtt_periodic_sending" type="checkbox">
-                    <span class="control_indicator"></span>
-                </label>
-                <div id="mqtt_sending_interval_div" class="indent">
-                    <label class="font-bold">
-                        <span class="text-container">
-                            <span lang="en">Sending interval (seconds)</span>
-                            <span lang="fi">Lähetysväli</span>
-                        </span>
+                <div>
+                    <label class="control control-checkbox">
+                        <span lang="en">Define sending interval instead of relaying messages instantly</span>
+                        <span lang="fi">Määritä lähetysväli, älä käytä välitöntä lähetystä</span>
+                        <input id="use_mqtt_periodic_sending" type="checkbox">
+                        <span class="control_indicator"></span>
+                    </label>
+                    <div id="mqtt_sending_interval_div" class="indent">
+                        <h3>
+                            <label for="mqtt_sending_interval">
+                                <span lang="en">Sending interval (seconds)</span>
+                                <span lang="fi">Lähetysväli</span>
+                            </label>
+                        </h3>
                         <div class="input-with_validity_check" style="width: 100%">
                             <input id="mqtt_sending_interval" type="text" value="">
                             <div class="input-with_validity_check-icon">
                             </div>
                         </div>
-                    </label>
+                    </div>
                 </div>
 
-                <div>&nbsp;</div>
+                <div class="border-hidden"></div>
 
-                <label>
-                    <span class="font-bold">
-                        <span lang="en">Username (optional)</span>
-                        <span lang="fi">Käyttäjänimi (valinnainen)</span>
-                    </span>
+                <div>
+                    <h3>
+                        <label for="mqtt_user">
+                            <span lang="en">Username (optional)</span>
+                            <span lang="fi">Käyttäjänimi (valinnainen)</span>
+                        </label>
+                    </h3>
                     <div class="input-with_validity_check">
                         <input id="mqtt_user" type="text" placeholder="User" value="">
                         <div class="input-with_validity_check-icon">
                         </div>
                     </div>
-                </label>
-                <label>
-                    <span class="font-bold">
-                        <span lang="en">Password (optional)</span>
-                        <span lang="fi">Salasana (valinnainen)</span>
-                    </span>
+                </div>
+
+                <div>
+                    <h3>
+                        <label for="mqtt_pass">
+                            <span lang="en">Password (optional)</span>
+                            <span lang="fi">Salasana (valinnainen)</span>
+                        </label>
+                    </h3>
                     <div class="input-password input-with_validity_check">
                         <input id="mqtt_pass" type="password" placeholder="Password" value="">
                         <div class="input-password-eye">
@@ -2123,7 +2199,8 @@
                         <div class="input-with_validity_check-icon">
                         </div>
                     </div>
-                </label>
+                </div>
+
                 <div id="page-custom_server-mqtt_validation_error" class="rd hidden">
                     <div class="block-centered">
                         <span lang="en">Validation failed</span>
@@ -2132,17 +2209,20 @@
                     <div id="page-custom_server-mqtt_validation_error-desc" class="block-centered">
                     </div>
                 </div>
-                <label class="font-bold">
-                    <span class="text-container">
-                        <span lang="en">Client name</span>
-                        <span lang="fi">Asiakastunnus</span>
-                    </span>
+
+                <div>
+                    <h3>
+                        <label for="mqtt_client_id">
+                            <span lang="en">Client name</span>
+                            <span lang="fi">Asiakastunnus</span>
+                        </label>
+                    </h3>
                     <div class="input-with_validity_check">
                         <input id="mqtt_client_id" type="text" placeholder="MAC-address is used if empty" value="">
                         <div class="input-with_validity_check-icon">
                         </div>
                     </div>
-                </label>
+                </div>
 
                 <label class="conf-settings-checkbox control control-checkbox">
                     <span lang="en">Disable the use of retained messages</span>
@@ -2151,19 +2231,19 @@
                     <span class="control_indicator"></span>
                 </label>
 
-                <div>&nbsp;</div>
+                <div class="border-hidden"></div>
 
-                <label class="font-bold">
+                <h3>
                     <span lang="en">Topic prefix</span>
                     <span lang="fi">Aiheen etuliite</span>
-                </label>
+                </h3>
 
-                <div>&nbsp;</div>
+                <div class="border-hidden"></div>
 
                 <div id="mqtt_prefix" class="input-primary">
                 </div>
 
-                <div>&nbsp;</div>
+                <div class="border-hidden"></div>
 
                 <label class="conf-settings-checkbox control control-checkbox">
                     <span lang="en">Use ‘ruuvi’ on the prefix</span>
@@ -2189,14 +2269,14 @@
                     </label>
                 </div>
 
-                <div>&nbsp;</div>
+                <div class="border-hidden"></div>
 
-                <label class="font-bold">
+                <h2>
                     <span lang="en">SSL certificate</span>
                     <span lang="fi">SSL-sertifikaatti</span>
-                </label>
+                </h2>
 
-                <div>&nbsp;</div>
+                <div class="border-hidden"></div>
 
                 <div class="line-container">
                     <label class="control control-checkbox">
@@ -2296,31 +2376,45 @@
                 </label>
 
                 <div id="conf-settings-http_stat" class="indent hidden">
-                    <div>&nbsp;</div>
+                    <div class="border-hidden"></div>
 
                     <div class="border"></div>
 
-                    <label class="font-bold">
-                        <span lang="en">HTTP server where to send statistics</span>
-                        <span lang="fi">HTTP-palvelin, jonne statistiikkatiedot lähetetään</span>
+                    <div>
+                        <h3>
+                            <label for="http_stat_url">
+                                <span lang="en">HTTP server where to send statistics</span>
+                                <span lang="fi">HTTP-palvelin, jonne statistiikkatiedot lähetetään</span>
+                            </label>
+                        </h3>
                         <div class="input-with_validity_check">
                             <input id="http_stat_url" type="text" placeholder="" value="">
                             <div class="input-with_validity_check-icon">
                             </div>
                         </div>
-                    </label>
-                    <label class="font-bold">
-                        <span lang="en">Username (optional)</span>
-                        <span lang="fi">Käyttäjänimi (valinnainen)</span>
+                    </div>
+
+                    <div>
+                        <h3>
+                            <label for="http_stat_user">
+                                <span lang="en">Username (optional)</span>
+                                <span lang="fi">Käyttäjänimi (valinnainen)</span>
+                            </label>
+                        </h3>
                         <div class="input-with_validity_check">
                             <input id="http_stat_user" type="text" placeholder="" value="">
                             <div class="input-with_validity_check-icon">
                             </div>
                         </div>
-                    </label>
-                    <label class="font-bold">
-                        <span lang="en">Password (optional)</span>
-                        <span lang="fi">Salasana (valinnainen)</span>
+                    </div>
+
+                    <div>
+                        <h3>
+                            <label for="http_stat_pass">
+                                <span lang="en">Password (optional)</span>
+                                <span lang="fi">Salasana (valinnainen)</span>
+                            </label>
+                        </h3>
                         <div class="input-password input-with_validity_check">
                             <input id="http_stat_pass" type="password" placeholder="" value="">
                             <div class="input-password-eye">
@@ -2332,16 +2426,16 @@
                             <div class="input-with_validity_check-icon">
                             </div>
                         </div>
-                    </label>
+                    </div>
 
-                    <div>&nbsp;</div>
+                    <div class="border-hidden"></div>
 
-                    <label class="font-bold">
+                    <h2>
                         <span lang="en">SSL certificate</span>
                         <span lang="fi">SSL-sertifikaatti</span>
-                    </label>
+                    </h2>
 
-                    <div>&nbsp;</div>
+                    <div class="border-hidden"></div>
 
                     <div class="line-container">
                         <label class="control control-checkbox">
@@ -2351,6 +2445,7 @@
                             <span class="control_indicator"></span>
                         </label>
                     </div>
+
                     <div id="stat_use_client_ssl_cert_options" class="indent hidden">
                         <div class="button-container-centered">
                             <div class="button-upload">
@@ -2389,7 +2484,9 @@
                             <span class="control_indicator"></span>
                         </label>
                     </div>
-                    <div>&nbsp;</div>
+
+                    <div class="border-hidden"></div>
+
                     <div id="stat_use_server_ssl_cert_options" class="indent hidden">
                         <div class="button-container-centered">
                             <div class="button-upload">
@@ -2484,7 +2581,7 @@
                 <span class="control_indicator"></span>
             </label>
 
-            <div>&nbsp;</div>
+            <div class="border-hidden"></div>
 
             <div class="border"></div>
             <div id="page-ntp_config-advanced-button" class="btn-dropdown">
@@ -2505,26 +2602,45 @@
                     <span class="control_indicator"></span>
                 </label>
                 <div id="page-ntp_config-custom_options" class="indent hidden">
-                    <label class="font-bold">
-                        <span lang="en">Server 1</span>
-                        <span lang="fi">Palvelin 1</span>
+                    <div>
+                        <h3>
+                            <label for="ntp_server1">
+                                <span lang="en">Server 1</span>
+                                <span lang="fi">Palvelin 1</span>
+                            </label>
+                        </h3>
                         <input id="ntp_server1" type="text" value="time.google.com">
-                    </label>
-                    <label class="font-bold">
-                        <span lang="en">Server 2</span>
-                        <span lang="fi">Palvelin 2</span>
+                    </div>
+
+                    <div>
+                        <h3>
+                            <label for="ntp_server2">
+                                <span lang="en">Server 2</span>
+                                <span lang="fi">Palvelin 2</span>
+                            </label>
+                        </h3>
                         <input id="ntp_server2" type="text" value="time.cloudflare.com">
-                    </label>
-                    <label class="font-bold">
-                        <span lang="en">Server 3</span>
-                        <span lang="fi">Palvelin 3</span>
+                    </div>
+
+                    <div>
+                        <h3>
+                            <label for="ntp_server3">
+                                <span lang="en">Server 3</span>
+                                <span lang="fi">Palvelin 3</span>
+                            </label>
+                        </h3>
                         <input id="ntp_server3" type="text" value="time.nist.gov">
-                    </label>
-                    <label class="font-bold">
-                        <span lang="en">Server 4</span>
-                        <span lang="fi">Palvelin 4</span>
+                    </div>
+
+                    <div>
+                        <h3>
+                            <label for="ntp_server4">
+                                <span lang="en">Server 4</span>
+                                <span lang="fi">Palvelin 4</span>
+                            </label>
+                        </h3>
                         <input id="ntp_server4" type="text" value="pool.ntp.org">
-                    </label>
+                    </div>
                 </div>
                 <label class="control control-radio">
                     <span lang="en">Use DHCP to get a set of NTP servers for time synchronisation</span>
@@ -2591,11 +2707,11 @@
                 <span class="control_indicator"></span>
             </label>
 
-            <div>&nbsp;</div>
-
+            <div class="border-hidden"></div>
             <div class="border"></div>
+
             <div id="page-scanning-advanced-button" class="btn-dropdown">
-                <h2 class="font-bold">
+                <h2>
                     <span lang="en">Advanced settings</span>
                     <span lang="fi">Edistyneet asetukset</span>
                 </h2>
@@ -2666,10 +2782,11 @@
 
                 <div class="border"></div>
 
-                <div class="font-bold">
+                <h2>
                     <span lang="en">Filtering</span>
                     <span lang="fi">Suodatus</span>
-                </div>
+                </h2>
+
                 <div>
                     <span lang="en">Bluetooth sensor filtering applies to the listening settings selected above.
                         Enabling this feature allows you to whitelist or blacklist sensors based on their MAC addresses.
@@ -2708,7 +2825,7 @@
                             </div>
                         </div>
 
-                        <div>&nbsp;</div>
+                        <div class="border-hidden"></div>
 
                         <div>
                             <div>
@@ -2731,15 +2848,15 @@
                             </div>
                         </div>
 
-                        <div>&nbsp;</div>
-                        <div>&nbsp;</div>
+                        <div class="border-hidden"></div>
+                        <div class="border-hidden"></div>
 
-                        <div class="font-bold">
+                        <h3>
                             <span lang="en">Filtered sensors (or other Bluetooth devices)</span>
                             <span lang="fi">Suodatetut anturit (tai muut Bluetooth-laitteet)</span>
-                        </div>
+                        </h3>
 
-                        <div>&nbsp;</div>
+                        <div class="border-hidden"></div>
 
                         <div class="indent">
                             <span lang="en">Below you can see the list of Bluetooth devices heard by Ruuvi Gateway.
@@ -2755,7 +2872,7 @@
                             </span>
                         </div>
 
-                        <div>&nbsp;</div>
+                        <div class="border-hidden"></div>
 
                         <div class="indent">
                             <table id="page_scanning-list_of_mac" class="page_scanning-list_of_mac">
@@ -2836,9 +2953,11 @@
                 <!-- the content is generated by change_page_to_finished -->
             </div>
 
-            <div class="block-centered font-bold">
-                <span lang="en">Ruuvi Gateway is now functioning.</span>
-                <span lang="fi">Ruuvi Gateway on nyt toiminnassa.</span>
+            <div class="block-centered">
+                <h2>
+                    <span lang="en">Ruuvi Gateway is now functioning.</span>
+                    <span lang="fi">Ruuvi Gateway on nyt toiminnassa.</span>
+                </h2>
             </div>
 
             <div>&nbsp;</div>

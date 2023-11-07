@@ -214,15 +214,16 @@ h1 {
 	text-align: center;
 }
 
-h2 {
+h2, .h2 {
 	font-size: 16px;
 	font-weight: 800;
+	margin-bottom: 0.75em;
 }
 
-h3 {
+h3, .h3 {
 	font-size: 16px;
-	font-weight: 600;
-	font-style: italic;
+	font-weight: 700;
+	margin-bottom: 0.5em;
 }
 
 p {
@@ -235,14 +236,6 @@ p {
 
 table {
 	width: 100%;
-}
-
-.font-bold {
-	font-weight: 700;
-}
-
-.font-bold-wifi-ssid-password {
-	font-weight: bold;
 }
 
 fieldset {
@@ -400,10 +393,6 @@ progress {
 
 .block-centered .btn {
 	margin: 0 auto;
-}
-
-.weekday-btn-group {
-	margin-bottom: 30px;
 }
 
 .btn-back {
