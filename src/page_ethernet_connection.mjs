@@ -7,7 +7,6 @@ import $ from 'jquery'
 import logger from './logger.mjs'
 import GuiButtonContinue from './gui_button_continue.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
-import GuiLoading from './gui_loading.mjs'
 import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
 import GuiText from './gui_text.mjs'
 import { log_wrap, networkConnect, networkDisconnect } from './utils.mjs'
@@ -16,6 +15,8 @@ import GwAP from './gw_ap.mjs'
 import Network from './network.mjs'
 import Navigation from './navigation.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
+import GuiOverlay from './gui_overlay.mjs'
+import GuiButton from "./gui_button.mjs";
 
 export class PageEthernetConnection {
   /** @type GwCfg */
@@ -35,6 +36,8 @@ export class PageEthernetConnection {
   #input_eth_dns2 = new GuiInputTextWithValidation($('#eth_dns2'))
   #subSectionManualSettings = new GuiText($('#page-ethernet_connection-section-manual_settings'))
   #timerEthConnection = null
+  #overlay_connect_ethernet = new GuiOverlay($('#overlay-connect_ethernet'))
+  #buttonCancelFromOverlay = new GuiButton($('#overlay-connect_ethernet-cancel'))
 
   constructor (gwCfg, auth) {
     this.#gwCfg = gwCfg
@@ -52,6 +55,7 @@ export class PageEthernetConnection {
     this.#input_eth_dns2.on_change(() => this.#ethernet_connection_check_validity())
 
     this.#buttonContinue.on_click(() => this.#onClickButtonContinue())
+    this.#buttonCancelFromOverlay.on_click(() => this.#onClickButtonCancelFromOverlay())
   }
 
   async #onShow () {
@@ -74,7 +78,7 @@ export class PageEthernetConnection {
 
   async #onHide () {
     console.log(log_wrap('section#page-ethernet_connection: onHide'))
-    $('#page-ethernet_connection-ask_user').hide()
+    this.#overlay_connect_ethernet.fadeOut()
     $('#page-ethernet_connection-no_cable').hide()
     this.#buttonContinue.enable()
     if (this.#timerEthConnection) {
@@ -114,7 +118,6 @@ export class PageEthernetConnection {
     } catch (err) {
       console.log(log_wrap(`save_network_config_and_connect_to_ethernet failed: ${err}`))
     }
-    GuiLoading.bodyClassLoadingRemove()
     logger.info('Start periodic status check')
     GwStatus.startCheckingStatus()
     if (isSuccessful) {
@@ -123,19 +126,27 @@ export class PageEthernetConnection {
   }
 
   #onClickButtonContinue () {
-    $('#page-ethernet_connection-ask_user').show()
+    this.#overlay_connect_ethernet.fadeIn()
     this.#buttonContinue.disable()
-    GuiLoading.bodyClassLoadingAdd()
     this.#timerEthConnection = setTimeout(() => {
       this.#timerEthConnection = null
-      if (GuiLoading.isLoading()) {
-        $('#page-ethernet_connection-ask_user').hide()
-        $('#page-ethernet_connection-no_cable').show()
-        GuiLoading.bodyClassLoadingRemove()
-      }
+      networkDisconnect().then(() => {})
+      this.#overlay_connect_ethernet.fadeOut()
+      $('#page-ethernet_connection-no_cable').show()
     }, 15 * 1000)
 
     this.#save_network_config_and_connect_to_ethernet().then(() => {})
+  }
+
+  #onClickButtonCancelFromOverlay() {
+    if (this.#timerEthConnection) {
+      clearTimeout(this.#timerEthConnection)
+      this.#timerEthConnection = null
+    }
+    networkDisconnect().then(() => {
+    })
+    this.#overlay_connect_ethernet.fadeOut()
+    this.#buttonContinue.enable()
   }
 
   #input_validity_check_by_regex (input_elem, reg_ex, flag_allow_empty) {
