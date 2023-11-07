@@ -315,6 +315,8 @@
                     <span lang="fi">Kiinteä IP-osoite</span>
                 </h3>
                 <div class="input-with_validity_check">
+                    <label for="eth_static_ip">
+                    </label>
                     <input id="eth_static_ip" type="text" placeholder="" value="">
                     <div class="input-with_validity_check-icon">
                     </div>
@@ -325,6 +327,8 @@
                     <span lang="fi">Aliverkon peite</span>
                 </h3>
                 <div class="input-with_validity_check">
+                    <label for="eth_netmask">
+                    </label>
                     <input id="eth_netmask" type="text" placeholder="" value="">
                     <div class="input-with_validity_check-icon">
                     </div>
@@ -335,6 +339,8 @@
                     <span lang="fi">Yhdyskäytävä</span>
                 </h3>
                 <div class="input-with_validity_check">
+                    <label for="eth_gw">
+                    </label>
                     <input id="eth_gw" type="text" placeholder="" value="">
                     <div class="input-with_validity_check-icon">
                     </div>
@@ -345,6 +351,8 @@
                     <span lang="fi">Ensisijaisen nimipalvelimen IP-osoite</span>
                 </h3>
                 <div class="input-with_validity_check">
+                    <label for="eth_dns1">
+                    </label>
                     <input id="eth_dns1" type="text" placeholder="DNS 1" value="">
                     <div class="input-with_validity_check-icon">
                     </div>
@@ -355,6 +363,8 @@
                     <span lang="fi">Toissijaisen nimipalvelimen IP-osoite</span>
                 </h3>
                 <div class="input-with_validity_check">
+                    <label for="eth_dns2">
+                    </label>
                     <input id="eth_dns2" type="text" placeholder="DNS 2" value="">
                     <div class="input-with_validity_check-icon">
                     </div>
@@ -408,10 +418,8 @@
                     <ul>
                         <li>
                             <button id="wifi_connection-sort_order-by_name" class="language-switcher-active button-link">
-                                <div>
-                                    <span lang="en">Name</span>
-                                    <span lang="fi">Nimi</span>
-                                </div>
+                                <span lang="en">Name</span>
+                                <span lang="fi">Nimi</span>
                             </button>
                         </li>
                         <li class="language-switcher-separator">｜</li>
@@ -659,12 +667,12 @@
 
                 <div id="software_update-url_title" class="control control-checkbox info-icon-container">
                     <label for="software_update-set-url-manually">
-                        <div class="info-icon-left-column">
+                        <span class="info-icon-left-column">
                             <span lang="en">Specify a URL that contains the required firmware update binaries.</span>
                             <span lang="fi">Anna URL-osoite, josta tarvittavat laiteohjelmistotiedostot ladataan.</span>
                             <input type="checkbox" id="software_update-set-url-manually">
                             <span class="control_indicator"></span>
-                        </div>
+                        </span>
                         <a class="info-icon-button" href="#popup-info-icon-software_update">i</a>
                     </label>
                 </div>
@@ -980,18 +988,26 @@
                                 <span class="control_indicator"></span>
                             </label>
                             <div id="conf-remote_cfg-auth_basic-options" class="hidden indent">
-                                <label>
-                                    <span lang="en">Username:</span>
-                                    <span lang="fi">Käyttäjätunnus:</span>
+                                <div>
+                                    <h3>
+                                        <label for="remote_cfg-auth_basic-user">
+                                            <span lang="en">Username:</span>
+                                            <span lang="fi">Käyttäjätunnus:</span>
+                                        </label>
+                                    </h3>
                                     <div class="input-with_validity_check">
                                         <input id="remote_cfg-auth_basic-user" type="text" placeholder="" value="">
                                         <div class="input-with_validity_check-icon">
                                         </div>
                                     </div>
-                                </label>
-                                <label>
-                                    <span lang="en">Password:</span>
-                                    <span lang="fi">Salasana:</span>
+                                </div>
+                                <div>
+                                    <h3>
+                                        <label for="remote_cfg-auth_basic-password">
+                                            <span lang="en">Password:</span>
+                                            <span lang="fi">Salasana:</span>
+                                        </label>
+                                    </h3>
                                     <div class="input-password input-with_validity_check">
                                         <input id="remote_cfg-auth_basic-password" type="password" placeholder=""
                                                value="">
@@ -1004,7 +1020,7 @@
                                         <div class="input-with_validity_check-icon">
                                         </div>
                                     </div>
-                                </label>
+                                </div>
                             </div>
                             <label class="control control-radio">
                                 <span lang="en">Bearer authentication</span>
@@ -1014,15 +1030,17 @@
                                 <span class="control_indicator"></span>
                             </label>
                             <div id="conf-remote_cfg-auth_bearer-options" class="hidden indent">
-                                <label>
-                                    <span lang="en">Token:</span>
-                                    <span lang="fi">Tunnus:</span>
-                                    <div class="input-password input-with_validity_check">
-                                        <input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
-                                        <div class="input-with_validity_check-icon">
-                                        </div>
+                                <h3>
+                                    <label for="remote_cfg-auth_bearer-token">
+                                        <span lang="en">Token:</span>
+                                        <span lang="fi">Tunnus:</span>
+                                    </label>
+                                </h3>
+                                <div class="input-password input-with_validity_check">
+                                    <input id="remote_cfg-auth_bearer-token" type="text" placeholder="" value="">
+                                    <div class="input-with_validity_check-icon">
                                     </div>
-                                </label>
+                                </div>
                             </div>
                         </div>
 
@@ -2655,23 +2673,23 @@
 
             <div id="page-scanning-advanced-dropdown" class="hidden">
                 <label class="control control-radio info-icon-container">
-                    <div class="info-icon-left-column">
+                    <span class="info-icon-left-column">
                         <span lang="en">Ruuvi sensors (including experimental long range sensors)</span>
                         <span lang="fi">Ruuvi-anturit (myös kokeelliset pitkän kantaman anturit)</span>
                         <input type="radio" name="company_use_filtering" value="2"
                                placeholder="Scan only Ruuvitags">
                         <span class="control_indicator"></span>
-                    </div>
+                    </span>
                     <a class="info-icon-button" href="#popup-info-icon-scanning">i</a>
                 </label>
 
                 <label class="control control-radio">
-                    <div>
+                    <span>
                         <span lang="en">All (including third party beacons)</span>
                         <span lang="fi">Kaikki (kolmansien osapuolten majakat mukaan lukien)</span>
                         <input type="radio" name="company_use_filtering" value="0" placeholder="Scan all beacons">
                         <span class="control_indicator"></span>
-                    </div>
+                    </span>
                 </label>
                 <div id="page-scanning-all_nearby_beacons-scanning_options" class="indent hidden">
                     <label class="control control-checkbox">
