@@ -74,11 +74,13 @@ function initialize () {
         $(this).fadeIn()
       else
         $(this).hide()
-      if (lang === 'en') {
-        $('input#mqtt_client_id').attr('placeholder', 'MAC-address is used if empty')
-      } else if (lang === 'fi') {
-        $('input#mqtt_client_id').attr('placeholder', 'MAC-osoitetta käytetään, jos se on tyhjä')
-      }
+
+      $('input').each(function () {
+        let associatedGuiObj = this.associatedGuiObj
+        if (associatedGuiObj && typeof associatedGuiObj.onLanguageChange === 'function') {
+          associatedGuiObj.onLanguageChange()
+        }
+      })
     })
   }
 
