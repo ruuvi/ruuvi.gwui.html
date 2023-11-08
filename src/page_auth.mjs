@@ -16,6 +16,7 @@ class PageAuth {
   #auth_default = $('#auth-default')
   #auth_reconfigure = $('#auth-reconfigure')
   #auth_user_login = $('#auth-user_login')
+  #auth_user_div = $('#auth-user-div')
   #auth_home = $('#auth-home')
   #auth_button_login = $('#auth-button-login')
   #auth_button_home = $('#auth-button-home')
@@ -62,6 +63,8 @@ class PageAuth {
     if (isDefaultAuth) {
       this.#auth_user.setVal('Admin')
       this.#auth_user.disable()
+      this.#auth_user.hide()
+      this.#auth_user_div.hide()
       this.#auth_default.show()
     } else {
       this.#auth_default.hide()

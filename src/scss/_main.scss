@@ -832,12 +832,13 @@ table {
 	color: var(--color-primary);
 }
 
-.rd {
+.err-message {
 	color: red;
-}
-
-.auth-err-message {
-	color: red;
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	margin-top: 1em;
+	margin-bottom: 1em;
 }
 
 .bl {

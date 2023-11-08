@@ -53,8 +53,8 @@
                 </div>
             </div>
 
-            <div id="auth-user_login" class="hidden indent" style="max-width: 300px">
-                <div>
+            <div id="auth-user_login" class="hidden" style="max-width: 300px">
+                <div id="auth-user-div">
                     <h3>
                         <label for="auth-user">
                             <span lang="en">Username:</span>
@@ -86,15 +86,15 @@
                         <span lang="en">Authorisation successful.</span>
                         <span lang="fi">Sisäänkirjautuminen onnistui.</span>
                     </div>
-                    <div id="auth-forbidden" class="auth-err-message hidden">
+                    <div id="auth-forbidden" class="err-message hidden">
                         <span lang="en">Access from LAN is forbidden - wrong username or password.</span>
                         <span lang="fi">Pääsy lähiverkosta on kielletty - väärä käyttäjätunnus tai salasana.</span>
                     </div>
-                    <div id="auth-denied" class="auth-err-message hidden">
+                    <div id="auth-denied" class="err-message hidden">
                         <span lang="en">Access from LAN is denied.</span>
                         <span lang="fi">Pääsy lähiverkosta on estetty.</span>
                     </div>
-                    <div id="auth-error" class="auth-err-message hidden">
+                    <div id="auth-error" class="err-message hidden">
                         <span lang="en">Wrong username or password.</span>
                         <span lang="fi">Väärä käyttäjätunnus tai salasana.</span>
                     </div>
@@ -287,17 +287,10 @@
             </div>
 
             <div class="ingress">
-                <span lang="en">dummy text...</span>
-                <span lang="fi">dummy text...</span>
-            </div>
-
-            <div id="page-ethernet_connection-no_cable" class="hidden">
-                <div class="block-centered rd">
-                    <p>
-                        <span lang="en">Ethernet cable is not connected or there is some other problem with the connection.</span>
-                        <span lang="fi">Lähiverkkokaapelia ei ole liitetty tai yhteydessä on jokin muu ongelma.</span>
-                    </p>
-                </div>
+                <p>
+                    <span lang="en">dummy text...</span>
+                    <span lang="fi">dummy text...</span>
+                </p>
             </div>
 
             <div>
@@ -371,6 +364,13 @@
                 </div>
             </div>
 
+            <div id="page-ethernet_connection-no_cable" class="hidden">
+                <div class="block-centered err-message">
+                    <span lang="en">Ethernet cable is not connected or there is some other problem with the connection.</span>
+                    <span lang="fi">Lähiverkkokaapelia ei ole liitetty tai yhteydessä on jokin muu ongelma.</span>
+                </div>
+            </div>
+
             <div class="button-container">
                 <a href="" id="page-ethernet_connection-button-back" class="btn-back">
                     <span lang="en">Back</span>
@@ -432,7 +432,7 @@
 
             <div id="page-wifi_connection-no_wifi" class="hidden">
                 <div class="border"></div>
-                <div class="block-centered rd">
+                <div class="block-centered err-message">
                     <span lang="en">No Wi-Fi networks found.</span>
                     <span lang="fi">Wi-Fi-verkkoja ei löytynyt.</span>
                 </div>
@@ -497,7 +497,7 @@
                 </div>
 
                 <div id="wifi-connection-status-block" class="hidden" style="height: 20px">
-                    <div id="wifi-connection-failed" class="rd">
+                    <div id="wifi-connection-failed" class="err-message">
                         <span lang="en">Failed to connect. Please try again.</span>
                         <span lang="fi">Yhteyden muodostaminen epäonnistui. Yritä uudelleen.</span>
                     </div>
@@ -596,7 +596,7 @@
                             <span lang="fi">Päivitys on saatavilla! Aloita laiteohjelman päivitys valitsemalla PÄIVITÄ.</span>
                         </p>
                     </div>
-                    <div id="software_update-status-error" class="software_update-status rd hidden">
+                    <div id="software_update-status-error" class="err-message hidden">
                         <p>
                             <span lang="en">Unable to get the latest firmware version from the server.</span>
                             <span lang="fi">Uusinta laiteohjelmistoversiota ei voitu ladata palvelimelta.</span>
@@ -643,6 +643,26 @@
                     </div>
                 </div>
 
+                <div id="page-software_update-fw_update-status-error" class="err-message hidden">
+                    <div class="block-centered">
+                        <span lang="en">Failed to retrieve json file with firmware update information.</span>
+                        <span lang="fi">Laiteohjelmiston päivitystietoja sisältävän json-tiedoston hakeminen epäonnistui.</span>
+                    </div>
+                    <div id="page-software_update-fw_update-status-error-desc" class="block-centered">
+                    </div>
+                </div>
+
+                <div id="page-software_update-updating-status-error" class="err-message hidden">
+                    <div class="block-centered">
+                        <div>
+                            <span lang="en">Error when starting the firmware upgrade process.</span>
+                            <span lang="fi">Virhe käynnistettäessä laiteohjelmiston päivitysprosessia.</span>
+                        </div>
+                    </div>
+                    <div id="page-software_update-updating-status-error-desc" class="block-centered">
+                    </div>
+                </div>
+
                 <div class="button-container-centered">
                     <button class="btn" id="page-software_update-button-fw_update_url-check" type="button">
                         <span lang="en">Check</span>
@@ -652,15 +672,6 @@
                         <span lang="en">Save</span>
                         <span lang="fi">Tallentaa</span>
                     </button>
-                </div>
-
-                <div id="page-software_update-fw_update-status-error" class="rd hidden">
-                    <div class="block-centered">
-                        <span lang="en">Failed to retrieve json file with firmware update information.</span>
-                        <span lang="fi">Laiteohjelmiston päivitystietoja sisältävän json-tiedoston hakeminen epäonnistui.</span>
-                    </div>
-                    <div id="page-software_update-fw_update-status-error-desc" class="block-centered">
-                    </div>
                 </div>
 
                 <div class="border"></div>
@@ -686,15 +697,6 @@
                         <div class="input-with_validity_check-icon">
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div id="page-software_update-updating-status-error" class="rd hidden">
-                <div class="block-centered">
-                    <span lang="en">Error when starting the firmware upgrade process.</span>
-                    <span lang="fi">Virhe käynnistettäessä laiteohjelmiston päivitysprosessia.</span>
-                </div>
-                <div id="page-software_update-updating-status-error-desc" class="block-centered">
                 </div>
             </div>
 
@@ -869,21 +871,19 @@
             </div>
 
             <div id="software_update_progress-status-completed_unsuccessfully" class="hidden">
-                <div class="block-centered rd">
-                    <span lang="en">Failure: </span>
-                    <span lang="fi">Virhe: </span>
-                </div>
-                <div class="block-left">
+                <div class="block-left err-message">
                     <div id="software_update_progress-status-completed_unsuccessfully-message"></div>
                     <div id="software_update_progress-status-completed_unsuccessfully-because_of_gateway_reboot"
                          class="hidden">
                         <span lang="en">Ruuvi Gateway suddenly rebooted during firmware upgrade. Please try again.</span>
-                        <span lang="fi">Ruuvi Gateway käynnistyi yhtäkkiä uudelleen laiteohjelmistopäivityksen aikana. Yritä uudelleen.</span>
+                        <span lang="fi">Ruuvi Gateway käynnistyi yhtäkkiä uudelleen laiteohjelmistopäivityksen
+                            aikana. Yritä uudelleen.</span>
                     </div>
                 </div>
 
-                <div class="block-left">
-                    <span lang="en">Please reboot the device. Locate the pinhole button under the power socket and press the button briefly using a paperclip. </span>
+                <div class="block-left err-message">
+                    <span lang="en">Please reboot the device. Locate the pinhole button under the power socket and
+                        press the button briefly using a paperclip. </span>
                     <span lang="fi">Käynnistä laite uudelleen painamalla paperiliittimellä lyhyesti virtaliittimen
                         alla olevaa painiketta.</span>
                 </div>
@@ -968,6 +968,15 @@
                             <input id="remote_cfg-base_url" type="text" value="">
                             <div class="input-with_validity_check-icon">
                             </div>
+                        </div>
+                    </div>
+
+                    <div id="page-remote_cfg-status-error" class="err-message hidden">
+                        <div class="block-centered">
+                            <span lang="en">Failed to get the configuration file from the remote server.</span>
+                            <span lang="fi">Määritystiedoston hakeminen etäpalvelimelta epäonnistui.</span>
+                        </div>
+                        <div id="page-remote_cfg-status-error-desc" class="block-centered">
                         </div>
                     </div>
 
@@ -1127,15 +1136,6 @@
                             <span lang="en">Check</span>
                             <span lang="fi">Tarkasta</span>
                         </button>
-                    </div>
-
-                    <div id="page-remote_cfg-status-error" class="rd hidden">
-                        <div class="block-centered">
-                            <span lang="en">Failed to get the configuration file from the remote server.</span>
-                            <span lang="fi">Määritystiedoston hakeminen etäpalvelimelta epäonnistui.</span>
-                        </div>
-                        <div id="page-remote_cfg-status-error-desc" class="block-centered">
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1833,6 +1833,15 @@
                     </div>
                 </div>
 
+                <div id="page-custom_server-http_validation_error" class="err-message hidden">
+                    <div class="block-centered">
+                        <span lang="en">Validation failed</span>
+                        <span lang="fi">Vahvistus epäonnistui</span>
+                    </div>
+                    <div id="page-custom_server-http_validation_error-desc" class="block-centered">
+                    </div>
+                </div>
+
                 <div id="http_http_period_div">
                     <h3>
                         <label for="http_period">
@@ -2009,15 +2018,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div id="page-custom_server-http_validation_error" class="rd hidden">
-                    <div class="block-centered">
-                        <span lang="en">Validation failed</span>
-                        <span lang="fi">Vahvistus epäonnistui</span>
-                    </div>
-                    <div id="page-custom_server-http_validation_error-desc" class="block-centered">
-                    </div>
-                </div>
             </div>
 
             <div class="border"></div>
@@ -2116,6 +2116,15 @@
                     </div>
                 </div>
 
+                <div id="page-custom_server-mqtt_validation_error" class="err-message hidden">
+                    <div class="block-centered">
+                        <span lang="en">Validation failed</span>
+                        <span lang="fi">Vahvistus epäonnistui</span>
+                    </div>
+                    <div id="page-custom_server-mqtt_validation_error-desc" class="block-centered">
+                    </div>
+                </div>
+
                 <div>
                     <label class="control control-checkbox">
                         <span lang="en">Define sending interval instead of relaying messages instantly</span>
@@ -2169,15 +2178,6 @@
                         </div>
                         <div class="input-with_validity_check-icon">
                         </div>
-                    </div>
-                </div>
-
-                <div id="page-custom_server-mqtt_validation_error" class="rd hidden">
-                    <div class="block-centered">
-                        <span lang="en">Validation failed</span>
-                        <span lang="fi">Vahvistus epäonnistui</span>
-                    </div>
-                    <div id="page-custom_server-mqtt_validation_error-desc" class="block-centered">
                     </div>
                 </div>
 
@@ -2357,6 +2357,15 @@
                         </div>
                     </div>
 
+                    <div id="page-custom_server-http_stat_validation_error" class="err-message hidden">
+                        <div class="block-centered">
+                            <span lang="en">Validation failed</span>
+                            <span lang="fi">Vahvistus epäonnistui</span>
+                        </div>
+                        <div id="page-custom_server-http_stat_validation_error-desc" class="block-centered">
+                        </div>
+                    </div>
+
                     <div>
                         <h3>
                             <label for="http_stat_user">
@@ -2465,14 +2474,6 @@
 
                     </div>
 
-                    <div id="page-custom_server-http_stat_validation_error" class="rd hidden">
-                        <div class="block-centered">
-                            <span lang="en">Validation failed</span>
-                            <span lang="fi">Vahvistus epäonnistui</span>
-                        </div>
-                        <div id="page-custom_server-http_stat_validation_error-desc" class="block-centered">
-                        </div>
-                    </div>
                     <div class="border"></div>
 
                 </div>
@@ -2527,8 +2528,10 @@
             </div>
 
             <div class="ingress">
-                <p lang="en">dummy text...</p>
-                <p lang="fi">dummy text...</p>
+                <p>
+                    <span lang="en">dummy text...</span>
+                    <span lang="fi">dummy text...</span>
+                </p>
             </div>
 
             <label class="control control-radio">
@@ -2741,7 +2744,7 @@
                     <span lang="fi">Suodatus</span>
                 </h2>
 
-                <div>
+                <p>
                     <span lang="en">Bluetooth sensor filtering applies to the listening settings selected above.
                         Enabling this feature allows you to whitelist or blacklist sensors based on their MAC addresses.
                     </span>
@@ -2749,7 +2752,7 @@
                         Ottamalla tämän ominaisuuden käyttöön voit lisätä anturit sallittujen tai mustalle
                         listalle niiden MAC-osoitteiden perusteella.
                     </span>
-                </div>
+                </p>
 
                 <div>
                     <label class="control control-checkbox">
@@ -2770,12 +2773,14 @@
                                 </label>
                             </div>
                             <div id="scan_filtering-type_allow-desc" class="indent">
-                                <span lang="en">In this mode, the Ruuvi Gateway only relays data from the selected
-                                    sensors and rejects all other Bluetooth devices or sensors it hears.
-                                </span>
-                                <span lang="fi">Tässä tilassa Ruuvi Gateway välittää tietoja vain valituista
-                                    antureista ja hylkää kaikki muut kuulemansa Bluetooth-laitteet tai anturit.
-                                </span>
+                                <p>
+                                    <span lang="en">In this mode, the Ruuvi Gateway only relays data from the selected
+                                        sensors and rejects all other Bluetooth devices or sensors it hears.
+                                    </span>
+                                    <span lang="fi">Tässä tilassa Ruuvi Gateway välittää tietoja vain valituista
+                                        antureista ja hylkää kaikki muut kuulemansa Bluetooth-laitteet tai anturit.
+                                    </span>
+                                </p>
                             </div>
                         </div>
 
@@ -2790,13 +2795,16 @@
                                 </label>
                             </div>
                             <div id="scan_filtering-type_discard-desc" class="indent">
-                                <span lang="en">In this mode, the Ruuvi Gateway rejects data from the selected sensors
-                                    and allows data from other Bluetooth devices or sensors
-                                    according to the listening selection.
-                                </span>
-                                <span lang="fi">Tässä tilassa Ruuvi Gateway hylkää valittujen antureiden lähettämät tiedot ja
-                                    sallii tiedot muista Bluetooth-laitteista tai antureista kuunteluvalinnan mukaan.
-                                </span>
+                                <p>
+                                    <span lang="en">In this mode, the Ruuvi Gateway rejects data from the selected
+                                        sensors and allows data from other Bluetooth devices or sensors
+                                        according to the listening selection.
+                                    </span>
+                                    <span lang="fi">Tässä tilassa Ruuvi Gateway hylkää valittujen antureiden lähettämät
+                                        tiedot ja sallii tiedot muista Bluetooth-laitteista tai antureista
+                                        kuunteluvalinnan mukaan.
+                                    </span>
+                                </p>
                             </div>
                         </div>
 
@@ -2806,17 +2814,26 @@
                         </h3>
 
                         <div class="indent">
-                            <span lang="en">Below you can see the list of Bluetooth devices heard by Ruuvi Gateway.
-                                Select the checkbox to assign the device to the filter list.
-                                Click the Refresh list button at the end of the list to update the list.
-                                You can also add a sensor to the list by entering its MAC address and clicking Add.
-                            </span>
-                            <span lang="fi">Alla näet listan Ruuvi Gatewayn kuulemista Bluetooth-laitteista.
-                                Lisää laite suodatuslistaan valitsemalla MAC-osoitteen oikealla puolella oleva valintaruutu.
-                                Päivitä lista napsauttamalla listan lopussa olevaa Päivitä lista -painiketta.
-                                Voit myös lisätä anturin listaan kirjoittamalla sen MAC-osoitteen
-                                ja napauttamalla Lisää.
-                            </span>
+                            <p>
+                                <span lang="en">Below you can see the list of Bluetooth devices heard by Ruuvi Gateway.
+                                    Select the checkbox to assign the device to the filter list.
+                                    Click the Refresh list button at the end of the list to update the list.
+                                    You can also add a sensor to the list by entering its MAC address and clicking Add.
+                                </span>
+                                <span lang="fi">Alla näet listan Ruuvi Gatewayn kuulemista Bluetooth-laitteista.
+                                    Lisää laite suodatuslistaan valitsemalla MAC-osoitteen oikealla puolella oleva valintaruutu.
+                                    Päivitä lista napsauttamalla listan lopussa olevaa Päivitä lista -painiketta.
+                                    Voit myös lisätä anturin listaan kirjoittamalla sen MAC-osoitteen
+                                    ja napauttamalla Lisää.
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="container indent">
+                            <button id="scan_filter_refresh" class="button-link underlined">
+                                <span lang="en">Refresh list</span>
+                                <span lang="fi">Päivitä lista</span>
+                            </button>
                         </div>
 
                         <div class="indent">
@@ -2824,36 +2841,17 @@
                             </table>
                         </div>
 
-                        <div class="indent">
-                            <table id="page_scanning-add_filter_manually">
-                                <tr>
-                                    <td class="page_scanning-list_of_mac-column_mac">
-                                        <div class="input-with_validity_check">
-                                            <div>
-                                                <label>
-                                                    <input id="scan_filter_add_mac" type="text" value="">
-                                                </label>
-                                            </div>
-                                            <div class="input-with_validity_check-icon">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="page_scanning-list_of_mac-column_checkbox">
-                                        <div>
-                                            <button id="scan_filter-button-add_manually" class="btn">
-                                                <span lang="en">Add</span>
-                                                <span lang="fi">Lisää</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
+                        <div class="input-with_validity_check indent">
+                            <label for="scan_filter_add_mac">
+                            </label>
+                            <input id="scan_filter_add_mac" type="text" value="">
+                            <div class="input-with_validity_check-icon">
+                            </div>
                         </div>
-
-                        <div class="container indent">
-                            <button id="scan_filter_refresh" class="button-link underlined">
-                                <span lang="en">Refresh list</span>
-                                <span lang="fi">Päivitä lista</span>
+                        <div class="indent">
+                            <button id="scan_filter-button-add_manually" class="btn">
+                                <span lang="en">Add</span>
+                                <span lang="fi">Lisää</span>
                             </button>
                         </div>
                     </div>
@@ -3017,7 +3015,7 @@
                             <span class="section-init_ssl_storage-status-time_until_reconnect"></span> sekunnin kuluttua.</span>
                     </div>
                 </div>
-                <div id="section-init_ssl_storage-status-error" class="rd hidden">
+                <div id="section-init_ssl_storage-status-error" class="err-message hidden">
                     <div class="block-centered">
                         <span lang="en">Storage initialisation error.</span>
                         <span lang="fi">Tallennustilan alustusvirhe.</span>
