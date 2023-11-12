@@ -440,7 +440,6 @@
             </div>
             <div id="page-wifi_connection-list_of_ssid" class="wifi-list"></div>
 
-            <div class="border"></div>
             <div id="page-wifi_connection-advanced-button" class="btn-dropdown">
                 <h2>
                     <span lang="en">Advanced settings</span>
@@ -449,7 +448,6 @@
                 <div class="btn-dropdown-arrow-down"></div>
                 <div class="btn-dropdown-arrow-up hidden"></div>
             </div>
-            <div class="border"></div>
 
             <div id="page-wifi_connection-advanced-dropdown" class="hidden">
                 <p>
@@ -612,7 +610,6 @@
                 </button>
             </div>
 
-            <div class="border"></div>
             <div id="page-software_update-advanced-button" class="btn-dropdown">
                 <h2>
                     <span lang="en">Advanced settings</span>
@@ -621,7 +618,6 @@
                 <div class="btn-dropdown-arrow-down"></div>
                 <div class="btn-dropdown-arrow-up hidden"></div>
             </div>
-            <div class="border"></div>
 
             <div id="page-software_update-advanced-dropdown" class="hidden">
                 <div id="page-software_update-fw_update_url-div">
@@ -702,11 +698,11 @@
 
             <div id="popup-info-icon-button-fw_update_url_title" class="info-icon-overlay">
                 <div class="info-icon-popup">
-                    <h1>
+                    <div class="popup-title">
                         <span lang="en">How to change the server for auto installation of firmware updates</span>
                         <span lang="fi">Palvelimen vaihtaminen laiteohjelmistopäivitysten automaattista asennusta varten
                         </span>
-                    </h1>
+                    </div>
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
                     <div class="info-icon-content">
                         <p>
@@ -731,10 +727,10 @@
 
             <div id="popup-info-icon-software_update" class="info-icon-overlay">
                 <div class="info-icon-popup">
-                    <h1>
+                    <div class="popup-title">
                         <span lang="en">How to install a custom firmware</span>
                         <span lang="fi">Mukautetun laiteohjelmiston asentaminen</span>
-                    </h1>
+                    </div>
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
                     <div class="info-icon-content">
                         <p>
@@ -929,7 +925,6 @@
                     asetuksia manuaalisesti.</p>
             </div>
 
-            <div class="border"></div>
             <div id="page-remote_cfg-advanced-button" class="btn-dropdown">
                 <h2>
                     <span lang="en">Advanced settings</span>
@@ -938,7 +933,6 @@
                 <div class="btn-dropdown-arrow-down"></div>
                 <div class="btn-dropdown-arrow-up hidden"></div>
             </div>
-            <div class="border"></div>
 
             <div id="page-remote_cfg-advanced-dropdown" class="hidden">
                 <div>
@@ -1142,10 +1136,10 @@
 
             <div id="popup-info-icon-button-remote_cfg" class="info-icon-overlay">
                 <div class="info-icon-popup">
-                    <h1>
+                    <div class="popup-title">
                         <span lang="en">Specify location</span>
                         <span lang="fi">Määritä sijainti</span>
-                    </h1>
+                    </div>
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
                     <div class="info-icon-content">
                         <p>
@@ -1240,7 +1234,6 @@
                 </label>
             </div>
 
-            <div class="border"></div>
             <div id="page-update_schedule-advanced-button" class="btn-dropdown">
                 <h2>
                     <span lang="en">Advanced settings</span>
@@ -1249,7 +1242,6 @@
                 <div class="btn-dropdown-arrow-down"></div>
                 <div class="btn-dropdown-arrow-up hidden"></div>
             </div>
-            <div class="border"></div>
 
             <div id="page-update_schedule-advanced-dropdown" class="hidden">
                 <label class="control control-radio">
@@ -1272,7 +1264,7 @@
                         <span lang="en">Define when to update</span>
                         <span lang="fi">Määritä päivitysajankohta</span>
                     </h2>
-                    <div class="ingress">
+                    <div>
                         <p lang="en">Select days and time range when Ruuvi Gateway is allowed to run automated firmware
                             updates.</p>
                         <p lang="fi">Valitse päivät ja aikaväli, jolloin Ruuvi Gatewayn automaattiset
@@ -1284,8 +1276,8 @@
                         <span lang="fi">Viikonpäivät</span>
                     </h3>
 
-                    <div>
-                        <div>
+                    <div class="checkbox-block">
+                        <div class="checkbox-line">
                             <label class="control control-checkbox">
                                 <span lang="en">Monday</span>
                                 <span lang="fi">Maanantai</span>
@@ -1295,7 +1287,7 @@
                             </label>
                         </div>
 
-                        <div>
+                        <div class="checkbox-line">
                             <label class="control control-checkbox">
                                 <span lang="en">Tuesday</span>
                                 <span lang="fi">Tiistai</span>
@@ -1305,7 +1297,7 @@
                             </label>
                         </div>
 
-                        <div>
+                        <div class="checkbox-line">
                             <label class="control control-checkbox">
                                 <span lang="en">Wednesday</span>
                                 <span lang="fi">Keskiviikko</span>
@@ -1315,7 +1307,7 @@
                             </label>
                         </div>
 
-                        <div>
+                        <div class="checkbox-line">
                             <label class="control control-checkbox">
                                 <span lang="en">Thursday</span>
                                 <span lang="fi">Torstai</span>
@@ -1325,7 +1317,7 @@
                             </label>
                         </div>
 
-                        <div>
+                        <div class="checkbox-line">
                             <label class="control control-checkbox">
                                 <span lang="en">Friday</span>
                                 <span lang="fi">Perjantai</span>
@@ -1335,7 +1327,7 @@
                             </label>
                         </div>
 
-                        <div>
+                        <div class="checkbox-line">
                             <label class="control control-checkbox">
                                 <span lang="en">Saturday</span>
                                 <span lang="fi">Lauantai</span>
@@ -1345,7 +1337,7 @@
                             </label>
                         </div>
 
-                        <div>
+                        <div class="checkbox-line">
                             <label class="control control-checkbox">
                                 <span lang="en">Sunday</span>
                                 <span lang="fi">Sunnuntai</span>
@@ -1522,23 +1514,20 @@
                 <span class="control_indicator"></span>
             </label>
             <div id="conf-lan_auth-default" class="hidden indent">
-                <div class="ingress">
-                    <p lang="en">Username: Admin</p>
-                    <p lang="fi">Käyttäjätunnus: Admin</p>
+                <div>
                     <p lang="en">
-                        Password: Unique ID (in format XX:XX:XX:XX:XX:XX:XX:XX) as printed on the bottom of the Ruuvi
-                        Gateway enclosure.
+                        Unique ID (in format XX:XX:XX:XX:XX:XX:XX:XX) as printed
+                        on the bottom of the Ruuvi Gateway enclosure.
                     </p>
                     <p lang="fi">
-                        Salasana: Yksilöllinen ID (muodossa XX:XX:XX:XX:XX:XX:XX:XX), jonka löydät Ruuvi Gatewayn
-                        pohjasta.
+                        Yksilöllinen ID (muodossa XX:XX:XX:XX:XX:XX:XX:XX),
+                        jonka löydät Ruuvi Gatewayn pohjasta.
                     </p>
                 </div>
             </div>
 
             <div id="page-settings_lan_auth-advanced">
 
-                <div class="border"></div>
                 <div id="page-settings_lan_auth-advanced-button" class="btn-dropdown">
                     <h2>
                         <span lang="en">Advanced settings</span>
@@ -1547,7 +1536,6 @@
                     <div class="btn-dropdown-arrow-down"></div>
                     <div class="btn-dropdown-arrow-up hidden"></div>
                 </div>
-                <div class="border"></div>
 
                 <div id="page-settings_lan_auth-advanced-dropdown" class="hidden">
                     <div>
@@ -1708,7 +1696,6 @@
                 </label>
             </div>
 
-            <div class="border"></div>
             <div id="page-cloud_options-advanced-button" class="btn-dropdown">
                 <h2>
                     <span lang="en">Advanced settings</span>
@@ -1717,7 +1704,6 @@
                 <div class="btn-dropdown-arrow-down"></div>
                 <div class="btn-dropdown-arrow-up hidden"></div>
             </div>
-            <div class="border"></div>
 
             <div id="page-cloud_options-advanced-dropdown" class="hidden">
                 <p>
@@ -2311,8 +2297,6 @@
 
             </div>
 
-            <div class="border"></div>
-
             <div id="page-custom_server-advanced-button" class="btn-dropdown">
                 <h2>
                     <span lang="en">Statistics</span>
@@ -2321,7 +2305,6 @@
                 <div class="btn-dropdown-arrow-down"></div>
                 <div class="btn-dropdown-arrow-up hidden"></div>
             </div>
-            <div class="border"></div>
 
             <div id="page-custom_server-advanced-dropdown" class="hidden">
                 <label class="control control-radio">
@@ -2541,7 +2524,6 @@
                 <span class="control_indicator"></span>
             </label>
 
-            <div class="border"></div>
             <div id="page-ntp_config-advanced-button" class="btn-dropdown">
                 <h2>
                     <span lang="en">Advanced settings</span>
@@ -2550,7 +2532,6 @@
                 <div class="btn-dropdown-arrow-down"></div>
                 <div class="btn-dropdown-arrow-up hidden"></div>
             </div>
-            <div class="border"></div>
 
             <div id="page-ntp_config-advanced-dropdown" class="hidden">
                 <label class="control control-radio">
@@ -2665,8 +2646,6 @@
                 <span class="control_indicator"></span>
             </label>
 
-            <div class="border"></div>
-
             <div id="page-scanning-advanced-button" class="btn-dropdown">
                 <h2>
                     <span lang="en">Advanced settings</span>
@@ -2675,8 +2654,6 @@
                 <div class="btn-dropdown-arrow-down"></div>
                 <div class="btn-dropdown-arrow-up hidden"></div>
             </div>
-
-            <div class="border"></div>
 
             <div id="page-scanning-advanced-dropdown" class="hidden">
                 <label class="control control-radio info-icon-container">
@@ -2860,10 +2837,10 @@
 
             <div id="popup-info-icon-scanning" class="info-icon-overlay">
                 <div class="info-icon-popup">
-                    <h1>
+                    <div class="popup-title">
                         <span lang="en">Bluetooth long range</span>
                         <span lang="fi">Pitkän kantaman Bluetooth</span>
-                    </h1>
+                    </div>
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
                     <div class="info-icon-content">
                         <p>
@@ -2908,8 +2885,10 @@
             </div>
 
             <div class="block-centered">
-                <span lang="en">You can now close this window and disconnect from the Ruuvi Gateway's Wi-Fi hotspot.</span>
-                <span lang="fi">Voit nyt sulkea tämän ikkunan ja katkaista yhteyden Ruuvi Gatewayn Wi-Fi-yhteyspisteeseen.</span>
+                <p>
+                    <span lang="en">You can now close this window and disconnect from the Ruuvi Gateway's Wi-Fi hotspot.</span>
+                    <span lang="fi">Voit nyt sulkea tämän ikkunan ja katkaista yhteyden Ruuvi Gatewayn Wi-Fi-yhteyspisteeseen.</span>
+                </p>
             </div>
 
             <div class="border"></div>
@@ -2979,10 +2958,10 @@
 
         <section id="section-init_ssl_storage" class="info-icon-overlay hidden">
             <div class="info-icon-popup">
-                <h1>
+                <div class="popup-title">
                     <span lang="en">SSL certificate storage initialisation required</span>
                     <span lang="fi">SSL-varmenteen tallennuksen alustus vaaditaan</span>
-                </h1>
+                </div>
 
                 <a href="" id="section-init_ssl_storage-button-close" class="btn-back info-icon-popup-close">&times;</a>
 
