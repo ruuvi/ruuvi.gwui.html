@@ -139,14 +139,11 @@
             </div>
 
             <div class="ingress">
-                <p lang="en">Setting up your Ruuvi Gateway is easy. Follow the simple steps in the setup wizard.</p>
-                <p lang="en">Please note that your Internet connection may be turned off for the duration of the
-                    configuration.</p>
+                <p lang="en">Welcome to the Ruuvi Gateway Setup Wizard! Use this wizard to effortlessly set up internet access for your Gateway and explore other advanced configuration options.</p>
+                <p lang="en">Please note that your internet connection may be turned off momentarily for the duration of the configuration.</p>
 
-                <p lang="fi">Ruuvi Gateway -reittimen käyttöönotto on helppoa. Jatka seuraamalla ohjatun määrityksen
-                    ohjeita.</p>
-                <p lang="fi">Huomaathan, että internet-yhteys saattaa olla poissa käytöstä asetusten määrityksen
-                    ajan.</p>
+                <p lang="fi">Tervetuloa Ruuvi Gateway -reittittimen ohjattuun käyttöönottoon! Tämän käyttöönoton avulla voit yhdistää reitittimen internetiin ja muokata edistyneitä asetuksia.</p>
+                <p lang="fi">Huomaathan, että internet-yhteys saattaa olla poissa käytöstä asetusten määrityksen ajan.</p>
             </div>
 
             <div id="button-container_page-welcome-button-get-started"
@@ -180,14 +177,11 @@
             </div>
 
             <div class="ingress">
-                <p lang="en">Ruuvi Gateway requires an Internet connection.
+                <p lang="en">Ruuvi Gateway requires an internet connection.
                     Connect an Ethernet (RJ45) cable to use a fixed network connection or connect to a local Wi-Fi
-                    network wirelessly.
-                    To ensure the most reliable Internet connectivity, Ethernet connection is recommended.</p>
+                    network wirelessly. To ensure the most reliable internet connectivity, Ethernet connection is recommended.</p>
                 <p lang="fi">Ruuvi Gateway tarvitsee internet-yhteyden.
-                    Yhdistä internetiin joko kiinteän (Ethernet RJ45) tai langattoman (Wi-Fi)
-                    lähiverkkoyhteyden avulla. Häiriöttömän yhteyden takaamiseksi suosittelemme käyttämään
-                    aina kiinteää Ethernet-yhteyttä.</p>
+                    Yhdistä internetiin joko kiinteän (Ethernet RJ45) tai langattoman (Wi-Fi) lähiverkkoyhteyden avulla. Häiriöttömän yhteyden takaamiseksi suosittelemme käyttämään aina kiinteää Ethernet-yhteyttä.</p>
             </div>
 
             <h2>
@@ -218,32 +212,26 @@
             <div id="page-network_type-access_from_lan">
                 <div>
                     <p lang="en">
-                        You're accessing the Ruuvi Gateway setup wizard from your local area network.
-                        You cannot adjust the connection type at this time.
-                        In order to change the connection type, please reconfigure the Ruuvi Gateway using its Wi-Fi hotspot.
-                        To restart the Wi-Fi hotspot, locate the pinhole button under the power socket and press the button
-                        briefly using a paperclip.
+                        You're accessing the Ruuvi Gateway setup wizard from your local area network. You cannot change the connection type at this time.
+                        In order to change the connection type, please reconfigure the Ruuvi Gateway using its Wi-Fi hotspot. To activate the Wi-Fi hotspot, locate the pinhole button under the power socket and press the button briefly using a paperclip.
                     </p>
                     <p lang="fi">
-                        Olet avannut Ruuvi Gatewayn käyttöönottosivun kiinteän lähiverkkoyhteyden kautta. Tästä johtuen
-                        et voi vaihtaa tapaa, jolla Ruuvi Gateway on yhteydessä internetiin.
-                        Voit vaihtaa yhteystyyppiä Ruuvi Gatewayn Wi-Fi-yhteyspisteen ohjatun käyttöönoton kautta.
-                        Käynnistä Wi-Fi-yhteyspiste uudelleen painamalla paperiliittimellä lyhyesti virtaliittimen alla
-                        sijaitsevaa painiketta.
+                        Olet avannut Ruuvi Gatewayn käyttöönottosivun lähiverkkoyhteyden kautta. Tästä johtuen et voi vaihtaa tapaa, jolla Ruuvi Gateway on yhteydessä internetiin. Voit vaihtaa yhteystyyppiä Ruuvi Gatewayn Wi-Fi-yhteyspisteen ohjatun käyttöönoton kautta.
+                        Aktivoi Wi-Fi-yhteyspiste painamalla paperiliittimellä lyhyesti virtaliittimen alla sijaitsevaa painiketta.
                     </p>
                 </div>
                 <div>
                     <p lang="en">
-                        Next, connect to a Wi-Fi hotspot named Configure Ruuvi Gateway XXXX.
+                        Next, establish a connection with the Wi-Fi hotspot labeled "Configure Ruuvi Gateway XXXX".
                         After connecting to the hotspot, your device may ask you to sign in to the network.
                         Next, a captive portal window showing the setup wizard will open.
-                        If the page doesn't open automatically open your web browser, type 10.10.0.1 and press enter.
+                        If the portal window fails to open automatically, open your web browser, type 10.10.0.1 and press Enter.
                     </p>
                     <p lang="fi">
-                        Liity seuraavaksi päätelaitteellasi Wi-Fi-verkkoon Configure Ruuvi Gateway XXXX.
+                        Liity seuraavaksi päätelaitteellasi Wi-Fi-verkkoon nimeltään Configure Ruuvi Gateway XXXX.
                         Ruuvi Gatewayn käyttöönottosivu avautuu uuteen selainikkunaan yhteyden muodostuttua.
-                        Mikäli ikkuna ei avaudu automaattisesti, voit avata käyttöönottosivun kirjoittamalla
-                        selaimesi osoitekenttään 10.10.0.1 ja painamalla enter.
+                        Mikäli ikkuna ei avaudu automaattisesti, avaa käyttöönottosivu kirjoittamalla
+                        selaimesi osoitekenttään 10.10.0.1 ja painamalla Enter.
                     </p>
                 </div>
             </div>
@@ -266,7 +254,7 @@
         </section>
 
 
-        <!-- ETHERNET CONFIGURATION -->
+        <!-- IP ADDRESS CONFIGURATION -->
         <section id="page-ethernet_connection" class="hidden">
             <h1>
                 <span lang="en">IP address settings</span>
@@ -288,15 +276,15 @@
 
             <div class="ingress">
                 <p>
-                    <span lang="en">dummy text...</span>
-                    <span lang="fi">dummy text...</span>
+                    <span lang="en">Configure your LAN connection to use either IP address served from DHCP server or to use a static IP address.</span>
+                    <span lang="fi">Määritä lähiverkkoyhteyden IP-osoite haettavaksi joko DHCP-palvelimelta tai käytä staattista IP-osoitetta.</span>
                 </p>
             </div>
 
             <div>
                 <label class="control control-checkbox">
-                    <span lang="en">Let the DHCP server assign an IP address automatically (default)</span>
-                    <span lang="fi">Määritä IP-osoite automaattisesti DHCP-palvelimen avulla (oletus)</span>
+                    <span lang="en">Let your DHCP server assign an IP address automatically (default)</span>
+                    <span lang="fi">Anna DHCP-palvelimesi määrittää IP-osoite automaattisesti (oletus)</span>
                     <input id="eth_dhcp" type="checkbox">
                     <span class="control_indicator"></span>
                 </label>
@@ -310,7 +298,7 @@
                 <div class="input-with_validity_check">
                     <label for="eth_static_ip">
                     </label>
-                    <input id="eth_static_ip" type="text" placeholder="" value="">
+                    <input id="eth_static_ip" type="text" placeholder="0.0.0.0" value="">
                     <div class="input-with_validity_check-icon">
                     </div>
                 </div>
@@ -322,19 +310,19 @@
                 <div class="input-with_validity_check">
                     <label for="eth_netmask">
                     </label>
-                    <input id="eth_netmask" type="text" placeholder="" value="">
+                    <input id="eth_netmask" type="text" placeholder="255.255.255.0" value="">
                     <div class="input-with_validity_check-icon">
                     </div>
                 </div>
 
                 <h3>
-                    <span lang="en">Gateway</span>
-                    <span lang="fi">Yhdyskäytävä</span>
+                    <span lang="en">Default Gateway</span>
+                    <span lang="fi">Oletusyhdyskäytävä</span>
                 </h3>
                 <div class="input-with_validity_check">
                     <label for="eth_gw">
                     </label>
-                    <input id="eth_gw" type="text" placeholder="" value="">
+                    <input id="eth_gw" type="text" placeholder="0.0.0.0" value="">
                     <div class="input-with_validity_check-icon">
                     </div>
                 </div>
@@ -346,7 +334,7 @@
                 <div class="input-with_validity_check">
                     <label for="eth_dns1">
                     </label>
-                    <input id="eth_dns1" type="text" placeholder="DNS 1" value="">
+                    <input id="eth_dns1" type="text" placeholder="0.0.0.0" value="">
                     <div class="input-with_validity_check-icon">
                     </div>
                 </div>
@@ -358,7 +346,7 @@
                 <div class="input-with_validity_check">
                     <label for="eth_dns2">
                     </label>
-                    <input id="eth_dns2" type="text" placeholder="DNS 2" value="">
+                    <input id="eth_dns2" type="text" placeholder="0.0.0.0" value="">
                     <div class="input-with_validity_check-icon">
                     </div>
                 </div>
@@ -388,7 +376,7 @@
         <section id="page-wifi_connection" class="hidden">
             <h1>
                 <span lang="en">Wi-Fi Network</span>
-                <span lang="fi">Wi-Fi-lähiverkko</span>
+                <span lang="fi">Wi-Fi-verkko</span>
             </h1>
 
             <div class="progressbar-container">
@@ -406,7 +394,7 @@
 
             <div class="ingress">
                 <p lang="en">Wi-Fi networks available near you are listed below.
-                    Select the wireless network that you want Ruuvi Gateway to use to connect to the Internet.</p>
+                    Select the wireless network that you want Ruuvi Gateway to use to connect to the internet.</p>
                 <p lang="fi">Lähelläsi olevat Wi-Fi-verkot on listattu alla.
                     Valitse langaton verkko, jonka kautta haluat Ruuvi Gatewayn olevan yhteydessä internetiin.</p>
             </div>
@@ -452,7 +440,7 @@
             <div id="page-wifi_connection-advanced-dropdown" class="hidden">
                 <p>
                     <span lang="en">If your network is hidden, you can connect manually.</span>
-                    <span lang="fi">Voit muodostaa yhdeyden manuaalisesti, mikäli verkko on piilotettu.</span>
+                    <span lang="fi">Mikäli verkkosi on piilotettu voit muodostaa yhdeyden manuaalisesti.</span>
                 </p>
 
                 <label class="control control-radio">
@@ -469,8 +457,8 @@
                 <div id="input_ssid_block">
                     <h3>
                         <label for="manual_ssid">
-                            <span lang="en">SSID</span>
-                            <span lang="fi">SSID</span>
+                            <span lang="en">SSID (network name)</span>
+                            <span lang="fi">SSID (verkon nimi)</span>
                         </label>
                     </h3>
                     <input id="manual_ssid" class="connection-field-manual" type="text" value="">
@@ -497,7 +485,7 @@
                 <div id="wifi-connection-status-block" class="hidden" style="height: 20px">
                     <div id="wifi-connection-failed" class="err-message">
                         <span lang="en">Failed to connect. Please try again.</span>
-                        <span lang="fi">Yhteyden muodostaminen epäonnistui. Yritä uudelleen.</span>
+                        <span lang="fi">Yhdistäminen epäonnistui. Yritä uudelleen.</span>
                     </div>
                 </div>
 
@@ -534,6 +522,13 @@
                     <li></li>
                     <li></li>
                 </ul>
+            </div>
+
+            <div class="ingress">
+                <p>
+                    <span lang="en">For optimal performance, it's recommended to use the most up-to-date firmware for Ruuvi Gateway. You can update the firmware on this page if an update is available, or choose to skip update and let Ruuvi Gateway update its firmware automatically when a new version is available.</span>
+                    <span lang="fi">Ruuvi Gateway toimii parhaiten uusimmalla laiteohjelmistoversiolla. Voit päivittää ohjelmiston tällä sivulla mikäli päivitys on saatavilla tai jatkaa päivittämättä, jolloin Ruuvi Gateway päivittää itse itsensä uuden ohjelmistoversion tultua saataville.</span>
+                </p>
             </div>
 
             <div id="page-software_update-version_info">
@@ -622,8 +617,8 @@
             <div id="page-software_update-advanced-dropdown" class="hidden">
                 <div id="page-software_update-fw_update_url-div">
                     <div class="info-icon-left-column">
-                        <span lang="en">URL of the json file containing the latest firmware version information:</span>
-                        <span lang="fi">Uusimmat laiteohjelmistoversiotiedot sisältävän json-tiedoston URL-osoite:</span>
+                        <span lang="en">Define a server for automatic firmware updates.</span>
+                        <span lang="fi">Automaattisille ohjelmistopäivityksille käytettävä palvelin.</span>
                     </div>
                     <a class="info-icon-button" href="#popup-info-icon-button-fw_update_url_title">i</a>
                 </div>
@@ -641,8 +636,8 @@
 
                 <div id="page-software_update-fw_update-status-error" class="err-message hidden">
                     <div class="block-centered">
-                        <span lang="en">Failed to retrieve json file with firmware update information.</span>
-                        <span lang="fi">Laiteohjelmiston päivitystietoja sisältävän json-tiedoston hakeminen epäonnistui.</span>
+                        <span lang="en">Failed to retrieve JSON file containing firmware update information.</span>
+                        <span lang="fi">Laiteohjelmiston päivitystiedot sisältävän JSON-tiedoston hakeminen epäonnistui.</span>
                     </div>
                     <div id="page-software_update-fw_update-status-error-desc" class="block-centered">
                     </div>
@@ -651,7 +646,7 @@
                 <div id="page-software_update-updating-status-error" class="err-message hidden">
                     <div class="block-centered">
                         <div>
-                            <span lang="en">Error when starting the firmware upgrade process.</span>
+                            <span lang="en">Error when starting the firmware update process.</span>
                             <span lang="fi">Virhe käynnistettäessä laiteohjelmiston päivitysprosessia.</span>
                         </div>
                     </div>
@@ -666,7 +661,7 @@
                     </button>
                     <button class="btn" id="page-software_update-button-fw_update_url-save" type="button">
                         <span lang="en">Save</span>
-                        <span lang="fi">Tallentaa</span>
+                        <span lang="fi">Tallenna</span>
                     </button>
                 </div>
 
@@ -675,8 +670,8 @@
                 <div id="software_update-url_title" class="control control-checkbox info-icon-container">
                     <label for="software_update-set-url-manually">
                         <span class="info-icon-left-column">
-                            <span lang="en">Specify a URL that contains the required firmware update binaries.</span>
-                            <span lang="fi">Anna URL-osoite, josta tarvittavat laiteohjelmistotiedostot ladataan.</span>
+                            <span lang="en">Don't use a JSON file. Define a URL address containing the files and choose Update.</span>
+                            <span lang="fi">Älä käytä JSON-määritystä. Anna tiedostot sisältävä URL-osoite ja valitse Päivitä.</span>
                             <input type="checkbox" id="software_update-set-url-manually">
                             <span class="control_indicator"></span>
                         </span>
@@ -699,27 +694,20 @@
             <div id="popup-info-icon-button-fw_update_url_title" class="info-icon-overlay">
                 <div class="info-icon-popup">
                     <div class="popup-title">
-                        <span lang="en">How to change the server for auto installation of firmware updates</span>
-                        <span lang="fi">Palvelimen vaihtaminen laiteohjelmistopäivitysten automaattista asennusta varten
-                        </span>
+                        <span lang="en">Define a server for automatic firmware updates</span>
+                        <span lang="fi">Automaattisille ohjelmistopäivityksille käytettävä palvelin</span>
                     </div>
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
                     <div class="info-icon-content">
                         <p>
-                            <span lang="en">You need to specify a URL that will return a json file with information
-                                about the latest version and links to download the binary files.
+                            <span lang="en">Define a URL address where JSON file can be downloaded. This JSON file includes information about latest version and location for binary files.
                             </span>
-                            <span lang="fi">Sinun on määritettävä URL-osoite, joka palauttaa json-tiedoston,
-                                joka sisältää tiedot uusimmasta versiosta ja linkit binaaritiedostojen lataamiseen.
+                            <span lang="fi">Anna URL-osoite, josta JSON-tiedosto on ladattavissa. JSON-tiedostossa määritellään tiedot uusimmasta versiosta ja binääritiedostojen sijainnista.
                             </span>
                         </p>
                         <p>
-                            <span lang="en">You can find more detailed instructions here:
-                                https://docs.ruuvi.com/ruuvi-gateway-firmware/gw-install-custom-firmware
-                            </span>
-                            <span lang="fi">Tarkemmat ohjeet löydät täältä:
-                                https://docs.ruuvi.com/ruuvi-gateway-firmware/gw-install-custom-firmware
-                            </span>
+                            <span lang="en">For more detailed instructions, refer to docs.ruuvi.com</span>
+                            <span lang="fi">Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com</span>
                         </p>
                     </div>
                 </div>
@@ -728,27 +716,18 @@
             <div id="popup-info-icon-software_update" class="info-icon-overlay">
                 <div class="info-icon-popup">
                     <div class="popup-title">
-                        <span lang="en">How to install a custom firmware</span>
-                        <span lang="fi">Mukautetun laiteohjelmiston asentaminen</span>
+                        <span lang="en">Install firmware from URL address</span>
+                        <span lang="fi">Asenna laiteohjelmisto URL-osoitteesta</span>
                     </div>
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
                     <div class="info-icon-content">
                         <p>
-                            <span lang="en">You need to prepare the firmware binaries (ruuvi_gateway_esp.bin,
-                                fatfs_gwui.bin and fatfs_nrf52.bin) and upload them to your HTTP server.
-                            </span>
-                            <span lang="fi">Valmista ensin laiteohjelmiston binäärit
-                                (ruuvi_gateway_esp.bin, fatfs_gwui.bin ja fatfs_nrf52.bin)
-                                ja lataa ne sitten HTTP-palvelimellesi.
-                            </span>
+                            <span lang="en">Download firmware binary files from a specific URL address.</span>
+                            <span lang="fi">Lataa laiteohjelmiston binääritiedostot määrittämästäsi URL-osoitteesta.</span>
                         </p>
                         <p>
-                            <span lang="en">You can find more detailed instructions here:
-                                https://docs.ruuvi.com/ruuvi-gateway-firmware/gw-install-custom-firmware
-                            </span>
-                            <span lang="fi">Tarkemmat ohjeet löydät täältä:
-                                https://docs.ruuvi.com/ruuvi-gateway-firmware/gw-install-custom-firmware
-                            </span>
+                            <span lang="en">For more detailed instructions, refer to docs.ruuvi.com</span>
+                            <span lang="fi">Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com</span>
                         </p>
                     </div>
                 </div>
@@ -917,12 +896,8 @@
             </div>
 
             <div class="ingress">
-                <p lang="en">If you are an advanced user, you can configure a remote server HTTP(S)
-                    address where the Ruuvi Gateway configuration file can be downloaded.
-                    In this case, you do not need to configure the Ruuvi Gateway manually.</p>
-                <p lang="fi">Jos olet edistynyt käyttäjä, voit määrittää Ruuvi Gatewayn määritysten hakemisen
-                    etäpalvelimelta HTTP(S)-osoitteesta. Tässä tapauksessa sinun ei tarvitse määrittää Ruuvi Gatewayn
-                    asetuksia manuaalisesti.</p>
+                <p lang="en">Ruuvi Gateway -router configuration can be fetched automatically from a remote server. In this case, you don't need to configure Ruuvi Gateway settings manually since Ruuvi Gateway will fetch settings file automatically. </p>
+                <p lang="fi">Ruuvi Gateway -reitittimen asetukset voidaan hakea automaattisesti etäpalvelimelta. Tässä tapauksessa sinun ei tarvitse määrittää Ruuvi Gatewayn asetuksia manuaalisesti, vaan Ruuvi Gateway hakee mahdollisesti muuttuneen asetustiedoston itsenäisesti. Tästä on erityisesti hyötyä, jos sinulla on useita Ruuvi Gateway -reitittimiä tai sinulla ei ole pääsyä ohjattuun määrittämiseen lähiverkon kautta.</p>
             </div>
 
             <div id="page-remote_cfg-advanced-button" class="btn-dropdown">
@@ -947,10 +922,10 @@
                 <div id="remote_cfg-options" class="indent hidden">
                     <div id="remote_cfg-options_url_title">
                         <div class="info-icon-left-column">
-                            <span lang="en">Specify the URL of the json file containing the configuration or
-                                the URL of the folder containing the json files for each Ruuvi Gateway:</span>
-                            <span lang="fi">Anna määritykset sisältävän json-tiedoston URL-osoite tai sen kansion
-                                URL-osoite, jossa on json-tiedostot jokaiselle Ruuvi Gatewaylle:</span>
+                            <span lang="en">Specify the URL of the JSON file containing the configuration or
+                                the URL of the folder containing the JSON files for each Ruuvi Gateway:</span>
+                            <span lang="fi">Anna määritykset sisältävän JSON-tiedoston URL-osoite tai sen kansion
+                                URL-osoite, jossa on JSON-tiedostot jokaiselle Ruuvi Gatewaylle:</span>
                         </div>
                         <a class="info-icon-button" href="#popup-info-icon-button-remote_cfg">i</a>
                     </div>
@@ -3022,14 +2997,12 @@
                     Oh no! Connection to the Ruuvi Gateway is lost.
                     <br/>
                     <br/>
-                    Please reconnect to the Wi-Fi hotspot. If the hotspot is not active, start it again.
-                     Locate the pinhole button under the power socket and press the button briefly using a paperclip.</span>
+                    Please restart the Setup Wizard. If you are configuring Ruuvi Gateway via it's Wi-Fi hotspot, you may need to reactivate it by locating the pinhole button beneath the power socket and briefly pressing it with a paperclip.</span>
                 <span lang="fi">
                     Voi ei! Yhteys Ruuvi Gatewayhyn on menetetty.
                     <br/>
                     <br/>
-                    Yhdistä Wi-Fi-yhteyspisteeseen uudelleen. Mikäli yhteyspiste ei ole
-                    aktiivinen, paina paperiliittimellä lyhyesti virtaliittimen alla olevaa painiketta.</span>
+                    Käynnistä ohjattu käyttöönotto uudelleen. Jos käytät Ruuvi Gateway -reitittimen Wi-Fi-yhteyspistettä asetusten määrittämiseen, voit joutua käynnistämään yhteyspisteen uudelleen. Yhteyspiste aktivoidaan painamalla virtaliittimen alla olevaa painiketta lyhyesti paperiliittimellä.</span>
             </div>
         </div>
 
