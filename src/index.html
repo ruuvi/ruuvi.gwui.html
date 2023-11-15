@@ -896,8 +896,8 @@
             </div>
 
             <div class="ingress">
-                <p lang="en">Ruuvi Gateway router configuration can be fetched automatically from a remote server. In this case, you don't need to configure Ruuvi Gateway settings manually since Ruuvi Gateway will fetch settings file automatically. </p>
-                <p lang="fi">Ruuvi Gateway -reitittimen asetukset voidaan hakea automaattisesti etäpalvelimelta. Tässä tapauksessa sinun ei tarvitse määrittää Ruuvi Gatewayn asetuksia manuaalisesti, vaan Ruuvi Gateway hakee mahdollisesti muuttuneen asetustiedoston itsenäisesti. Tästä on erityisesti hyötyä, jos sinulla on useita Ruuvi Gateway -reitittimiä tai sinulla ei ole pääsyä ohjattuun määrittämiseen lähiverkon kautta.</p>
+                <p lang="en">If you are an advanced user, you can set up Ruuvi Gateway router to fetch its configuration automatically from a remote server. In this case, you don't need to configure Ruuvi Gateway settings manually since Ruuvi Gateway will fetch settings file automatically. If this doesn't concern you, please continue to the next step.</p>
+                <p lang="fi">Jos olet edistynyt käyttäjä, voit määrittää Ruuvi Gateway -reitittimen hakemaan asetukset automaattisesti etäpalvelimelta. Tässä tapauksessa sinun ei tarvitse määrittää Ruuvi Gatewayn asetuksia manuaalisesti, vaan Ruuvi Gateway hakee mahdollisesti muuttuneen asetustiedoston itsenäisesti. Tästä on erityisesti hyötyä, jos sinulla on useita Ruuvi Gateway -reitittimiä tai sinulla ei ole pääsyä ohjattuun määrittämiseen lähiverkon kautta. Mikäli tämä ei koske sinua, voit jatkaa seuraavaan kohtaan.</p>
             </div>
 
             <div id="page-remote_cfg-advanced-button" class="btn-dropdown">
@@ -922,10 +922,10 @@
                 <div id="remote_cfg-options" class="indent hidden">
                     <div id="remote_cfg-options_url_title">
                         <div class="info-icon-left-column">
-                            <span lang="en">Specify the URL of the JSON file containing the configuration or
-                                the URL of the folder containing the JSON files for each Ruuvi Gateway</span>
-                            <span lang="fi">Anna määritykset sisältävän JSON-tiedoston URL-osoite tai sen kansion
-                                URL-osoite, jossa on JSON-tiedostot jokaiselle Ruuvi Gatewaylle</span>
+                            <span lang="en">Specify the URL of the JSON file that contains the configuration settings for your Ruuvi Gateway or
+                                the URL of the folder containing the JSON files for each Ruuvi Gateway.</span>
+                            <span lang="fi">Anna Ruuvi Gateway -reittimen määritykset sisältävän JSON-tiedoston URL-osoite tai sen kansion
+                                URL-osoite, jossa on JSON-tiedostot jokaiselle Ruuvi Gatewaylle.</span>
                         </div>
                         <a class="info-icon-button" href="#popup-info-icon-button-remote_cfg">i</a>
                     </div>
@@ -1195,7 +1195,7 @@
 
             <div>
                 <label class="control control-radio">
-                    <span lang="en">Auto update (recommended setting, accept only stable updates)</span>
+                    <span lang="en">Auto update (recommended setting, accept only official stable updates)</span>
                     <span lang="fi">Automaattinen päivitys (suositeltu vaihtoehto, hyväksy ainoastaan viralliset päivitykset)</span>
                     <input id="auto_update_cycle-regular" value="auto_update_cycle-regular" type="radio"
                            name="auto_update_cycle" checked>
@@ -1469,10 +1469,10 @@
 
             <div class="ingress">
                 <p lang="en">
-                    After completing Ruuvi Gateway setup wizard you can easily access it again through your local area network without restarting Ruuvi Gateway's own Wi-Fi hotspot. Choose your preferred login method below.
+                    After completing Ruuvi Gateway setup wizard you can easily access it again through your local area network without restarting Ruuvi Gateway's own Wi-Fi hotspot. To do this, type your Ruuvi Gateways's IP address to your browser. Choose your preferred login method below.
                 </p>
                 <p lang="fi">
-                    Kun tämä ohjattu käyttöönotto on viety loppuun ensimmäisen kerran, voit avata Ruuvi Gatewayn ohjatun käyttöönoton uudelleen lähiverkkosi kautta Ruuvi Gatewayn omaa Wi-Fi-yhteyspistettä käynnistämättä. Valitse haluamasi kirjautumistapa alta.
+                    Kun tämä ohjattu käyttöönotto on viety loppuun ensimmäisen kerran, voit avata Ruuvi Gatewayn ohjatun käyttöönoton uudelleen lähiverkkosi kautta Ruuvi Gatewayn omaa Wi-Fi-yhteyspistettä käynnistämättä. Pääset kirjautumisikkunaan syöttämällä Ruuvi Gatewayn IP-osoitteen selaimen osoitekenttään. Valitse haluamasi kirjautumistapa alta.
                 </p>
             </div>
 
@@ -1585,7 +1585,7 @@
                     <div>
                         <div>
                             <label class="control control-checkbox">
-                                <span lang="en">Enable full (read/write) access to the Ruuvi Gateway router using API-key</span>
+                                <span lang="en">Enable full (read/write) access to the Ruuvi Gateway router using API key</span>
                                 <span lang="fi">Salli täysi (luku/kirjoitus) pääsy Ruuvi Gateway -reitittimeen API-avaimen avulla</span>
                                 <input type="checkbox" id="settings_lan_auth-use_api_key_rw">
                                 <span class="control_indicator"></span>
@@ -1630,9 +1630,9 @@
 
             <div class="ingress">
                 <p lang="en">Define where the sensor data collected by Ruuvi Gateway will be sent.
-                    Ruuvi Cloud service is used by default. You can alternatively send measurement data to your own server. By choosing the advanced settings you will also be able to adjust sensor filtering, sending interval and more.</p>
+                    Ruuvi Cloud service is used by default. If you are an advanced user, you can alternatively send measurement data to your own server. By choosing the advanced settings you will also be able to adjust sensor filtering, sending interval and more.</p>
                 <p lang="fi">Määritä minne Ruuvi Gatewayn keräämät anturitiedot lähetetään.
-                    Oletuksena käytössä on Ruuvi Cloud -pilvipalvelu. Voit vaihtoehtoisesti lähettää mittaustiedot omalle palvelimellesi. Edistyneiden asetusten kautta voit myös muokata anturien suodatusta, lähetysvälejä ja muita asetuksia.</p>
+                    Oletuksena käytössä on Ruuvi Cloud -pilvipalvelu. Jos olet edistynyt käyttäjä, voit vaihtoehtoisesti lähettää mittaustiedot omalle palvelimellesi. Edistyneiden asetusten kautta voit myös muokata anturien suodatusta, lähetysvälejä ja muita asetuksia.</p>
             </div>
 
             <div id="conf-ruuvi">
@@ -1726,34 +1726,7 @@
                 <input id="use_http" type="checkbox">
                 <span class="control_indicator"></span>
             </label>
-
             <div id="conf-settings-http" class="indent hidden">
-                <h3>
-                    <span lang="en">Data format</span>
-                    <span lang="fi">Tietojen muoto</span>
-                </h3>
-                <label class="control control-radio">
-                    <span lang="en">Ruuvi raw data</span>
-                    <span lang="fi">Ruuvi raakadata</span>
-                    <input id="http_data_format_ruuvi" name="http_data_format" type="radio"
-                           value="http_data_format_ruuvi"/>
-                    <span class="control_indicator"></span>
-                </label>
-                <label class="control control-radio">
-                    <span lang="en">Ruuvi raw and decoded data</span>
-                    <span lang="fi">Ruuvi raaka ja dekoodattu data</span>
-                    <input id="http_data_format_ruuvi_raw_and_decoded" name="http_data_format" type="radio"
-                           value="http_data_format_ruuvi_raw_and_decoded"/>
-                    <span class="control_indicator"></span>
-                </label>
-                <label class="control control-radio">
-                    <span lang="en">Ruuvi decoded data</span>
-                    <span lang="fi">Ruuvi dekoodattu data</span>
-                    <input id="http_data_format_ruuvi_decoded" name="http_data_format" type="radio"
-                           value="http_data_format_ruuvi_decoded"/>
-                    <span class="control_indicator"></span>
-                </label>
-
                 <div>
                     <h3>
                         <label for="http_url">
@@ -1767,7 +1740,35 @@
                         </div>
                     </div>
                 </div>
-
+                <h3>
+                    <span lang="en">Data format</span>
+                    <span lang="fi">Dataformaatti</span>
+                </h3>
+                <p>
+                    <span lang="en">Choose the data format to use for relaying received Bluetooth advertisement data.</span>
+                    <span lang="fi">Valitse vastaanotettujen Bluetooth-mainospakettien välittämiseen käytettävä dataformaatti.</span>
+                </p>
+                <label class="control control-radio">
+                    <span lang="en">Don't decode, send data in raw format</span>
+                    <span lang="fi">Älä dekoodaa, lähetä tiedot raakamuodossa</span>
+                    <input id="http_data_format_ruuvi" name="http_data_format" type="radio"
+                           value="http_data_format_ruuvi"/>
+                    <span class="control_indicator"></span>
+                </label>
+                <label class="control control-radio">
+                    <span lang="en">Send data in raw format and decoded</span>
+                    <span lang="fi">Lähetä tiedot sekä raakamuodossa että dekoodattuna</span>
+                    <input id="http_data_format_ruuvi_raw_and_decoded" name="http_data_format" type="radio"
+                           value="http_data_format_ruuvi_raw_and_decoded"/>
+                    <span class="control_indicator"></span>
+                </label>
+                <label class="control control-radio">
+                    <span lang="en">Send only decoded data</span>
+                    <span lang="fi">Lähetä tiedot ainoastaan dekoodattuna</span>
+                    <input id="http_data_format_ruuvi_decoded" name="http_data_format" type="radio"
+                           value="http_data_format_ruuvi_decoded"/>
+                    <span class="control_indicator"></span>
+                </label>
                 <div id="page-custom_server-http_validation_error" class="err-message hidden">
                     <div class="block-centered">
                         <span lang="en">Validation failed</span>
@@ -1780,8 +1781,8 @@
                 <div id="http_http_period_div">
                     <h3>
                         <label for="http_period">
-                            <span lang="en">Sending interval (seconds)</span>
-                            <span lang="fi">Lähetysväli (sekuntia)</span>
+                            <span lang="en">Sending interval (10-3600 seconds)</span>
+                            <span lang="fi">Lähetysväli (10-3600 sekuntia)</span>
                         </label>
                     </h3>
                     <div class="input-with_validity_check" style="width: 100%">
@@ -1809,8 +1810,8 @@
                             <div id="http_auth_basic_params" class="indent">
                                 <h3>
                                     <label for="http_user">
-                                        <span lang="en">Username (optional)</span>
-                                        <span lang="fi">Käyttäjänimi (valinnainen)</span>
+                                        <span lang="en">Username</span>
+                                        <span lang="fi">Käyttäjänimi</span>
                                     </label>
                                 </h3>
                                 <div class="input-with_validity_check">
@@ -1820,8 +1821,8 @@
                                 </div>
                                 <h3>
                                     <label for="http_pass">
-                                        <span lang="en">Password (optional)</span>
-                                        <span lang="fi">Salasana (valinnainen)</span>
+                                        <span lang="en">Password</span>
+                                        <span lang="fi">Salasana</span>
                                     </label>
                                 </h3>
                                 <div class="input-password input-with_validity_check">
@@ -1884,10 +1885,10 @@
                     </div>
                 </div>
 
-                <h2>
+                <h3>
                     <span lang="en">SSL certificate</span>
                     <span lang="fi">SSL-sertifikaatti</span>
-                </h2>
+                </h3>
 
                 <div>
                     <label class="control control-checkbox">
@@ -1999,34 +2000,6 @@
 
                 <div>
                     <h3>
-                        <span lang="en">Data format</span>
-                        <span lang="fi">Tietojen muoto</span>
-                    </h3>
-                    <label class="control control-radio">
-                        <span lang="en">Ruuvi raw data</span>
-                        <span lang="fi">Ruuvi raakadataa</span>
-                        <input id="mqtt_data_format_ruuvi" name="mqtt_data_format" type="radio"
-                               value="mqtt_data_format_ruuvi_raw"/>
-                        <span class="control_indicator"></span>
-                    </label>
-                    <label class="control control-radio">
-                        <span lang="en">Ruuvi raw and decoded data</span>
-                        <span lang="fi">Ruuvi raaka ja dekoodattu data</span>
-                        <input id="mqtt_data_format_ruuvi_raw_and_decoded" name="mqtt_data_format" type="radio"
-                               value="mqtt_data_format_ruuvi_raw_and_decoded"/>
-                        <span class="control_indicator"></span>
-                    </label>
-                    <label class="control control-radio">
-                        <span lang="en">Ruuvi decoded data</span>
-                        <span lang="fi">Ruuvi dekoodattu data</span>
-                        <input id="mqtt_data_format_ruuvi_decoded" name="mqtt_data_format" type="radio"
-                               value="mqtt_data_format_ruuvi_decoded"/>
-                        <span class="control_indicator"></span>
-                    </label>
-                </div>
-
-                <div>
-                    <h3>
                         <label for="mqtt_server">
                             <span lang="en">Server</span>
                             <span lang="fi">Palvelin</span>
@@ -2051,6 +2024,38 @@
                     </div>
                 </div>
 
+                <div>
+                    <h3>
+                        <span lang="en">Data format</span>
+                        <span lang="fi">Dataformaatti</span>
+                    </h3>
+                    <p>
+                    <span lang="en">Choose the data format to use for relaying received Bluetooth advertisement data.</span>
+                    <span lang="fi">Valitse vastaanotettujen Bluetooth-mainospakettien välittämiseen käytettävä dataformaatti.</span>
+                    </p>
+                    <label class="control control-radio">
+                        <span lang="en">Don't decode, send data in raw format</span>
+                        <span lang="fi">Älä dekoodaa, lähetä tiedot raakamuodossa</span>
+                        <input id="mqtt_data_format_ruuvi" name="mqtt_data_format" type="radio"
+                               value="mqtt_data_format_ruuvi_raw"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                    <label class="control control-radio">
+                        <span lang="en">Send data in raw format and decoded</span>
+                        <span lang="fi">Lähetä tiedot sekä raakamuodossa että dekoodattuna</span>
+                        <input id="mqtt_data_format_ruuvi_raw_and_decoded" name="mqtt_data_format" type="radio"
+                               value="mqtt_data_format_ruuvi_raw_and_decoded"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                    <label class="control control-radio">
+                        <span lang="en">Send only decoded data</span>
+                        <span lang="fi">Lähetä tiedot ainoastaan dekoodattuna</span>
+                        <input id="mqtt_data_format_ruuvi_decoded" name="mqtt_data_format" type="radio"
+                               value="mqtt_data_format_ruuvi_decoded"/>
+                        <span class="control_indicator"></span>
+                    </label>
+                </div>
+
                 <div id="page-custom_server-mqtt_validation_error" class="err-message hidden">
                     <div class="block-centered">
                         <span lang="en">Validation failed</span>
@@ -2070,8 +2075,8 @@
                     <div id="mqtt_sending_interval_div" class="indent">
                         <h3>
                             <label for="mqtt_sending_interval">
-                                <span lang="en">Sending interval (seconds)</span>
-                                <span lang="fi">Lähetysväli</span>
+                                <span lang="en">Sending interval (10-3600 seconds)</span>
+                                <span lang="fi">Lähetysväli (10-3600 sekuntia)</span>
                             </label>
                         </h3>
                         <div class="input-with_validity_check" style="width: 100%">
@@ -2133,10 +2138,13 @@
                         </div>
                     </div>
                 </div>
-
+                <h3>
+                    <span lang="en">Retained messages</span>
+                    <span lang="fi">Säilytetyt viestit</span>
+                </h3>
                 <label class="conf-settings-checkbox control control-checkbox">
-                    <span lang="en">Disable the use of retained messages</span>
-                    <span lang="fi">Älä käytä säilytettyjä viestejä</span>
+                    <span lang="en">Disable the use of retained messages. When a message with the "retain" flag set is published to a topic, the broker saves that message and sends it to any future subscribers for that topic.</span>
+                    <span lang="fi">Älä käytä säilytettyjä viestejä. Kun "säilytä"-lipun sisältävä viesti julkaistaan aiheeseen, välittäjä tallentaa viestin ja lähettää sen kaikille tuleville kyseisen aiheen tilaajille.</span>
                     <input id="mqtt_disable_retained_messages" type="checkbox">
                     <span class="control_indicator"></span>
                 </label>
@@ -2173,10 +2181,10 @@
                     </label>
                 </div>
 
-                <h2>
+                <h3>
                     <span lang="en">SSL certificate</span>
                     <span lang="fi">SSL-sertifikaatti</span>
-                </h2>
+                </h3>
 
                 <div class="line-container">
                     <label class="control control-checkbox">
@@ -2208,8 +2216,8 @@
                         </div>
                         <div>
                             <button class="btn btn-narrow btn-two-rows" id="mqtt-button_remove_client_cert_and_key" type="button">
-                                <span lang="en">Remove cert & key</span>
-                                <span lang="fi">Poista sert ja avain</span>
+                                <span lang="en">Remove certificate & key</span>
+                                <span lang="fi">Poista sertifikaatti ja avain</span>
                             </button>
                         </div>
                     </div>
@@ -2257,8 +2265,8 @@
 
             <div id="page-custom_server-advanced-dropdown" class="hidden">
                 <label class="control control-radio">
-                    <span lang="en">Send statistics to Ruuvi (default)</span>
-                    <span lang="fi">Lähetä statistiikkatiedot Ruuville (oletus)</span>
+                    <span lang="en">Send anonymous statistics used for service development and maintenance to Ruuvi (default)</span>
+                    <span lang="fi">Lähetä nimettömiä palvelun kehittämiseen ja ylläpitoon hyödynnettäviä statistiikkatietoja Ruuville (oletus)</span>
                     <input id="use_http_stat_ruuvi" value="statistics_use_ruuvi" name="use_statistics" type="radio"
                            class="conf-checkbox">
                     <span class="control_indicator"></span>
@@ -2278,8 +2286,8 @@
                     <div>
                         <h3>
                             <label for="http_stat_url">
-                                <span lang="en">HTTP server where to send statistics</span>
-                                <span lang="fi">HTTP-palvelin, jonne statistiikkatiedot lähetetään</span>
+                                <span lang="en">HTTP server</span>
+                                <span lang="fi">HTTP-palvelin</span>
                             </label>
                         </h3>
                         <div class="input-with_validity_check">
@@ -2368,8 +2376,8 @@
                             </div>
                             <div>
                                 <button class="btn btn-narrow btn-two-rows" id="stat-button_remove_client_cert_and_key" type="button">
-                                    <span lang="en">Remove cert & key</span>
-                                    <span lang="fi">Poista sert ja avain</span>
+                                    <span lang="en">Remove certificate & key</span>
+                                    <span lang="fi">Poista sertifikaatti ja avain</span>
                                 </button>
                             </div>
                         </div>
@@ -2461,8 +2469,8 @@
 
             <div class="ingress">
                 <p>
-                    <span lang="en">dummy text...</span>
-                    <span lang="fi">dummy text...</span>
+                    <span lang="en">Ruuvi Gateway uses time servers for specifying the correct time. Make sure at least one time servers is accessible if your Ruuvi Gateway is behind a firewall.</span>
+                    <span lang="fi">Ruuvi Gateway käyttää aikapalvelimia kellonajan määrittämiseen. Mikäli Ruuvi Gateway on palomuurin takana, vähintään yhden aikapalvelimen on oltava saavutettavissa.</span>
                 </p>
             </div>
 
@@ -2581,15 +2589,15 @@
             </div>
 
             <div class="ingress">
-                <p lang="en">Ruuvi Gateway actively listens for Bluetooth beacon messages from its surroundings.
-                    You can modify the listening settings.</p>
+                <p lang="en">Ruuvi Gateway continuously listens for Bluetooth advertisements from its surroundings.
+                    If you are an advanced user you can choose different listening options and set sensor filtering.</p>
                 <p lang="fi">Ruuvi Gateway kuuntelee jatkuvasti ympäristön Bluetooth-majakkaviestejä.
-                    Voit muokata kuunteluasetuksia.</p>
+                    Jos olet edistynyt käyttäjä, voit muuttaa kuunteluasetuksia ja anturien suodatusasetuksia.</p>
             </div>
 
             <label class="control control-radio">
-                <span lang="en">Listen to Ruuvi sensors</span>
-                <span lang="fi">Kuuntele Ruuvi-antureita</span>
+                <span lang="en">Listen to Ruuvi sensors only (default)</span>
+                <span lang="fi">Kuuntele ainoastaan Ruuvi-antureita (oletus)</span>
                 <input type="radio" name="company_use_filtering" value="1" checked="checked"
                        placeholder="Scan only Ruuvitags">
                 <span class="control_indicator"></span>
@@ -2607,8 +2615,8 @@
             <div id="page-scanning-advanced-dropdown" class="hidden">
                 <label class="control control-radio info-icon-container">
                     <span class="info-icon-left-column">
-                        <span lang="en">Ruuvi sensors (including experimental long range sensors)</span>
-                        <span lang="fi">Ruuvi-anturit (myös kokeelliset pitkän kantaman anturit)</span>
+                        <span lang="en">Listen to Ruuvi sensors (including long range sensors)</span>
+                        <span lang="fi">Kuuntele Ruuvi-antureita (myös pitkän kantaman anturit)</span>
                         <input type="radio" name="company_use_filtering" value="2"
                                placeholder="Scan only Ruuvitags">
                         <span class="control_indicator"></span>
@@ -2618,23 +2626,23 @@
 
                 <label class="control control-radio">
                     <span>
-                        <span lang="en">All (including third party beacons)</span>
-                        <span lang="fi">Kaikki (kolmansien osapuolten majakat mukaan lukien)</span>
+                        <span lang="en">Listen to all Bluetooth beacon messages (not just Ruuvi sensors)</span>
+                        <span lang="fi">Kuuntele kaikkia Bluetooth-majakkaviestejä (ei ainoastaan Ruuvi-antureita)</span>
                         <input type="radio" name="company_use_filtering" value="0" placeholder="Scan all beacons">
                         <span class="control_indicator"></span>
                     </span>
                 </label>
                 <div id="page-scanning-all_nearby_beacons-scanning_options" class="indent hidden">
                     <label class="control control-checkbox">
-                        <span lang="en">Use coded PHY (long range)</span>
-                        <span lang="fi">Käytä koodattua PHY:tä (pitkä kantama)</span>
-                        <input id="scan_coded_phy" type="checkbox">
+                        <span lang="en">Listen to 1 MBit/s advertisements</span>
+                        <span lang="fi">Kuuntele 1 MBit/s -majakkaviestejä</span>
+                        <input id="scan_1mbit_phy" type="checkbox">
                         <span class="control_indicator"></span>
                     </label>
                     <label class="control control-checkbox">
-                        <span lang="en">Use 1 MBit/s PHY</span>
-                        <span lang="fi">Skannaa 1 MBit/s -lähetyksiä</span>
-                        <input id="scan_1mbit_phy" type="checkbox">
+                        <span lang="en">Listen to coded PHY (long range) advertisements</span>
+                        <span lang="fi">Kuuntele pitkän kantaman protokollalla (PHY) koodattuja majakkaviestejä</span>
+                        <input id="scan_coded_phy" type="checkbox">
                         <span class="control_indicator"></span>
                     </label>
                     <label class="control control-checkbox">
@@ -2644,20 +2652,20 @@
                         <span class="control_indicator"></span>
                     </label>
                     <label class="control control-checkbox">
-                        <span lang="en">Use channel 37</span>
-                        <span lang="fi">Skannaa kanavaa 37</span>
+                        <span lang="en">Listen to channel 37</span>
+                        <span lang="fi">Kuuntele kanavaa 37</span>
                         <input id="scan_channel_37" type="checkbox">
                         <span class="control_indicator"></span>
                     </label>
                     <label class="control control-checkbox">
-                        <span lang="en">Use channel 38</span>
-                        <span lang="fi">Skannaa kanavaa 38</span>
+                        <span lang="en">Listen to channel 38</span>
+                        <span lang="fi">Kuuntele kanavaa 38</span>
                         <input id="scan_channel_38" type="checkbox">
                         <span class="control_indicator"></span>
                     </label>
                     <label class="control control-checkbox">
-                        <span lang="en">Use channel 39</span>
-                        <span lang="fi">Skannaa kanavaa 39</span>
+                        <span lang="en">Listen to channel 39</span>
+                        <span lang="fi">Kuuntele kanavaa 39</span>
                         <input id="scan_channel_39" type="checkbox">
                         <span class="control_indicator"></span>
                     </label>
@@ -2743,12 +2751,12 @@
                             <p>
                                 <span lang="en">Below you can see the list of Bluetooth devices heard by Ruuvi Gateway.
                                     Select the checkbox to assign the device to the filter list.
-                                    Click the Refresh list button at the end of the list to update the list.
+                                    Tap the Refresh list button to update the list.
                                     You can also add a sensor to the list by entering its MAC address and clicking Add.
                                 </span>
                                 <span lang="fi">Alla näet listan Ruuvi Gatewayn kuulemista Bluetooth-laitteista.
                                     Lisää laite suodatuslistaan valitsemalla MAC-osoitteen oikealla puolella oleva valintaruutu.
-                                    Päivitä lista napsauttamalla listan lopussa olevaa Päivitä lista -painiketta.
+                                    Päivitä lista napauttamalla Päivitä lista -painiketta.
                                     Voit myös lisätä anturin listaan kirjoittamalla sen MAC-osoitteen
                                     ja napauttamalla Lisää.
                                 </span>
@@ -2794,9 +2802,9 @@
                     <div class="info-icon-content">
                         <p>
                             <span lang="en">If you enable long range, Ruuvi Gateway will continuously switch the operating mode
-                                between short and long range (normal mode 50% / long range mode 50%)</span>
+                                between short and long range (50%/50%).</span>
                             <span lang="fi">Jos otat pitkän kantaman käyttöön, Ruuvi Gateway vaihtaa toimintatilaa lyhyen
-                                ja pitkän kantaman välillä (normaali tila 50 % / pitkän kantaman tila 50 %)</span>
+                                ja pitkän kantaman välillä (50%/50%).</span>
                         </p>
                     </div>
                 </div>
@@ -2835,8 +2843,8 @@
 
             <div class="block-centered">
                 <p>
-                    <span lang="en">You can now close this window and disconnect from the Ruuvi Gateway's Wi-Fi hotspot.</span>
-                    <span lang="fi">Voit nyt sulkea tämän ikkunan ja katkaista yhteyden Ruuvi Gatewayn Wi-Fi-yhteyspisteeseen.</span>
+                    <span lang="en">You can now close this window.</span>
+                    <span lang="fi">Voit nyt sulkea tämän ikkunan.</span>
                 </p>
             </div>
 
@@ -2888,20 +2896,19 @@
             </h2>
 
             <div class="ingress">
-                <p lang="en">If you need to modify these settings later, you can reconfigure your Ruuvi Gateway by
-                    restaring the Wi-Fi hotspot.
-                    Locate the pinhole button under the power socket and press the button briefly using a paperclip.</p>
-                <p lang="fi">Mikäli haluat myöhemmin muokata Ruuvi Gatewayn asetuksia, voit käynnistää
-                    Wi-Fi-yhteyspisteen ja ohjatun käyttöönoton
-                    uudelleen painamalla lyhyesti laitteen virtaliittimen alla olevaa nollauspainiketta
-                    paperiliittimellä.</p>
+                <p lang="en"> Restart the setup wizard if you need to modify these settings later. If you are configuring Ruuvi Gateway via it's Wi-Fi hotspot, 
+                    you need to reactivate it by locating the pinhole button beneath the power socket and briefly pressing it with a paperclip.</p>
+                
+                <p lang="fi"> Käynnistä ohjattu käyttöönotto uudelleen, mikäli haluat myöhemmin muokata näitä asetuksia. 
+                    Käynnistä yhteyspisteen uudelleen jos käytät Ruuvi Gateway -reitittimen Wi-Fi-yhteyspistettä asetusten määrittämiseen. 
+                    Yhteyspiste aktivoidaan painamalla virtaliittimen alla olevaa painiketta lyhyesti paperiliittimellä.</p>
             </div>
 
             <div class="ingress">
-                <p lang="en">If you want to reset to the factory settings, use a paperclip and press the small
+                <p lang="en">If you want to reset Ruuvi Gateway to the factory settings, use a paperclip and press the small
                     pinhole button under the power socket for 10 seconds.</p>
-                <p lang="fi">Mikäli haluat palauttaa tehdasasetukset, pidä paperiliittimellä virtaliittimen alla
-                    olevaa nollauspainiketta alaspainettuna kymmenen sekunnin ajan.</p>
+                <p lang="fi">Mikäli haluat palauttaa Ruuvi Gatewayn tehdasasetukset, pidä paperiliittimellä virtaliittimen alla
+                    olevaa painiketta alaspainettuna kymmenen sekunnin ajan.</p>
             </div>
         </section>
 
