@@ -39,18 +39,18 @@ class PageSoftwareUpdate {
   #section = $('section#page-software_update')
   #checkbox_software_update_set_url_manually = new GuiCheckbox($('#software_update-set-url-manually'))
 
-  #div_fw_update_server_div = new GuiDiv($('#page-software_update-fw_update_server-div'))
-  #input_fw_update_url = new GuiInputTextWithValidation($('#page-software_update-fw_update_url'))
-  #button_fw_update_url_check = new GuiButton($('#page-software_update-button-fw_update_url-check'))
-  #button_fw_update_url_save = new GuiButton($('#page-software_update-button-fw_update_url-save'))
+  #div_fw_update_server = new GuiDiv($('#page-software_update-fw_update_server-div'))
+  #input_fw_update_server_url = new GuiInputTextWithValidation($('#page-software_update-fw_update_server_url'))
+  #button_fw_update_server_check = new GuiButton($('#page-software_update-button-fw_update_server_url-check'))
+  #button_fw_update_server_save = new GuiButton($('#page-software_update-button-fw_update_server_url-save'))
+
+  #div_fw_update_binary_files = new GuiDiv($('#page-software_update-fw_update_binary_files-div'))
+  #input_fw_update_binary_files_url = new GuiInputTextWithValidation($('#page-software_update-fw_update_binary_files_url'))
+
   #div_fw_update_status_error = new GuiDiv($('#page-software_update-fw_update-status-error'))
   #text_fw_update_status_error_desc = new GuiText($('#page-software_update-fw_update-status-error-desc'))
 
-  #div_software_update_url = new GuiDiv($('#software_update-url-div'))
-  #input_software_update_url = new GuiInputTextWithValidation($('#software_update-url'))
   #button_upgrade = new GuiButton($('#software_update-button-upgrade'))
-
-  #div_software_update_server = new GuiDiv($('#software_update-server-div'))
 
   #button_continue = new GuiButtonContinue($('#page-software_update-button-continue'))
   #div_in_button_continue_no_update = new GuiText($('#page-software_update-button-continue_no_update'))
@@ -81,13 +81,14 @@ class PageSoftwareUpdate {
     this.#section.bind('onShow', async () => this.#onShow())
     this.#section.bind('onHide', async () => this.#onHide())
 
-    this.#input_fw_update_url.on_change(() => this.#on_change_fw_update_url())
-    this.#button_fw_update_url_check.on_click(async () => this.#on_button_fw_update_url_check())
-    this.#button_fw_update_url_save.on_click(async () => this.#on_button_fw_update_url_save())
+    this.#input_fw_update_server_url.on_change(() => this.#on_change_url_fw_update_server())
+    this.#button_fw_update_server_check.on_click(async () => this.#on_button_url_fw_update_server_check())
+    this.#button_fw_update_server_save.on_click(async () => this.#on_button_url_fw_update_server_save())
 
-    this.#input_software_update_url.on_change(() => this.#on_change_url())
+    this.#checkbox_software_update_set_url_manually.on_change(() => this.#on_change_url_fw_update_binary_files())
+    this.#input_fw_update_binary_files_url.on_change(() => this.#on_change_url_fw_update_binary_files())
+
     this.#button_upgrade.on_click(async () => this.#on_button_upgrade())
-    this.#checkbox_software_update_set_url_manually.on_change(() => this.#on_change_url())
     this.#button_continue.on_click(() => Navigation.change_page_to_remote_cfg())
 
     this.#text_version_current.setVal(gwCfg.info.fw_ver)
@@ -97,7 +98,7 @@ class PageSoftwareUpdate {
     console.log(log_wrap('section#page-software_update: onShow'))
     this.#checkbox_software_update_set_url_manually.setUnchecked()
     if (this.#text_version_latest.getVal() !== '') {
-      this.#input_software_update_url.setVal(this.#latest_url)
+      this.#input_fw_update_binary_files_url.setVal(this.#latest_url)
       return
     }
     this.#button_upgrade.disable()
@@ -105,12 +106,12 @@ class PageSoftwareUpdate {
 
     this.#set_software_update_status_empty()
 
-    this.#input_fw_update_url.setVal(this.#gwCfg.fw_update_url.fw_update_url)
-    this.#button_fw_update_url_save.disable()
+    this.#input_fw_update_server_url.setVal(this.#gwCfg.fw_update_url.fw_update_url)
+    this.#button_fw_update_server_save.disable()
 
     this.#sect_advanced.disable()
 
-    this.#on_change_url()
+    this.#on_change_url_fw_update_binary_files()
 
     gui_loading.bodyClassLoadingAdd()
     GwStatus.stopCheckingStatus()
@@ -131,7 +132,7 @@ class PageSoftwareUpdate {
 
   async #onHide () {
     console.log(log_wrap('section#page-software_update: onHide'))
-    this.#on_change_url()
+    this.#on_change_url_fw_update_binary_files()
   }
 
 
@@ -230,7 +231,7 @@ class PageSoftwareUpdate {
       this.#div_in_button_continue_without_update.hide()
     }
 
-    this.#input_software_update_url.setVal(this.#latest_url)
+    this.#input_fw_update_binary_files_url.setVal(this.#latest_url)
 
     this.#sect_advanced.enable()
 
@@ -248,40 +249,40 @@ class PageSoftwareUpdate {
     return true
   }
 
-  #on_change_fw_update_url() {
+  #on_change_url_fw_update_server() {
     this.#div_fw_update_status_error.hide()
-    this.#input_fw_update_url.clearValidationIcon()
-    this.#input_fw_update_url.setValidationRequired()
-    this.#button_fw_update_url_save.disable()
+    this.#input_fw_update_server_url.clearValidationIcon()
+    this.#input_fw_update_server_url.setValidationRequired()
+    this.#button_fw_update_server_save.disable()
   }
 
-  #on_change_url () {
+  #on_change_url_fw_update_binary_files () {
     this.#div_updating_status_error.hide()
     this.#set_software_update_status_empty()
     if (this.#checkbox_software_update_set_url_manually.isChecked()) {
-      this.#div_fw_update_server_div.slideUp()
-      if (this.#is_valid_http_url(this.#input_software_update_url.getVal())) {
-        this.#input_software_update_url.clearValidationIcon()
+      this.#div_fw_update_server.slideUp()
+      if (this.#is_valid_http_url(this.#input_fw_update_binary_files_url.getVal())) {
+        this.#input_fw_update_binary_files_url.clearValidationIcon()
         this.#button_upgrade.enable()
       } else {
-        this.#input_software_update_url.setInvalid()
+        this.#input_fw_update_binary_files_url.setInvalid()
         this.#button_upgrade.disable()
       }
       this.#div_version_info.slideUp()
-      this.#div_software_update_url.slideDown()
+      this.#div_fw_update_binary_files.slideDown()
       this.#button_continue.hide()
     } else {
-      this.#div_fw_update_server_div.slideDown()
+      this.#div_fw_update_server.slideDown()
       if (this.#text_version_latest.getVal() !== '') {
-        this.#input_software_update_url.setVal(this.#latest_url)
+        this.#input_fw_update_binary_files_url.setVal(this.#latest_url)
         if (this.#text_version_latest.getVal() === '' || this.#text_version_current.getVal() === this.#text_version_latest.getVal()) {
           this.#button_upgrade.disable()
         } else {
           this.#button_upgrade.enable()
         }
       }
-      this.#input_software_update_url.clearValidationIcon()
-      this.#div_software_update_url.slideUp()
+      this.#input_fw_update_binary_files_url.clearValidationIcon()
+      this.#div_fw_update_binary_files.slideUp()
       this.#div_version_info.slideDown()
       this.#button_continue.show()
       if (!this.#flagLatestFirmwareVersionSupported) {
@@ -290,18 +291,18 @@ class PageSoftwareUpdate {
     }
   }
 
-  async #on_button_fw_update_url_check () {
+  async #on_button_url_fw_update_server_check () {
     this.#div_updating_status_error.hide()
-    let fw_update_url_val = this.#input_fw_update_url.getVal()
+    let fw_update_url_val = this.#input_fw_update_server_url.getVal()
     if (fw_update_url_val.indexOf('://') === -1) {
       fw_update_url_val = 'https://' + fw_update_url_val
     }
-    if (fw_update_url_val !== this.#input_fw_update_url.getVal()) {
-      this.#input_fw_update_url.setVal(fw_update_url_val)
+    if (fw_update_url_val !== this.#input_fw_update_server_url.getVal()) {
+      this.#input_fw_update_server_url.setVal(fw_update_url_val)
     }
     if (!this.#is_valid_http_url(fw_update_url_val)) {
-      this.#input_fw_update_url.setInvalid()
-      this.#button_fw_update_url_save.disable()
+      this.#input_fw_update_server_url.setInvalid()
+      this.#button_fw_update_server_save.disable()
       return
     }
 
@@ -309,23 +310,23 @@ class PageSoftwareUpdate {
     GwStatus.stopCheckingStatus()
     await Network.waitWhileInProgress()
 
-    this.#input_fw_update_url.clearValidationIcon()
-    this.#input_fw_update_url.setValidationRequired()
+    this.#input_fw_update_server_url.clearValidationIcon()
+    this.#input_fw_update_server_url.setValidationRequired()
 
     let params = {
-      input_url: this.#input_fw_update_url,
+      input_url: this.#input_fw_update_server_url,
       error: this.#text_fw_update_status_error_desc,
       div_status: this.#div_fw_update_status_error,
     }
     this.#div_fw_update_status_error.hide()
 
-    validate_url(this.#auth, this.#input_fw_update_url.getVal(), 'check_fw_update_url', 'none', params)
+    validate_url(this.#auth, this.#input_fw_update_server_url.getVal(), 'check_fw_update_url', 'none', params)
         .then((resp) => {
           if (resp && Object.prototype.toString.call(resp) === '[object Object]') {
             console.log(log_wrap(`validate_url resp: ${resp}`))
 
             if (this.#on_get_latest_release_info(resp)) {
-              this.#button_fw_update_url_save.enable()
+              this.#button_fw_update_server_save.enable()
             }
           }
         })
@@ -336,18 +337,18 @@ class PageSoftwareUpdate {
         })
   }
 
-  async #on_button_fw_update_url_save () {
+  async #on_button_url_fw_update_server_save () {
     this.#div_updating_status_error.hide()
-    let fw_update_url_val = this.#input_fw_update_url.getVal()
+    let fw_update_url_val = this.#input_fw_update_server_url.getVal()
     if (fw_update_url_val.indexOf('://') === -1) {
       fw_update_url_val = 'https://' + fw_update_url_val
     }
-    if (fw_update_url_val !== this.#input_fw_update_url.getVal()) {
-      this.#input_fw_update_url.setVal(fw_update_url_val)
+    if (fw_update_url_val !== this.#input_fw_update_server_url.getVal()) {
+      this.#input_fw_update_server_url.setVal(fw_update_url_val)
     }
     if (!this.#is_valid_http_url(fw_update_url_val)) {
-      this.#input_fw_update_url.setInvalid()
-      this.#button_fw_update_url_save.disable()
+      this.#input_fw_update_server_url.setInvalid()
+      this.#button_fw_update_server_save.disable()
       return
     }
 
@@ -366,7 +367,7 @@ class PageSoftwareUpdate {
         message = ''
       }
       if (status === 200) {
-        this.#button_fw_update_url_save.disable()
+        this.#button_fw_update_server_save.disable()
       } else {
         this.#text_updating_status_error_desc.setVal(`Status: ${status}, Message: ${message}`)
         this.#div_updating_status_error.show()
@@ -383,8 +384,8 @@ class PageSoftwareUpdate {
 
   async #on_button_upgrade () {
     this.#set_software_update_status_empty()
-    this.#input_software_update_url.clearValidationIcon()
-    let software_update_url_val = this.#input_software_update_url.getVal()
+    this.#input_fw_update_binary_files_url.clearValidationIcon()
+    let software_update_url_val = this.#input_fw_update_binary_files_url.getVal()
 
     if (software_update_url_val.indexOf('://') === -1) {
       software_update_url_val = 'http://' + software_update_url_val
@@ -392,11 +393,11 @@ class PageSoftwareUpdate {
     if (!software_update_url_val.endsWith('/')) {
       software_update_url_val += '/'
     }
-    if (software_update_url_val !== this.#input_software_update_url.getVal()) {
-      this.#input_software_update_url.setVal(software_update_url_val)
+    if (software_update_url_val !== this.#input_fw_update_binary_files_url.getVal()) {
+      this.#input_fw_update_binary_files_url.setVal(software_update_url_val)
     }
     if (!this.#is_valid_http_url(software_update_url_val)) {
-      this.#input_software_update_url.setInvalid()
+      this.#input_fw_update_binary_files_url.setInvalid()
       this.#button_upgrade.disable()
       return
     }
@@ -417,13 +418,13 @@ class PageSoftwareUpdate {
       } else {
         this.#text_updating_status_error_desc.setVal(`Status: ${status}, Message: ${message}`)
         this.#div_updating_status_error.show()
-        this.#input_software_update_url.setInvalid()
+        this.#input_fw_update_binary_files_url.setInvalid()
       }
     }).catch((err) => {
       console.log(log_wrap(`POST /fw_update.json: failure: ${err}`))
       this.#text_updating_status_error_desc.setVal(`${err}`)
       this.#div_updating_status_error.show()
-      this.#input_software_update_url.setInvalid()
+      this.#input_fw_update_binary_files_url.setInvalid()
     }).finally(() => {
       gui_loading.bodyClassLoadingRemove()
       GwStatus.startCheckingStatus()
