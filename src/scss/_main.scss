@@ -764,7 +764,7 @@ select {
 .info-icon-left-column {
 	float: left;
 	width: calc(100% - 3em);
-	min-height: calc(var(--info-size) + 2 * var(--info-border-width));
+	min-height: calc(var(--info-size) + var(--info-margin-top) + var(--info-margin-bottom));
 }
 
 .info-icon-button {

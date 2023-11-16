@@ -39,7 +39,7 @@ class PageSoftwareUpdate {
   #section = $('section#page-software_update')
   #checkbox_software_update_set_url_manually = new GuiCheckbox($('#software_update-set-url-manually'))
 
-  #div_fw_update_url = new GuiDiv($('#page-software_update-fw_update_url-div'))
+  #div_fw_update_server_div = new GuiDiv($('#page-software_update-fw_update_server-div'))
   #input_fw_update_url = new GuiInputTextWithValidation($('#page-software_update-fw_update_url'))
   #button_fw_update_url_check = new GuiButton($('#page-software_update-button-fw_update_url-check'))
   #button_fw_update_url_save = new GuiButton($('#page-software_update-button-fw_update_url-save'))
@@ -49,6 +49,8 @@ class PageSoftwareUpdate {
   #div_software_update_url = new GuiDiv($('#software_update-url-div'))
   #input_software_update_url = new GuiInputTextWithValidation($('#software_update-url'))
   #button_upgrade = new GuiButton($('#software_update-button-upgrade'))
+
+  #div_software_update_server = new GuiDiv($('#software_update-server-div'))
 
   #button_continue = new GuiButtonContinue($('#page-software_update-button-continue'))
   #div_in_button_continue_no_update = new GuiText($('#page-software_update-button-continue_no_update'))
@@ -255,6 +257,7 @@ class PageSoftwareUpdate {
   #on_change_url () {
     this.#set_software_update_status_empty()
     if (this.#checkbox_software_update_set_url_manually.isChecked()) {
+      this.#div_fw_update_server_div.slideUp()
       if (this.#is_valid_http_url(this.#input_software_update_url.getVal())) {
         this.#input_software_update_url.clearValidationIcon()
         this.#button_upgrade.enable()
@@ -262,10 +265,11 @@ class PageSoftwareUpdate {
         this.#input_software_update_url.setInvalid()
         this.#button_upgrade.disable()
       }
-      this.#div_version_info.setInvisible()
-      this.#div_software_update_url.show()
+      this.#div_version_info.slideUp()
+      this.#div_software_update_url.slideDown()
       this.#button_continue.hide()
     } else {
+      this.#div_fw_update_server_div.slideDown()
       if (this.#text_version_latest.getVal() !== '') {
         this.#input_software_update_url.setVal(this.#latest_url)
         if (this.#text_version_latest.getVal() === '' || this.#text_version_current.getVal() === this.#text_version_latest.getVal()) {
@@ -275,8 +279,8 @@ class PageSoftwareUpdate {
         }
       }
       this.#input_software_update_url.clearValidationIcon()
-      this.#div_software_update_url.hide()
-      this.#div_version_info.setVisible()
+      this.#div_software_update_url.slideUp()
+      this.#div_version_info.slideDown()
       this.#button_continue.show()
       if (!this.#flagLatestFirmwareVersionSupported) {
         this.#button_upgrade.disable()

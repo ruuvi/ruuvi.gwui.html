@@ -567,9 +567,6 @@
             <div id="page-software_update-status">
                 <div class="block-centered">
                     <div id="software_update-status-empty" class="software_update-status">
-                        <p>
-                            <span>&nbsp;</span>
-                        </p>
                     </div>
                     <div id="software_update-status-ok-already_latest" class="software_update-status gr hidden">
                         <p>
@@ -598,13 +595,6 @@
                 </div>
             </div>
 
-            <div class="button-container-centered">
-                <button class="btn" id="software_update-button-upgrade" type="button">
-                    <span lang="en">Update</span>
-                    <span lang="fi">Päivitä</span>
-                </button>
-            </div>
-
             <div id="page-software_update-advanced-button" class="btn-dropdown">
                 <h2>
                     <span lang="en">Advanced settings</span>
@@ -615,86 +605,105 @@
             </div>
 
             <div id="page-software_update-advanced-dropdown" class="hidden">
-                <div id="page-software_update-fw_update_url-div">
-                    <div class="info-icon-left-column">
-                        <span lang="en">Define a server for automatic firmware updates.</span>
-                        <span lang="fi">Automaattisille ohjelmistopäivityksille käytettävä palvelin.</span>
+
+                <div id="page-software_update-fw_update_server-div">
+
+                    <div id="page-software_update-fw_update_url-div">
+                        <div class="info-icon-left-column">
+                            <span lang="en">Server for automatic firmware updates.</span>
+                            <span lang="fi">Automaattisille ohjelmistopäivityksille käytettävä palvelin.</span>
+                        </div>
+                        <a class="info-icon-button" href="#popup-info-icon-button-fw_update_url_title">i</a>
                     </div>
-                    <a class="info-icon-button" href="#popup-info-icon-button-fw_update_url_title">i</a>
-                </div>
-                <div class="input-container">
-                    <h3>
-                        <label for="page-software_update-fw_update_url" class="info-icon-container">
-                        </label>
-                    </h3>
-                    <div class="input-with_validity_check">
-                        <input id="page-software_update-fw_update_url" type="text" value="">
-                        <div class="input-with_validity_check-icon">
+
+                    <div id="software_update-server-div">
+                        <h3>
+                            <label for="page-software_update-fw_update_url" class="info-icon-container">
+                            </label>
+                        </h3>
+                        <div class="input-container">
+                            <div class="input-with_validity_check">
+                                <input id="page-software_update-fw_update_url" type="text" value="">
+                                <div class="input-with_validity_check-icon">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="page-software_update-fw_update-status-error" class="err-message hidden">
+                            <div class="block-centered">
+                                <span lang="en">Failed to retrieve JSON file containing firmware update information.</span>
+                                <span lang="fi">Laiteohjelmiston päivitystiedot sisältävän JSON-tiedoston hakeminen epäonnistui.</span>
+                            </div>
+                            <div id="page-software_update-fw_update-status-error-desc" class="block-centered">
+                            </div>
+                        </div>
+                        <div id="page-software_update-updating-status-error" class="err-message hidden">
+                            <div class="block-centered">
+                                <div>
+                                    <span lang="en">Error when starting the firmware update process.</span>
+                                    <span lang="fi">Virhe käynnistettäessä laiteohjelmiston päivitysprosessia.</span>
+                                </div>
+                            </div>
+                            <div id="page-software_update-updating-status-error-desc" class="block-centered">
+                            </div>
+                        </div>
+
+                        <div class="button-container-centered">
+                            <button class="btn" id="page-software_update-button-fw_update_url-check" type="button">
+                                <span lang="en">Check</span>
+                                <span lang="fi">Tarkasta</span>
+                            </button>
+                            <button class="btn" id="page-software_update-button-fw_update_url-save" type="button">
+                                <span lang="en">Save</span>
+                                <span lang="fi">Tallenna</span>
+                            </button>
                         </div>
                     </div>
+
+                    <div class="border"></div>
                 </div>
 
-                <div id="page-software_update-fw_update-status-error" class="err-message hidden">
-                    <div class="block-centered">
-                        <span lang="en">Failed to retrieve JSON file containing firmware update information.</span>
-                        <span lang="fi">Laiteohjelmiston päivitystiedot sisältävän JSON-tiedoston hakeminen epäonnistui.</span>
-                    </div>
-                    <div id="page-software_update-fw_update-status-error-desc" class="block-centered">
-                    </div>
-                </div>
-
-                <div id="page-software_update-updating-status-error" class="err-message hidden">
-                    <div class="block-centered">
-                        <div>
-                            <span lang="en">Error when starting the firmware update process.</span>
-                            <span lang="fi">Virhe käynnistettäessä laiteohjelmiston päivitysprosessia.</span>
-                        </div>
-                    </div>
-                    <div id="page-software_update-updating-status-error-desc" class="block-centered">
-                    </div>
-                </div>
-
-                <div class="button-container-centered">
-                    <button class="btn" id="page-software_update-button-fw_update_url-check" type="button">
-                        <span lang="en">Check</span>
-                        <span lang="fi">Tarkasta</span>
-                    </button>
-                    <button class="btn" id="page-software_update-button-fw_update_url-save" type="button">
-                        <span lang="en">Save</span>
-                        <span lang="fi">Tallenna</span>
-                    </button>
-                </div>
-
-                <div class="border"></div>
-
-                <div id="software_update-url_title" class="control control-checkbox info-icon-container">
-                    <label for="software_update-set-url-manually">
+                <div id="page-software_update-fw_update_binary-div">
+                    <div id="software_update-url_title" class="control control-checkbox info-icon-container">
+                        <label for="software_update-set-url-manually">
                         <span class="info-icon-left-column">
-                            <span lang="en">Don't use a JSON file. Define a URL address containing the files and choose Update.</span>
-                            <span lang="fi">Älä käytä JSON-määritystä. Anna tiedostot sisältävä URL-osoite ja valitse Päivitä.</span>
+                            <span lang="en">Don't use Ruuvi's provided software update but download binary files
+                                from URL address instead.
+                            </span>
+                            <span lang="fi">Älä käytä Ruuvin tarjoamaa päivitystä vaan lataa binääritiedostot
+                                URL-osoitteesta.
+                            </span>
                             <input type="checkbox" id="software_update-set-url-manually">
                             <span class="control_indicator"></span>
                         </span>
-                        <a class="info-icon-button" href="#popup-info-icon-software_update">i</a>
-                    </label>
-                </div>
-                <div id="software_update-url-div" class="input-container indent">
-                    <h3>
-                        <label for="software_update-url">
+                            <a class="info-icon-button" href="#popup-info-icon-software_update">i</a>
                         </label>
-                    </h3>
-                    <div class="input-with_validity_check">
-                        <input id="software_update-url" type="text" value="">
-                        <div class="input-with_validity_check-icon">
+                    </div>
+                    <div id="software_update-url-div" class="input-container indent">
+                        <h3>
+                            <label for="software_update-url">
+                            </label>
+                        </h3>
+                        <div class="input-with_validity_check">
+                            <input id="software_update-url" type="text" value="">
+                            <div class="input-with_validity_check-icon">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+
+            <div class="button-container-centered">
+                <button class="btn" id="software_update-button-upgrade" type="button">
+                    <span lang="en">Update</span>
+                    <span lang="fi">Päivitä</span>
+                </button>
+            </div>
+
             <div id="popup-info-icon-button-fw_update_url_title" class="info-icon-overlay">
                 <div class="info-icon-popup">
                     <div class="popup-title">
-                        <span lang="en">Define a server for automatic firmware updates</span>
+                        <span lang="en">Server for automatic firmware updates</span>
                         <span lang="fi">Automaattisille ohjelmistopäivityksille käytettävä palvelin</span>
                     </div>
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
@@ -1563,7 +1572,7 @@
                             <span lang="en">Access Ruuvi Gateway from LAN using bearer authentication with an API key (token). You can enable read-only access (to retrieve data in polling mode via the /history endpoint) or read-write access (to read any data or change the configuration).</span>
                             <span lang="fi">Käytä API-avainta Ruuvi Gatewayhyn yhdistämiseen lähiverkossa. Voit suojata pääsyn vain luku -tilassa API-avaimella (tiedot voidaan lukea /history-sivulta) tai suojata pääsyn kaikkiin Ruuvi Gatewayn tietoihin (tietojen tai asetusten lukeminen sekä kirjoitus).</span>
                         </p>
-                        
+
                         <div>
                             <label class="control control-checkbox">
                                 <span lang="en">Enable read-only access to "/history" using API key</span>
@@ -1749,8 +1758,8 @@
                     <span lang="fi">Valitse vastaanotettujen Bluetooth-mainospakettien välittämiseen käytettävä dataformaatti.</span>
                 </p>
                 <label class="control control-radio">
-                    <span lang="en">Don't decode, send data in raw format</span>
-                    <span lang="fi">Älä dekoodaa, lähetä tiedot raakamuodossa</span>
+                    <span lang="en">Don't decode, send data in raw format (default)</span>
+                    <span lang="fi">Älä dekoodaa, lähetä tiedot raakamuodossa (oletus)</span>
                     <input id="http_data_format_ruuvi" name="http_data_format" type="radio"
                            value="http_data_format_ruuvi"/>
                     <span class="control_indicator"></span>
@@ -2034,8 +2043,8 @@
                     <span lang="fi">Valitse vastaanotettujen Bluetooth-mainospakettien välittämiseen käytettävä dataformaatti.</span>
                     </p>
                     <label class="control control-radio">
-                        <span lang="en">Don't decode, send data in raw format</span>
-                        <span lang="fi">Älä dekoodaa, lähetä tiedot raakamuodossa</span>
+                        <span lang="en">Don't decode, send data in raw format (default)</span>
+                        <span lang="fi">Älä dekoodaa, lähetä tiedot raakamuodossa (oletus)</span>
                         <input id="mqtt_data_format_ruuvi" name="mqtt_data_format" type="radio"
                                value="mqtt_data_format_ruuvi_raw"/>
                         <span class="control_indicator"></span>
@@ -2896,11 +2905,11 @@
             </h2>
 
             <div class="ingress">
-                <p lang="en"> Restart the setup wizard if you need to modify these settings later. If you are configuring Ruuvi Gateway via it's Wi-Fi hotspot, 
+                <p lang="en"> Restart the setup wizard if you need to modify these settings later. If you are configuring Ruuvi Gateway via it's Wi-Fi hotspot,
                     you need to reactivate it by locating the pinhole button beneath the power socket and briefly pressing it with a paperclip.</p>
-                
-                <p lang="fi"> Käynnistä ohjattu käyttöönotto uudelleen, mikäli haluat myöhemmin muokata näitä asetuksia. 
-                    Käynnistä yhteyspisteen uudelleen jos käytät Ruuvi Gateway -reitittimen Wi-Fi-yhteyspistettä asetusten määrittämiseen. 
+
+                <p lang="fi"> Käynnistä ohjattu käyttöönotto uudelleen, mikäli haluat myöhemmin muokata näitä asetuksia.
+                    Käynnistä yhteyspisteen uudelleen jos käytät Ruuvi Gateway -reitittimen Wi-Fi-yhteyspistettä asetusten määrittämiseen.
                     Yhteyspiste aktivoidaan painamalla virtaliittimen alla olevaa painiketta lyhyesti paperiliittimellä.</p>
             </div>
 
