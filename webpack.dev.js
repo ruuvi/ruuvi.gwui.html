@@ -30,6 +30,14 @@ const config = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
+          options: {
+            presets: [
+              ["@babel/preset-env", {
+                // prevent Babel from converting access to private class members:
+                "targets": "> 1.0%, not dead" // Adjust according to your debug target environments
+              }]
+            ],
+          }
         },
       },
       {
