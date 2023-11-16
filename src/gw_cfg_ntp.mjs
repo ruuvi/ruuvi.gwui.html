@@ -9,8 +9,8 @@ export class GwCfgNtp {
   static NTP_DEFAULT = Object.freeze({
     'SERVER1': 'time.google.com',
     'SERVER2': 'time.cloudflare.com',
-    'SERVER3': 'time.nist.gov',
-    'SERVER4': 'pool.ntp.org',
+    'SERVER3': 'pool.ntp.org',
+    'SERVER4': 'time.ruuvi.com',
   })
 
   ntp_use = null
