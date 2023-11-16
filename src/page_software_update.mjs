@@ -249,12 +249,14 @@ class PageSoftwareUpdate {
   }
 
   #on_change_fw_update_url() {
+    this.#div_fw_update_status_error.hide()
     this.#input_fw_update_url.clearValidationIcon()
     this.#input_fw_update_url.setValidationRequired()
     this.#button_fw_update_url_save.disable()
   }
 
   #on_change_url () {
+    this.#div_updating_status_error.hide()
     this.#set_software_update_status_empty()
     if (this.#checkbox_software_update_set_url_manually.isChecked()) {
       this.#div_fw_update_server_div.slideUp()
@@ -289,6 +291,7 @@ class PageSoftwareUpdate {
   }
 
   async #on_button_fw_update_url_check () {
+    this.#div_updating_status_error.hide()
     let fw_update_url_val = this.#input_fw_update_url.getVal()
     if (fw_update_url_val.indexOf('://') === -1) {
       fw_update_url_val = 'https://' + fw_update_url_val
@@ -334,6 +337,7 @@ class PageSoftwareUpdate {
   }
 
   async #on_button_fw_update_url_save () {
+    this.#div_updating_status_error.hide()
     let fw_update_url_val = this.#input_fw_update_url.getVal()
     if (fw_update_url_val.indexOf('://') === -1) {
       fw_update_url_val = 'https://' + fw_update_url_val
@@ -379,6 +383,7 @@ class PageSoftwareUpdate {
 
   async #on_button_upgrade () {
     this.#set_software_update_status_empty()
+    this.#input_software_update_url.clearValidationIcon()
     let software_update_url_val = this.#input_software_update_url.getVal()
 
     if (software_update_url_val.indexOf('://') === -1) {
@@ -412,11 +417,13 @@ class PageSoftwareUpdate {
       } else {
         this.#text_updating_status_error_desc.setVal(`Status: ${status}, Message: ${message}`)
         this.#div_updating_status_error.show()
+        this.#input_software_update_url.setInvalid()
       }
     }).catch((err) => {
       console.log(log_wrap(`POST /fw_update.json: failure: ${err}`))
       this.#text_updating_status_error_desc.setVal(`${err}`)
       this.#div_updating_status_error.show()
+      this.#input_software_update_url.setInvalid()
     }).finally(() => {
       gui_loading.bodyClassLoadingRemove()
       GwStatus.startCheckingStatus()
