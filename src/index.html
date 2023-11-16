@@ -472,12 +472,16 @@
                         </label>
                     </h3>
                     <div class="input-password">
-                        <input id="pwd" type="password" placeholder="Password" class="connection-field" value="">
+                        <input id="pwd" type="password" placeholder="" class="connection-field" value="">
                         <div class="input-password-eye">
                             <div class="eye">
                             </div>
                             <div class="eye-slash hidden">
                             </div>
+                        </div>
+                        <div class="input-placeholder">
+                            <span lang="en">Password</span>
+                            <span lang="fi">Salasana</span>
                         </div>
                     </div>
                 </div>
@@ -2027,8 +2031,12 @@
                         </label>
                     </h3>
                     <div class="input-with_validity_check" style="flex-grow: unset; width: auto;">
-                        <input id="mqtt_port" type="text" placeholder="Port" style="width: calc(5ch + 4px + 2 * var(--input-padding-right-and-left));">
+                        <input id="mqtt_port" type="text" placeholder="" style="width: calc(5ch + 4px + 2 * var(--input-padding-right-and-left));">
                         <div class="input-with_validity_check-icon">
+                        </div>
+                        <div class="input-placeholder">
+                            <span lang="en">Port</span>
+                            <span lang="fi">Portti</span>
                         </div>
                     </div>
                 </div>
@@ -2104,8 +2112,12 @@
                         </label>
                     </h3>
                     <div class="input-with_validity_check">
-                        <input id="mqtt_user" type="text" placeholder="User" value="">
+                        <input id="mqtt_user" type="text" placeholder="" value="">
                         <div class="input-with_validity_check-icon">
+                        </div>
+                        <div class="input-placeholder">
+                            <span lang="en">User</span>
+                            <span lang="fi">Käyttäjä</span>
                         </div>
                     </div>
                 </div>
@@ -2118,7 +2130,7 @@
                         </label>
                     </h3>
                     <div class="input-password input-with_validity_check">
-                        <input id="mqtt_pass" type="password" placeholder="Password" value="">
+                        <input id="mqtt_pass" type="password" placeholder="" value="">
                         <div class="input-password-eye">
                             <div class="eye">
                             </div>
@@ -2126,6 +2138,10 @@
                             </div>
                         </div>
                         <div class="input-with_validity_check-icon">
+                        </div>
+                        <div class="input-placeholder">
+                            <span lang="en">Password</span>
+                            <span lang="fi">Salasana</span>
                         </div>
                     </div>
                 </div>
@@ -2185,9 +2201,15 @@
                     <span class="control_indicator"></span>
                 </label>
                 <div id="mqtt_prefix_custom_div" class="indent">
-                    <label>
-                        <input id="mqtt_prefix_custom" type="text" placeholder="Custom MQTT topic prefix" value="">
+                    <label for="mqtt_prefix_custom">
                     </label>
+                    <div>
+                        <input id="mqtt_prefix_custom" type="text" placeholder="" value="">
+                        <div class="input-placeholder">
+                            <span lang="en">Custom MQTT topic prefix</span>
+                            <span lang="fi">Mukautettu MQTT-aiheetuliite</span>
+                        </div>
+                    </div>
                 </div>
 
                 <h3>
@@ -2607,8 +2629,7 @@
             <label class="control control-radio">
                 <span lang="en">Listen to Ruuvi sensors only (default)</span>
                 <span lang="fi">Kuuntele ainoastaan Ruuvi-antureita (oletus)</span>
-                <input type="radio" name="company_use_filtering" value="1" checked="checked"
-                       placeholder="Scan only Ruuvitags">
+                <input type="radio" name="company_use_filtering" value="1" checked="checked">
                 <span class="control_indicator"></span>
             </label>
 
@@ -2626,8 +2647,7 @@
                     <span class="info-icon-left-column">
                         <span lang="en">Listen to Ruuvi sensors (including long range sensors)</span>
                         <span lang="fi">Kuuntele Ruuvi-antureita (myös pitkän kantaman anturit)</span>
-                        <input type="radio" name="company_use_filtering" value="2"
-                               placeholder="Scan only Ruuvitags">
+                        <input type="radio" name="company_use_filtering" value="2">
                         <span class="control_indicator"></span>
                     </span>
                     <a class="info-icon-button" href="#popup-info-icon-scanning">i</a>
@@ -2637,7 +2657,7 @@
                     <span>
                         <span lang="en">Listen to all Bluetooth beacon messages (not just Ruuvi sensors)</span>
                         <span lang="fi">Kuuntele kaikkia Bluetooth-majakkaviestejä (ei ainoastaan Ruuvi-antureita)</span>
-                        <input type="radio" name="company_use_filtering" value="0" placeholder="Scan all beacons">
+                        <input type="radio" name="company_use_filtering" value="0">
                         <span class="control_indicator"></span>
                     </span>
                 </label>
