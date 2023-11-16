@@ -449,7 +449,10 @@ class PageCustomServer {
         this.#gwCfg.http.use_http = this.#checkbox_use_http.isChecked()
         if (this.#checkbox_use_http.isChecked()) {
             this.#gwCfg.http.http_url = this.#input_http_url.getVal()
-            this.#gwCfg.http.http_period = parseInt(this.#input_http_period.getVal())
+            const http_period = parseInt(this.#input_http_period.getVal())
+            if (!isNaN(http_period)) {
+                this.#gwCfg.http.http_period = http_period
+            }
             if (this.#radio_http_data_format_ruuvi.isChecked()) {
                 this.#gwCfg.http.http_data_format.setRuuvi()
             } else if (this.#radio_http_data_format_ruuvi_raw_and_decoded.isChecked()) {
@@ -532,12 +535,15 @@ class PageCustomServer {
                 throw new Error(`Unsupported mqtt_data_format`)
             }
             this.#gwCfg.mqtt.mqtt_server = this.#input_mqtt_server.getVal()
-            this.#gwCfg.mqtt.mqtt_port = parseInt(this.#input_mqtt_port.getVal())
-            if (Number.isNaN(this.#gwCfg.mqtt.mqtt_port)) {
-                this.#gwCfg.mqtt.mqtt_port = 0
+            const mqtt_port = parseInt(this.#input_mqtt_port.getVal())
+            if (!isNaN(mqtt_port)) {
+                this.#gwCfg.mqtt.mqtt_port = mqtt_port
             }
             if (this.#checkbox_use_mqtt_periodic_sending.isChecked()) {
-                this.#gwCfg.mqtt.mqtt_sending_interval = parseInt(this.#input_mqtt_sending_interval.getVal())
+                const mqtt_sending_interval = parseInt(this.#input_mqtt_sending_interval.getVal())
+                if (!isNaN(mqtt_sending_interval)) {
+                    this.#gwCfg.mqtt.mqtt_sending_interval = mqtt_sending_interval
+                }
             } else {
                 this.#gwCfg.mqtt.mqtt_sending_interval = 0
             }
