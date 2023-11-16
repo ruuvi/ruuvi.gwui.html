@@ -610,6 +610,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         resp += f'\r\n'.encode('ascii')
         resp += resp_content_encoded
         print(f'Response: {resp}')
+        time.sleep(1.0)
         self.wfile.write(resp)
 
     def _do_post_connect_json(self):
