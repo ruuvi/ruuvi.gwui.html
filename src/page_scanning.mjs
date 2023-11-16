@@ -49,6 +49,8 @@ class PageScanning {
     #checkbox_scan_channel_38 = new GuiCheckbox($('#scan_channel_38'))
     #checkbox_scan_channel_39 = new GuiCheckbox($('#scan_channel_39'))
 
+    #div_scan_extended_payload = new GuiDiv($('#scan_extended_payload-div'))
+
     #checkbox_scan_filtering = new GuiCheckbox($('#scan_filtering'))
     #div_scan_filtering_options = new GuiDiv($('#scan_filtering-options'))
     #radio_scan_filtering_type = new GuiRadioButton('scan_filtering-type')
@@ -130,6 +132,11 @@ class PageScanning {
 
         this.#checkbox_scan_coded_phy.setState(this.#gwCfg.scan.scan_coded_phy)
 
+        if (this.#div_scan_extended_payload.isHidden())
+        {
+            this.#checkbox_scan_extended_payload.setState(false)
+        }
+
         if (!this.#gwCfg.company_filter.company_use_filtering) {
             this.#radio_company_use_filtering_0.setChecked()
             this.#checkbox_scan_1mbit_phy.setState(this.#gwCfg.scan.scan_1mbit_phy)
@@ -173,6 +180,11 @@ class PageScanning {
 
     async #onHide() {
         console.log(log_wrap('section#page-scanning: onHide'))
+
+        if (this.#div_scan_extended_payload.isHidden())
+        {
+            this.#checkbox_scan_extended_payload.setState(false)
+        }
 
         this.#input_add_mac_filter.setVal('')
         this.#input_add_mac_filter.clearValidationIcon('')
@@ -240,7 +252,7 @@ class PageScanning {
             this.#div_all_nearby_beacons_scanning_options.hide()
             this.#checkbox_scan_coded_phy.setUnchecked()
             this.#checkbox_scan_1mbit_phy.setChecked()
-            this.#checkbox_scan_extended_payload.setChecked()
+            this.#checkbox_scan_extended_payload.setUnchecked()
             this.#checkbox_scan_channel_37.setChecked()
             this.#checkbox_scan_channel_38.setChecked()
             this.#checkbox_scan_channel_38.setChecked()
@@ -248,7 +260,7 @@ class PageScanning {
             this.#div_all_nearby_beacons_scanning_options.hide()
             this.#checkbox_scan_coded_phy.setChecked()
             this.#checkbox_scan_1mbit_phy.setChecked()
-            this.#checkbox_scan_extended_payload.setChecked()
+            this.#checkbox_scan_extended_payload.setUnchecked()
             this.#checkbox_scan_channel_37.setChecked()
             this.#checkbox_scan_channel_38.setChecked()
             this.#checkbox_scan_channel_39.setChecked()
