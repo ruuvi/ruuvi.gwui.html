@@ -123,12 +123,17 @@ class PageTimeSync {
       this.#input_ntp_server4.setVal(GwCfgNtp.NTP_DEFAULT.SERVER4)
       this.#div_custom_options.hide()
     } else if (this.#radio_ntp_sync_custom.isChecked()) {
+      if ((this.#input_ntp_server1.getVal() === '') &&
+          (this.#input_ntp_server2.getVal() === '') &&
+          (this.#input_ntp_server3.getVal() === '') &&
+          (this.#input_ntp_server4.getVal() === '')) {
+        this.#input_ntp_server1.setVal(GwCfgNtp.NTP_DEFAULT.SERVER1)
+        this.#input_ntp_server2.setVal(GwCfgNtp.NTP_DEFAULT.SERVER2)
+        this.#input_ntp_server3.setVal(GwCfgNtp.NTP_DEFAULT.SERVER3)
+        this.#input_ntp_server4.setVal(GwCfgNtp.NTP_DEFAULT.SERVER4)
+      }
       this.#div_custom_options.show()
     } else {
-      this.#input_ntp_server1.setVal('')
-      this.#input_ntp_server2.setVal('')
-      this.#input_ntp_server3.setVal('')
-      this.#input_ntp_server4.setVal('')
       this.#div_custom_options.hide()
     }
   }
