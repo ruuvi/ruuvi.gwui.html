@@ -62,6 +62,10 @@
                         </label>
                     </h3>
                     <input type="text" id="auth-user">
+                    <div class="input-placeholder">
+                        <span lang="en"></span>
+                        <span lang="fi"></span>
+                    </div>
                 </div>
 
                 <div>
@@ -298,8 +302,12 @@
                 <div class="input-with_validity_check">
                     <label for="eth_static_ip">
                     </label>
-                    <input type="text" id="eth_static_ip" placeholder="0.0.0.0">
+                    <input type="text" id="eth_static_ip">
                     <div class="input-with_validity_check-icon">
+                    </div>
+                    <div class="input-placeholder">
+                        <span lang="en">0.0.0.0</span>
+                        <span lang="fi">0.0.0.0</span>
                     </div>
                 </div>
 
@@ -310,8 +318,12 @@
                 <div class="input-with_validity_check">
                     <label for="eth_netmask">
                     </label>
-                    <input type="text" id="eth_netmask" placeholder="255.255.255.0">
+                    <input type="text" id="eth_netmask">
                     <div class="input-with_validity_check-icon">
+                    </div>
+                    <div class="input-placeholder">
+                        <span lang="en">255.255.255.0</span>
+                        <span lang="fi">255.255.255.0</span>
                     </div>
                 </div>
 
@@ -322,8 +334,12 @@
                 <div class="input-with_validity_check">
                     <label for="eth_gw">
                     </label>
-                    <input type="text" id="eth_gw" placeholder="0.0.0.0">
+                    <input type="text" id="eth_gw">
                     <div class="input-with_validity_check-icon">
+                    </div>
+                    <div class="input-placeholder">
+                        <span lang="en">0.0.0.0</span>
+                        <span lang="fi">0.0.0.0</span>
                     </div>
                 </div>
 
@@ -334,8 +350,12 @@
                 <div class="input-with_validity_check">
                     <label for="eth_dns1">
                     </label>
-                    <input type="text" id="eth_dns1" placeholder="0.0.0.0">
+                    <input type="text" id="eth_dns1">
                     <div class="input-with_validity_check-icon">
+                    </div>
+                    <div class="input-placeholder">
+                        <span lang="en">0.0.0.0</span>
+                        <span lang="fi">0.0.0.0</span>
                     </div>
                 </div>
 
@@ -346,8 +366,12 @@
                 <div class="input-with_validity_check">
                     <label for="eth_dns2">
                     </label>
-                    <input type="text" id="eth_dns2" placeholder="0.0.0.0">
+                    <input type="text" id="eth_dns2">
                     <div class="input-with_validity_check-icon">
+                    </div>
+                    <div class="input-placeholder">
+                        <span lang="en">0.0.0.0</span>
+                        <span lang="fi">0.0.0.0</span>
                     </div>
                 </div>
             </div>
@@ -462,6 +486,10 @@
                         </label>
                     </h3>
                     <input type="text" id="manual_ssid" class="connection-field-manual">
+                    <div class="input-placeholder">
+                        <span lang="en"></span>
+                        <span lang="fi"></span>
+                    </div>
                 </div>
 
                 <div id="input_password_block" class="hidden">
@@ -640,6 +668,10 @@
                                 <input type="text" id="page-software_update-fw_update_server_url">
                                 <div class="input-with_validity_check-icon">
                                 </div>
+                                <div class="input-placeholder">
+                                    <span lang="en"></span>
+                                    <span lang="fi"></span>
+                                </div>
                             </div>
                         </div>
                         <div id="page-software_update-fw_update-status-error" class="err-message hidden">
@@ -690,6 +722,10 @@
                         <div class="input-with_validity_check">
                             <input type="text" id="page-software_update-fw_update_binary_files_url">
                             <div class="input-with_validity_check-icon">
+                            </div>
+                            <div class="input-placeholder">
+                                <span lang="en"></span>
+                                <span lang="fi"></span>
                             </div>
                         </div>
                     </div>
@@ -950,6 +986,10 @@
                             <input type="text" id="remote_cfg-base_url">
                             <div class="input-with_validity_check-icon">
                             </div>
+                            <div class="input-placeholder">
+                                <span lang="en"></span>
+                                <span lang="fi"></span>
+                            </div>
                         </div>
                     </div>
 
@@ -990,6 +1030,10 @@
                                         <input type="text" id="remote_cfg-auth_basic-user">
                                         <div class="input-with_validity_check-icon">
                                         </div>
+                                        <div class="input-placeholder">
+                                            <span lang="en"></span>
+                                            <span lang="fi"></span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div>
@@ -1029,6 +1073,10 @@
                                 <div class="input-password input-with_validity_check">
                                     <input type="text" id="remote_cfg-auth_bearer-token">
                                     <div class="input-with_validity_check-icon">
+                                    </div>
+                                    <div class="input-placeholder">
+                                        <span lang="en"></span>
+                                        <span lang="fi"></span>
                                     </div>
                                 </div>
                             </div>
@@ -1526,13 +1574,19 @@
                             <span class="control_indicator"></span>
                         </label>
                         <div id="conf-lan_auth-login-password" class="hidden indent">
-                            <h3>
-                                <label for="lan_auth-user">
-                                    <span lang="en">Username</span>
-                                    <span lang="fi">Käyttäjätunnus</span>
-                                </label>
-                            </h3>
-                            <input type="text" id="lan_auth-user">
+                            <div>
+                                <h3>
+                                    <label for="lan_auth-user">
+                                        <span lang="en">Username</span>
+                                        <span lang="fi">Käyttäjätunnus</span>
+                                    </label>
+                                </h3>
+                                <input type="text" id="lan_auth-user">
+                                <div class="input-placeholder">
+                                    <span lang="en"></span>
+                                    <span lang="fi"></span>
+                                </div>
+                            </div>
 
                             <h3>
                                 <label for="lan_auth-pass">
@@ -1592,6 +1646,10 @@
                                 </label>
                             </h3>
                             <input type="text" id="lan_auth-api_key">
+                            <div class="input-placeholder">
+                                <span lang="en"></span>
+                                <span lang="fi"></span>
+                            </div>
                         </div>
                     </div>
                     <div>
@@ -1611,6 +1669,10 @@
                                 </label>
                             </h3>
                             <input type="text" id="lan_auth-api_key_rw">
+                            <div class="input-placeholder">
+                                <span lang="en"></span>
+                                <span lang="fi"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1750,6 +1812,10 @@
                         <input type="text" id="http_url">
                         <div class="input-with_validity_check-icon">
                         </div>
+                        <div class="input-placeholder">
+                            <span lang="en"></span>
+                            <span lang="fi"></span>
+                        </div>
                     </div>
                 </div>
                 <h3>
@@ -1801,6 +1867,10 @@
                         <input type="text" id="http_period">
                         <div class="input-with_validity_check-icon">
                         </div>
+                        <div class="input-placeholder">
+                            <span lang="en"></span>
+                            <span lang="fi"></span>
+                        </div>
                     </div>
                 </div>
 
@@ -1829,6 +1899,10 @@
                                 <div class="input-with_validity_check">
                                     <input type="text" id="http_user">
                                     <div class="input-with_validity_check-icon">
+                                    </div>
+                                    <div class="input-placeholder">
+                                        <span lang="en"></span>
+                                        <span lang="fi"></span>
                                     </div>
                                 </div>
                                 <h3>
@@ -1869,6 +1943,10 @@
                                     <input type="text" id="http_auth_bearer_api_key">
                                     <div class="input-with_validity_check-icon">
                                     </div>
+                                    <div class="input-placeholder">
+                                        <span lang="en"></span>
+                                        <span lang="fi"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1889,6 +1967,10 @@
                                 <div class="input-password input-with_validity_check">
                                     <input type="text" id="http_auth_token_api_key">
                                     <div class="input-with_validity_check-icon">
+                                    </div>
+                                    <div class="input-placeholder">
+                                        <span lang="en"></span>
+                                        <span lang="fi"></span>
                                     </div>
                                 </div>
                             </div>
@@ -2019,6 +2101,10 @@
                     </h3>
                     <div class="input-server">
                         <input type="text" id="mqtt_server">
+                        <div class="input-placeholder">
+                            <span lang="en"></span>
+                            <span lang="fi"></span>
+                        </div>
                     </div>
                 </div>
 
@@ -2102,6 +2188,10 @@
                         <div class="input-with_validity_check" style="width: 100%">
                             <input type="text" id="mqtt_sending_interval">
                             <div class="input-with_validity_check-icon">
+                            </div>
+                            <div class="input-placeholder">
+                                <span lang="en"></span>
+                                <span lang="fi"></span>
                             </div>
                         </div>
                     </div>
@@ -2328,6 +2418,10 @@
                             <input type="text" id="http_stat_url">
                             <div class="input-with_validity_check-icon">
                             </div>
+                            <div class="input-placeholder">
+                                <span lang="en"></span>
+                                <span lang="fi"></span>
+                            </div>
                         </div>
                     </div>
 
@@ -2350,6 +2444,10 @@
                         <div class="input-with_validity_check">
                             <input type="text" id="http_stat_user">
                             <div class="input-with_validity_check-icon">
+                            </div>
+                            <div class="input-placeholder">
+                                <span lang="en"></span>
+                                <span lang="fi"></span>
                             </div>
                         </div>
                     </div>
@@ -2540,6 +2638,10 @@
                             </label>
                         </h3>
                         <input type="text" id="ntp_server1" value="time.google.com">
+                        <div class="input-placeholder">
+                            <span lang="en"></span>
+                            <span lang="fi"></span>
+                        </div>
                     </div>
 
                     <div>
@@ -2550,6 +2652,10 @@
                             </label>
                         </h3>
                         <input type="text" id="ntp_server2" value="time.cloudflare.com">
+                        <div class="input-placeholder">
+                            <span lang="en"></span>
+                            <span lang="fi"></span>
+                        </div>
                     </div>
 
                     <div>
@@ -2560,6 +2666,10 @@
                             </label>
                         </h3>
                         <input type="text" id="ntp_server3" value="pool.ntp.org">
+                        <div class="input-placeholder">
+                            <span lang="en"></span>
+                            <span lang="fi"></span>
+                        </div>
                     </div>
 
                     <div>
@@ -2570,6 +2680,10 @@
                             </label>
                         </h3>
                         <input type="text" id="ntp_server4" value="time.ruuvi.com">
+                        <div class="input-placeholder">
+                            <span lang="en"></span>
+                            <span lang="fi"></span>
+                        </div>
                     </div>
                 </div>
                 <label class="control control-radio">
@@ -2815,6 +2929,10 @@
                             </label>
                             <input type="text" id="scan_filter_add_mac">
                             <div class="input-with_validity_check-icon">
+                            </div>
+                            <div class="input-placeholder">
+                                <span lang="en"></span>
+                                <span lang="fi"></span>
                             </div>
                         </div>
                         <div class="indent">
