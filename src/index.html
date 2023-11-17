@@ -624,8 +624,8 @@
 
                     <div>
                         <div class="info-icon-left-column">
-                            <span lang="en">Server for automatic firmware updates.</span>
-                            <span lang="fi">Automaattisille ohjelmistopäivityksille käytettävä palvelin.</span>
+                            <span lang="en">Server for automatic firmware updates</span>
+                            <span lang="fi">Automaattisille ohjelmistopäivityksille käytettävä palvelin</span>
                         </div>
                         <a class="info-icon-button" href="#popup-info-icon-button-fw_update_url_title">i</a>
                     </div>
@@ -671,10 +671,10 @@
                         <label for="software_update-set-url-manually">
                         <span class="info-icon-left-column">
                             <span lang="en">Don't use Ruuvi's provided software update but download binary files
-                                from URL address instead.
+                                from URL address instead
                             </span>
                             <span lang="fi">Älä käytä Ruuvin tarjoamaa päivitystä vaan lataa binääritiedostot
-                                URL-osoitteesta.
+                                URL-osoitteesta
                             </span>
                             <input type="checkbox" id="software_update-set-url-manually">
                             <span class="control_indicator"></span>
@@ -1482,10 +1482,10 @@
 
             <div class="ingress">
                 <p lang="en">
-                    After completing Ruuvi Gateway setup wizard you can easily access it again through your local area network without restarting Ruuvi Gateway's own Wi-Fi hotspot. To do this, type your Ruuvi Gateways's IP address to your browser. Choose your preferred login method below.
+                    After completing Ruuvi Gateway setup wizard you can easily access it again through your local area network without restarting Ruuvi Gateway's own Wi-Fi hotspot. In normal use, it’s not necessary to return to setup wizard after finishing setup.
                 </p>
                 <p lang="fi">
-                    Kun tämä ohjattu käyttöönotto on viety loppuun ensimmäisen kerran, voit avata Ruuvi Gatewayn ohjatun käyttöönoton uudelleen lähiverkkosi kautta Ruuvi Gatewayn omaa Wi-Fi-yhteyspistettä käynnistämättä. Pääset kirjautumisikkunaan syöttämällä Ruuvi Gatewayn IP-osoitteen selaimen osoitekenttään. Valitse haluamasi kirjautumistapa alta.
+                    Kun tämä ohjattu käyttöönotto on viety loppuun ensimmäisen kerran, pääset muokkaamaan asetuksia uudelleen lähiverkkosi kautta Ruuvi Gatewayn omaa Wi-Fi-yhteyspistettä käynnistämättä. Asetusten muokkaaminen ei ole yleensä tarpeellista ensimmäisen konfigurointikerran jälkeen.
                 </p>
             </div>
 
@@ -1573,8 +1573,8 @@
                             <span lang="fi">Salli pääsy API-avaimella</span>
                         </h3>
                         <p>
-                            <span lang="en">Access Ruuvi Gateway from LAN using bearer authentication with an API key (token). You can enable read-only access (to retrieve data in polling mode via the /history endpoint) or read-write access (to read any data or change the configuration).</span>
-                            <span lang="fi">Käytä API-avainta Ruuvi Gatewayhyn yhdistämiseen lähiverkossa. Voit suojata pääsyn vain luku -tilassa API-avaimella (tiedot voidaan lukea /history-sivulta) tai suojata pääsyn kaikkiin Ruuvi Gatewayn tietoihin (tietojen tai asetusten lukeminen sekä kirjoitus).</span>
+                            <span lang="en">Access Ruuvi Gateway from LAN using bearer authentication with an API key (token). You can enable read-only access (to retrieve data in polling mode via the /history endpoint) or read-write access (to read any data or change the configuration). For more detailed instructions, refer to docs.ruuvi.com.</span>
+                            <span lang="fi">Käytä API-avainta Ruuvi Gatewayhyn yhdistämiseen lähiverkossa. Voit suojata pääsyn vain luku -tilassa API-avaimella (tiedot voidaan lukea /history-sivulta) tai suojata pääsyn kaikkiin Ruuvi Gatewayn tietoihin (tietojen tai asetusten lukeminen sekä kirjoitus). Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com.</span>
                         </p>
 
                         <div>
@@ -2083,6 +2083,10 @@
                 </div>
 
                 <div>
+                    <h3>
+                        <span lang="en">Sending interval</span>
+                        <span lang="fi">Lähetysväli</span>
+                    </h3>
                     <label class="control control-checkbox">
                         <span lang="en">Define sending interval instead of relaying messages instantly</span>
                         <span lang="fi">Määritä lähetysväli, älä käytä välitöntä lähetystä</span>
@@ -2304,8 +2308,8 @@
                 </label>
 
                 <label class="control control-radio">
-                    <span lang="en">Send to custom server</span>
-                    <span lang="fi">Lähetä mukautetulle palvelimelle</span>
+                    <span lang="en">Send to a custom server</span>
+                    <span lang="fi">Lähetä ulkopuoliselle palvelimelle</span>
                     <input id="use_http_stat" value="statistics_use_custom" name="use_statistics" type="radio"
                            class="conf-checkbox">
                     <span class="control_indicator"></span>
@@ -2500,14 +2504,14 @@
 
             <div class="ingress">
                 <p>
-                    <span lang="en">Ruuvi Gateway uses time servers for specifying the correct time. Make sure at least one time servers is accessible if your Ruuvi Gateway is behind a firewall.</span>
-                    <span lang="fi">Ruuvi Gateway käyttää aikapalvelimia kellonajan määrittämiseen. Mikäli Ruuvi Gateway on palomuurin takana, vähintään yhden aikapalvelimen on oltava saavutettavissa.</span>
+                    <span lang="en">Ruuvi Gateway uses time servers to keep the correct time. Make sure at least one time server is always accessible if your Ruuvi Gateway is behind a firewall.</span>
+                    <span lang="fi">Ruuvi Gateway käyttää aikapalvelimia oikeassa ajassa pysymiseen. Varmista, että vähintään yksi aikapalvelin on aina tavoitettavissa, jos Ruuvi Gateway on palomuurin takana.</span>
                 </p>
             </div>
 
             <label class="control control-radio">
-                <span lang="en">Use default set of NTP servers for time synchronisation</span>
-                <span lang="fi">Käytä oletusarvoisia NTP-palvelimia ajan synkronointiin</span>
+                <span lang="en">Use default set of time servers (NTP servers) for time synchronisation</span>
+                <span lang="fi">Käytä oletusarvoisia aikapalvelimia (NTP-palvelimia) ajan synkronointiin</span>
                 <input id="ntp_sync_default" name="ntp_sync" value="ntp_sync_default" type="radio"/>
                 <span class="control_indicator"></span>
             </label>
@@ -2523,8 +2527,8 @@
 
             <div id="page-ntp_config-advanced-dropdown" class="hidden">
                 <label class="control control-radio">
-                    <span lang="en">Use custom set of NTP servers for time synchronisation</span>
-                    <span lang="fi">Käytä mukautettuja NTP-palvelimia ajan synkronointiin</span>
+                    <span lang="en">Use custom set of time servers for time synchronisation</span>
+                    <span lang="fi">Käytä mukautettuja aikapalvelimia ajan synkronointiin</span>
                     <input id="ntp_sync_custom" name="ntp_sync" value="ntp_sync_custom" type="radio"/>
                     <span class="control_indicator"></span>
                 </label>
@@ -2570,8 +2574,8 @@
                     </div>
                 </div>
                 <label class="control control-radio">
-                    <span lang="en">Use DHCP to get a set of NTP servers for time synchronisation</span>
-                    <span lang="fi">Käytä DHCP:tä saadaksesi joukon NTP-palvelimia ajan synkronointia varten</span>
+                    <span lang="en">Use time servers offered by your DHCP server</span>
+                    <span lang="fi">Käytä DHCP-palvelimesi tarjoamia aikapalvelimia</span>
                     <input id="ntp_sync_dhcp" name="ntp_sync" value="ntp_sync_dhcp" type="radio"/>
                     <span class="control_indicator"></span>
                 </label>
@@ -2720,12 +2724,9 @@
                 </h2>
 
                 <p>
-                    <span lang="en">Bluetooth sensor filtering applies to the listening settings selected above.
-                        Enabling this feature allows you to whitelist or blacklist sensors based on their MAC addresses.
+                    <span lang="en">Use this feature to whitelist or blacklist sensors based on their MAC addresses.
                     </span>
-                    <span lang="fi">Bluetooth-anturin suodatus koskee yllä valittuja kuunteluasetuksia.
-                        Ottamalla tämän ominaisuuden käyttöön voit lisätä anturit sallittujen tai mustalle
-                        listalle niiden MAC-osoitteiden perusteella.
+                    <span lang="fi">Tämän ominaisuuden avulla voit lisätä anturit sallittujen tai mustalle listalle niiden MAC-osoitteiden perusteella.
                     </span>
                 </p>
 
@@ -2749,11 +2750,9 @@
                             </div>
                             <div id="scan_filtering-type_allow-desc" class="indent">
                                 <p>
-                                    <span lang="en">In this mode, the Ruuvi Gateway only relays data from the selected
-                                        sensors and rejects all other Bluetooth devices or sensors it hears.
+                                    <span lang="en">In this mode, the Ruuvi Gateway relays data only from the selected sensors and discards data of all other Bluetooth devices.
                                     </span>
-                                    <span lang="fi">Tässä tilassa Ruuvi Gateway välittää tietoja vain valituista
-                                        antureista ja hylkää kaikki muut kuulemansa Bluetooth-laitteet tai anturit.
+                                    <span lang="fi">Tässä tilassa Ruuvi Gateway välittää tietoja vain valituista antureista ja hylkää kaikkien muiden Bluetooth-laitteiden viestit.
                                     </span>
                                 </p>
                             </div>
@@ -2771,13 +2770,9 @@
                             </div>
                             <div id="scan_filtering-type_discard-desc" class="indent">
                                 <p>
-                                    <span lang="en">In this mode, the Ruuvi Gateway rejects data from the selected
-                                        sensors and allows data from other Bluetooth devices or sensors
-                                        according to the listening selection.
+                                    <span lang="en">In this mode, the Ruuvi Gateway discards data from the selected sensors and relays data of all other Bluetooth devices.
                                     </span>
-                                    <span lang="fi">Tässä tilassa Ruuvi Gateway hylkää valittujen antureiden lähettämät
-                                        tiedot ja sallii tiedot muista Bluetooth-laitteista tai antureista
-                                        kuunteluvalinnan mukaan.
+                                    <span lang="fi">Tässä tilassa Ruuvi Gateway hylkää datan valituilta antureilta ja välittää kaikkien muiden Bluetooth-laitteiden tiedot.
                                     </span>
                                 </p>
                             </div>
@@ -2791,7 +2786,7 @@
                         <div class="indent">
                             <p>
                                 <span lang="en">Below you can see the list of Bluetooth devices heard by Ruuvi Gateway.
-                                    Select the checkbox to assign the device to the filter list.
+                                    Add the device to the filter list by selecting the checkbox on the right side of the MAC address.
                                     Tap the Refresh list button to update the list.
                                     You can also add a sensor to the list by entering its MAC address and clicking Add.
                                 </span>
@@ -2884,8 +2879,8 @@
 
             <div class="block-centered">
                 <p>
-                    <span lang="en">You can now close this window.</span>
-                    <span lang="fi">Voit nyt sulkea tämän ikkunan.</span>
+                    <span lang="en">You can close this window.</span>
+                    <span lang="fi">Voit sulkea tämän ikkunan.</span>
                 </p>
             </div>
 
@@ -2909,7 +2904,7 @@
 
             <div class="block-left">
                 <span lang="en">Ruuvi Gateway’s IP address:&nbsp;</span>
-                <span lang="fi">Ruuvi Gateway IP-osoite:&nbsp;</span>
+                <span lang="fi">Ruuvi Gatewayn IP-osoite:&nbsp;</span>
                 <div id="ip"></div>
             </div>
 
@@ -2937,10 +2932,11 @@
             </h2>
 
             <div class="ingress">
-                <p lang="en"> Restart the setup wizard if you need to modify these settings later. If you are configuring Ruuvi Gateway via it's Wi-Fi hotspot,
+                <p lang="en"> Restart the setup wizard if you need to modify these settings later. If you did not block remote access via the local network during the configuration, you can open this page again by entering the Ruuvi Gateway's IP address (see above) in your browser. 
+                    If you are configuring Ruuvi Gateway via it's Wi-Fi hotspot,
                     you need to reactivate it by locating the pinhole button beneath the power socket and briefly pressing it with a paperclip.</p>
 
-                <p lang="fi"> Käynnistä ohjattu käyttöönotto uudelleen, mikäli haluat myöhemmin muokata näitä asetuksia.
+                <p lang="fi"> Käynnistä ohjattu käyttöönotto uudelleen, mikäli haluat myöhemmin muokata näitä asetuksia. Jos et estänyt etäkäyttöä lähiverkon kautta määrityksen aikana, voit avata tämän sivun uudelleen syöttämällä selaimeesi Ruuvi Gatewayn IP-osoitteen (katso yllä).
                     Käynnistä yhteyspisteen uudelleen jos käytät Ruuvi Gateway -reitittimen Wi-Fi-yhteyspistettä asetusten määrittämiseen.
                     Yhteyspiste aktivoidaan painamalla virtaliittimen alla olevaa painiketta lyhyesti paperiliittimellä.</p>
             </div>
