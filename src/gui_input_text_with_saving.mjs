@@ -22,8 +22,10 @@ class GuiInputTextWithSaving extends GuiInputText {
   }
 
   #setValue (val) {
-    this._obj.val('')
-    this._clear_saved()
+    this._obj.val(val)
+    if (val === '') {
+      this._clear_saved()
+    }
   }
 
   getVal () {
@@ -39,6 +41,7 @@ class GuiInputTextWithSaving extends GuiInputText {
 
   #clear_saved () {
     this._obj.removeAttr('placeholder')
+    this._setDefaultPlaceholder()
   }
 
   _clear_saved () {

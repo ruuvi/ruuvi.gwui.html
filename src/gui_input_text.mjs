@@ -43,6 +43,9 @@ class GuiInputText extends GuiObj {
   }
 
   onLanguageChange() {
+    if (this.#input_obj.prop('placeholder') === '********') {
+      return
+    }
     if (this.#placeholder_lang_dict) {
       let active_lang = Lang.getActiveLang()
       let placeholder = this.#placeholder_lang_dict[active_lang]
@@ -51,7 +54,13 @@ class GuiInputText extends GuiObj {
       } else {
         this.#input_obj.prop('placeholder', "")
       }
+    } else {
+      this.#input_obj.prop('placeholder', "")
     }
+  }
+
+  _setDefaultPlaceholder() {
+    this.onLanguageChange()
   }
 
   setVal (val) {
