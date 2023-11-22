@@ -359,7 +359,12 @@ class PageCustomServer {
             this.#radio_mqtt_data_format_ruuvi_decoded.setChecked()
         }
 
-        this.#input_mqtt_server.setVal(this.#get_mqtt_url_prefix() + this.#gwCfg.mqtt.mqtt_server)
+        if (this.#gwCfg.mqtt.mqtt_server !== '') {
+            this.#input_mqtt_server.setVal(this.#get_mqtt_url_prefix_for_ui() + this.#gwCfg.mqtt.mqtt_server)
+        } else {
+            this.#input_mqtt_server.setVal('')
+        }
+
         this.#input_mqtt_port.setVal(this.#gwCfg.mqtt.mqtt_port)
         if (this.#gwCfg.mqtt.mqtt_sending_interval === 0) {
             this.#input_mqtt_sending_interval.setVal("")
@@ -1095,7 +1100,12 @@ class PageCustomServer {
     }
 
     #updateMqttServerPrefix() {
-        this.#input_mqtt_server.setVal(this.#get_mqtt_url_prefix() + this.#get_mqtt_server_without_prefix())
+        if (this.#get_mqtt_server_without_prefix() !== '') {
+            this.#input_mqtt_server.setVal(this.#get_mqtt_url_prefix_for_ui() + this.#get_mqtt_server_without_prefix())
+        } else {
+            this.#input_mqtt_server.setVal('')
+            this.#input_mqtt_server.setPlaceholder(this.#get_mqtt_url_prefix_for_ui())
+        }
     }
 
     #onChangeMqttServer() {
@@ -1106,15 +1116,15 @@ class PageCustomServer {
             this.#radio_mqtt_transport_TCP.setChecked()
         } else if (mqtt_server_prefix === 'mqtts://') {
             this.#radio_mqtt_transport_SSL.setChecked()
-        } else if (mqtt_server_prefix === 'mqttws://') {
+        } else if (mqtt_server_prefix === 'ws://') {
             this.#radio_mqtt_transport_WS.setChecked()
-        } else if (mqtt_server_prefix === 'mqttwss://') {
+        } else if (mqtt_server_prefix === 'wss://') {
             this.#radio_mqtt_transport_WSS.setChecked()
         } else {
             is_server_valid = false
         }
         if (this.#get_mqtt_server_without_prefix() === '') {
-            this.#input_mqtt_server.setPlaceholder(this.#get_mqtt_url_prefix())
+            this.#input_mqtt_server.setPlaceholder(this.#get_mqtt_url_prefix_for_ui())
             is_server_valid = false
         } else {
             if (!this.#input_mqtt_server.is_focused()) {
@@ -1579,7 +1589,7 @@ class PageCustomServer {
         })
     }
 
-    #get_mqtt_url_prefix() {
+    #get_mqtt_url_prefix_for_gwcfg() {
         let mqtt_url_prefix = ''
         if (this.#radio_mqtt_transport_TCP.isChecked()) {
             mqtt_url_prefix = 'mqtt://'
@@ -1593,6 +1603,20 @@ class PageCustomServer {
         return mqtt_url_prefix
     }
 
+    #get_mqtt_url_prefix_for_ui() {
+        let mqtt_url_prefix = ''
+        if (this.#radio_mqtt_transport_TCP.isChecked()) {
+            mqtt_url_prefix = 'mqtt://'
+        } else if (this.#radio_mqtt_transport_SSL.isChecked()) {
+            mqtt_url_prefix = 'mqtts://'
+        } else if (this.#radio_mqtt_transport_WS.isChecked()) {
+            mqtt_url_prefix = 'ws://'
+        } else if (this.#radio_mqtt_transport_WSS.isChecked()) {
+            mqtt_url_prefix = 'wss://'
+        }
+        return mqtt_url_prefix
+    }
+
     #custom_server_validate_url_mqtt() {
         if (!this.#checkbox_use_mqtt.isChecked()) {
             console.log(log_wrap(`MQTT URL validation not needed (MQTT is not active)`))
@@ -1600,7 +1624,7 @@ class PageCustomServer {
                 resolve(true)
             })
         }
-        let mqtt_url_prefix = this.#get_mqtt_url_prefix()
+        let mqtt_url_prefix = this.#get_mqtt_url_prefix_for_gwcfg()
         let mqtt_topic_prefix = this.#get_mqtt_topic_prefix()
         let mqtt_url = mqtt_url_prefix + this.#get_mqtt_server_without_prefix() + ':' + this.#input_mqtt_port.getVal()
         let aux_params = ''
