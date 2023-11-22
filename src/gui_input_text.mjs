@@ -63,6 +63,10 @@ class GuiInputText extends GuiObj {
     this.onLanguageChange()
   }
 
+  setPlaceholder(placeholder) {
+    this.#input_obj.prop('placeholder', placeholder)
+  }
+
   setVal (val) {
     this._obj.val(val)
   }
@@ -85,6 +89,10 @@ class GuiInputText extends GuiObj {
 
   focus() {
     this._obj.focus()
+  }
+
+  is_focused() {
+    return this._obj.is(':focus')
   }
 
   put_cursor_at_end() {

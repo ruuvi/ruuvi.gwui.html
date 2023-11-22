@@ -630,14 +630,6 @@ input.input-row {
 	cursor: default;
 }
 
-.input-server {
-	position: relative;
-	flex-grow: 1; /* Take up remaining space */
-	display: flex;
-	align-items: center;
-	margin-right: 10px;
-}
-
 .input-with_validity_check {
 	position: relative;
 	display: flex;
