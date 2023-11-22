@@ -1536,7 +1536,11 @@ class PageCustomServer {
         aux_params += '&mqtt_topic_prefix='
         aux_params += encodeURIComponent(mqtt_topic_prefix)
         aux_params += '&mqtt_client_id='
-        aux_params += encodeURIComponent(this.#input_mqtt_client_id.getVal())
+        let mqtt_client_id = this.#input_mqtt_client_id.getVal()
+        if (!mqtt_client_id) {
+            mqtt_client_id = this.#gwCfg.info.gw_mac
+        }
+        aux_params += encodeURIComponent(mqtt_client_id)
         aux_params += '&mqtt_disable_retained_messages='
         aux_params += this.#checkbox_mqtt_disable_retained_messages.isChecked() ? "true" : "false"
 
