@@ -2805,21 +2805,35 @@
                     </span>
                 </label>
                 <div id="page-scanning-all_nearby_beacons-scanning_options" class="indent hidden">
-                    <div>
-                        <label class="control control-checkbox">
-                            <span lang="en">Listen to 1 MBit/s advertisements</span>
-                            <span lang="fi">Kuuntele 1 MBit/s -majakkaviestejä</span>
-                            <input type="checkbox" id="scan_1mbit_phy">
-                            <span class="control_indicator"></span>
-                        </label>
-                    </div>
-                    <div>
-                        <label class="control control-checkbox">
-                            <span lang="en">Listen to coded PHY (long range) advertisements</span>
-                            <span lang="fi">Kuuntele pitkän kantaman protokollalla (PHY) koodattuja majakkaviestejä</span>
-                            <input type="checkbox" id="scan_coded_phy">
-                            <span class="control_indicator"></span>
-                        </label>
+                    <h3>
+                        <span lang="en">Select PHY:</span>
+                        <span lang="fi">Select PHY:</span>
+                    </h3>
+                    <div class="indent">
+                        <div>
+                            <label class="control control-radio">
+                                <span lang="en">Listen to 1 MBit/s advertisements</span>
+                                <span lang="fi">Kuuntele 1 MBit/s -majakkaviestejä</span>
+                                <input type="radio" name="scan_phy" value="scan_phy_1mbit">
+                                <span class="control_indicator"></span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="control control-radio">
+                                <span lang="en">Listen to coded PHY (long range) advertisements</span>
+                                <span lang="fi">Kuuntele pitkän kantaman protokollalla (PHY) koodattuja majakkaviestejä</span>
+                                <input type="radio" name="scan_phy" value="scan_phy_coded">
+                                <span class="control_indicator"></span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="control control-radio">
+                                <span lang="en">Listen to 1 MBit/s and coded PHY (long range) advertisements</span>
+                                <span lang="fi">Kuuntele 1 MBit/s ja pitkän kantaman protokollalla (PHY) koodattuja majakkaviestejä</span>
+                                <input type="radio" name="scan_phy" value="scan_phy_1mbit_and_coded">
+                                <span class="control_indicator"></span>
+                            </label>
+                        </div>
                     </div>
                     <div id="scan_extended_payload-div" class="hidden">
                         <label class="control control-checkbox">
@@ -2829,29 +2843,37 @@
                             <span class="control_indicator"></span>
                         </label>
                     </div>
-                    <div>
-                        <label class="control control-checkbox">
-                            <span lang="en">Listen to channel 37</span>
-                            <span lang="fi">Kuuntele kanavaa 37</span>
-                            <input type="checkbox" id="scan_channel_37">
-                            <span class="control_indicator"></span>
-                        </label>
-                    </div>
-                    <div>
-                        <label class="control control-checkbox">
-                            <span lang="en">Listen to channel 38</span>
-                            <span lang="fi">Kuuntele kanavaa 38</span>
-                            <input type="checkbox" id="scan_channel_38">
-                            <span class="control_indicator"></span>
-                        </label>
-                    </div>
-                    <div>
-                        <label class="control control-checkbox">
-                            <span lang="en">Listen to channel 39</span>
-                            <span lang="fi">Kuuntele kanavaa 39</span>
-                            <input type="checkbox" id="scan_channel_39">
-                            <span class="control_indicator"></span>
-                        </label>
+
+                    <h3>
+                        <span lang="en">Select advertising channels:</span>
+                        <span lang="fi">Select advertising channels:</span>
+                    </h3>
+
+                    <div class="indent">
+                        <div>
+                            <label class="control control-checkbox">
+                                <span lang="en">Listen to channel 37</span>
+                                <span lang="fi">Kuuntele kanavaa 37</span>
+                                <input type="checkbox" id="scan_channel_37">
+                                <span class="control_indicator"></span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="control control-checkbox">
+                                <span lang="en">Listen to channel 38</span>
+                                <span lang="fi">Kuuntele kanavaa 38</span>
+                                <input type="checkbox" id="scan_channel_38">
+                                <span class="control_indicator"></span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="control control-checkbox">
+                                <span lang="en">Listen to channel 39</span>
+                                <span lang="fi">Kuuntele kanavaa 39</span>
+                                <input type="checkbox" id="scan_channel_39">
+                                <span class="control_indicator"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
