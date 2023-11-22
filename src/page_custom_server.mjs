@@ -905,9 +905,6 @@ class PageCustomServer {
             if (this.#input_http_url.getVal() === GwCfgHttp.HTTP_URL_DEFAULT) {
                 this.#input_http_url.setVal('')
             }
-            if (this.#input_http_url.getVal() === '') {
-                this.#input_http_url.setInvalid()
-            }
             this.#input_http_url.setValidationRequired()
         }
         this.#on_custom_connection_type_changed()
@@ -959,9 +956,6 @@ class PageCustomServer {
     #onChangeHttpUrl() {
         this.#input_http_url.setValidationRequired()
         this.#div_http_validation_error.hide()
-        if (this.#input_http_url.getVal() === '') {
-            this.#input_http_url.setInvalid()
-        }
         this.#on_custom_server_url_changed()
     }
 
@@ -1109,7 +1103,6 @@ class PageCustomServer {
     }
 
     #onChangeMqttServer() {
-        let is_server_valid = true
         const mqtt_server_prefix = this.#get_mqtt_server_prefix()
         if (mqtt_server_prefix === '') {
         } else if (mqtt_server_prefix === 'mqtt://') {
@@ -1120,25 +1113,18 @@ class PageCustomServer {
             this.#radio_mqtt_transport_WS.setChecked()
         } else if (mqtt_server_prefix === 'wss://') {
             this.#radio_mqtt_transport_WSS.setChecked()
-        } else {
-            is_server_valid = false
         }
         if (this.#get_mqtt_server_without_prefix() === '') {
             this.#input_mqtt_server.setPlaceholder(this.#get_mqtt_url_prefix_for_ui())
-            is_server_valid = false
         } else {
             if (!this.#input_mqtt_server.is_focused()) {
                 this.#updateMqttServerPrefix()
             }
         }
 
-        if (is_server_valid) {
-            this.#input_mqtt_server.clearValidationIcon()
-        } else {
-            this.#input_mqtt_server.setInvalid()
-        }
-
         this.#on_edit_mqtt_settings()
+        this.#input_mqtt_server.clearValidationIcon()
+        this.#input_mqtt_port.clearValidationIcon()
         this.#input_mqtt_server.setValidationRequired()
         this.#input_mqtt_port.setValidationRequired()
         this.#div_mqtt_validation_error.hide()
@@ -1147,6 +1133,8 @@ class PageCustomServer {
 
     #onChangeMqttPort() {
         this.#on_edit_mqtt_settings()
+        this.#input_mqtt_server.clearValidationIcon()
+        this.#input_mqtt_port.clearValidationIcon()
         this.#input_mqtt_server.setValidationRequired()
         this.#input_mqtt_port.setValidationRequired()
         this.#div_mqtt_validation_error.hide()
@@ -1299,30 +1287,10 @@ class PageCustomServer {
         if (this.#checkbox_use_http.isChecked() && this.#input_http_url.isValidationRequired()) {
             flag_url_modified = true
             this.#input_http_url.clearValidationIcon()
-            if (!this.#is_valid_http_url(this.#input_http_url.getVal())) {
-                this.#input_http_url.setInvalid()
-            }
 
-            this.#input_http_auth_basic_user.setValid()
-            this.#input_http_auth_bearer_token.setValid()
-            this.#input_http_auth_token_api_key.setValid()
-            if (this.#checkbox_use_http_auth.isChecked()) {
-                if (this.#radio_http_auth_basic.isChecked()) {
-                    if (this.#input_http_auth_basic_user.getVal() === '') {
-                        this.#input_http_auth_basic_user.setInvalid()
-                    }
-                }
-                if (this.#radio_http_auth_bearer.isChecked()) {
-                    if (this.#input_http_auth_bearer_token.getVal() === '') {
-                        this.#input_http_auth_bearer_token.setInvalid()
-                    }
-                }
-                if (this.#radio_http_auth_token.isChecked()) {
-                    if (this.#input_http_auth_token_api_key.getVal() === '') {
-                        this.#input_http_auth_token_api_key.setInvalid()
-                    }
-                }
-            }
+            this.#input_http_auth_basic_user.clearValidationIcon()
+            this.#input_http_auth_bearer_token.clearValidationIcon()
+            this.#input_http_auth_token_api_key.clearValidationIcon()
         }
 
         if (this.#radio_statistics_use_custom.isChecked() && this.#input_http_stat_url.isValidationRequired()) {
@@ -1496,7 +1464,6 @@ class PageCustomServer {
             .then(() => this.#custom_server_validate_url_http_stat())
             .then(() => this.#custom_server_validate_url_mqtt())
             .finally(() => {
-                this.#on_custom_server_url_changed()
                 this.#button_continue.enable()
                 gui_loading.bodyClassLoadingRemove()
                 GwStatus.startCheckingStatus()
@@ -1506,6 +1473,23 @@ class PageCustomServer {
     #custom_server_validate_url_http() {
         if (!this.#checkbox_use_http.isChecked()) {
             console.log(log_wrap(`HTTP URL validation not needed (HTTP is not active)`))
+            return new Promise(function (resolve) {
+                resolve(true)
+            })
+        }
+
+        if (this.#input_http_url.getVal() === '') {
+            this.#input_http_url.setInvalid()
+            this.#text_http_validation_error_desc.setVal(`HTTP(S) URL address is empty`)
+            this.#div_http_validation_error.show()
+            return new Promise(function (resolve) {
+                resolve(true)
+            })
+        }
+        if (!this.#is_valid_http_url(this.#input_http_url.getVal())) {
+            this.#input_http_url.setInvalid()
+            this.#text_http_validation_error_desc.setVal(`HTTP(S) URL address is not valid`)
+            this.#div_http_validation_error.show()
             return new Promise(function (resolve) {
                 resolve(true)
             })
@@ -1522,6 +1506,14 @@ class PageCustomServer {
             })
         } else {
             if (this.#radio_http_auth_basic.isChecked()) {
+                if (this.#input_http_auth_basic_user.getVal() === '') {
+                    this.#input_http_auth_basic_user.setInvalid()
+                    this.#text_http_validation_error_desc.setVal(`Username is empty`)
+                    this.#div_http_validation_error.show()
+                    return new Promise(function (resolve) {
+                        resolve(true)
+                    })
+                }
                 const auth_type = 'basic'
                 return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
                     input_url: this.#input_http_url,
@@ -1531,6 +1523,14 @@ class PageCustomServer {
                     div_status: this.#div_http_validation_error,
                 })
             } else if (this.#radio_http_auth_bearer.isChecked()) {
+                if (this.#input_http_auth_bearer_token.getVal() === '') {
+                    this.#input_http_auth_bearer_token.setInvalid()
+                    this.#text_http_validation_error_desc.setVal(`Bearer API key is empty`)
+                    this.#div_http_validation_error.show()
+                    return new Promise(function (resolve) {
+                        resolve(true)
+                    })
+                }
                 const auth_type = 'bearer'
                 return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
                     input_url: this.#input_http_url,
@@ -1539,6 +1539,14 @@ class PageCustomServer {
                     div_status: this.#div_http_validation_error,
                 })
             } else if (this.#radio_http_auth_token.isChecked()) {
+                if (this.#input_http_auth_token_api_key.getVal() === '') {
+                    this.#input_http_auth_token_api_key.setInvalid()
+                    this.#text_http_validation_error_desc.setVal(`Token API key is empty`)
+                    this.#div_http_validation_error.show()
+                    return new Promise(function (resolve) {
+                        resolve(true)
+                    })
+                }
                 const auth_type = 'token'
                 return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
                     input_url: this.#input_http_url,
@@ -1568,6 +1576,23 @@ class PageCustomServer {
 
         if (!this.#radio_statistics_use_custom.isChecked()) {
             console.log(log_wrap(`HTTP_STAT URL validation not needed (HTTP_STAT is not active)`))
+            return new Promise(function (resolve) {
+                resolve(true)
+            })
+        }
+
+        if (this.#input_http_stat_url.getVal() === '') {
+            this.#input_http_stat_url.setInvalid()
+            this.#text_http_stat_validation_error_desc.setVal(`Statistics URL address is empty`)
+            this.#div_http_stat_validation_error.show()
+            return new Promise(function (resolve) {
+                resolve(true)
+            })
+        }
+        if (!this.#is_valid_http_url(this.#input_http_stat_url.getVal())) {
+            this.#input_http_stat_url.setInvalid()
+            this.#text_http_stat_validation_error_desc.setVal(`Statistics URL address is not valid`)
+            this.#div_http_stat_validation_error.show()
             return new Promise(function (resolve) {
                 resolve(true)
             })
@@ -1617,6 +1642,21 @@ class PageCustomServer {
         return mqtt_url_prefix
     }
 
+    #isValidNumberInRange(str, min, max) {
+        // Regular expression to check if the string is a positive integer
+        let regex = /^\d+$/;
+
+        // First, check if the string is a positive integer
+        if (regex.test(str)) {
+            let num = Number(str);
+
+            // Then, check if the number is within the range 1 to 65535
+            return num >= min && num <= max;
+        }
+
+        return false;
+    }
+
     #custom_server_validate_url_mqtt() {
         if (!this.#checkbox_use_mqtt.isChecked()) {
             console.log(log_wrap(`MQTT URL validation not needed (MQTT is not active)`))
@@ -1624,6 +1664,57 @@ class PageCustomServer {
                 resolve(true)
             })
         }
+
+        if (this.#get_mqtt_server_prefix() !== this.#get_mqtt_url_prefix_for_ui()) {
+            this.#input_mqtt_server.setInvalid()
+            this.#text_mqtt_validation_error_desc.setVal(`MQTT Server URL must start with ${this.#get_mqtt_url_prefix_for_ui()}`)
+            this.#div_mqtt_validation_error.show()
+            return new Promise(function (resolve) {
+                resolve(true)
+            })
+        }
+        if (this.#get_mqtt_server_without_prefix() === '') {
+            this.#input_mqtt_server.setInvalid()
+            this.#text_mqtt_validation_error_desc.setVal(`MQTT Server URL is empty`)
+            this.#div_mqtt_validation_error.show()
+            return new Promise(function (resolve) {
+                resolve(true)
+            })
+        }
+        if (this.#input_mqtt_port.getVal() === '') {
+            this.#input_mqtt_port.setInvalid()
+            this.#text_mqtt_validation_error_desc.setVal(`MQTT Server port is empty`)
+            this.#div_mqtt_validation_error.show()
+            return new Promise(function (resolve) {
+                resolve(true)
+            })
+        }
+        if (!/^\d+$/.test(this.#input_mqtt_port.getVal())) {
+            this.#input_mqtt_port.setInvalid()
+            this.#text_mqtt_validation_error_desc.setVal(`MQTT Server port is not a number`)
+            this.#div_mqtt_validation_error.show()
+            return new Promise(function (resolve) {
+                resolve(true)
+            })
+        }
+        const mqtt_port = parseInt(this.#input_mqtt_port.getVal())
+        if (isNaN(mqtt_port)) {
+            this.#input_mqtt_port.setInvalid()
+            this.#text_mqtt_validation_error_desc.setVal(`MQTT Server port is not a number`)
+            this.#div_mqtt_validation_error.show()
+            return new Promise(function (resolve) {
+                resolve(true)
+            })
+        }
+        if (mqtt_port < 1 || mqtt_port > 65535) {
+            this.#input_mqtt_port.setInvalid()
+            this.#text_mqtt_validation_error_desc.setVal(`MQTT Server port is out of range`)
+            this.#div_mqtt_validation_error.show()
+            return new Promise(function (resolve) {
+                resolve(true)
+            })
+        }
+
         let mqtt_url_prefix = this.#get_mqtt_url_prefix_for_gwcfg()
         let mqtt_topic_prefix = this.#get_mqtt_topic_prefix()
         let mqtt_url = mqtt_url_prefix + this.#get_mqtt_server_without_prefix() + ':' + this.#input_mqtt_port.getVal()
@@ -1645,7 +1736,8 @@ class PageCustomServer {
         }
 
         return validate_url(this.#auth, mqtt_url, 'check_mqtt', auth_type, {
-            input_url: this.#input_mqtt_port,
+            input_url: this.#input_mqtt_server,
+            input_url_port: this.#input_mqtt_port,
             use_ssl_client_cert: this.#checkbox_mqtt_use_client_ssl_cert.isChecked(),
             use_ssl_server_cert: this.#checkbox_mqtt_use_server_ssl_cert.isChecked(),
             input_user: this.#input_mqtt_user,

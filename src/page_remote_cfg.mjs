@@ -180,41 +180,49 @@ class PageRemoteCfg {
 
     #onChangeRemoteCfgUse() {
         this.#input_base_url.setValidationRequired()
+        this.#div_status_error.hide()
         this.#on_remote_cfg_changed()
     }
 
     #onChangeRemoteCfgUseAuth() {
         this.#input_base_url.setValidationRequired()
+        this.#div_status_error.hide()
         this.#on_remote_cfg_changed()
     }
 
     #onChangeRemoteCfgAuthType() {
         this.#input_base_url.setValidationRequired()
+        this.#div_status_error.hide()
         this.#on_remote_cfg_changed()
     }
 
     #onChangeBaseURL() {
         this.#input_base_url.setValidationRequired()
         this.#input_base_url.clearValidationIcon()
+        this.#div_status_error.hide()
         this.#on_remote_cfg_changed()
+
     }
 
     #onChangeAuthBasicUser() {
         this.#input_auth_basic_pass.clear()
         this.#input_auth_basic_user.setValidationRequired()
         this.#input_base_url.setValidationRequired()
+        this.#div_status_error.hide()
         this.#on_remote_cfg_changed()
     }
 
     #onChangeAuthBasicPass() {
         this.#input_auth_basic_pass.setValidationRequired()
         this.#input_base_url.setValidationRequired()
+        this.#div_status_error.hide()
         this.#on_remote_cfg_changed()
     }
 
     #onChangeAuthBearerToken() {
         this.#input_auth_bearer_token.setValidationRequired()
         this.#input_base_url.setValidationRequired()
+        this.#div_status_error.hide()
         this.#on_remote_cfg_changed()
     }
 
@@ -317,11 +325,13 @@ class PageRemoteCfg {
 
     #onChangeUseClientSslCertRemote() {
         this.#input_base_url.setValidationRequired()
+        this.#div_status_error.hide()
         this.#on_remote_cfg_changed()
     }
 
     #onChangeUseServerSslCertRemote() {
         this.#input_base_url.setValidationRequired()
+        this.#div_status_error.hide()
         this.#on_remote_cfg_changed()
     }
 
@@ -372,6 +382,28 @@ class PageRemoteCfg {
         this.#input_auth_basic_pass.clearValidationIcon()
         this.#input_auth_bearer_token.clearValidationIcon()
         this.#input_base_url.setValidationRequired()
+
+        if (this.#input_base_url.getVal() === '') {
+            this.#input_base_url.setInvalid()
+            return
+        }
+        if (this.#checkbox_remote_cfg_use_auth.isChecked()) {
+            if (this.#radio_remote_cfg_auth_type_basic.isChecked()) {
+                if (this.#input_auth_basic_user.getVal() === '') {
+                    this.#input_auth_basic_user.setInvalid()
+                    return
+                }
+                if (!this.#input_auth_basic_pass.is_saved() && this.#input_auth_basic_pass.getVal() === '') {
+                    this.#input_auth_basic_pass.setInvalid()
+                    return
+                }
+            } else if (this.#radio_remote_cfg_auth_type_bearer.isChecked()) {
+                if (!this.#input_auth_bearer_token.is_saved() && this.#input_auth_bearer_token.getVal() === '') {
+                    this.#input_auth_bearer_token.setInvalid()
+                    return
+                }
+            }
+        }
 
         this.#remote_cfg_validate_url().then(() => {
         })
@@ -491,29 +523,6 @@ class PageRemoteCfg {
             this.#div_auth_options.hide()
         }
 
-        let flag_valid_url = true
-        let flag_valid_user = true
-        let flag_valid_pass = true
-        let flag_valid_token = true
-        if (remote_cfg_use && this.#input_base_url.getVal() === '') {
-            flag_valid_url = false
-        }
-        if (remote_cfg_use_auth) {
-            if (remote_cfg_auth_type === 'remote_cfg_auth_type_bearer') {
-                if (!this.#input_auth_bearer_token.is_saved() && this.#input_auth_bearer_token.getVal() === '') {
-                    flag_valid_token = false
-                }
-            } else {
-                if (this.#input_auth_basic_user.getVal() === '') {
-                    flag_valid_user = false
-                }
-
-                if (!this.#input_auth_basic_pass.is_saved() && this.#input_auth_basic_pass.getVal() === '') {
-                    flag_valid_pass = false
-                }
-            }
-        }
-
         let flag_base_url_modified = false
         let flag_user_pass_modified = false
         let flag_token_modified = false
@@ -528,31 +537,10 @@ class PageRemoteCfg {
             flag_token_modified = true
         }
 
-        if (flag_base_url_modified || this.#input_base_url.isInvalid() ||
-            flag_user_pass_modified || this.#input_auth_basic_user.isInvalid() || this.#input_auth_basic_pass.isInvalid() ||
-            flag_token_modified || this.#input_auth_bearer_token.isInvalid() ||
-            !flag_valid_url || !flag_valid_user || !flag_valid_pass || !flag_valid_token) {
-
+        if (flag_base_url_modified || flag_user_pass_modified || flag_token_modified) {
             this.#button_download.hide()
             this.#button_check.show()
-
-            if (!flag_valid_url || !flag_valid_user || !flag_valid_pass || !flag_valid_token) {
-                this.#button_check.disable()
-                if (!flag_valid_url) {
-                    this.#input_base_url.setInvalid()
-                }
-                if (!flag_valid_user) {
-                    this.#input_auth_basic_user.setInvalid()
-                }
-                if (!flag_valid_pass) {
-                    this.#input_auth_basic_pass.setInvalid()
-                }
-                if (!flag_valid_token) {
-                    this.#input_auth_bearer_token.setInvalid()
-                }
-            } else {
-                this.#button_check.enable()
-            }
+            this.#button_check.enable()
         } else {
             this.#button_check.hide()
             this.#button_download.show()
