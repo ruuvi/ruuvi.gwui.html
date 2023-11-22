@@ -1204,16 +1204,49 @@ class PageCustomServer {
         }
     }
 
+    #is_valid_http_url (str_val) {
+        let url
+        if (str_val.indexOf('://') === -1) {
+            str_val = 'http://' + str_val
+        }
+        try {
+            url = new URL(str_val)
+        } catch (_) {
+            return false
+        }
+        return url.protocol === 'http:' || url.protocol === 'https:'
+    }
+
     #on_custom_server_url_changed() {
         let flag_url_modified = false
 
         if (this.#checkbox_use_http.isChecked() && this.#input_http_url.isValidationRequired()) {
             flag_url_modified = true
             this.#input_http_url.clearValidationIcon()
-            this.#input_http_auth_basic_user.clearValidationIcon()
-            this.#input_http_auth_basic_pass.clearValidationIcon()
-            this.#input_http_auth_bearer_token.clearValidationIcon()
-            this.#input_http_auth_token_api_key.clearValidationIcon()
+            if (!this.#is_valid_http_url(this.#input_http_url.getVal())) {
+                this.#input_http_url.setInvalid()
+            }
+
+            this.#input_http_auth_basic_user.setValid()
+            this.#input_http_auth_bearer_token.setValid()
+            this.#input_http_auth_token_api_key.setValid()
+            if (this.#checkbox_use_http_auth.isChecked()) {
+                if (this.#radio_http_auth_basic.isChecked()) {
+                    if (this.#input_http_auth_basic_user.getVal() === '') {
+                        this.#input_http_auth_basic_user.setInvalid()
+                    }
+                }
+                if (this.#radio_http_auth_bearer.isChecked()) {
+                    if (this.#input_http_auth_bearer_token.getVal() === '') {
+                        this.#input_http_auth_bearer_token.setInvalid()
+                    }
+                }
+                if (this.#radio_http_auth_token.isChecked()) {
+                    if (this.#input_http_auth_token_api_key.getVal() === '') {
+                        this.#input_http_auth_token_api_key.setInvalid()
+                    }
+                }
+            }
         }
 
         if (this.#radio_statistics_use_custom.isChecked() && this.#input_http_stat_url.isValidationRequired()) {
@@ -1310,10 +1343,18 @@ class PageCustomServer {
             this.#input_http_period.setValid()
         }
 
-        if (flag_url_modified || this.#input_http_url.isInvalid() || this.#input_http_stat_url.isInvalid() ||
-            this.#input_mqtt_port.isInvalid() || !flag_mqtt_periodic_sending_valid || !flag_http_period_valid) {
+        const flag_is_invalid = this.#input_http_url.isInvalid() ||
+            this.#input_http_auth_basic_user.isInvalid() ||
+            this.#input_http_auth_bearer_token.isInvalid() ||
+            this.#input_http_auth_token_api_key.isInvalid() ||
+            this.#input_http_stat_url.isInvalid() ||
+            this.#input_mqtt_port.isInvalid() ||
+            !flag_mqtt_periodic_sending_valid ||
+            !flag_http_period_valid
+
+        if (flag_url_modified || flag_is_invalid) {
             this.#button_continue.disable()
-            if (!flag_mqtt_periodic_sending_valid || !flag_http_period_valid) {
+            if (flag_is_invalid) {
                 this.#button_check.disable()
             } else {
                 this.#button_check.enable()
