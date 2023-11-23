@@ -480,7 +480,7 @@ progress {
 }
 
 .control {
-	display: block;
+	display: flex;
 	line-height: 24px;
 	position: relative;
 	padding: 3px 0 3px 28px;
@@ -753,6 +753,11 @@ select {
 	min-height: calc(var(--info-size) + 2 * var(--info-border-width));
 }
 
+.info-icon-row {
+	display: flex;
+	min-height: calc(var(--info-size) + var(--info-margin-top) + var(--info-margin-bottom));
+}
+
 .info-icon-left-column {
 	display: block;
 	float: left;
@@ -760,20 +765,26 @@ select {
 	min-height: calc(var(--info-size) + var(--info-margin-top) + var(--info-margin-bottom));
 }
 
+.info-icon-right-column {
+	display: block;
+	float: right;
+	width: calc(3em);
+	min-height: calc(var(--info-size) + var(--info-margin-top) + var(--info-margin-bottom));
+}
+
 .info-icon-button {
-	position: relative;
+	display: block;
+	float: right;
 	border-radius: 50%;
 	border: 0;
 	text-align: center;
 	text-decoration: none;
-	display: inline-block;
 	width: var(--info-size);
 	height: var(--info-size);
 	line-height: 0.9em;
 	font-family: "Montserrat", sans-serif;
 	color: rgba(255, 255, 255, 0.8);
 	background-color: var(--color-primary);
-	float: right;
 	margin-top: var(--info-margin-top);
 	margin-bottom: var(--info-margin-bottom);
 	margin-right: var(--info-border-width);

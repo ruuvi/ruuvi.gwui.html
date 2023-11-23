@@ -2796,24 +2796,28 @@
             </div>
 
             <div id="page-scanning-advanced-dropdown" class="hidden">
-                <label class="control control-radio info-icon-container">
-                    <span class="info-icon-left-column">
-                        <span lang="en">Listen to Ruuvi sensors (including long range sensors)</span>
-                        <span lang="fi">Kuuntele Ruuvi-antureita (myös pitkän kantaman anturit)</span>
-                        <input type="radio" name="company_use_filtering" value="2">
-                        <span class="control_indicator"></span>
-                    </span>
-                    <a class="info-icon-button" href="#popup-info-icon-scanning"><span>i</span></a>
-                </label>
+                <div class="info-icon-row">
+                    <div class="info-icon-left-column">
+                        <label class="control control-radio info-icon-container">
+                            <span lang="en">Listen to Ruuvi sensors (including long range sensors)</span>
+                            <span lang="fi">Kuuntele Ruuvi-antureita (myös pitkän kantaman anturit)</span>
+                            <input type="radio" name="company_use_filtering" value="2">
+                            <span class="control_indicator"></span>
+                        </label>
+                    </div>
+                    <div class="info-icon-right-column">
+                        <a class="info-icon-button" href="#popup-info-icon-scanning"><span>i</span></a>
+                    </div>
+                </div>
 
-                <label class="control control-radio">
-                    <span>
+                <div>
+                    <label class="control control-radio">
                         <span lang="en">Listen to all Bluetooth beacon messages (not just Ruuvi sensors)</span>
                         <span lang="fi">Kuuntele kaikkia Bluetooth-majakkaviestejä (ei ainoastaan Ruuvi-antureita)</span>
                         <input type="radio" name="company_use_filtering" value="0">
                         <span class="control_indicator"></span>
-                    </span>
-                </label>
+                    </label>
+                </div>
                 <div id="page-scanning-all_nearby_beacons-scanning_options" class="indent hidden">
                     <h3>
                         <span lang="en">Listen to protocol</span>
