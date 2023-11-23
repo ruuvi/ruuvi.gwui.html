@@ -176,7 +176,7 @@ class PageScanning {
                 this.#radio_company_use_filtering_1.setChecked()
             }
         }
-        this.#on_settings_scan_filtering_changed()
+        this.#on_settings_scan_filtering_changed(false)
 
         this.#onChangeInputFilter()
 
@@ -289,18 +289,30 @@ class PageScanning {
         })
     }
 
-    #on_settings_scan_filtering_changed() {
+    #on_settings_scan_filtering_changed(flag_smoothly = true) {
         if (this.#radio_company_use_filtering_0.isChecked()) {
-            this.#div_all_nearby_beacons_scanning_options.show()
+            if (flag_smoothly) {
+                this.#div_all_nearby_beacons_scanning_options.slideDown()
+            } else {
+                this.#div_all_nearby_beacons_scanning_options.show()
+            }
         } else if (this.#radio_company_use_filtering_1.isChecked()) {
-            this.#div_all_nearby_beacons_scanning_options.hide()
+            if (flag_smoothly) {
+                this.#div_all_nearby_beacons_scanning_options.slideUp()
+            } else {
+                this.#div_all_nearby_beacons_scanning_options.hide()
+            }
             this.#radio_scan_phy_1mbit.setChecked()
             this.#checkbox_scan_extended_payload.setUnchecked()
             this.#checkbox_scan_channel_37.setChecked()
             this.#checkbox_scan_channel_38.setChecked()
             this.#checkbox_scan_channel_38.setChecked()
         } else if (this.#radio_company_use_filtering_2.isChecked()) {
-            this.#div_all_nearby_beacons_scanning_options.hide()
+            if (flag_smoothly) {
+                this.#div_all_nearby_beacons_scanning_options.slideUp()
+            } else {
+                this.#div_all_nearby_beacons_scanning_options.hide()
+            }
             this.#radio_scan_phy_1mbit_and_coded.setChecked()
             this.#checkbox_scan_extended_payload.setUnchecked()
             this.#checkbox_scan_channel_37.setChecked()
