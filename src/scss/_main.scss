@@ -1026,3 +1026,33 @@ td.page_scanning-list_of_mac-column_checkbox span.control_indicator {
 	margin-bottom: 1em;
 	text-align: center;
 }
+
+#ruuvi-gateway-img {
+	width: 100%;
+	min-width: 300px;
+	min-height: 300px;
+	max-width: 300px;
+	max-height: 300px;
+	margin: 0 auto;
+	padding-top: 30px;
+	padding-bottom: 20px;
+	display: block;
+	@include max(sm) {
+		min-width: 50%;
+		min-height: 50%;
+		max-width: 50%;
+		max-height: 50%;
+	}
+	@include max(xs) {
+		min-width: 50%;
+		min-height: 50%;
+		max-width: 50%;
+		max-height: 50%;
+	}
+	@include max(xxs) {
+		min-width: 50%;
+		min-height: 50%;
+		max-width: 50%;
+		max-height: 50%;
+	}
+}
