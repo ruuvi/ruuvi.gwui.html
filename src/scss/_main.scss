@@ -754,6 +754,7 @@ select {
 }
 
 .info-icon-left-column {
+	display: block;
 	float: left;
 	width: calc(100% - 3em);
 	min-height: calc(var(--info-size) + var(--info-margin-top) + var(--info-margin-bottom));
@@ -768,7 +769,7 @@ select {
 	display: inline-block;
 	width: var(--info-size);
 	height: var(--info-size);
-	line-height: 1.6em;
+	line-height: 0.9em;
 	font-family: "Montserrat", sans-serif;
 	color: rgba(255, 255, 255, 0.8);
 	background-color: var(--color-primary);
@@ -780,6 +781,11 @@ select {
 
 .info-icon-button:hover {
 	cursor: pointer;
+}
+
+.info-icon-button span {
+	display: block;
+	padding: 4px;
 }
 
 .info-icon-overlay {
