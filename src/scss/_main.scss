@@ -814,6 +814,7 @@ select {
 .info-icon-overlay:target {
 	visibility: visible;
 	opacity: 1;
+	overflow: auto; /* enable scrolling on the overlay */
 }
 .info-icon-popup {
 	margin: 70px auto;
@@ -824,6 +825,23 @@ select {
 	max-width: var(--max-width);
 	position: relative;
 	transition: all 5s ease-in-out;
+	max-height: 80vh; /* 80% of the viewport height */
+	overflow-y: auto; /* enable vertical scrolling */
+	@include max(sm) {
+		margin-top: 50px;
+		margin-bottom: 50px;
+		max-height: calc(90vh - 100px);
+	}
+	@include max(xs) {
+		margin-top: 30px;
+		margin-bottom: 30px;
+		max-height: calc(90vh - 60px);
+	}
+	@include max(xxs) {
+		margin-top: 20px;
+		margin-bottom: 20px;
+		max-height: calc(90vh - 40px);
+	}
 }
 .info-icon-content {
 	color: var(--color-text);
