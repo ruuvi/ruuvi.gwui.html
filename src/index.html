@@ -53,70 +53,72 @@
                 </div>
             </div>
 
-            <div id="auth-user_login" class="hidden" style="max-width: 300px">
+            <div id="auth-user_login" class="hidden">
                 <div class="ingress">
                     <p lang="en">Login to configure Ruuvi Gateway's settings. This Ruuvi Gateway is configured for access from LAN with a username and password.</p>
                     <p lang="fi">Kirjautumalla pääset muuttamaan Ruuvi Gateway -reittimen asetuksia. Tämä Ruuvi Gateway on määritetty käytettäväksi lähiverkosta käyttäjätunnuksella ja salasanalla.</p>
                 </div>
 
-                <div id="auth-user-div">
-                    <h3>
-                        <label for="auth-user">
-                            <span lang="en">Username</span>
-                            <span lang="fi">Käyttäjätunnus</span>
-                        </label>
-                    </h3>
-                    <input type="text" id="auth-user">
-                    <div class="input-placeholder">
-                        <span lang="en">User</span>
-                        <span lang="fi">Käyttäjä</span>
-                    </div>
-                </div>
-
-                <div>
-                    <h3>
-                        <label for="auth-pass">
-                            <span lang="en">Password</span>
-                            <span lang="fi">Salasana</span>
-                        </label>
-                    </h3>
-                    <div class="input-password">
-                        <input type="password" id="auth-pass">
-                        <div class="input-password-eye">
-                            <div class="eye">
-                            </div>
-                            <div class="eye-slash hidden">
-                            </div>
-                        </div>
+                <div style="max-width: 300px">
+                    <div id="auth-user-div">
+                        <h3>
+                            <label for="auth-user">
+                                <span lang="en">Username</span>
+                                <span lang="fi">Käyttäjätunnus</span>
+                            </label>
+                        </h3>
+                        <input type="text" id="auth-user">
                         <div class="input-placeholder">
-                            <span lang="en">Password</span>
-                            <span lang="fi">Salasana</span>
+                            <span lang="en">User</span>
+                            <span lang="fi">Käyttäjä</span>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <div id="auth-yes" class="hidden">
-                        <span lang="en">Authorisation successful.</span>
-                        <span lang="fi">Sisäänkirjautuminen onnistui.</span>
+
+                    <div>
+                        <h3>
+                            <label for="auth-pass">
+                                <span lang="en">Password</span>
+                                <span lang="fi">Salasana</span>
+                            </label>
+                        </h3>
+                        <div class="input-password">
+                            <input type="password" id="auth-pass">
+                            <div class="input-password-eye">
+                                <div class="eye">
+                                </div>
+                                <div class="eye-slash hidden">
+                                </div>
+                            </div>
+                            <div class="input-placeholder">
+                                <span lang="en">Password</span>
+                                <span lang="fi">Salasana</span>
+                            </div>
+                        </div>
                     </div>
-                    <div id="auth-forbidden" class="err-message hidden">
-                        <span lang="en">Access from LAN is forbidden - wrong username or password.</span>
-                        <span lang="fi">Pääsy lähiverkosta on kielletty - väärä käyttäjätunnus tai salasana.</span>
+                    <div>
+                        <div id="auth-yes" class="hidden">
+                            <span lang="en">Authorisation successful.</span>
+                            <span lang="fi">Sisäänkirjautuminen onnistui.</span>
+                        </div>
+                        <div id="auth-forbidden" class="err-message hidden">
+                            <span lang="en">Access from LAN is forbidden - wrong username or password.</span>
+                            <span lang="fi">Pääsy lähiverkosta on kielletty - väärä käyttäjätunnus tai salasana.</span>
+                        </div>
+                        <div id="auth-denied" class="err-message hidden">
+                            <span lang="en">Access from LAN is denied.</span>
+                            <span lang="fi">Pääsy lähiverkosta on estetty.</span>
+                        </div>
+                        <div id="auth-error" class="err-message hidden">
+                            <span lang="en">Wrong username or password.</span>
+                            <span lang="fi">Väärä käyttäjätunnus tai salasana.</span>
+                        </div>
                     </div>
-                    <div id="auth-denied" class="err-message hidden">
-                        <span lang="en">Access from LAN is denied.</span>
-                        <span lang="fi">Pääsy lähiverkosta on estetty.</span>
+                    <div class="button-container-centered">
+                        <a href="" id="auth-button-login" class="btn">
+                            <span lang="en">Log in</span>
+                            <span lang="fi">Kirjaudu sisään</span>
+                        </a>
                     </div>
-                    <div id="auth-error" class="err-message hidden">
-                        <span lang="en">Wrong username or password.</span>
-                        <span lang="fi">Väärä käyttäjätunnus tai salasana.</span>
-                    </div>
-                </div>
-                <div class="button-container-centered">
-                    <a href="" id="auth-button-login" class="btn">
-                        <span lang="en">Log in</span>
-                        <span lang="fi">Kirjaudu sisään</span>
-                    </a>
                 </div>
             </div>
 
