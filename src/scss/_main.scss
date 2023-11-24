@@ -213,14 +213,16 @@ h1 {
 h2, .h2 {
 	font-size: 18px;
 	font-weight: 800;
-	margin-top: 1.5em;
+	padding-top: 1.5em;
+	margin-top: 0;
 	margin-bottom: 1em;
 }
 
 h3, .h3 {
 	font-size: 16px;
 	font-weight: 700;
-	margin-top: 1em;
+	padding-top: 1em;
+	margin-top: 0;
 	margin-bottom: 0.75em;
 }
 
@@ -481,9 +483,9 @@ progress {
 
 .control {
 	display: flex;
-	line-height: 24px;
+	line-height: var(--control-line-height);
 	position: relative;
-	padding: 3px 0 3px 28px;
+	padding: var(--control-padding) 0 var(--control-padding) calc(var(--control-line-height) + 4px);
 	margin-top: 0;
 	cursor: pointer;
 
@@ -506,12 +508,12 @@ progress {
 }
 
 .control_indicator {
-	height: 16px;
-	width: 16px;
+	height: var(--control_indicator-size);
+	width: var(--control_indicator-size);
 	background: white;
 	border: 1px solid var(--color-border);
 	position: absolute;
-	top: 7px;
+	top: calc((var(--control-line-height) + 2 * var(--control-padding) - var(--control_indicator-size)) / 2);
 	left: 0;
 
 	&:after {
@@ -749,6 +751,22 @@ select {
 	filter: blur(2px);
 }
 
+.wifi_list-row {
+	display: flex;
+}
+
+.wifi_list-left_column {
+	display: flex;
+	float: left;
+	width: calc(100% - (var(--wifi_list-lock-icon-size) + var(--wifi_list-rssi-icon-size) + 2 * var(--wifi_list-icon-margin-right)));
+}
+
+.wifi_list-right_column {
+	display: flex;
+	float: right;
+	width: calc(var(--wifi_list-lock-icon-size) + var(--wifi_list-rssi-icon-size) + 2 * var(--wifi_list-icon-margin-right));
+}
+
 .info-icon-container {
 	min-height: calc(var(--info-size) + 2 * var(--info-border-width));
 }
@@ -889,26 +907,26 @@ table {
 }
 
 .pw {
-	width: 14px;
-	height: 14px;
+	width: var(--wifi_list-lock-icon-size);
+	height: var(--wifi_list-lock-icon-size);
 	background-position: 50%;
 	background-repeat: no-repeat;
 	background-size: contain;
-	margin-right: 20px;
-	margin-top: 6px;
+	margin-right: var(--wifi_list-icon-margin-right);
+	margin-top: calc((var(--control-line-height) + 2 * var(--control-padding) - var(--wifi_list-lock-icon-size)) / 2);
 }
 
 .w0,
 .w1,
 .w2,
 .w3 {
-	width: 18px;
-	height: 18px;
+	width: var(--wifi_list-rssi-icon-size);
+	height: var(--wifi_list-rssi-icon-size);
 	background-position: 50%;
 	background-repeat: no-repeat;
 	background-size: contain;
-	margin-right: 20px;
-	margin-top: 4px;
+	margin-right: var(--wifi_list-icon-margin-right);
+	margin-top: calc((var(--control-line-height) + 2 * var(--control-padding) - var(--wifi_list-rssi-icon-size)) / 2);
 }
 
 .w0 {

@@ -20,6 +20,12 @@
 	--fontawesome-icon-height: calc(1em * 1.5);
 	--fontawesome-icon-width: calc(1em * 1.5 * 576 / 512);
 	--max-width: 650px;
+	--control-line-height: 1.5em;
+	--control-padding: 3px;
+	--control_indicator-size: 1em;
+	--wifi_list-lock-icon-size: 14px;
+	--wifi_list-rssi-icon-size: 18px;
+	--wifi_list-icon-margin-right: calc(1em + 4px);
 }
 
 // Grid breakpoints
