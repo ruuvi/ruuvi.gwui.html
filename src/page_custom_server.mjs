@@ -901,6 +901,9 @@ class PageCustomServer {
     }
 
     #onChangeUseHttpCustom() {
+        this.#input_http_url.clearValidationIcon()
+        this.#div_http_validation_error.hide()
+        this.#input_http_url.clearValidationRequired()
         if (this.#checkbox_use_http.isChecked()) {
             if (this.#input_http_url.getVal() === GwCfgHttp.HTTP_URL_DEFAULT) {
                 this.#input_http_url.setVal('')
@@ -942,6 +945,8 @@ class PageCustomServer {
         this.#input_http_stat_pass.clear()
         this.#checkbox_stat_use_client_ssl_cert.setUnchecked()
         this.#checkbox_stat_use_server_ssl_cert.setUnchecked()
+        this.#input_http_stat_url.clearValidationIcon()
+        this.#div_http_stat_validation_error.hide()
 
         if (this.#radio_statistics_use_custom.isChecked()) {
             this.#div_settings_http_stat.slideDown()
@@ -991,9 +996,6 @@ class PageCustomServer {
     #onChangeHttpStatUrl() {
         this.#input_http_stat_url.setValidationRequired()
         this.#div_http_stat_validation_error.hide()
-        if (this.#input_http_stat_url.getVal() === '') {
-            this.#input_http_stat_url.setInvalid()
-        }
         this.#on_custom_server_url_changed()
     }
 
@@ -1011,6 +1013,8 @@ class PageCustomServer {
     }
 
     #onChangeUseMqtt() {
+        this.#input_mqtt_server.clearValidationIcon()
+        this.#div_mqtt_validation_error.hide()
         if (this.#checkbox_use_mqtt.isChecked()) {
             this.#input_mqtt_server.setValidationRequired()
             this.#input_mqtt_port.setValidationRequired()
@@ -1387,22 +1391,9 @@ class PageCustomServer {
             this.#input_http_period.setValid()
         }
 
-        const flag_is_invalid = this.#input_http_url.isInvalid() ||
-            this.#input_http_auth_basic_user.isInvalid() ||
-            this.#input_http_auth_bearer_token.isInvalid() ||
-            this.#input_http_auth_token_api_key.isInvalid() ||
-            this.#input_http_stat_url.isInvalid() ||
-            this.#input_mqtt_port.isInvalid() ||
-            !flag_mqtt_periodic_sending_valid ||
-            !flag_http_period_valid
-
-        if (flag_url_modified || flag_is_invalid) {
+        if (flag_url_modified) {
             this.#button_continue.disable()
-            if (flag_is_invalid) {
-                this.#button_check.disable()
-            } else {
-                this.#button_check.enable()
-            }
+            this.#button_check.enable()
         } else {
             this.#button_continue.enable()
             this.#button_check.disable()
@@ -1464,7 +1455,19 @@ class PageCustomServer {
             .then(() => this.#custom_server_validate_url_http_stat())
             .then(() => this.#custom_server_validate_url_mqtt())
             .finally(() => {
-                this.#button_continue.enable()
+                let flag_valid = true
+                if (this.#checkbox_use_http && this.#input_http_url.isInvalid()) {
+                    flag_valid = false
+                }
+                if (this.#checkbox_use_mqtt && (this.#input_mqtt_server.isInvalid() || this.#input_mqtt_port.isInvalid())) {
+                    flag_valid = false
+                }
+                if (this.#radio_statistics_use_custom && this.#input_http_stat_url.isInvalid()) {
+                    flag_valid = false
+                }
+                if (flag_valid) {
+                    this.#button_continue.enable()
+                }
                 gui_loading.bodyClassLoadingRemove()
                 GwStatus.startCheckingStatus()
             })
@@ -1665,17 +1668,17 @@ class PageCustomServer {
             })
         }
 
-        if (this.#get_mqtt_server_prefix() !== this.#get_mqtt_url_prefix_for_ui()) {
+        if (this.#get_mqtt_server_without_prefix() === '') {
             this.#input_mqtt_server.setInvalid()
-            this.#text_mqtt_validation_error_desc.setVal(`MQTT Server URL must start with ${this.#get_mqtt_url_prefix_for_ui()}`)
+            this.#text_mqtt_validation_error_desc.setVal(`MQTT Server URL is empty`)
             this.#div_mqtt_validation_error.show()
             return new Promise(function (resolve) {
                 resolve(true)
             })
         }
-        if (this.#get_mqtt_server_without_prefix() === '') {
+        if (this.#get_mqtt_server_prefix() !== this.#get_mqtt_url_prefix_for_ui()) {
             this.#input_mqtt_server.setInvalid()
-            this.#text_mqtt_validation_error_desc.setVal(`MQTT Server URL is empty`)
+            this.#text_mqtt_validation_error_desc.setVal(`MQTT Server URL must start with ${this.#get_mqtt_url_prefix_for_ui()}`)
             this.#div_mqtt_validation_error.show()
             return new Promise(function (resolve) {
                 resolve(true)
