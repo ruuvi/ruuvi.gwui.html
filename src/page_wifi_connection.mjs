@@ -9,7 +9,7 @@ import GuiInputPassword from './gui_input_password.mjs'
 import GuiInputText from './gui_input_text.mjs'
 import GuiRadioButton from './gui_radio_button.mjs'
 import gui_loading from './gui_loading.mjs'
-import { log_wrap, networkConnect, networkDisconnect } from './utils.mjs'
+import { log_wrap, networkConnect, networkConnectWPS, networkDisconnect } from './utils.mjs'
 import GwStatus from './gw_status.mjs'
 import GwAP from './gw_ap.mjs'
 import Network from './network.mjs'
@@ -17,11 +17,16 @@ import GuiSectAdvanced from './gui_sect_advanced.mjs'
 import Navigation from './navigation.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import GuiButton from './gui_button.mjs'
+import GuiCheckbox from "./gui_checkbox.mjs";
+import GuiDiv from "./gui_div.mjs";
+import GuiOverlay from "./gui_overlay.mjs";
 
 export class PageWiFiConnection {
   #gwCfg
   #auth
   #section = $('section#page-wifi_connection')
+  #checkbox_use_wps = new GuiCheckbox($('#wifi_connection-use_wps'))
+  #div_list_of_wifi = new GuiDiv($('#wifi_connection-list_of_wifi'))
   #button_sort_order_by_name = new GuiButton($('#wifi_connection-sort_order-by_name'))
   #button_sort_order_by_rssi = new GuiButton($('#wifi_connection-sort_order-by_rssi'))
   #input_ssid = new GuiInputText($('section#page-wifi_connection input#manual_ssid'))
@@ -31,6 +36,8 @@ export class PageWiFiConnection {
   #sect_advanced = new GuiSectAdvanced($('#page-wifi_connection-advanced-button'))
   #button_continue = new GuiButtonContinue($('#page-wifi_connection-button-continue'))
   #button_back = new GuiButtonBack($('#page-wifi_connection-button-back'))
+  #overlay_connect_wifi_wps = new GuiOverlay($('#overlay-connect_wifi_wps'))
+  #buttonCancelFromOverlay = new GuiButton($('#overlay-connect_wifi_wps-cancel'))
   #apList = null
   #flag_sort_by_rssi = false
   #flag_initial_refresh = false
@@ -41,6 +48,8 @@ export class PageWiFiConnection {
 
     this.#section.bind('onShow', async () => this.#onShow())
     this.#section.bind('onHide', async () => this.#onHide())
+
+    this.#checkbox_use_wps.on_change(() => this.#onChangeUseWPS())
 
     this.#onChangeSortByRSSI(false)
 
@@ -55,6 +64,7 @@ export class PageWiFiConnection {
 
     this.#sect_advanced.on_click(() => this.#onClickButtonAdvanced())
     this.#button_continue.on_click(() => this.#onClickButtonContinue())
+    this.#buttonCancelFromOverlay.on_click(() => this.#onClickButtonCancelFromOverlay())
   }
 
   async #onShow () {
@@ -74,10 +84,25 @@ export class PageWiFiConnection {
 
   async #onHide () {
     console.log(log_wrap('section#page-wifi_connection: onHide'))
+    this.#overlay_connect_wifi_wps.fadeOut()
     this.#button_continue.enable()
     $('#page-wifi_connection-ssid_password').hide()
     $('#page-wifi_connection-list_of_ssid').html('')
     GwAP.stopRefreshingAP()
+  }
+
+  async #onChangeUseWPS () {
+    if (this.#checkbox_use_wps.isChecked()) {
+      this.#div_list_of_wifi.slideUp()
+      GwAP.stopRefreshingAP()
+      this.#button_continue.enable()
+      await Network.waitWhileInProgress()
+      this.#button_continue.enable()
+    } else {
+      GwAP.startRefreshingAP()
+      this.#div_list_of_wifi.slideDown()
+      this.#checkAndUpdatePageWiFiListButtonNext()
+    }
   }
 
   #onChangeSortByRSSI (flag_sort_by_rssi) {
@@ -131,6 +156,29 @@ export class PageWiFiConnection {
     }
   }
 
+  async #connect_to_wifi_with_wps() {
+    let isSuccessful = false
+    try {
+      GwStatus.stopCheckingStatus()
+      GwAP.stopRefreshingAP()
+      await Network.waitWhileInProgress()
+      isSuccessful = await networkConnectWPS(this.#auth)
+      console.log(log_wrap(`networkConnectWPS: ${isSuccessful}`))
+    } catch (err) {
+      console.log(log_wrap(`connect_to_wifi_with_wps failed: ${err}`))
+    } finally {
+      console.log(log_wrap('Start periodic status check'))
+      GwStatus.startCheckingStatus()
+      this.#button_continue.enable()
+      if (isSuccessful) {
+        Navigation.change_page_to_software_update()
+      } else {
+        $('#wifi-connection-status-block').show()
+        GwAP.startRefreshingAP()
+      }
+    }
+  }
+
   async #save_network_config_and_connect_to_wifi (wifi_channel, ssid, password) {
     gui_loading.bodyClassLoadingAdd()
     let isSuccessful = false
@@ -160,6 +208,17 @@ export class PageWiFiConnection {
   }
 
   #onClickButtonContinue () {
+    if (this.#checkbox_use_wps.isChecked()) {
+      this.#overlay_connect_wifi_wps.fadeIn()
+      this.#button_back.hide()
+      this.#button_continue.disable()
+      $('#wifi-connection-status-block').hide()
+      this.#connect_to_wifi_with_wps().then(() => {
+        this.#button_back.show()
+        this.#overlay_connect_wifi_wps.fadeOut()
+      })
+      return
+    }
     const selected_wifi_radio_button = $('input[name="wifi-name"]:checked')
     let ssid = ''
     let isAuthNeeded = true
@@ -204,6 +263,14 @@ export class PageWiFiConnection {
     $('#wifi-connection-status-block').hide()
     this.#updatePositionOfWiFiPasswordInput()
     this.#save_network_config_and_connect_to_wifi(wifi_channel, ssid, password).then(() => {})
+  }
+
+  #onClickButtonCancelFromOverlay() {
+    networkDisconnect().then(() => {
+    })
+    this.#overlay_connect_wifi_wps.fadeOut()
+    this.#button_back.show()
+    this.#button_continue.enable()
   }
 
   #refreshAPHTML (data) {
