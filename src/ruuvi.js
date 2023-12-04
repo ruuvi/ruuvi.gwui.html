@@ -31,6 +31,7 @@ import PageScanning from './page_scanning.mjs'
 import PageFinished from './page_finished.mjs'
 import { log_wrap } from './utils.mjs'
 import PageInitSslStorage from "./page_init_ssl_storage.mjs";
+import RuuviLogoImage from './img/beaver.jpg'
 
 let g_auth
 let g_gw_cfg
@@ -74,11 +75,13 @@ function initialize () {
         $(this).fadeIn()
       else
         $(this).hide()
-      if (lang === 'en') {
-        $('input#mqtt_client_id').attr('placeholder', 'MAC-address is used if empty')
-      } else if (lang === 'fi') {
-        $('input#mqtt_client_id').attr('placeholder', 'MAC-osoitetta käytetään, jos se on tyhjä')
-      }
+
+      $('input').each(function () {
+        let associatedGuiObj = this.associatedGuiObj
+        if (associatedGuiObj && typeof associatedGuiObj.onLanguageChange === 'function') {
+          associatedGuiObj.onLanguageChange()
+        }
+      })
     })
   }
 
@@ -156,6 +159,8 @@ async function on_authenticate (result) {
 
 function on_load () {
   logger.info('ruuvi.js: Loaded')
+
+  $('#ruuvi-gateway-img').attr('src', RuuviLogoImage)
 
   initialize()
   g_gw_cfg = createGwCfg()

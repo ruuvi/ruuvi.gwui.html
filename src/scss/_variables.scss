@@ -8,17 +8,24 @@
 	--color-notification: #0808dd;
 	--color-border: #d6eee9;
 	--color-divider: rgba(75, 201, 186, 0.4);
-	--info-border-width: 0.75em;
+	--info-border-width: 0.3em;
 	--info-size: 1.3em;
-	--info-margin-top: 0.35em;
-	--info-margin-bottom: 0.95em;
-	--input-margin-top: 12px;
+	--info-margin-top: 0.15em;
+	--info-margin-bottom: 0.15em;
+	--input-margin-top: 1px;
 	--input-margin-bottom: 15px;
 	--input-border: 1px;
 	--input-padding-top-and-bottom: 8px;
 	--input-padding-right-and-left: 10px;
 	--fontawesome-icon-height: calc(1em * 1.5);
 	--fontawesome-icon-width: calc(1em * 1.5 * 576 / 512);
+	--max-width: 650px;
+	--control-line-height: 1.5em;
+	--control-padding: 3px;
+	--control_indicator-size: 1em;
+	--wifi_list-lock-icon-size: 14px;
+	--wifi_list-rssi-icon-size: 18px;
+	--wifi_list-icon-margin-right: calc(1em + 4px);
 }
 
 // Grid breakpoints

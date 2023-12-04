@@ -273,18 +273,22 @@ export class PageWiFiConnection {
         h += '\n'
       }
       h += '<div>'
-      h += '<label class="control control-radio">'
-      h += '    <div style="display: flex">'
-      h += `        <div>${e.ssid}</div>`
-      h += `        <div style="margin-left: auto;" class="${e.auth === 0 ? '' : 'pw'}"></div>`
-      h += `        <div class="${this.#rssiToIcon(e.rssi)}"></div>`
+      h += '    <div class="wifi_list-row">'
+      h += '        <div class="wifi_list-left_column">'
+      h += '            <label class="control control-radio">'
+      h += `                <span>${e.ssid}</span>`
+      h += `                <input type="radio" name="wifi-name" value="${e.ssid}" class="${(e.auth === 0) ? 'no_auth' : 'auth'} wifi_chan_${e.chan}">`
+      h += '                <span class="control_indicator"></span>'
+      h += '            </label>'
+      h += '        </div>'
+      h += '        <div class="wifi_list-right_column">'
+      h += `            <div class="${e.auth === 0 ? '' : 'pw'}"></div>`
+      h += `            <div class="${this.#rssiToIcon(e.rssi)}"></div>`
+      h += '        </div>'
       h += '    </div>'
-      h += `    <input value="${e.ssid}" name="wifi-name" type="radio" class="${(e.auth === 0) ? 'no_auth' : 'auth'} wifi_chan_${e.chan}">`
-      h += '    <span class="control_indicator"></span>'
-      h += '</label>'
-      h += '<div class="wifi_password"></div>'
-      h += '<div class="border"></div>'
+      h += '    <div class="wifi_password"></div>'
       h += '</div>'
+      h += '<div class="border"></div>'
       h += '\n'
     })
 
@@ -434,7 +438,7 @@ export class PageWiFiConnection {
       div_ssid_password_wrap.css('height', div_page_wifi_list_ssid_password.height())
       div_page_wifi_list_ssid_password.css('top', wifi_password_position.top)
     } else {
-      let div_wifi_password = selected_wifi.parent().parent().children('.wifi_password')
+      let div_wifi_password = selected_wifi.parent().parent().parent().parent().children('.wifi_password')
       let div_page_wifi_list_ssid_password = $('#page-wifi_connection-ssid_password')
 
       $('.wifi_password').css('height', 0)

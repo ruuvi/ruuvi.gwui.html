@@ -16,10 +16,6 @@ import GuiProgress from './gui_progress.mjs'
 class PageSoftwareUpdateProgress {
   #section = $('section#page-software_update_progress')
   #fw_updating_stage = 0
-  #div_info = new GuiDiv($('#page-software_update_progress-info'))
-  #div_status_completed_successfully = new GuiDiv($('#software_update_progress-status-completed_successfully'))
-  #div_status_completed_unsuccessfully = new GuiDiv($('#software_update_progress-status-completed_unsuccessfully'))
-  #div_button_container_configure = new GuiDiv($('#page-software_update_progress-button_container-configure'))
   #button_configure = new GuiButtonContinue($('#page-software_update_progress-button-configure'))
   #div_software_update_progress_info = new GuiDiv($('#page-software_update_progress-info'))
   #div_software_update_progress_status_completed_successfully = new GuiDiv($('#software_update_progress-status-completed_successfully'))
@@ -41,10 +37,10 @@ class PageSoftwareUpdateProgress {
 
   async #onShow () {
     console.log(log_wrap('page-software_update_progress: onShow'))
-    this.#div_info.show()
-    this.#div_status_completed_successfully.hide()
-    this.#div_status_completed_unsuccessfully.hide()
-    this.#div_button_container_configure.hide()
+    this.#div_software_update_progress_info.show()
+    this.#div_software_update_progress_status_completed_successfully.hide()
+    this.#div_software_update_progress_status_completed_unsuccessfully.hide()
+    this.#div_software_update_progress_button_container_configure.hide()
     this.#fw_updating_stage = 0
     GwStatus.setCallbackFirmwareUpdatingProgress((fw_updating_stage, fw_updating_percentage, err_message) =>
         this.#firmwareUpdatingProgress(fw_updating_stage, fw_updating_percentage, err_message))

@@ -21,6 +21,10 @@ class GuiDiv {
     this.#obj.hide()
   }
 
+  isHidden() {
+    return this.#obj.hasClass("hidden")
+  }
+
   slideUp () {
     this.#obj.slideUp()
   }

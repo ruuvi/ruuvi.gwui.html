@@ -173,8 +173,8 @@ g_ruuvi_dict = {
     'ntp_use_dhcp': False,
     'ntp_server1': "time.google.com",
     'ntp_server2': "time.cloudflare.com",
-    'ntp_server3': "time.nist.gov",
-    'ntp_server4': "pool.ntp.org",
+    'ntp_server3': "pool.ntp.org",
+    'ntp_server4': "time.ruuvi.com",
     'company_use_filtering': True,
     'company_id': 0x0499,
     'coordinates': "",
@@ -610,6 +610,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         resp += f'\r\n'.encode('ascii')
         resp += resp_content_encoded
         print(f'Response: {resp}')
+        time.sleep(1.0)
         self.wfile.write(resp)
 
     def _do_post_connect_json(self):

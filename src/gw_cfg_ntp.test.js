@@ -28,8 +28,8 @@ describe('GwCfgNtp', () => {
       ntp_use_dhcp: false,
       ntp_server1: 'time.google.com',
       ntp_server2: 'time.cloudflare.com',
-      ntp_server3: 'time.nist.gov',
-      ntp_server4: 'pool.ntp.org',
+      ntp_server3: 'pool.ntp.org',
+      ntp_server4: 'time.ruuvi.com',
     }
     let ntp = new GwCfgNtp()
     ntp.parse(data)
@@ -37,8 +37,8 @@ describe('GwCfgNtp', () => {
     expect(ntp.ntp_use_dhcp).to.be.false
     expect(ntp.ntp_server1).to.equal('time.google.com')
     expect(ntp.ntp_server2).to.equal('time.cloudflare.com')
-    expect(ntp.ntp_server3).to.equal('time.nist.gov')
-    expect(ntp.ntp_server4).to.equal('pool.ntp.org')
+    expect(ntp.ntp_server3).to.equal('pool.ntp.org')
+    expect(ntp.ntp_server4).to.equal('time.ruuvi.com')
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -68,8 +68,8 @@ describe('GwCfgNtp', () => {
       ntp_use_dhcp: true,
       ntp_server1: 'time.google.com',
       ntp_server2: 'time.cloudflare.com',
-      ntp_server3: 'time.nist.gov',
-      ntp_server4: 'pool.ntp.org',
+      ntp_server3: 'pool.ntp.org',
+      ntp_server4: 'time.ruuvi.com',
     }
     let ntp = new GwCfgNtp()
     ntp.parse(data)
@@ -77,8 +77,8 @@ describe('GwCfgNtp', () => {
     expect(ntp.ntp_use_dhcp).to.be.true
     expect(ntp.ntp_server1).to.equal('time.google.com')
     expect(ntp.ntp_server2).to.equal('time.cloudflare.com')
-    expect(ntp.ntp_server3).to.equal('time.nist.gov')
-    expect(ntp.ntp_server4).to.equal('pool.ntp.org')
+    expect(ntp.ntp_server3).to.equal('pool.ntp.org')
+    expect(ntp.ntp_server4).to.equal('time.ruuvi.com')
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -93,8 +93,8 @@ describe('GwCfgNtp', () => {
     expect(ntp.ntp_use_dhcp).to.be.true
     expect(ntp.ntp_server1).to.equal('time.google.com')
     expect(ntp.ntp_server2).to.equal('time.cloudflare.com')
-    expect(ntp.ntp_server3).to.equal('time.nist.gov')
-    expect(ntp.ntp_server4).to.equal('pool.ntp.org')
+    expect(ntp.ntp_server3).to.equal('pool.ntp.org')
+    expect(ntp.ntp_server4).to.equal('time.ruuvi.com')
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -104,8 +104,8 @@ describe('GwCfgNtp', () => {
       ntp_use_dhcp: true,
       ntp_server1: 'time.google.com',
       ntp_server2: 'time.cloudflare.com',
-      ntp_server3: 'time.nist.gov',
-      ntp_server4: 'pool.ntp.org',
+      ntp_server3: 'pool.ntp.org',
+      ntp_server4: 'time.ruuvi.com',
     }
     let ntp = new GwCfgNtp()
     ntp.parse(data)
@@ -113,8 +113,8 @@ describe('GwCfgNtp', () => {
     expect(ntp.ntp_use_dhcp).to.be.true
     expect(ntp.ntp_server1).to.equal('time.google.com')
     expect(ntp.ntp_server2).to.equal('time.cloudflare.com')
-    expect(ntp.ntp_server3).to.equal('time.nist.gov')
-    expect(ntp.ntp_server4).to.equal('pool.ntp.org')
+    expect(ntp.ntp_server3).to.equal('pool.ntp.org')
+    expect(ntp.ntp_server4).to.equal('time.ruuvi.com')
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -148,8 +148,8 @@ describe('GwCfgNtp', () => {
     expect(ntp.ntp_use_dhcp).to.be.false
     expect(ntp.ntp_server1).to.equal('time.google.com')
     expect(ntp.ntp_server2).to.equal('time.cloudflare.com')
-    expect(ntp.ntp_server3).to.equal('time.nist.gov')
-    expect(ntp.ntp_server4).to.equal('pool.ntp.org')
+    expect(ntp.ntp_server3).to.equal('pool.ntp.org')
+    expect(ntp.ntp_server4).to.equal('time.ruuvi.com')
     expect(Object.keys(data).length).to.equal(0)
   })
 

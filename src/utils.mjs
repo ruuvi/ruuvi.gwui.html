@@ -215,6 +215,9 @@ function generate_url_for_validation (auth, url_to_validate, validate_type, auth
 export function validate_url (auth, url_to_validate, validate_type, auth_type, params) {
   function validity_icons_clear (params) {
     params['input_url'].clearValidationIcon()
+    if ('input_url_port' in params) {
+      params['input_url_port'].clearValidationIcon()
+    }
     if ('input_user' in params && 'input_pass' in params) {
       params['input_user'].clearValidationIcon()
       params['input_pass'].clearValidationIcon()
@@ -225,6 +228,9 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
 
   function validity_icons_set_checking (params) {
     params['input_url'].setCheckingIsValid()
+    if ('input_url_port' in params) {
+      params['input_url_port'].setCheckingIsValid()
+    }
     if ('input_user' in params && 'input_pass' in params) {
       if (params['input_user'].getVal()) {
         params['input_user'].setCheckingIsValid()
@@ -240,6 +246,9 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
 
   function validity_icons_set_valid (params) {
     params['input_url'].setValid()
+    if ('input_url_port' in params) {
+      params['input_url_port'].setValid()
+    }
     if ('input_user' in params && 'input_pass' in params) {
       let input_user = params['input_user']
       let input_pass = params['input_pass']
@@ -257,6 +266,9 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
 
   function validity_icons_set_invalid (params) {
     params['input_url'].setInvalid()
+    if ('input_url_port' in params) {
+      params['input_url_port'].setInvalid()
+    }
     if ('input_user' in params) {
       params['input_user'].setInvalid()
     }
@@ -290,6 +302,7 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
 
   return new Promise((resolve, reject) => {
     let input_url = params['input_url']
+    let input_url_port = params['input_url_port']
     if (!input_url.isValidationRequired() || input_url.isValidityChecked()) {
       console.log(log_wrap(`Skip URL validation (${validate_type}): ${url_to_validate}`))
       resolve(true)
@@ -306,6 +319,9 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
           return response.json()
         }, (error) => {
           input_url.setInvalid()
+          if (input_url_port) {
+            input_url_port.setInvalid()
+          }
           console.log(log_wrap(`Ruuvi Gateway connection failure: ${error}`))
           set_error_message(params, 'Ruuvi Gateway connection failure')
           resolve(false)
@@ -324,7 +340,11 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
               } else if (resp.status === 401) {
                 validity_icons_set_invalid(params)
               } else {
-                validity_icons_set_invalid({ input_url: params['input_url'] })
+                let params2 = { input_url: params['input_url'] }
+                if ('input_url_port' in params) {
+                  params2['input_url_port'] = params['input_url_port']
+                }
+                validity_icons_set_invalid(params2)
                 if (resp.status === 502) {
                   set_error_message(params, resp.message)
                 } else if (resp.status === 500) {
