@@ -31,7 +31,7 @@ import PageScanning from './page_scanning.mjs'
 import PageFinished from './page_finished.mjs'
 import { log_wrap } from './utils.mjs'
 import PageInitSslStorage from "./page_init_ssl_storage.mjs";
-import RuuviLogoImage from './img/beaver-phone-and-tag-happy.png'
+import RuuviLogoImage from './img/beaver.jpg'
 
 let g_auth
 let g_gw_cfg
