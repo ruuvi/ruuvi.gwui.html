@@ -76,6 +76,17 @@ export class PageEthernetConnection {
     networkDisconnect().then(() => {})
   }
 
+  #updateGwCfg () {
+    this.#gwCfg.eth.eth_dhcp = this.#checkbox_eth_dhcp.isChecked()
+    if (!this.#gwCfg.eth.eth_dhcp) {
+      this.#gwCfg.eth.eth_static_ip = this.#input_eth_static_ip.getVal()
+      this.#gwCfg.eth.eth_netmask = this.#input_eth_netmask.getVal()
+      this.#gwCfg.eth.eth_gw = this.#input_eth_gw.getVal()
+      this.#gwCfg.eth.eth_dns1 = this.#input_eth_dns1.getVal()
+      this.#gwCfg.eth.eth_dns2 = this.#input_eth_dns2.getVal()
+    }
+  }
+
   async #onHide () {
     console.log(log_wrap('section#page-ethernet_connection: onHide'))
     this.#overlay_connect_ethernet.fadeOut()
@@ -86,14 +97,7 @@ export class PageEthernetConnection {
       this.#timerEthConnection = null
     }
 
-    this.#gwCfg.eth.eth_dhcp = this.#checkbox_eth_dhcp.isChecked()
-    if (!this.#gwCfg.eth.eth_dhcp) {
-      this.#gwCfg.eth.eth_static_ip = this.#input_eth_static_ip.getVal()
-      this.#gwCfg.eth.eth_netmask = this.#input_eth_netmask.getVal()
-      this.#gwCfg.eth.eth_gw = this.#input_eth_gw.getVal()
-      this.#gwCfg.eth.eth_dns1 = this.#input_eth_dns1.getVal()
-      this.#gwCfg.eth.eth_dns2 = this.#input_eth_dns2.getVal()
-    }
+    this.#updateGwCfg()
   }
 
   #onChange_eth_dhcp () {
@@ -112,6 +116,7 @@ export class PageEthernetConnection {
       GwAP.stopRefreshingAP()
       await Network.waitWhileInProgress()
       this.#gwCfg.wifi_ap_cfg.setWiFiChannel(1)
+      this.#updateGwCfg()
       await this.#gwCfg.saveNetworkConfig(this.#auth)
       isSuccessful = await networkConnect(null, null, this.#auth)
       console.log(log_wrap(`networkConnect: ${isSuccessful}`))
