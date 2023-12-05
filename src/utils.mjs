@@ -103,9 +103,9 @@ export async function networkConnect (ssid, password, auth) {
 
   const promiseConnecting = GwStatus.setStateToConnecting()
   try {
-    await Network.httpEncryptAndPostJson(auth, '/connect.json', 5000, json_content)
     console.log(log_wrap('POST /connect.json: successful'))
     console.log(log_wrap('Waiting for the connection to be established'))
+    await Network.httpEncryptAndPostJson(auth, '/connect.json', 5000, json_content)
     console.log(log_wrap('Start periodic status check'))
     GwStatus.startCheckingStatus()
     const isSuccessful = await promiseConnecting
@@ -113,6 +113,25 @@ export async function networkConnect (ssid, password, auth) {
     return isSuccessful
   } catch (err) {
     console.log(log_wrap(`POST /connect.json: failure: ${err}`))
+    throw err
+  }
+}
+
+export async function networkConnectWPS (auth) {
+  console.log(log_wrap('POST /connect_wps'))
+
+  const promiseConnecting = GwStatus.setStateToConnecting()
+  try {
+    console.log(log_wrap('POST /connect_wps: successful'))
+    console.log(log_wrap('Waiting for the connection to be established'))
+    await Network.httpEncryptAndPostJson(auth, '/connect_wps', 5000, '{}')
+    console.log(log_wrap('Start periodic status check'))
+    GwStatus.startCheckingStatus()
+    const isSuccessful = await promiseConnecting
+    console.log(log_wrap(`Connection status: ${isSuccessful}`))
+    return isSuccessful
+  } catch (err) {
+    console.log(log_wrap(`POST /connect_wps: failure: ${err}`))
     throw err
   }
 }

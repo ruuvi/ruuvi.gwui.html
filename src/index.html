@@ -443,104 +443,117 @@
                     Valitse langaton verkko, jonka kautta haluat Ruuvi Gatewayn olevan yhteydessä internetiin.</p>
             </div>
 
-            <div style="display: flex; justify-content: right">
-                <span lang="en">Sort by:&nbsp;</span>
-                <span lang="fi">Järjestä:&nbsp;</span>
-                <div id="wifi_connection-sort_order" class="language-switcher">
-                    <ul>
-                        <li>
-                            <button id="wifi_connection-sort_order-by_name" class="language-switcher-active button-link">
-                                <span lang="en">Name</span>
-                                <span lang="fi">Nimi</span>
-                            </button>
-                        </li>
-                        <li class="language-switcher-separator">｜</li>
-                        <li>
-                            <button id="wifi_connection-sort_order-by_rssi" class="button-link"><span>RSSI</span></button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div id="page-wifi_connection-no_wifi" class="hidden">
-                <div class="border"></div>
-                <div class="block-centered err-message">
-                    <span lang="en">No Wi-Fi networks found.</span>
-                    <span lang="fi">Wi-Fi-verkkoja ei löytynyt.</span>
-                </div>
-                <div class="border"></div>
-            </div>
-            <div id="page-wifi_connection-list_of_ssid" class="wifi-list"></div>
-
-            <div id="page-wifi_connection-advanced-button" class="btn-dropdown">
-                <h2>
-                    <span lang="en">Advanced settings</span>
-                    <span lang="fi">Edistyneet asetukset</span>
-                </h2>
-                <div class="btn-dropdown-arrow-down"></div>
-                <div class="btn-dropdown-arrow-up hidden"></div>
-            </div>
-
-            <div id="page-wifi_connection-advanced-dropdown" class="hidden">
-                <p>
-                    <span lang="en">If your network is hidden, you can connect manually.</span>
-                    <span lang="fi">Mikäli verkkosi on piilotettu voit muodostaa yhdeyden manuaalisesti.</span>
-                </p>
-
-                <label class="control control-radio">
-                    <span lang="en">Connect manually</span>
-                    <span lang="fi">Yhdistä manuaalisesti</span>
-                    <input type="radio" id="page-wifi_connection-radio-connect_manually" value="" name="wifi-name">
-                    <span class="control_indicator"></span>
+            <div id="wifi_connection-use_wps-div">
+                <label for="wifi_connection-use_wps" class="control control-checkbox">
+                    <span class="info-icon-left-column">
+                        <span lang="en">Use WPS to connect to Wi-Fi network</span>
+                        <span lang="fi">Käytä WPS:ää yhteyden muodostamiseen Wi-Fi-verkkoon</span>
+                        <input type="checkbox" id="wifi_connection-use_wps">
+                        <span class="control_indicator"></span>
+                    </span>
                 </label>
-
-                <div id="page-wifi_connection-ssid_password-wrap"></div>
             </div>
 
-            <div style="position: absolute" id="page-wifi_connection-ssid_password" class="indent hidden">
-                <div id="input_ssid_block">
-                    <h3>
-                        <label for="manual_ssid">
-                            <span lang="en">SSID (network name)</span>
-                            <span lang="fi">SSID (verkon nimi)</span>
-                        </label>
-                    </h3>
-                    <input type="text" id="manual_ssid" class="connection-field-manual">
-                    <div class="input-placeholder">
-                        <span lang="en">Network name</span>
-                        <span lang="fi">Verkon nimi</span>
+            <div id="wifi_connection-list_of_wifi">
+                <div style="display: flex; justify-content: right">
+                    <span lang="en">Sort by:&nbsp;</span>
+                    <span lang="fi">Järjestä:&nbsp;</span>
+                    <div id="wifi_connection-sort_order" class="language-switcher">
+                        <ul>
+                            <li>
+                                <button id="wifi_connection-sort_order-by_name" class="language-switcher-active button-link">
+                                    <span lang="en">Name</span>
+                                    <span lang="fi">Nimi</span>
+                                </button>
+                            </li>
+                            <li class="language-switcher-separator">｜</li>
+                            <li>
+                                <button id="wifi_connection-sort_order-by_rssi" class="button-link"><span>RSSI</span></button>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
-                <div id="input_password_block" class="hidden">
-                    <h3>
-                        <label for="pwd">
-                            <span lang="en">Password</span>
-                            <span lang="fi">Salasana</span>
-                        </label>
-                    </h3>
-                    <div class="input-password">
-                        <input type="password" id="pwd" class="connection-field">
-                        <div class="input-password-eye">
-                            <div class="eye">
-                            </div>
-                            <div class="eye-slash hidden">
-                            </div>
-                        </div>
+                <div id="page-wifi_connection-no_wifi" class="hidden">
+                    <div class="border"></div>
+                    <div class="block-centered err-message">
+                        <span lang="en">No Wi-Fi networks found.</span>
+                        <span lang="fi">Wi-Fi-verkkoja ei löytynyt.</span>
+                    </div>
+                    <div class="border"></div>
+                </div>
+                <div id="page-wifi_connection-list_of_ssid" class="wifi-list"></div>
+
+                <div id="page-wifi_connection-advanced-button" class="btn-dropdown">
+                    <h2>
+                        <span lang="en">Advanced settings</span>
+                        <span lang="fi">Edistyneet asetukset</span>
+                    </h2>
+                    <div class="btn-dropdown-arrow-down"></div>
+                    <div class="btn-dropdown-arrow-up hidden"></div>
+                </div>
+
+                <div id="page-wifi_connection-advanced-dropdown" class="hidden">
+                    <p>
+                        <span lang="en">If your network is hidden, you can connect manually.</span>
+                        <span lang="fi">Mikäli verkkosi on piilotettu voit muodostaa yhdeyden manuaalisesti.</span>
+                    </p>
+
+                    <label class="control control-radio">
+                        <span lang="en">Connect manually</span>
+                        <span lang="fi">Yhdistä manuaalisesti</span>
+                        <input type="radio" id="page-wifi_connection-radio-connect_manually" value="" name="wifi-name">
+                        <span class="control_indicator"></span>
+                    </label>
+
+                    <div id="page-wifi_connection-ssid_password-wrap"></div>
+                </div>
+
+                <div style="position: absolute" id="page-wifi_connection-ssid_password" class="indent hidden">
+                    <div id="input_ssid_block">
+                        <h3>
+                            <label for="manual_ssid">
+                                <span lang="en">SSID (network name)</span>
+                                <span lang="fi">SSID (verkon nimi)</span>
+                            </label>
+                        </h3>
+                        <input type="text" id="manual_ssid" class="connection-field-manual">
                         <div class="input-placeholder">
-                            <span lang="en">Password</span>
-                            <span lang="fi">Salasana</span>
+                            <span lang="en">Network name</span>
+                            <span lang="fi">Verkon nimi</span>
                         </div>
                     </div>
-                </div>
 
-                <div id="wifi-connection-status-block" class="hidden" style="height: 20px">
-                    <div id="wifi-connection-failed" class="err-message">
-                        <span lang="en">Failed to connect. Please try again.</span>
-                        <span lang="fi">Yhdistäminen epäonnistui. Yritä uudelleen.</span>
+                    <div id="input_password_block" class="hidden">
+                        <h3>
+                            <label for="pwd">
+                                <span lang="en">Password</span>
+                                <span lang="fi">Salasana</span>
+                            </label>
+                        </h3>
+                        <div class="input-password">
+                            <input type="password" id="pwd" class="connection-field">
+                            <div class="input-password-eye">
+                                <div class="eye">
+                                </div>
+                                <div class="eye-slash hidden">
+                                </div>
+                            </div>
+                            <div class="input-placeholder">
+                                <span lang="en">Password</span>
+                                <span lang="fi">Salasana</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
+                    <div id="wifi-connection-status-block" class="hidden" style="height: 20px">
+                        <div id="wifi-connection-failed" class="err-message">
+                            <span lang="en">Failed to connect. Please try again.</span>
+                            <span lang="fi">Yhdistäminen epäonnistui. Yritä uudelleen.</span>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
             <div class="button-container">
@@ -3213,6 +3226,21 @@
                 </p>
                 <div class="button-container-centered">
                     <button class="btn" id="overlay-connect_ethernet-cancel" type="button">
+                        <span lang="en">Cancel</span>
+                        <span lang="fi">Peruuttaa</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden overlay-container" id="overlay-connect_wifi_wps">
+            <div class="overlay">
+                <p>
+                    <span lang="en">Please start WPS on your router by pressing on the WPS button.</span>
+                    <span lang="fi">Käynnistä WPS reitittimessäsi painamalla WPS-painiketta.</span>
+                </p>
+                <div class="button-container-centered">
+                    <button class="btn" id="overlay-connect_wifi_wps-cancel" type="button">
                         <span lang="en">Cancel</span>
                         <span lang="fi">Peruuttaa</span>
                     </button>
