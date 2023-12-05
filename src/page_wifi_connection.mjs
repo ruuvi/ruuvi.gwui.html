@@ -102,6 +102,7 @@ export class PageWiFiConnection {
       GwAP.startRefreshingAP()
       this.#div_list_of_wifi.slideDown()
       this.#checkAndUpdatePageWiFiListButtonNext()
+      this.#updatePositionOfWiFiPasswordInput()
     }
   }
 
