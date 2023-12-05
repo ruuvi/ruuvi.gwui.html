@@ -90,6 +90,7 @@ g_gw_mac = "AA:BB:CC:DD:EE:FF"
 g_gw_unique_id = "00:11:22:33:44:55:66:77"
 g_flag_access_from_lan = False
 g_aes_key = None
+g_flag_save_wifi_cfg_fails = False
 
 RUUVI_AUTH_REALM = 'RuuviGateway' + g_gw_mac[-5:-3] + g_gw_mac[-2:]
 
@@ -674,6 +675,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     def _do_post_ruuvi_json(self):
         global g_ruuvi_dict
         global g_authorized_sessions
+        global g_flag_save_wifi_cfg_fails
         req_dict = self._ecdh_decrypt_request_json(g_aes_key)
         if req_dict is None:
             resp = b''
@@ -745,6 +747,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     lan_auth_pass = g_ruuvi_dict['lan_auth_pass']
                     print(f'Set LAN auth (prev password): {lan_auth_type}, {lan_auth_user}, {lan_auth_pass}')
                 g_authorized_sessions = dict()
+
+        if 'use_eth' in g_ruuvi_dict:
+            if not g_ruuvi_dict['use_eth']:
+                g_flag_save_wifi_cfg_fails = not g_flag_save_wifi_cfg_fails
+                if g_flag_save_wifi_cfg_fails:
+                    return
 
         content = '{}'
         self._write_json_response(content)
