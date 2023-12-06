@@ -672,6 +672,36 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         print(f'Response: {resp}')
         self.wfile.write(resp)
 
+    def _do_post_connect_wps(self):
+        global g_ssid
+        global g_password
+        global g_timestamp
+        global g_simulation_mode
+        resp = b''
+        req_dict = self._ecdh_decrypt_request_json(g_aes_key)
+        if req_dict is None:
+            resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+            resp += f'Content-Length: 0\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            print(f'Response: {resp}')
+            self.wfile.write(resp)
+            return
+        g_ssid = 'Pantum-AP-A6D49F'
+        g_password = '12345678'
+        g_timestamp = time.time()
+        g_simulation_mode = SIMULATION_MODE_NO_CONNECTION
+        resp_content = f'{{}}'
+        resp_content_encoded = resp_content.encode('utf-8')
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: application/json\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += resp_content_encoded
+        print(f'Response: {resp}')
+        self.wfile.write(resp)
+
     def _do_post_ruuvi_json(self):
         global g_ruuvi_dict
         global g_authorized_sessions
@@ -903,6 +933,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self._do_post_auth()
         elif self.path == '/connect.json':
             self._do_post_connect_json()
+        elif self.path == '/connect_wps':
+            self._do_post_connect_wps()
         elif self.path == '/ruuvi.json':
             self._do_post_ruuvi_json()
         elif self.path == '/bluetooth_scanning.json':
