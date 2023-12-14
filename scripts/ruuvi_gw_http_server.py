@@ -779,10 +779,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     print(f'Set LAN auth (prev password): {lan_auth_type}, {lan_auth_user}, {lan_auth_pass}')
                 g_authorized_sessions = dict()
 
-        if 'use_eth' in g_ruuvi_dict:
-            if not g_ruuvi_dict['use_eth']:
+        if 'use_eth' in req_dict:
+            if not req_dict['use_eth']:
                 g_flag_save_wifi_cfg_fails = not g_flag_save_wifi_cfg_fails
                 if g_flag_save_wifi_cfg_fails:
+                    print(f'Simulate connection loss - do not send a respond')
                     return
 
         content = '{}'
