@@ -795,7 +795,7 @@
             <div id="popup-info-icon-software_update" class="info-icon-overlay">
                 <div class="info-icon-popup">
                     <div class="popup-title">
-                        <span lang="en">Install firmware from URL address.</span>
+                        <span lang="en">Install firmware from URL address</span>
                         <span lang="fi">Asenna laiteohjelmisto URL-osoitteesta</span>
                     </div>
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
@@ -1665,7 +1665,7 @@
                         </h3>
                         <p>
                             <span lang="en">Access Ruuvi Gateway from LAN using bearer authentication with an API key (token). You can enable read-only access (to retrieve data in polling mode via the /history endpoint) or read-write access (to read any data or change the configuration). For more detailed instructions, refer to docs.ruuvi.com.</span>
-                            <span lang="fi">Käytä API-avainta Ruuvi Gatewayhyn yhdistämiseen lähiverkossa. Voit suojata pääsyn vain luku -tilassa API-avaimella (tiedot voidaan lukea /history-sivulta) tai suojata pääsyn kaikkiin Ruuvi Gatewayn tietoihin (tietojen tai asetusten lukeminen sekä kirjoitus). Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com.</span>
+                            <span lang="fi">Käytä API-avainta Ruuvi Gatewayhyn yhdistämiseen lähiverkossa. Voit suojata pääsyn vain luku -tilassa API-avaimella (tiedot voidaan lukea "/history"-sivulta) tai suojata pääsyn kaikkiin Ruuvi Gatewayn tietoihin (tietojen tai asetusten lukeminen sekä kirjoitus). Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com.</span>
                         </p>
 
                         <div>
@@ -1880,7 +1880,7 @@
                     <span class="control_indicator"></span>
                 </label>
                 <label class="control control-radio">
-                    <span lang="en">Send data in raw format and decoded</span>
+                    <span lang="en">Send data in raw and decoded formats</span>
                     <span lang="fi">Lähetä tiedot sekä raakamuodossa että dekoodattuna</span>
                     <input type="radio" id="http_data_format_ruuvi_raw_and_decoded" name="http_data_format"
                            value="http_data_format_ruuvi_raw_and_decoded">
@@ -1970,7 +1970,7 @@
                         <div>
                             <label class="control control-radio">
                                 <span lang="en">Bearer authentication</span>
-                                <span lang="fi">Bearer token</span>
+                                <span lang="fi">Todennus haltijatunnuksella (bearer authentication)</span>
                                 <input type="radio" id="http_auth_bearer" name="http_auth" value="http_auth_bearer">
                                 <span class="control_indicator"></span>
                             </label>
@@ -1994,8 +1994,8 @@
                         </div>
                         <div>
                             <label class="control control-radio">
-                                <span lang="en">Token</span>
-                                <span lang="fi">Token</span>
+                                <span lang="en">API key (token)</span>
+                                <span lang="fi">API-avain (token)</span>
                                 <input type="radio" id="http_auth_token" name="http_auth" value="http_auth_token">
                                 <span class="control_indicator"></span>
                             </label>
@@ -2109,14 +2109,14 @@
                     </h3>
                     <label class="control control-radio">
                         <span lang="en">MQTT over unencrypted TCP</span>
-                        <span lang="fi">MQTT salaamattoman TCP kautta</span>
+                        <span lang="fi">MQTT salaamattoman TCP:n kautta</span>
                         <input type="radio" id="mqtt_transport_TCP" name="mqtt_transport" value="mqtt_transport_TCP"
                                checked>
                         <span class="control_indicator"></span>
                     </label>
                     <label class="control control-radio">
                         <span lang="en">MQTT over SSL</span>
-                        <span lang="fi">MQTT SSL kautta</span>
+                        <span lang="fi">MQTT SSL:n kautta</span>
                         <input type="radio" id="mqtt_transport_SSL" name="mqtt_transport" value="mqtt_transport_SSL">
                         <span class="control_indicator"></span>
                     </label>
@@ -2196,7 +2196,7 @@
                         <span class="control_indicator"></span>
                     </label>
                     <label class="control control-radio">
-                        <span lang="en">Send data in raw format and decoded</span>
+                        <span lang="en">Send data in raw and decoded formats</span>
                         <span lang="fi">Lähetä tiedot sekä raakamuodossa että dekoodattuna</span>
                         <input type="radio" id="mqtt_data_format_ruuvi_raw_and_decoded" name="mqtt_data_format"
                                value="mqtt_data_format_ruuvi_raw_and_decoded">
@@ -2741,7 +2741,7 @@
                     <span class="control_indicator"></span>
                 </label>
                 <label class="control control-radio">
-                    <span lang="en">Do not use time synchronisation</span>
+                    <span lang="en">Don't use time synchronisation</span>
                     <span lang="fi">Älä käytä ajan synkronointia</span>
                     <input type="radio" id="ntp_sync_disabled" name="ntp_sync" value="ntp_sync_disabled">
                     <span class="control_indicator"></span>
@@ -2786,7 +2786,7 @@
 
             <div class="ingress">
                 <p lang="en">Ruuvi Gateway continuously listens for Bluetooth advertisements from its surroundings.
-                    If you are an advanced user you can choose different listening options and set sensor filtering.</p>
+                    If you're an advanced user you can choose different listening options and set sensor filtering.</p>
                 <p lang="fi">Ruuvi Gateway kuuntelee jatkuvasti ympäristön Bluetooth-majakkaviestejä.
                     Jos olet edistynyt käyttäjä, voit muuttaa kuunteluasetuksia ja anturien suodatusasetuksia.</p>
             </div>
@@ -3124,12 +3124,12 @@
 
             <div class="ingress">
                 <p lang="en"> Restart the setup wizard if you need to modify these settings later. If you didn't block remote access via the local network during the configuration, you can open this page again by entering the Ruuvi Gateway's IP address (see above) in your browser.
-                    If you're configuring Ruuvi Gateway via it's Wi-Fi hotspot,
+                    If you want to reconfigure Ruuvi Gateway via it's Wi-Fi hotspot,
                     you need to reactivate it by locating the pinhole button beneath the power socket and briefly pressing it with a paperclip.</p>
 
                 <p lang="fi"> Käynnistä ohjattu käyttöönotto uudelleen, mikäli haluat myöhemmin muokata näitä asetuksia. Jos et estänyt etäkäyttöä lähiverkon kautta määrityksen aikana, voit avata tämän sivun uudelleen syöttämällä selaimeesi Ruuvi Gatewayn IP-osoitteen (katso yllä).
-                    Käynnistä yhteyspiste uudelleen, jos käytät Ruuvi Gateway -reitittimen Wi-Fi-yhteyspistettä asetusten määrittämiseen.
-                    Yhteyspiste aktivoidaan painamalla virtaliittimen alla olevaa painiketta lyhyesti paperiliittimellä.</p>
+                    Mikäli haluat määrittää Ruuvi Gateway -reitittimen asetukset uudelleen Wi-Fi-yhteyspisteen kautta, käynnistä yhteyspiste uudelleen
+                    painamalla virtaliittimen alla olevaa painiketta lyhyesti paperiliittimellä.</p>
             </div>
 
             <div class="ingress">
