@@ -537,7 +537,7 @@ class PageRemoteCfg {
             flag_token_modified = true
         }
 
-        if (flag_base_url_modified || flag_user_pass_modified || flag_token_modified) {
+        if (flag_base_url_modified || flag_user_pass_modified || flag_token_modified || this.#input_base_url.isInvalid()) {
             this.#button_download.hide()
             this.#button_check.show()
             this.#button_check.enable()
