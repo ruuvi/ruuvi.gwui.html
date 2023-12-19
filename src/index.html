@@ -34,7 +34,7 @@
             <div>
                 <div id="auth-default" class="hidden">
                     <p>
-                        <span lang="en">Login to configure Ruuvi Gateway's settings. Login by typing the Unique ID that is printed on the bottom of Ruuvi Gateway (fill the ID in format XX:XX:XX:XX:XX:XX:XX:XX).</span>
+                        <span lang="en">Login to configure Ruuvi Gateway's settings. Login by typing the Unique ID that is printed on the bottom of the Ruuvi Gateway (fill the ID in format XX:XX:XX:XX:XX:XX:XX:XX).</span>
                         <span lang="fi">Kirjautumalla pääset muuttamaan Ruuvi Gateway -reittimen asetuksia. Kirjaudu sisään syöttämällä yksilöllinen tunnus, joka on painettu Ruuvi Gatewayn pohjaan (syötä ID muodossa XX:XX:XX:XX:XX:XX:XX:XX).</span>
                     </p>
                 </div>
@@ -208,7 +208,7 @@
             </div>
 
             <h2>
-                <span lang="en">Select connection type</span>
+                <span lang="en">Select connection type:</span>
                 <span lang="fi">Valitse yhteystyyppi</span>
             </h2>
 
@@ -438,7 +438,7 @@
 
             <div class="ingress">
                 <p lang="en">Wi-Fi networks available near you are listed below.
-                    Select the wireless network that you want Ruuvi Gateway to use to connect to the internet.</p>
+                    Select the wireless network that you want the Ruuvi Gateway to use to connect to the Internet.</p>
                 <p lang="fi">Lähelläsi olevat Wi-Fi-verkot on listattu alla.
                     Valitse langaton verkko, jonka kautta haluat Ruuvi Gatewayn olevan yhteydessä internetiin.</p>
             </div>
@@ -446,7 +446,7 @@
             <div id="wifi_connection-use_wps-div">
                 <label for="wifi_connection-use_wps" class="control control-checkbox">
                     <span class="info-icon-left-column">
-                        <span lang="en">Use WPS to connect to Wi-Fi network</span>
+                        <span lang="en">Use WPS to connect to Wi-Fi network.</span>
                         <span lang="fi">Käytä WPS:ää yhteyden muodostamiseen Wi-Fi-verkkoon</span>
                         <input type="checkbox" id="wifi_connection-use_wps">
                         <span class="control_indicator"></span>
@@ -591,7 +591,7 @@
 
             <div class="ingress">
                 <p>
-                    <span lang="en">For optimal performance, it's recommended to use the most up-to-date firmware for Ruuvi Gateway. You can update the firmware on this page if an update is available, or choose to skip update and let Ruuvi Gateway update its firmware automatically when a new version is available.</span>
+                    <span lang="en">For optimal performance, it's recommended to use the most up-to-date firmware for Ruuvi Gateway. You can update the firmware on this page if an update is available, or choose to skip the update and let Ruuvi Gateway update its firmware automatically when a new version is available.</span>
                     <span lang="fi">Ruuvi Gateway toimii parhaiten uusimmalla laiteohjelmistoversiolla. Voit päivittää ohjelmiston tällä sivulla mikäli päivitys on saatavilla tai jatkaa päivittämättä, jolloin Ruuvi Gateway päivittää itse itsensä uuden ohjelmistoversion tultua saataville.</span>
                 </p>
             </div>
@@ -635,7 +635,7 @@
                     </div>
                     <div id="software_update-status-ok-already_latest" class="software_update-status gr hidden">
                         <p>
-                            <span lang="en">You already have the latest release installed</span>
+                            <span lang="en">You already have the latest release installed.</span>
                             <span lang="fi">Sinulla on jo uusin versio asennettuna</span>
                         </p>
                     </div>
@@ -683,7 +683,7 @@
 
                 <div id="page-software_update-fw_update_server-div">
 
-                    <div>
+                    <div class="info-icon-container">
                         <div class="info-icon-left-column">
                             <span lang="en">Server for automatic firmware updates</span>
                             <span lang="fi">Automaattisille ohjelmistopäivityksille käytettävä palvelin</span>
@@ -692,11 +692,9 @@
                     </div>
 
                     <div>
-                        <h3>
-                            <label for="page-software_update-fw_update_server_url" class="info-icon-container">
+                        <div>
+                            <label for="page-software_update-fw_update_server_url">
                             </label>
-                        </h3>
-                        <div class="input-container">
                             <div class="input-with_validity_check">
                                 <input type="text" id="page-software_update-fw_update_server_url">
                                 <div class="input-with_validity_check-icon">
@@ -727,7 +725,6 @@
                             </button>
                         </div>
                     </div>
-
                     <div class="border"></div>
                 </div>
 
@@ -735,8 +732,8 @@
                     <div id="software_update-url_title" class="control control-checkbox info-icon-container">
                         <label for="software_update-set-url-manually">
                         <span class="info-icon-left-column">
-                            <span lang="en">Don't use Ruuvi's provided software update but download binary files
-                                from URL address instead
+                            <span lang="en">Don't use the software update provided by Ruuvi but download binary files
+                                from URL address instead.
                             </span>
                             <span lang="fi">Älä käytä Ruuvin tarjoamaa päivitystä vaan lataa binääritiedostot
                                 URL-osoitteesta
@@ -747,18 +744,18 @@
                             <a class="info-icon-button" href="#popup-info-icon-software_update"><span>i</span></a>
                         </label>
                     </div>
-                    <div id="page-software_update-fw_update_binary_files-div" class="input-container indent">
-                        <h3>
+                    <div id="page-software_update-fw_update_binary_files-div" class="indent">
+                        <div>
                             <label for="page-software_update-fw_update_binary_files_url">
                             </label>
-                        </h3>
-                        <div class="input-with_validity_check">
-                            <input type="text" id="page-software_update-fw_update_binary_files_url">
-                            <div class="input-with_validity_check-icon">
-                            </div>
-                            <div class="input-placeholder">
-                                <span lang="en">URL address</span>
-                                <span lang="fi">URL-osoite</span>
+                            <div class="input-with_validity_check">
+                                <input type="text" id="page-software_update-fw_update_binary_files_url">
+                                <div class="input-with_validity_check-icon">
+                                </div>
+                                <div class="input-placeholder">
+                                    <span lang="en">URL address</span>
+                                    <span lang="fi">URL-osoite</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -978,7 +975,7 @@
             </div>
 
             <div class="ingress">
-                <p lang="en">If you're an advanced user, you can set up Ruuvi Gateway router to fetch its configuration automatically from a remote server. In this case, you don't need to configure Ruuvi Gateway settings manually since Ruuvi Gateway will fetch settings file automatically. This is especially useful if you've multiple Ruuvi Gateway routers or if you don't have access to the configuration wizard via your local network. If this doesn't concern you, please continue to the next step.</p>
+                <p lang="en">If you're an advanced user, you can set up the Ruuvi Gateway router to fetch its configuration automatically from a remote server. In this case, you don't need to configure the Ruuvi Gateway settings manually since Ruuvi Gateway will fetch settings file automatically. This is especially useful if you have multiple Ruuvi Gateway routers or if you don't have access to the configuration wizard via your local network. If this doesn't apply to you, please continue to the next step.</p>
                 <p lang="fi">Jos olet edistynyt käyttäjä, voit määrittää Ruuvi Gateway -reitittimen hakemaan asetukset automaattisesti etäpalvelimelta. Tässä tapauksessa sinun ei tarvitse määrittää Ruuvi Gatewayn asetuksia manuaalisesti, vaan Ruuvi Gateway hakee mahdollisesti muuttuneen asetustiedoston itsenäisesti. Tästä on erityisesti hyötyä, jos sinulla on useita Ruuvi Gateway -reitittimiä tai sinulla ei ole pääsyä ohjattuun määrittämiseen lähiverkon kautta. Mikäli tämä ei koske sinua, voit jatkaa seuraavaan kohtaan.</p>
             </div>
 
@@ -994,7 +991,7 @@
             <div id="page-remote_cfg-advanced-dropdown" class="hidden">
                 <div>
                     <label class="control control-checkbox">
-                        <span lang="en">Download configuration file from a remote server automatically (HTTP/HTTPS)</span>
+                        <span lang="en">Download configuration file from a remote server automatically. (HTTP/HTTPS)</span>
                         <span lang="fi">Lataa määritystiedosto automaattisesti etäpalvelimelta (HTTP/HTTPS)</span>
                         <input type="checkbox" id="remote_cfg-use">
                         <span class="control_indicator"></span>
@@ -1155,7 +1152,7 @@
                                 </div>
                                 <div>
                                     <button class="btn btn-narrow btn-two-rows" id="remote_cfg-button_remove_client_cert_and_key" type="button">
-                                        <span lang="en">Remove certificate & key</span>
+                                        <span lang="en">Remove certificate and key</span>
                                         <span lang="fi">Poista sertifikaatti ja avain</span>
                                     </button>
                                 </div>
@@ -1280,7 +1277,7 @@
                     Set a suitable schedule for installing automatic firmware updates.
                     During the update, your Ruuvi Gateway will download the latest firmware and then will
                     automatically install it and reboot.
-                    You may notice a 1-5 minutes downtime during the update.
+                    You may notice a 1 to 5 minute downtime during the update.
                 </p>
                 <p lang="fi">
                     Valitse sinulle sopivin aika automaattisten ohjelmistopäivitysten toteuttamiselle.
@@ -1668,7 +1665,7 @@
                         </h3>
                         <p>
                             <span lang="en">Access Ruuvi Gateway from LAN using bearer authentication with an API key (token). You can enable read-only access (to retrieve data in polling mode via the /history endpoint) or read-write access (to read any data or change the configuration). For more detailed instructions, refer to docs.ruuvi.com.</span>
-                            <span lang="fi">Käytä API-avainta Ruuvi Gatewayhyn yhdistämiseen lähiverkossa. Voit suojata pääsyn vain luku -tilassa API-avaimella (tiedot voidaan lukea /history-sivulta) tai suojata pääsyn kaikkiin Ruuvi Gatewayn tietoihin (tietojen tai asetusten lukeminen sekä kirjoitus). Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com.</span>
+                            <span lang="fi">Käytä API-avainta Ruuvi Gatewayhyn yhdistämiseen lähiverkossa. Voit suojata pääsyn vain luku -tilassa API-avaimella (tiedot voidaan lukea "/history"-sivulta) tai suojata pääsyn kaikkiin Ruuvi Gatewayn tietoihin (tietojen tai asetusten lukeminen sekä kirjoitus). Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com.</span>
                         </p>
 
                         <div>
@@ -1776,7 +1773,7 @@
                 </p>
 
                 <label class="control control-radio">
-                    <span lang="en">Use Ruuvi Cloud and/or a custom server and configure other advanced settings</span>
+                    <span lang="en">Use Ruuvi Cloud and/or a custom server and configure other advanced settings.</span>
                     <span lang="fi">Käytä Ruuvi Cloudia ja/tai vaihtoehtoista palvelinta sekä määritä muita lisäasetuksia</span>
                     <input type="radio" id="use_custom" name="connection_type" value="custom" class="conf-checkbox">
                     <span class="control_indicator"></span>
@@ -1883,7 +1880,7 @@
                     <span class="control_indicator"></span>
                 </label>
                 <label class="control control-radio">
-                    <span lang="en">Send data in raw format and decoded</span>
+                    <span lang="en">Send data in raw and decoded formats</span>
                     <span lang="fi">Lähetä tiedot sekä raakamuodossa että dekoodattuna</span>
                     <input type="radio" id="http_data_format_ruuvi_raw_and_decoded" name="http_data_format"
                            value="http_data_format_ruuvi_raw_and_decoded">
@@ -1973,7 +1970,7 @@
                         <div>
                             <label class="control control-radio">
                                 <span lang="en">Bearer authentication</span>
-                                <span lang="fi">Bearer-token</span>
+                                <span lang="fi">Todennus haltijatunnuksella (bearer authentication)</span>
                                 <input type="radio" id="http_auth_bearer" name="http_auth" value="http_auth_bearer">
                                 <span class="control_indicator"></span>
                             </label>
@@ -1997,8 +1994,8 @@
                         </div>
                         <div>
                             <label class="control control-radio">
-                                <span lang="en">Token</span>
-                                <span lang="fi">Token</span>
+                                <span lang="en">API key (token)</span>
+                                <span lang="fi">API-avain (token)</span>
                                 <input type="radio" id="http_auth_token" name="http_auth" value="http_auth_token">
                                 <span class="control_indicator"></span>
                             </label>
@@ -2058,7 +2055,7 @@
                             </div>
                             <div>
                                 <button class="btn btn-narrow btn-two-rows" id="http-button_remove_client_cert_and_key" type="button">
-                                    <span lang="en">Remove cert & key</span>
+                                    <span lang="en">Remove certificate and key</span>
                                     <span lang="fi">Poista sert ja avain</span>
                                 </button>
                             </div>
@@ -2112,14 +2109,14 @@
                     </h3>
                     <label class="control control-radio">
                         <span lang="en">MQTT over unencrypted TCP</span>
-                        <span lang="fi">MQTT salaamattoman TCP kautta</span>
+                        <span lang="fi">MQTT salaamattoman TCP:n kautta</span>
                         <input type="radio" id="mqtt_transport_TCP" name="mqtt_transport" value="mqtt_transport_TCP"
                                checked>
                         <span class="control_indicator"></span>
                     </label>
                     <label class="control control-radio">
                         <span lang="en">MQTT over SSL</span>
-                        <span lang="fi">MQTT SSL kautta</span>
+                        <span lang="fi">MQTT SSL:n kautta</span>
                         <input type="radio" id="mqtt_transport_SSL" name="mqtt_transport" value="mqtt_transport_SSL">
                         <span class="control_indicator"></span>
                     </label>
@@ -2199,7 +2196,7 @@
                         <span class="control_indicator"></span>
                     </label>
                     <label class="control control-radio">
-                        <span lang="en">Send data in raw format and decoded</span>
+                        <span lang="en">Send data in raw and decoded formats</span>
                         <span lang="fi">Lähetä tiedot sekä raakamuodossa että dekoodattuna</span>
                         <input type="radio" id="mqtt_data_format_ruuvi_raw_and_decoded" name="mqtt_data_format"
                                value="mqtt_data_format_ruuvi_raw_and_decoded">
@@ -2387,7 +2384,7 @@
                         </div>
                         <div>
                             <button class="btn btn-narrow btn-two-rows" id="mqtt-button_remove_client_cert_and_key" type="button">
-                                <span lang="en">Remove certificate & key</span>
+                                <span lang="en">Remove certificate and key</span>
                                 <span lang="fi">Poista sertifikaatti ja avain</span>
                             </button>
                         </div>
@@ -2436,8 +2433,8 @@
 
             <div id="page-custom_server-advanced-dropdown" class="hidden">
                 <label class="control control-radio">
-                    <span lang="en">Allow Ruuvi Gateway to send anonymous statistics (used by Ruuvi for service development and maintenance purposes).</span>
-                    <span lang="fi">Annan Ruuvi Gatewaylle luvan lähettää nimettömiä statistiikkatietoja (käytetään Ruuvin palveluiden parantamiseen ja ylläpitoon).</span>
+                    <span lang="en">Allow Ruuvi Gateway to send anonymous statistics (used by Ruuvi for service development and maintenance purposes)</span>
+                    <span lang="fi">Annan Ruuvi Gatewaylle luvan lähettää nimettömiä statistiikkatietoja (käytetään Ruuvin palveluiden parantamiseen ja ylläpitoon)</span>
                     <input type="radio" id="use_http_stat_ruuvi" value="statistics_use_ruuvi" name="use_statistics"
                            class="conf-checkbox">
                     <span class="control_indicator"></span>
@@ -2559,7 +2556,7 @@
                             </div>
                             <div>
                                 <button class="btn btn-narrow btn-two-rows" id="stat-button_remove_client_cert_and_key" type="button">
-                                    <span lang="en">Remove certificate & key</span>
+                                    <span lang="en">Remove certificate and key</span>
                                     <span lang="fi">Poista sertifikaatti ja avain</span>
                                 </button>
                             </div>
@@ -2744,7 +2741,7 @@
                     <span class="control_indicator"></span>
                 </label>
                 <label class="control control-radio">
-                    <span lang="en">Do not use time synchronisation</span>
+                    <span lang="en">Don't use time synchronisation</span>
                     <span lang="fi">Älä käytä ajan synkronointia</span>
                     <input type="radio" id="ntp_sync_disabled" name="ntp_sync" value="ntp_sync_disabled">
                     <span class="control_indicator"></span>
@@ -2789,7 +2786,7 @@
 
             <div class="ingress">
                 <p lang="en">Ruuvi Gateway continuously listens for Bluetooth advertisements from its surroundings.
-                    If you are an advanced user you can choose different listening options and set sensor filtering.</p>
+                    If you're an advanced user you can choose different listening options and set sensor filtering.</p>
                 <p lang="fi">Ruuvi Gateway kuuntelee jatkuvasti ympäristön Bluetooth-majakkaviestejä.
                     Jos olet edistynyt käyttäjä, voit muuttaa kuunteluasetuksia ja anturien suodatusasetuksia.</p>
             </div>
@@ -2975,7 +2972,7 @@
 
                         <div class="indent">
                             <p>
-                                <span lang="en">Below you can see the list of Bluetooth devices heard by Ruuvi Gateway.
+                                <span lang="en">Below you can see the list of Bluetooth devices heard by the Ruuvi Gateway.
                                     Add the device to the filter list by selecting the checkbox on the right side of the MAC address.
                                     Tap the Refresh list button to update the list.
                                     You can also add a sensor to the list by entering its MAC address and selecting Add.
@@ -3031,7 +3028,7 @@
                     <a class="info-icon-popup-close" onclick="window.history.back()">&times;</a>
                     <div class="info-icon-content">
                         <p>
-                            <span lang="en">If you enable long range, Ruuvi Gateway will continuously switch the operating mode
+                            <span lang="en">If you enable long range, the Ruuvi Gateway will continuously switch the operating mode
                                 between short and long range (50%/50%). For more detailed instructions, refer to docs.ruuvi.com.</span>
                             <span lang="fi">Jos otat pitkän kantaman käyttöön, Ruuvi Gateway vaihtaa toimintatilaa lyhyen
                                 ja pitkän kantaman välillä (50%/50%). Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com.</span>
@@ -3127,16 +3124,16 @@
 
             <div class="ingress">
                 <p lang="en"> Restart the setup wizard if you need to modify these settings later. If you didn't block remote access via the local network during the configuration, you can open this page again by entering the Ruuvi Gateway's IP address (see above) in your browser.
-                    If you're configuring Ruuvi Gateway via it's Wi-Fi hotspot,
+                    If you want to reconfigure Ruuvi Gateway via it's Wi-Fi hotspot,
                     you need to reactivate it by locating the pinhole button beneath the power socket and briefly pressing it with a paperclip.</p>
 
                 <p lang="fi"> Käynnistä ohjattu käyttöönotto uudelleen, mikäli haluat myöhemmin muokata näitä asetuksia. Jos et estänyt etäkäyttöä lähiverkon kautta määrityksen aikana, voit avata tämän sivun uudelleen syöttämällä selaimeesi Ruuvi Gatewayn IP-osoitteen (katso yllä).
-                    Käynnistä yhteyspiste uudelleen, jos käytät Ruuvi Gateway -reitittimen Wi-Fi-yhteyspistettä asetusten määrittämiseen.
-                    Yhteyspiste aktivoidaan painamalla virtaliittimen alla olevaa painiketta lyhyesti paperiliittimellä.</p>
+                    Mikäli haluat määrittää Ruuvi Gateway -reitittimen asetukset uudelleen Wi-Fi-yhteyspisteen kautta, käynnistä yhteyspiste uudelleen
+                    painamalla virtaliittimen alla olevaa painiketta lyhyesti paperiliittimellä.</p>
             </div>
 
             <div class="ingress">
-                <p lang="en">If you want to reset Ruuvi Gateway to the factory settings, use a paperclip and press the small
+                <p lang="en">If you want to reset the Ruuvi Gateway to the factory settings, use a paperclip and press the small
                     pinhole button under the power socket for 10 seconds.</p>
                 <p lang="fi">Mikäli haluat palauttaa Ruuvi Gatewayn tehdasasetukset, pidä virtaliittimen alla
                     olevaa painiketta alaspainettuna paperiliittimellä kymmenen sekunnin ajan.</p>
@@ -3209,7 +3206,7 @@
                     Oh no! Connection to the Ruuvi Gateway is lost.
                     <br>
                     <br>
-                    Please restart the Setup Wizard. If you're configuring Ruuvi Gateway via it's Wi-Fi hotspot, you may need to reactivate it by locating the pinhole button beneath the power socket and briefly pressing it with a paperclip.</span>
+                    Please restart the Setup Wizard. If you're configuring the Ruuvi Gateway via it's Wi-Fi hotspot, you may need to reactivate it by locating the pinhole button beneath the power socket and briefly pressing it with a paperclip.</span>
                 <span lang="fi">
                     Voi ei! Yhteys Ruuvi Gatewayhyn on menetetty.
                     <br>

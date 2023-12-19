@@ -59,6 +59,9 @@ function initialize () {
       // Prevent the user from leaving this page by pressing the Back button
       window.history.pushState(null, '', '#page-finished')
     }
+    setTimeout(function() {
+      window.scrollTo(0, 0);
+    }, 0);
   }
 
   window.addEventListener('online', function (event) {

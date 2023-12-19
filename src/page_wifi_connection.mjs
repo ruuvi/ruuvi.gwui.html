@@ -193,15 +193,20 @@ export class PageWiFiConnection {
     await Network.waitWhileInProgress()
 
     this.#gwCfg.wifi_ap_cfg.setWiFiChannel(wifi_channel)
+    let flag_network_config_saved = false
     try {
       await this.#gwCfg.saveNetworkConfig(this.#auth)
+      flag_network_config_saved = true
     } catch (err) {
       // First attempt to save the network config always fails because Wi-Fi channel is changed.
+      flag_network_config_saved = false
       console.log(log_wrap(`First attempt to saveNetworkConfig failed: ${err}`))
       await this.#sleep(3000)
     }
     try {
-      await this.#gwCfg.saveNetworkConfig(this.#auth)
+      if (!flag_network_config_saved) {
+        await this.#gwCfg.saveNetworkConfig(this.#auth)
+      }
       isSuccessful = await networkConnect(ssid, password, this.#auth)
       console.log(log_wrap(`networkConnect: ${isSuccessful}`))
     } catch (err) {

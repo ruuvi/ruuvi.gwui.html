@@ -663,12 +663,6 @@ input.input-row {
 	top: calc(var(--input-border) + var(--input-padding-top-and-bottom));
 }
 
-.input-container {
-	display: flex;
-	align-items: center;
-	width: 100%;
-}
-
 .input-valid {
 	background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48IS0tISBGb250IEF3ZXNvbWUgRnJlZSA2LjIuMCBieSBAZm9udGF3ZXNvbWUgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbSBMaWNlbnNlIC0gaHR0cHM6Ly9mb250YXdlc29tZS5jb20vbGljZW5zZS9mcmVlIChJY29uczogQ0MgQlkgNC4wLCBGb250czogU0lMIE9GTCAxLjEsIENvZGU6IE1JVCBMaWNlbnNlKSBDb3B5cmlnaHQgMjAyMiBGb250aWNvbnMsIEluYy4gLS0+PHBhdGggZmlsbD0iIzAwZDBiYSIgZD0iTTI0My44IDMzOS44QzIzMi45IDM1MC43IDIxNS4xIDM1MC43IDIwNC4yIDMzOS44TDE0MC4yIDI3NS44QzEyOS4zIDI2NC45IDEyOS4zIDI0Ny4xIDE0MC4yIDIzNi4yQzE1MS4xIDIyNS4zIDE2OC45IDIyNS4zIDE3OS44IDIzNi4yTDIyNCAyODAuNEwzMzIuMiAxNzIuMkMzNDMuMSAxNjEuMyAzNjAuOSAxNjEuMyAzNzEuOCAxNzIuMkMzODIuNyAxODMuMSAzODIuNyAyMDAuOSAzNzEuOCAyMTEuOEwyNDMuOCAzMzkuOHpNNTEyIDI1NkM1MTIgMzk3LjQgMzk3LjQgNTEyIDI1NiA1MTJDMTE0LjYgNTEyIDAgMzk3LjQgMCAyNTZDMCAxMTQuNiAxMTQuNiAwIDI1NiAwQzM5Ny40IDAgNTEyIDExNC42IDUxMiAyNTZ6TTI1NiA0OEMxNDEuMSA0OCA0OCAxNDEuMSA0OCAyNTZDNDggMzcwLjkgMTQxLjEgNDY0IDI1NiA0NjRDMzcwLjkgNDY0IDQ2NCAzNzAuOSA0NjQgMjU2QzQ2NCAxNDEuMSAzNzAuOSA0OCAyNTYgNDh6Ii8+PC9zdmc+");
 }
@@ -1076,30 +1070,30 @@ td.page_scanning-list_of_mac-column_checkbox span.control_indicator {
 
 #ruuvi-gateway-img {
 	width: 100%;
-	min-width: 300px;
-	min-height: 300px;
-	max-width: 300px;
-	max-height: 300px;
+	min-width: 400px;
+	min-height: 400px;
+	max-width: 400px;
+	max-height: 400px;
 	margin: 0 auto;
 	padding-top: 30px;
 	padding-bottom: 20px;
 	display: block;
 	@include max(sm) {
-		min-width: 50%;
-		min-height: 50%;
-		max-width: 50%;
-		max-height: 50%;
+		min-width: 80%;
+		min-height: 80%;
+		max-width: 80%;
+		max-height: 80%;
 	}
 	@include max(xs) {
-		min-width: 50%;
-		min-height: 50%;
-		max-width: 50%;
-		max-height: 50%;
+		min-width: 80%;
+		min-height: 80%;
+		max-width: 80%;
+		max-height: 80%;
 	}
 	@include max(xxs) {
-		min-width: 50%;
-		min-height: 50%;
-		max-width: 50%;
-		max-height: 50%;
+		min-width: 80%;
+		min-height: 80%;
+		max-width: 80%;
+		max-height: 80%;
 	}
 }

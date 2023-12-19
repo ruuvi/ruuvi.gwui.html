@@ -96,7 +96,7 @@ RUUVI_AUTH_REALM = 'RuuviGateway' + g_gw_mac[-5:-3] + g_gw_mac[-2:]
 
 g_lan_auth_default_password_hashed = hashlib.md5(f'{LAN_AUTH_DEFAULT_USER}:{RUUVI_AUTH_REALM}:{g_gw_unique_id}'.encode('utf-8')).hexdigest()
 
-g_fw_ver = 'v1.14.3'
+g_fw_ver = 'v1.15.0'
 g_nrf52_fw_ver = 'v1.0.0'
 
 g_ruuvi_dict = {
@@ -197,8 +197,8 @@ g_ruuvi_dict = {
 g_content_firmware_update_json = '''
 {
   "latest": {
-    "version": "v1.15.0",
-    "url": "https://fwupdate.ruuvi.com/v1.15.0",
+    "version": "v1.15.1",
+    "url": "https://fwupdate.ruuvi.com/v1.15.1",
     "created_at": "2023-03-15T14:54:34Z"
   },
   "beta": {
@@ -216,18 +216,18 @@ g_content_firmware_update_json = '''
 g_content_firmware_update_json2 = '''
 {
     "latest":{
-        "version":"v1.14.1",
-        "url":"https://fwupdate.ruuvi.com/v1.14.1",
-        "created_at":"2023-08-24T14:54:34Z"
+        "version":"v1.15.1",
+        "url":"https://fwupdate.ruuvi.com/v1.15.1",
+        "created_at":"2023-12-10T14:54:34Z"
     },
     "alpha":{
         "version":"1056",
         "url":"https://jenkins.ruuvi.com/job/ruuvi_gateway_esp-PR/1056/artifact/build/"
     },
     "beta":{
-        "version":"v1.14.1",
-        "url":"https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.14.1",
-        "created_at":"2023-08-21T13:10:34Z"
+        "version":"v1.15.2",
+        "url":"https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.15.2",
+        "created_at":"2023-12-11T13:10:34Z"
     }
 }
 '''
@@ -712,6 +712,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
             resp += f'Content-Length: {0}\r\n'.encode('ascii')
             resp += f'\r\n'.encode('ascii')
+            print(f'Response: {resp}')
             self.wfile.write(resp)
             return
         lan_auth_type = None
@@ -778,13 +779,15 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     print(f'Set LAN auth (prev password): {lan_auth_type}, {lan_auth_user}, {lan_auth_pass}')
                 g_authorized_sessions = dict()
 
-        if 'use_eth' in g_ruuvi_dict:
-            if not g_ruuvi_dict['use_eth']:
+        if 'use_eth' in req_dict:
+            if not req_dict['use_eth']:
                 g_flag_save_wifi_cfg_fails = not g_flag_save_wifi_cfg_fails
                 if g_flag_save_wifi_cfg_fails:
+                    print(f'Simulate connection loss - do not send a respond')
                     return
 
         content = '{}'
+        print(f'Response: {content}')
         self._write_json_response(content)
 
     def _do_post_bluetooth_scanning_json(self):
