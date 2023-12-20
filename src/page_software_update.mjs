@@ -72,6 +72,9 @@ class PageSoftwareUpdate {
   #div_updating_status_error = new GuiDiv($('#page-software_update-updating-status-error'))
   #text_updating_status_error_desc = new GuiText($('#page-software_update-updating-status-error-desc'))
 
+  #div_updating_status_error2 = new GuiDiv($('#page-software_update-updating-status-error2'))
+  #text_updating_status_error2_desc = new GuiText($('#page-software_update-updating-status-error2-desc'))
+
   #sect_advanced = new GuiSectAdvanced($('#page-software_update-advanced-button'))
 
   constructor (gwCfg, auth) {
@@ -258,6 +261,7 @@ class PageSoftwareUpdate {
 
   #on_change_url_fw_update_binary_files () {
     this.#div_updating_status_error.hide()
+    this.#div_updating_status_error2.hide()
     this.#set_software_update_status_empty()
     if (this.#checkbox_software_update_set_url_manually.isChecked()) {
       this.#div_fw_update_server.slideUp()
@@ -293,6 +297,7 @@ class PageSoftwareUpdate {
 
   async #on_button_url_fw_update_server_check () {
     this.#div_updating_status_error.hide()
+    this.#div_updating_status_error2.hide()
     let fw_update_url_val = this.#input_fw_update_server_url.getVal()
     if (fw_update_url_val.indexOf('://') === -1) {
       fw_update_url_val = 'https://' + fw_update_url_val
@@ -339,6 +344,7 @@ class PageSoftwareUpdate {
 
   async #on_button_url_fw_update_server_save () {
     this.#div_updating_status_error.hide()
+    this.#div_updating_status_error2.hide()
     let fw_update_url_val = this.#input_fw_update_server_url.getVal()
     if (fw_update_url_val.indexOf('://') === -1) {
       fw_update_url_val = 'https://' + fw_update_url_val
@@ -357,6 +363,7 @@ class PageSoftwareUpdate {
     await Network.waitWhileInProgress()
 
     this.#div_updating_status_error.hide()
+    this.#div_updating_status_error2.hide()
 
     const timeout = 8 * 1000
     const json_data = { 'url': fw_update_url_val }
@@ -369,13 +376,23 @@ class PageSoftwareUpdate {
       if (status === 200) {
         this.#button_fw_update_server_save.disable()
       } else {
-        this.#text_updating_status_error_desc.setVal(`Status: ${status}, Message: ${message}`)
-        this.#div_updating_status_error.show()
+        if (this.#checkbox_software_update_set_url_manually.isChecked()) {
+          this.#text_updating_status_error2_desc.setVal(`Status: ${status}, Message: ${message}`)
+          this.#div_updating_status_error2.show()
+        } else {
+          this.#text_updating_status_error_desc.setVal(`Status: ${status}, Message: ${message}`)
+          this.#div_updating_status_error.show()
+        }
       }
     }).catch((err) => {
       console.log(log_wrap(`POST /fw_update_url.json: failure: ${err}`))
-      this.#text_updating_status_error_desc.setVal(`${err}`)
-      this.#div_updating_status_error.show()
+      if (this.#checkbox_software_update_set_url_manually.isChecked()) {
+        this.#text_updating_status_error2_desc.setVal(`${err}`)
+        this.#div_updating_status_error2.show()
+      } else {
+        this.#text_updating_status_error_desc.setVal(`${err}`)
+        this.#div_updating_status_error.show()
+      }
     }).finally(() => {
       gui_loading.bodyClassLoadingRemove()
       GwStatus.startCheckingStatus()
@@ -416,14 +433,24 @@ class PageSoftwareUpdate {
       if (status === 200) {
         Navigation.change_url_software_update_progress()
       } else {
-        this.#text_updating_status_error_desc.setVal(`Status: ${status}, Message: ${message}`)
-        this.#div_updating_status_error.show()
+        if (this.#checkbox_software_update_set_url_manually.isChecked()) {
+          this.#text_updating_status_error2_desc.setVal(`Status: ${status}, Message: ${message}`)
+          this.#div_updating_status_error2.show()
+        } else {
+          this.#text_updating_status_error_desc.setVal(`Status: ${status}, Message: ${message}`)
+          this.#div_updating_status_error.show()
+        }
         this.#input_fw_update_binary_files_url.setInvalid()
       }
     }).catch((err) => {
       console.log(log_wrap(`POST /fw_update.json: failure: ${err}`))
-      this.#text_updating_status_error_desc.setVal(`${err}`)
-      this.#div_updating_status_error.show()
+      if (this.#checkbox_software_update_set_url_manually.isChecked()) {
+        this.#text_updating_status_error2_desc.setVal(`${err}`)
+        this.#div_updating_status_error2.show()
+      } else {
+        this.#text_updating_status_error_desc.setVal(`${err}`)
+        this.#div_updating_status_error.show()
+      }
       this.#input_fw_update_binary_files_url.setInvalid()
     }).finally(() => {
       gui_loading.bodyClassLoadingRemove()

@@ -216,8 +216,8 @@ g_content_firmware_update_json = '''
 g_content_firmware_update_json2 = '''
 {
     "latest":{
-        "version":"v1.15.1",
-        "url":"https://fwupdate.ruuvi.com/v1.15.1",
+        "version":"v1.15.1q",
+        "url":"https://fwupdate2.ruuvi.com/v1.15.1q",
         "created_at":"2023-12-10T14:54:34Z"
     },
     "alpha":{
@@ -842,10 +842,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         g_software_update_url = new_dict['url']
         if g_software_update_url.startswith('http://'):
             content = '{"status": 400, "message": "Invalid URL"}'
-        else:
+        elif g_software_update_url.startswith('https://fwupdate.ruuvi.com/'):
             g_software_update_stage = SOFTWARE_UPDATE_STAGE_1_DOWNLOAD_MAIN_FW
             g_software_update_percentage = 0
             content = '{"status": 200, "message": "OK"}'
+        else:
+            content = '{"status": 404, "message": "File not found"}'
         self._write_json_response(content)
 
     def _do_post_fw_update_url_json(self):
