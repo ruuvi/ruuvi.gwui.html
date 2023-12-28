@@ -203,7 +203,7 @@ class PageSoftwareUpdate {
   }
 
   #on_get_latest_release_info (data) {
-    const { latest = {}, beta = {}, alpha = {} } = data
+    const { latest = {}, beta = {} } = data
     if (!('version' in latest) || !('url' in latest)) {
       console.warn("'latest' object should have 'version' and 'url' properties")
       return false
@@ -212,8 +212,6 @@ class PageSoftwareUpdate {
     this.#latest_url = latest.url
     const beta_version = beta?.version
     const beta_url = beta?.url
-    const alpha_version = alpha?.version
-    const alpha_url = alpha?.url
 
     let m = this.#latest_version.match(/v(\d+)\.(\d+)\.(\d+)/)
     this.#flagLatestFirmwareVersionSupported = false
