@@ -105,7 +105,93 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         resp += content.encode('ascii')
         self.wfile.write(resp)
 
+    def handle_firmware_update(self):
+            resp = b''
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            content = '''
+    {
+      "latest": {
+        "version": "v1.14.3",
+        "url": "https://fwupdate.ruuvi.com/v1.14.3",
+        "created_at": "2023-10-06T11:26:07Z"
+      }
+    }
+     '''
+            resp += content.encode('ascii')
+            self.wfile.write(resp)
+
+    def handle_firmware_update_beta(self):
+        resp = b''
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: application/json\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        content = '''
+{
+  "latest": {
+    "version": "v1.14.3",
+    "url": "https://fwupdate.ruuvi.com/v1.14.3",
+    "created_at": "2023-10-06T11:26:07Z"
+  },
+  "beta": {
+    "version": "v1.14.2",
+    "url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.14.2",
+    "created_at": "2023-09-19T11:16:48Z"
+  }
+}
+ '''
+        resp += content.encode('ascii')
+        self.wfile.write(resp)
+
+    def handle_firmware_update_not_exist(self):
+            resp = b''
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            content = '''
+    {
+      "latest": {
+        "version": "v1.14.9",
+        "url": "https://fwupdate.ruuvi.com/v1.14.9",
+        "created_at": "2023-09-19T11:16:48Z"
+      }
+    }
+     '''
+            resp += content.encode('ascii')
+            self.wfile.write(resp)
+
+    def handle_firmware_update_empty(self):
+        resp = b''
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: application/json\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        content = '{ "latest": { "version": "", "url": "", "created_at": "" } }'
+        resp += content.encode('ascii')
+        self.wfile.write(resp)
+
     def do_GET(self):
+        print('GET %s' % self.path)
+        if self.path == '/firmwareupdate':
+            self.handle_firmware_update()
+            return
+        if self.path == '/firmwareupdate_beta':
+            self.handle_firmware_update_beta()
+            return
+        if self.path == '/firmwareupdate_not_exist':
+            self.handle_firmware_update_not_exist()
+            return
+        if self.path == '/firmwareupdate_empty':
+            self.handle_firmware_update_empty()
+            return
         if self._auth is None:
             self._do_GET(False)
         else:
