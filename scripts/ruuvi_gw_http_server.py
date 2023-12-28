@@ -205,10 +205,6 @@ g_content_firmware_update_json = '''
     "version": "v1.16.0",
     "url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.16.0/",
     "created_at": "2023-03-15T14:54:34Z"
-  },
-  "alpha": {
-    "version": "1031",
-    "url": "https://jenkins.ruuvi.com/job/ruuvi_gateway_esp-PR/1031/artifact/build/"
   }
 }
  '''
@@ -219,10 +215,6 @@ g_content_firmware_update_json2 = '''
         "version":"v1.15.1q",
         "url":"https://fwupdate2.ruuvi.com/v1.15.1q",
         "created_at":"2023-12-10T14:54:34Z"
-    },
-    "alpha":{
-        "version":"1056",
-        "url":"https://jenkins.ruuvi.com/job/ruuvi_gateway_esp-PR/1056/artifact/build/"
     },
     "beta":{
         "version":"v1.15.2",
@@ -1512,6 +1504,9 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             return self._resp_200_json_validate_url_status(404, "{\\\"message\\\":\\\"Not Found\\\"}" )
         elif url == 'https://network.ruuvi2.com/firmwareupdate':
             return self._resp_200_json_validate_url_status(502, "Failed to resolve hostname")
+        elif url == 'https://network.ruuvi.com/firmwareupdate_empty':
+            return self._resp_200_json_validate_url_status(200, json='{ "latest": { "version": "", "url": "", "created_at": "" } }' )
+
         return self._resp_200_json_validate_url_status(400, "Error description")
 
     def _validate_url(self, url_with_params):
@@ -1695,10 +1690,28 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(resp)
 
     def _do_get_firmware_update_json(self):
-        content = g_content_firmware_update_json
-        time.sleep(GET_FIRMWARE_UPDATE_TIMEOUT)
         resp = b''
-        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        fw_update_url = g_ruuvi_dict['fw_update_url']
+        if fw_update_url == 'https://network.ruuvi.com/firmwareupdate':
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            content = g_content_firmware_update_json
+        elif fw_update_url == 'https://network2.ruuvi.com/firmwareupdate':
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            content = g_content_firmware_update_json2
+        elif fw_update_url == 'https://network.ruuvi.com/firmwareupdate2':
+            resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
+            content = ''
+        elif fw_update_url == 'https://network.ruuvi2.com/firmwareupdate':
+            resp += f'HTTP/1.0 502 Bad Gateway\r\n'.encode('ascii')
+            content = ''
+        elif fw_update_url == 'https://network.ruuvi.com/firmwareupdate_empty':
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            content = '{ "latest": { "version": "", "url": "", "created_at": "" } }'
+        else:
+            resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
+            content = ''
+
+        time.sleep(GET_FIRMWARE_UPDATE_TIMEOUT)
         resp += f'Content-type: application/json; charset=utf-8\r\n'.encode('ascii')
         resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
         resp += f'Pragma: no-cache\r\n'.encode('ascii')

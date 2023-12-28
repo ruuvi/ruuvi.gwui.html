@@ -203,17 +203,26 @@ class PageSoftwareUpdate {
   }
 
   #on_get_latest_release_info (data) {
-    const { latest = {}, beta = {}, alpha = {} } = data
+    const { latest = {}, beta = {} } = data
     if (!('version' in latest) || !('url' in latest)) {
       console.warn("'latest' object should have 'version' and 'url' properties")
-      return false
+      this.#input_fw_update_server_url.setInvalid()
+      this.#text_fw_update_status_error_desc.setVal('Firmware update info is empty')
+      this.#div_fw_update_status_error.show()
+      throw new Error("Server returned incorrect firmware update info")
+    }
+    if ((latest.version === '') || (latest.url === '')) {
+      console.warn("latest.version and latest.url should not be empty")
+      this.#input_fw_update_server_url.setInvalid()
+      this.#text_fw_update_status_error_desc.setVal('Firmware update URL is empty or version is empty')
+      this.#div_fw_update_status_error.show()
+      this.#sect_advanced.enable()
+      throw new Error("Server returned incorrect firmware update info")
     }
     this.#latest_version = latest.version
     this.#latest_url = latest.url
     const beta_version = beta?.version
     const beta_url = beta?.url
-    const alpha_version = alpha?.version
-    const alpha_url = alpha?.url
 
     let m = this.#latest_version.match(/v(\d+)\.(\d+)\.(\d+)/)
     this.#flagLatestFirmwareVersionSupported = false
