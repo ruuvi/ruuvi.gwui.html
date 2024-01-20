@@ -266,6 +266,7 @@ class PageCustomServer {
         this.#checkbox_use_mqtt_prefix_gw_mac.on_change(() => this.#onChangeUseMqttPrefix())
         this.#checkbox_use_mqtt_prefix_custom.on_change(() => this.#onChangeUseMqttPrefix())
         this.#input_mqtt_prefix_custom.on_change(() => this.#onChangeUseMqttPrefix())
+        this.#input_mqtt_client_id.on_change(() => this.#onChangeMqttClientId())
         this.#checkbox_mqtt_disable_retained_messages.on_change(() => this.#onChangeMqttDisableRetainedMessages())
 
         this.#button_check.on_click(async () => this.#onButtonCheck())
@@ -1186,6 +1187,12 @@ class PageCustomServer {
         this.#on_edit_mqtt_settings()
     }
 
+    #onChangeMqttClientId() {
+        this.#input_mqtt_server.setValidationRequired()
+        this.#input_mqtt_port.setValidationRequired()
+        this.#on_custom_server_url_changed()
+    }
+
     #onChangeMqttDisableRetainedMessages() {
         this.#input_mqtt_server.setValidationRequired()
         this.#input_mqtt_port.setValidationRequired()
@@ -1286,10 +1293,10 @@ class PageCustomServer {
     }
 
     #on_custom_server_url_changed() {
-        let flag_url_modified = false
+        let flag_need_check_url = false
 
         if (this.#checkbox_use_http.isChecked() && this.#input_http_url.isValidationRequired()) {
-            flag_url_modified = true
+            flag_need_check_url = true
             this.#input_http_url.clearValidationIcon()
 
             this.#input_http_auth_basic_user.clearValidationIcon()
@@ -1298,14 +1305,17 @@ class PageCustomServer {
         }
 
         if (this.#radio_statistics_use_custom.isChecked() && this.#input_http_stat_url.isValidationRequired()) {
-            flag_url_modified = true
+            flag_need_check_url = true
             this.#input_http_stat_url.clearValidationIcon()
             this.#input_http_stat_user.clearValidationIcon()
             this.#input_http_stat_pass.clearValidationIcon()
         }
 
-        if (this.#checkbox_use_mqtt.isChecked() && this.#input_mqtt_port.isValidationRequired()) {
-            flag_url_modified = true
+
+        if (this.#checkbox_use_mqtt.isChecked() &&
+            (this.#input_mqtt_server.isValidationRequired() || this.#input_mqtt_port.isValidationRequired())) {
+            flag_need_check_url = true
+            this.#input_mqtt_server.clearValidationIcon()
             this.#input_mqtt_port.clearValidationIcon()
             this.#input_mqtt_user.clearValidationIcon()
             this.#input_mqtt_pass.clearValidationIcon()
@@ -1391,7 +1401,7 @@ class PageCustomServer {
             this.#input_http_period.setValid()
         }
 
-        if (flag_url_modified) {
+        if (flag_need_check_url) {
             this.#button_continue.disable()
             this.#button_check.enable()
         } else {
@@ -1455,19 +1465,7 @@ class PageCustomServer {
             .then(() => this.#custom_server_validate_url_http_stat())
             .then(() => this.#custom_server_validate_url_mqtt())
             .finally(() => {
-                let flag_valid = true
-                if (this.#checkbox_use_http && this.#input_http_url.isInvalid()) {
-                    flag_valid = false
-                }
-                if (this.#checkbox_use_mqtt && (this.#input_mqtt_server.isInvalid() || this.#input_mqtt_port.isInvalid())) {
-                    flag_valid = false
-                }
-                if (this.#radio_statistics_use_custom && this.#input_http_stat_url.isInvalid()) {
-                    flag_valid = false
-                }
-                if (flag_valid) {
-                    this.#button_continue.enable()
-                }
+                this.#on_custom_server_url_changed();
                 gui_loading.bodyClassLoadingRemove()
                 GwStatus.startCheckingStatus()
             })
