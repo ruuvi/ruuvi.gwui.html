@@ -1133,8 +1133,8 @@
 
                         <div class="line-container">
                             <label class="control control-checkbox">
-                                <span lang="en">Use client SSL certificate (*.pem)</span>
-                                <span lang="fi">Käytä asiakkaan SSL-sertifikaattia (*.pem)</span>
+                                <span lang="en">Use client SSL certificate (*.pem,*.crt,*.cert,*.key)</span>
+                                <span lang="fi">Käytä asiakkaan SSL-sertifikaattia (*.pem,*.crt,*.cert,*.key)</span>
                                 <input type="checkbox" id="remote_cfg-use_client_ssl_cert">
                                 <span class="control_indicator"></span>
                             </label>
@@ -1144,7 +1144,7 @@
                             <div class="button-container-centered">
                                 <div class="button-upload">
                                     <label>
-                                        <input type="file" accept=".pem" class="hidden" hidden>
+                                        <input type="file" accept="*.pem,*.crt,*.cert" class="hidden" hidden>
                                     </label>
                                     <button class="btn btn-narrow btn-two-rows" id="remote_cfg-button_upload_client_cert" type="button">
                                         <span lang="en">Upload certificate</span>
@@ -1153,7 +1153,7 @@
                                 </div>
                                 <div class="button-upload">
                                     <label>
-                                        <input type="file" accept=".pem" class="hidden" hidden>
+                                        <input type="file" accept=".pem,.key" class="hidden" hidden>
                                     </label>
                                     <button class="btn btn-narrow btn-two-rows" id="remote_cfg-button_upload_client_key" type="button">
                                         <span lang="en">Upload private key</span>
@@ -1172,8 +1172,8 @@
 
                         <div class="line-container">
                             <label class="control control-checkbox">
-                                <span lang="en">Use custom SSL certificate for the server (*.pem)</span>
-                                <span lang="fi">Käytä omaa SSL-sertifikaattia palvelimelle (*.pem)</span>
+                                <span lang="en">Use custom SSL certificate for the server (*.pem,*.crt,*.cert)</span>
+                                <span lang="fi">Käytä omaa SSL-sertifikaattia palvelimelle (*.pem,*.crt,*.cert)</span>
                                 <input type="checkbox" id="remote_cfg-use_server_ssl_cert">
                                 <span class="control_indicator"></span>
                             </label>
@@ -1183,7 +1183,7 @@
                             <div class="button-container-centered">
                                 <div class="button-upload">
                                     <label>
-                                        <input type="file" accept=".pem" class="hidden" hidden>
+                                        <input type="file" accept=".pem,.crt,.cert" class="hidden" hidden>
                                     </label>
                                     <button class="btn btn-narrow btn-two-rows" id="remote_cfg-button_upload_server_cert" type="button">
                                         <span lang="en">Upload certificate</span>
@@ -2038,8 +2038,8 @@
 
                 <div>
                     <label class="control control-checkbox">
-                        <span lang="en">Use client SSL certificate (*.pem)</span>
-                        <span lang="fi">Käytä asiakkaan SSL-sertifikaattia (*.pem)</span>
+                        <span lang="en">Use client SSL certificate (*.pem,*.crt,*.cert,*.key)</span>
+                        <span lang="fi">Käytä asiakkaan SSL-sertifikaattia (*.pem,*.crt,*.cert,*.key)</span>
                         <input type="checkbox" id="http_use_client_ssl_cert">
                         <span class="control_indicator"></span>
                     </label>
@@ -2047,7 +2047,7 @@
                         <div class="button-container-centered">
                             <div class="button-upload">
                                 <label>
-                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                    <input type="file" accept=".pem,.crt,.cert" class="hidden" hidden>
                                 </label>
                                 <button class="btn btn-narrow btn-two-rows" id="http-button_upload_client_cert" type="button">
                                     <span lang="en">Upload certificate</span>
@@ -2056,7 +2056,7 @@
                             </div>
                             <div class="button-upload">
                                 <label>
-                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                    <input type="file" accept=".pem,.key" class="hidden" hidden>
                                 </label>
                                 <button class="btn btn-narrow btn-two-rows" id="http-button_upload_client_key" type="button">
                                     <span lang="en">Upload private key</span>
@@ -2075,8 +2075,8 @@
 
                 <div>
                     <label class="control control-checkbox">
-                        <span lang="en">Use custom SSL certificate for the server (*.pem)</span>
-                        <span lang="fi">Käytä omaa SSL-sertifikaattia palvelimelle (*.pem)</span>
+                        <span lang="en">Use custom SSL certificate for the server (*.pem,*.crt,*.cert)</span>
+                        <span lang="fi">Käytä omaa SSL-sertifikaattia palvelimelle (*.pem,*.crt,*.cert)</span>
                         <input type="checkbox" id="http_use_server_ssl_cert">
                         <span class="control_indicator"></span>
                     </label>
@@ -2084,7 +2084,7 @@
                         <div class="button-container-centered">
                             <div class="button-upload">
                                 <label>
-                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                    <input type="file" accept=".pem,.crt,.cert" class="hidden" hidden>
                                 </label>
                                 <button class="btn btn-narrow btn-two-rows" id="http-button_upload_server_cert" type="button">
                                     <span lang="en">Upload certificate</span>
@@ -2296,7 +2296,7 @@
                 <div>
                     <h3>
                         <label for="mqtt_client_id">
-                            <span lang="en">Client name</span>
+                            <span lang="en">Client ID</span>
                             <span lang="fi">Asiakastunnus</span>
                         </label>
                     </h3>
@@ -2366,8 +2366,8 @@
 
                 <div class="line-container">
                     <label class="control control-checkbox">
-                        <span lang="en">Use client SSL certificate (*.pem)</span>
-                        <span lang="fi">Käytä asiakkaan SSL-sertifikaattia (*.pem)</span>
+                        <span lang="en">Use client SSL certificate (*.pem,*.crt,*.cert,*.key)</span>
+                        <span lang="fi">Käytä asiakkaan SSL-sertifikaattia (*.pem,*.crt,*.cert,*.key)</span>
                         <input type="checkbox" id="mqtt_use_client_ssl_cert">
                         <span class="control_indicator"></span>
                     </label>
@@ -2376,7 +2376,7 @@
                     <div class="button-container-centered">
                         <div class="button-upload">
                             <label>
-                                <input type="file" accept=".pem" class="hidden" hidden>
+                                <input type="file" accept=".pem,.crt,.cert" class="hidden" hidden>
                             </label>
                             <button class="btn btn-narrow btn-two-rows" id="mqtt-button_upload_client_cert" type="button">
                                 <span lang="en">Upload certificate</span>
@@ -2385,7 +2385,7 @@
                         </div>
                         <div class="button-upload">
                             <label>
-                                <input type="file" accept=".pem" class="hidden" hidden>
+                                <input type="file" accept=".pem,.key" class="hidden" hidden>
                             </label>
                             <button class="btn btn-narrow btn-two-rows" id="mqtt-button_upload_client_key" type="button">
                                 <span lang="en">Upload private key</span>
@@ -2404,8 +2404,8 @@
 
                 <div class="line-container">
                     <label class="control control-checkbox">
-                        <span lang="en">Use custom SSL certificate for the server (*.pem)</span>
-                        <span lang="fi">Käytä omaa SSL-sertifikaattia palvelimelle (*.pem)</span>
+                        <span lang="en">Use custom SSL certificate for the server (*.pem,*.crt,*.cert)</span>
+                        <span lang="fi">Käytä omaa SSL-sertifikaattia palvelimelle (*.pem,*.crt,*.cert)</span>
                         <input type="checkbox" id="mqtt_use_server_ssl_cert">
                         <span class="control_indicator"></span>
                     </label>
@@ -2414,7 +2414,7 @@
                     <div class="button-container-centered">
                         <div class="button-upload">
                             <label>
-                                <input type="file" accept=".pem" class="hidden" hidden>
+                                <input type="file" accept=".pem,.crt,.cert" class="hidden" hidden>
                             </label>
                             <button class="btn btn-narrow btn-two-rows" id="mqtt-button_upload_server_cert" type="button">
                                 <span lang="en">Upload certificate</span>
@@ -2537,8 +2537,8 @@
 
                     <div class="line-container">
                         <label class="control control-checkbox">
-                            <span lang="en">Use client SSL certificate (*.pem)</span>
-                            <span lang="fi">Käytä asiakkaan SSL-sertifikaattia (*.pem)</span>
+                            <span lang="en">Use client SSL certificate (*.pem,*.crt,*.cert,*.key)</span>
+                            <span lang="fi">Käytä asiakkaan SSL-sertifikaattia (*.pem,*.crt,*.cert,*.key)</span>
                             <input type="checkbox" id="stat_use_client_ssl_cert">
                             <span class="control_indicator"></span>
                         </label>
@@ -2548,7 +2548,7 @@
                         <div class="button-container-centered">
                             <div class="button-upload">
                                 <label>
-                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                    <input type="file" accept=".pem,.crt,.cert" class="hidden" hidden>
                                 </label>
                                 <button class="btn btn-narrow btn-two-rows" id="stat-button_upload_client_cert" type="button">
                                     <span lang="en">Upload certificate</span>
@@ -2557,7 +2557,7 @@
                             </div>
                             <div class="button-upload">
                                 <label>
-                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                    <input type="file" accept=".pem,.key" class="hidden" hidden>
                                 </label>
                                 <button class="btn btn-narrow btn-two-rows" id="stat-button_upload_client_key" type="button">
                                     <span lang="en">Upload private key</span>
@@ -2576,8 +2576,8 @@
 
                     <div class="line-container">
                         <label class="control control-checkbox">
-                            <span lang="en">Use custom SSL certificate for the server (*.pem)</span>
-                            <span lang="fi">Käytä omaa SSL-sertifikaattia palvelimelle (*.pem)</span>
+                            <span lang="en">Use custom SSL certificate for the server (*.pem,*.crt,*.cert)</span>
+                            <span lang="fi">Käytä omaa SSL-sertifikaattia palvelimelle (*.pem,*.crt,*.cert)</span>
                             <input type="checkbox" id="stat_use_server_ssl_cert">
                             <span class="control_indicator"></span>
                         </label>
@@ -2587,7 +2587,7 @@
                         <div class="button-container-centered">
                             <div class="button-upload">
                                 <label>
-                                    <input type="file" accept=".pem" class="hidden" hidden>
+                                    <input type="file" accept=".pem,.crt,.cert" class="hidden" hidden>
                                 </label>
                                 <button class="btn btn-narrow btn-two-rows" id="stat-button_upload_server_cert" type="button">
                                     <span lang="en">Upload certificate</span>
