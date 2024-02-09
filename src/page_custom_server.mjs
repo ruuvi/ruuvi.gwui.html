@@ -173,6 +173,7 @@ class PageCustomServer {
     #button_back = new GuiButtonBack($('#page-custom_server-button-back'))
     #button_check = new GuiButtonContinue($('#page-custom_server-button-check'))
     #button_continue = new GuiButtonContinue($('#page-custom_server-button-continue'))
+    #button_ignore_errors_and_continue = new GuiButtonContinue($('#page-custom_server-button-ignore_errors_and_continue'))
 
     /**
      * constructor
@@ -271,6 +272,7 @@ class PageCustomServer {
 
         this.#button_check.on_click(async () => this.#onButtonCheck())
         this.#button_continue.on_click(() => Navigation.change_url_ntp_config())
+        this.#button_ignore_errors_and_continue.on_click(() => Navigation.change_url_ntp_config())
     }
 
     async #onShow() {
@@ -445,7 +447,7 @@ class PageCustomServer {
         this.#checkbox_mqtt_use_server_ssl_cert.setState(this.#gwCfg.mqtt.mqtt_use_ssl_server_cert)
 
         this.#on_custom_connection_type_changed()
-        this.#on_custom_server_url_changed()
+        this.#on_custom_server_url_changed(true)
         this.#on_edit_mqtt_settings()
     }
 
@@ -1293,33 +1295,81 @@ class PageCustomServer {
         return url.protocol === 'http:' || url.protocol === 'https:'
     }
 
-    #on_custom_server_url_changed() {
+    #on_custom_server_url_changed(flag_force_check_url = false) {
         let flag_need_check_url = false
+        let flag_url_validation_failed = false
 
-        if (this.#checkbox_use_http.isChecked() && this.#input_http_url.isValidationRequired()) {
-            flag_need_check_url = true
-            this.#input_http_url.clearValidationIcon()
+        if (this.#checkbox_use_http.isChecked()) {
+            if (flag_force_check_url) {
+                this.#input_http_url.setValidationRequired()
+            }
+            if (this.#input_http_url.isValidationRequired()) {
+                flag_need_check_url = true
+                this.#input_http_url.clearValidationIcon()
 
-            this.#input_http_auth_basic_user.clearValidationIcon()
-            this.#input_http_auth_bearer_token.clearValidationIcon()
-            this.#input_http_auth_token_api_key.clearValidationIcon()
+                this.#input_http_auth_basic_user.clearValidationIcon()
+                this.#input_http_auth_bearer_token.clearValidationIcon()
+                this.#input_http_auth_token_api_key.clearValidationIcon()
+            } else {
+                if (this.#input_http_url.isInvalid()) {
+                    flag_url_validation_failed = true
+                }
+            }
+            let flag_http_period_valid = true
+            let http_period = parseIntegerString(this.#input_http_period.getVal())
+            if (!http_period || (http_period < 10) || (http_period > 60 * 60)) {
+                this.#input_http_period.setInvalid()
+                flag_http_period_valid = false
+                flag_url_validation_failed = true
+            } else {
+                this.#input_http_period.setValid()
+            }
         }
 
-        if (this.#radio_statistics_use_custom.isChecked() && this.#input_http_stat_url.isValidationRequired()) {
-            flag_need_check_url = true
-            this.#input_http_stat_url.clearValidationIcon()
-            this.#input_http_stat_user.clearValidationIcon()
-            this.#input_http_stat_pass.clearValidationIcon()
+        if (this.#radio_statistics_use_custom.isChecked()) {
+            if (flag_force_check_url) {
+                this.#input_http_stat_url.setValidationRequired()
+            }
+            if (this.#input_http_stat_url.isValidationRequired()) {
+                flag_need_check_url = true
+                this.#input_http_stat_url.clearValidationIcon()
+                this.#input_http_stat_user.clearValidationIcon()
+                this.#input_http_stat_pass.clearValidationIcon()
+            } else {
+                if (this.#input_http_stat_url.isInvalid()) {
+                    flag_url_validation_failed = true
+                }
+            }
         }
 
-
-        if (this.#checkbox_use_mqtt.isChecked() &&
-            (this.#input_mqtt_server.isValidationRequired() || this.#input_mqtt_port.isValidationRequired())) {
-            flag_need_check_url = true
-            this.#input_mqtt_server.clearValidationIcon()
-            this.#input_mqtt_port.clearValidationIcon()
-            this.#input_mqtt_user.clearValidationIcon()
-            this.#input_mqtt_pass.clearValidationIcon()
+        if (this.#checkbox_use_mqtt.isChecked()) {
+            if (flag_force_check_url) {
+                this.#input_mqtt_server.setValidationRequired()
+            }
+            if (this.#input_mqtt_server.isValidationRequired() || this.#input_mqtt_port.isValidationRequired()) {
+                flag_need_check_url = true
+                this.#input_mqtt_server.clearValidationIcon()
+                this.#input_mqtt_port.clearValidationIcon()
+                this.#input_mqtt_user.clearValidationIcon()
+                this.#input_mqtt_pass.clearValidationIcon()
+            } else {
+                if (this.#input_mqtt_server.isInvalid() || this.#input_mqtt_port.isInvalid()) {
+                    flag_url_validation_failed = true
+                }
+            }
+            let flag_mqtt_periodic_sending_valid = true
+            if (this.#checkbox_use_mqtt_periodic_sending.isChecked()) {
+                let mqtt_sending_interval = parseIntegerString(this.#input_mqtt_sending_interval.getVal())
+                if (!mqtt_sending_interval || (mqtt_sending_interval < 10) || (mqtt_sending_interval > 60 * 60)) {
+                    flag_mqtt_periodic_sending_valid = false
+                }
+                if (!flag_mqtt_periodic_sending_valid) {
+                    this.#input_mqtt_sending_interval.setInvalid()
+                    flag_url_validation_failed = true
+                } else {
+                    this.#input_mqtt_sending_interval.setValid()
+                }
+            }
         }
 
         this.#button_http_upload_client_cert.setStorageReady(this.#gwCfg.info.storage_ready)
@@ -1380,34 +1430,26 @@ class PageCustomServer {
             this.#div_mqtt_use_server_ssl_cert_options.hide()
         }
 
-        let flag_mqtt_periodic_sending_valid = true
-        if (this.#checkbox_use_mqtt_periodic_sending.isChecked()) {
-            let mqtt_sending_interval = parseIntegerString(this.#input_mqtt_sending_interval.getVal())
-            if (!mqtt_sending_interval || (mqtt_sending_interval < 10) || (mqtt_sending_interval > 60 * 60)) {
-                flag_mqtt_periodic_sending_valid = false
-            }
-            if (!flag_mqtt_periodic_sending_valid) {
-                this.#input_mqtt_sending_interval.setInvalid()
+        if (flag_url_validation_failed) {
+            this.#button_continue.hide()
+            this.#button_ignore_errors_and_continue.show()
+            if (flag_need_check_url) {
+                this.#button_ignore_errors_and_continue.disable()
+                this.#button_check.enable()
             } else {
-                this.#input_mqtt_sending_interval.setValid()
+                this.#button_ignore_errors_and_continue.enable()
+                this.#button_check.disable()
             }
-        }
-
-        let flag_http_period_valid = true
-        let http_period = parseIntegerString(this.#input_http_period.getVal())
-        if (!http_period || (http_period < 10) || (http_period > 60 * 60)) {
-            this.#input_http_period.setInvalid()
-            flag_http_period_valid = false
         } else {
-            this.#input_http_period.setValid()
-        }
-
-        if (flag_need_check_url) {
-            this.#button_continue.disable()
-            this.#button_check.enable()
-        } else {
-            this.#button_continue.enable()
-            this.#button_check.disable()
+            this.#button_ignore_errors_and_continue.hide()
+            this.#button_continue.show()
+            if (flag_need_check_url) {
+                this.#button_continue.disable()
+                this.#button_check.enable()
+            } else {
+                this.#button_continue.enable()
+                this.#button_check.disable()
+            }
         }
     }
 
@@ -1460,6 +1502,9 @@ class PageCustomServer {
         console.log('custom_server_validate_urls')
         gui_loading.bodyClassLoadingAdd()
         GwStatus.stopCheckingStatus()
+        this.#button_continue.disable()
+        this.#button_ignore_errors_and_continue.disable()
+
         await Network.waitWhileInProgress()
 
         this.#custom_server_validate_url_http()
