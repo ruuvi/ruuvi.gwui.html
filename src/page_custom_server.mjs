@@ -1196,6 +1196,7 @@ class PageCustomServer {
     #onChangeMqttDisableRetainedMessages() {
         this.#input_mqtt_server.setValidationRequired()
         this.#input_mqtt_port.setValidationRequired()
+        this.#on_custom_server_url_changed()
     }
 
     async #onButtonCheck() {
