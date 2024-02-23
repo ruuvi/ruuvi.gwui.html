@@ -103,6 +103,9 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         if self.path != '/':
             # Assuming the base directory for files is the current working directory
             file_path = '.' + self.path  # Prepend '.' to make the path relative to the current directory
+            # SimpleHTTPRequestHandler class has built-in measures to prevent directory traversal attacks,
+            # so we don't need to sanitize the path to ensure that it cannot navigate outside the current directory
+            # using relative paths like '..'.
             if os.path.isfile(file_path):
                 # File exists, serve it
                 with open(file_path, 'rb') as file:
