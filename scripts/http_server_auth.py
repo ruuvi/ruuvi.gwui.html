@@ -11,6 +11,13 @@ import os
 import logging
 import ssl
 import sys
+from datetime import datetime
+import time
+
+
+def log(msg):
+    logging.info(f'[{datetime.now().isoformat()}] {msg}')
+
 
 def create_ssl_context(cert_file, key_file, ca_file):
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
@@ -61,10 +68,10 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
         if use_auth:
-            print('POST (with auth) %s: %s' % (self.path, post_data.decode('utf-8')))
+            log('POST (with auth) %s: %s' % (self.path, post_data.decode('utf-8')))
         else:
-            print('POST (without auth) %s: %s' % (self.path, post_data.decode('utf-8')))
-        print('POST headers: %s' % str(self.headers))
+            log('POST (without auth) %s: %s' % (self.path, post_data.decode('utf-8')))
+        log('POST headers: %s' % str(self.headers))
         logging.debug("POST: %s\nHeaders:\n%s\n\nBody:\n%s\n", str(self.path), str(self.headers), post_data.decode('utf-8'))
         self.send_response(200)
         self.send_header('Ruuvi-HMAC-KEY', 'new_key')
@@ -73,6 +80,7 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_POST(self):
+        log(f'POST {self.path}')
         if self._auth is None:
             self._do_POST(False)
         else:
@@ -91,18 +99,39 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
 
     def _do_GET(self, use_auth):
         # SimpleHTTPRequestHandler.do_GET(self)
-        print('GET %s' % self.path)
         resp = b''
-        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-        resp += f'Content-type: application/json\r\n'.encode('ascii')
-        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-        resp += f'Pragma: no-cache\r\n'.encode('ascii')
-        resp += f'\r\n'.encode('ascii')
-        if use_auth:
-            content = '{"use_auth": true}'
+        if self.path != '/':
+            # Assuming the base directory for files is the current working directory
+            file_path = '.' + self.path  # Prepend '.' to make the path relative to the current directory
+            # SimpleHTTPRequestHandler class has built-in measures to prevent directory traversal attacks,
+            # so we don't need to sanitize the path to ensure that it cannot navigate outside the current directory
+            # using relative paths like '..'.
+            if os.path.isfile(file_path):
+                # File exists, serve it
+                with open(file_path, 'rb') as file:
+                    file_content = file.read()
+                resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+                # You might want to dynamically set the Content-type based on the file type
+                resp += f'Content-type: {self.guess_type(file_path)}\r\n'.encode('ascii')
+            else:
+                # File not found, return 404
+                resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
+                file_content = b'File not found'
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            resp += file_content
         else:
-            content = '{"use_auth": false}'
-        resp += content.encode('ascii')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            if use_auth:
+                content = '{"use_auth": true}'
+            else:
+                content = '{"use_auth": false}'
+            resp += content.encode('ascii')
         self.wfile.write(resp)
 
     def handle_firmware_update(self):
@@ -179,7 +208,7 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         self.wfile.write(resp)
 
     def do_GET(self):
-        print('GET %s' % self.path)
+        log(f'GET {self.path}')
         if self.path == '/firmwareupdate':
             self.handle_firmware_update()
             return
@@ -231,11 +260,12 @@ def httpd_run(HandlerClass=BaseHTTPRequestHandler,
         sa = httpd.socket.getsockname()
         serve_message = "Serving {conn_type} on {host} port {port} ({conn_type2}://{host}:{port}/) ..."
         conn_type = "HTTP" if ssl_cert is None else "HTTPS"
-        print(serve_message.format(conn_type=conn_type.upper(), conn_type2=conn_type.lower(), host=sa[0], port=sa[1]))
+        log(serve_message.format(conn_type=conn_type.upper(), conn_type2=conn_type.lower(), host=sa[0], port=sa[1]))
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
-            print("\nKeyboard interrupt received, exiting.")
+            print('\n')
+            log("Keyboard interrupt received, exiting.")
             sys.exit(0)
 
 
