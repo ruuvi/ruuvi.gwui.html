@@ -54,9 +54,24 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
     #     # self.protocol_version = 'HTTP/1.0'
 
     def do_HEAD(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
+        if self.path == '/':
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+        else:
+            # Assuming the base directory for files is the current working directory
+            file_path = '.' + self.path  # Prepend '.' to make the path relative to the current directory
+            # SimpleHTTPRequestHandler class has built-in measures to prevent directory traversal attacks,
+            # so we don't need to sanitize the path to ensure that it cannot navigate outside the current directory
+            # using relative paths like '..'.
+            if os.path.isfile(file_path):
+                self.send_response(200)
+                self.send_header("Content-type", self.guess_type(file_path))
+                self.end_headers()
+            else:
+                # File not found, return 404
+                self.send_response(404)
+                self.end_headers()
 
     def do_AUTHHEAD(self):
         self.send_response(401)
