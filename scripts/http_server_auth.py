@@ -13,6 +13,9 @@ import ssl
 import sys
 from datetime import datetime
 import time
+import socket
+
+g_simulate_post_delay = 0
 
 
 def log(msg):
@@ -88,6 +91,10 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
             log('POST (without auth) %s: %s' % (self.path, post_data.decode('utf-8')))
         log('POST headers: %s' % str(self.headers))
         logging.debug("POST: %s\nHeaders:\n%s\n\nBody:\n%s\n", str(self.path), str(self.headers), post_data.decode('utf-8'))
+        if g_simulate_post_delay != 0:
+            log(f'Simulating delay of {g_simulate_post_delay} seconds...')
+            time.sleep(g_simulate_post_delay)
+            log('Simulated delay done.')
         self.send_response(200)
         self.send_header('Ruuvi-HMAC-KEY', 'new_key')
 #         self.send_header('X-Ruuvi-Gateway-Rate', '5')
@@ -312,6 +319,16 @@ if __name__ == "__main__":
         help="Specify alternate port [default: 8000]",
     )
     parser.add_argument(
+        "--simulate_just_listen_port",
+        action="store_true",
+        help="Just listen on the port, don't serve anything",
+    )
+    parser.add_argument(
+        "--simulate_just_accept_connection",
+        action="store_true",
+        help="Just accept a connection, don't serve anything",
+    )
+    parser.add_argument(
         "--ssl_cert",
         help="Path to server.pem (for HTTPS), if it contains private key, then --ssl_key is not needed",
     )
@@ -326,7 +343,40 @@ if __name__ == "__main__":
     parser.add_argument("--username", "-u", metavar="USERNAME")
     parser.add_argument("--password", "-p", metavar="PASSWORD")
     parser.add_argument("--bearer_token", "-t", metavar="BEARER_TOKEN")
+    parser.add_argument(
+        "--simulate_post_delay",
+        action="store",
+        default=0,
+        type=int,
+        help="Simulate delay in POST request processing (seconds)",
+    )
     args = parser.parse_args()
+    g_simulate_post_delay = args.simulate_post_delay
+    if args.simulate_just_listen_port and args.simulate_just_accept_connection:
+        print("Options --simulate_just_listen_port and --simulate_just_accept_connection are mutually exclusive.")
+        sys.exit(1)
+    if args.simulate_just_listen_port:
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_socket.bind(('0.0.0.0', args.port))
+        server_socket.listen(5)
+        log(f"Listening for incoming connections on 0.0.0.0 port {args.port}")
+        while True:
+            time.sleep(1)
+    if args.simulate_just_accept_connection:
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server_socket.bind(('0.0.0.0', args.port))
+        server_socket.listen(5)
+        log(f"Listening for incoming connections on 0.0.0.0 port {args.port}")
+        while True:
+            client_socket, addr = server_socket.accept()
+            log(f"Got a connection from {addr}")
+            log("Waiting for 20 seconds before closing a connection...")
+            time.sleep(20)
+            log(f"Close connection from {addr}")
+            client_socket.close()
+
     handler_class = partial(
         AuthHTTPRequestHandler,
         username=args.username,
