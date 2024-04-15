@@ -70,6 +70,7 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
             if os.path.isfile(file_path):
                 self.send_response(200)
                 self.send_header("Content-type", self.guess_type(file_path))
+                self.send_header("Content-length", str(os.stat(file_path).st_size))
                 self.end_headers()
             else:
                 # File not found, return 404
@@ -135,6 +136,7 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
                 resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                 # You might want to dynamically set the Content-type based on the file type
                 resp += f'Content-type: {self.guess_type(file_path)}\r\n'.encode('ascii')
+                resp += f'Content-length: {str(os.stat(file_path).st_size)}\r\n'.encode('ascii')
             else:
                 # File not found, return 404
                 resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
