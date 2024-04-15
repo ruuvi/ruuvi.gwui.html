@@ -358,6 +358,7 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
                 }
               } else if (resp.status === 401) {
                 validity_icons_set_invalid(params)
+                set_error_message(params, `HTTP error 401 (Unauthorized): ${resp.message}`)
               } else {
                 let params2 = { input_url: params['input_url'] }
                 if ('input_url_port' in params) {
