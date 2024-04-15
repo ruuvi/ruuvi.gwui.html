@@ -1,0 +1,111 @@
+env:
+  url: "${secrets:url}"
+  gw_id: "${secrets:gw_id}"
+  gw_mac: "${secrets:gw_mac}"
+  http_server: "${secrets:http_server}"
+  https_server: "${secrets:https_server}"
+  navigationTimeout: 2000
+  preClickDelay: 1000
+  postClickDelay: 1000
+
+pages:
+  - page?: "#page-auth"
+    steps:
+      - if: isInvisible "#auth-user_login"
+        then: fail "Remote access is disabled"
+      - if: isEnabled "#auth-user"
+        then:
+          - do: fail "Custom username/password is requited"
+        #          - do: fillInput "#auth-user" "${env:username}"
+        #          - do: fillInput "#auth-pass" "${env:password}"
+        else:
+          - do: fillInput "#auth-pass" "${env:gw_id}"
+      - do: clickAndNavigate "#auth-button-login"
+        params:
+          postClickDelay: 3000
+          navigationTimeout: 5000
+
+  - page: "#page-welcome"
+    steps:
+      - do: clickAndNavigate "#page-welcome-button-get-started"  # Click on 'Let's get started' button
+
+  - page: "#page-network_type"
+    steps:
+      - do: clickAndNavigate "#page-network_type-button-skip"  # Click on 'Skip' button
+
+  - page: "#page-software_update"
+    steps:
+      - do: waitUntilLoaded 40000  # Wait until the information about the software update is loaded
+      - do: clickAndNavigate "#page-software_update-button-continue"  # Click on 'Next' or 'Continue and skip update' button
+
+  - page: "#page-remote_cfg"
+    steps:
+      - do: clickAndNavigate "#page-remote_cfg-button-continue"  # Click on 'Next' button
+
+  - page: "#page-update_schedule"
+    steps:
+      - do: clickAndNavigate "#page-update_schedule-button-continue"  # Click on 'Next' button
+
+  - page: "#page-settings_lan_auth"
+    steps:
+      - do: clickAndNavigate "#page-lan_auth_type-button-continue"  # Click on 'Next' button
+
+  - page: "#page-cloud_options"
+    steps:
+      - do: showAdvancedSettings "#page-cloud_options-advanced-button"
+      - do: selectRadio "#use_custom"  # Select radio 'Use Ruuvi Cloud and/or a custom server and configure other advanced settings'
+      - do: clickAndNavigate "#page-cloud_options-button-continue"  # Click on 'Next' button
+
+  - page: "#page-custom_server"
+    steps:
+      - do: checkCheckbox "#use_http_ruuvi"  # Check checkbox 'Ruuvi Cloud'
+      - do: uncheckCheckbox "#use_http"  # Uncheck checkbox 'HTTP(S)'
+
+      - do: checkCheckbox "#use_mqtt"  # Check checkbox 'MQTT'
+      - do: selectRadio "#mqtt_transport_SSL"  # Select radio 'MQTT over SSL'
+      - do: fillInput "#mqtt_server" "a1t7928xlpfw6k-ats.iot.eu-central-1.amazonaws.com"  # Fill the input 'Server'
+      - do: fillInput "#mqtt_port" "8883"  # Fill the input 'Port'
+      - do: selectRadio "#mqtt_data_format_ruuvi"  # Select the radio 'Don't decode, send data in raw format (default)'
+      - do: uncheckCheckbox "#use_mqtt_periodic_sending"  # Uncheck the checkbox 'Define sending interval instead of relaying messages instantly'
+      - do: fillInput "#mqtt_user" ""  # Fill the input 'Username'
+      - do: fillInput "#mqtt_pass" ""  # Fill the input 'Password'
+      - do: fillInput "#mqtt_client_id" "iotconsole-2118c7c7-9dff-4f45-8274-28d7cdc1e186"  # Fill the input 'Client ID'
+      - do: checkCheckbox "#mqtt_disable_retained_messages"  # Check checkbox 'Disable the use of retained messages'
+      - do: checkCheckbox "#use_mqtt_prefix_ruuvi"  # Check checkbox "Use ‘ruuvi’ on the prefix"
+      - do: checkCheckbox "#use_mqtt_prefix_gw_mac"  # Check checkbox 'Use Ruuvi Gateway's MAC address on the topic prefix'
+      - do: uncheckCheckbox "#use_mqtt_prefix_custom"  # Check checkbox 'Use a custom topic prefix'
+
+      - do: checkCheckbox "#mqtt_use_client_ssl_cert"  # Enable checkbox 'Use client SSL certificate.'
+      - if: hasClassDisableClick "#mqtt-button_upload_client_cert"
+        then: clickButton "#mqtt-button_remove_client_cert_and_key"  # Remove the client certificate and key
+      - if: hasClassDisableClick "#mqtt-button_upload_client_key"
+        then: clickButton "#mqtt-button_remove_client_cert_and_key"  # Remove the client certificate and key
+      - do: saveFile "mqtt_client_cert.crt" "${secrets:mqtt_client_cert}"  # Save certificate to file
+      - do: clickButtonUploadFile "#mqtt-button_upload_client_cert" "mqtt_client_cert.crt" true  # Click on button 'Upload certificate'
+      - do: saveFile "mqtt_client_key.key" "${secrets:mqtt_client_key}"  # Save private key to file
+      - do: clickButtonUploadFile "#mqtt-button_upload_client_key" "mqtt_client_key.key" true  # Click on button 'Upload certificate'
+
+      - do: checkCheckbox "#mqtt_use_server_ssl_cert"  # Enable checkbox 'Use custom SSL certificate for the server'
+      - if: hasClassDisableClick "#mqtt-button_upload_server_cert"
+        then: clickButton "#mqtt-button_remove_server_cert"  # Remove the server certificate
+      - do: saveFile "mqtt_server_cert.pem" "${secrets:mqtt_server_cert}"  # Save private key to file
+      - do: clickButtonUploadFile "#mqtt-button_upload_server_cert" "mqtt_server_cert.pem" true  # Click on button 'Upload certificate'
+
+      - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
+      - do: waitUntilLoaded 20000  # Wait until checking is done
+      - if: isVisible "#page-custom_server-mqtt_validation_error"
+        then: fail "MQTT server check failed"
+      - do: delay 3000
+      - do: clickAndNavigate "#page-custom_server-button-continue"  # Click on 'Next' button
+
+  - page: "#page-ntp_config"
+    steps:
+      - do: clickAndNavigate "#page-ntp_config-button-continue"  # Click on 'Next' button
+
+  - page: "#page-scanning"
+    steps:
+      - do: clickAndNavigate "#page-scanning-button-continue"  # Click on 'Next' button
+
+  - page: "#page-finished"
+    steps:
+      - do: delay 3000

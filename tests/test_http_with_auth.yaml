@@ -1,0 +1,106 @@
+env:
+  url: "${secrets:url}"
+  gw_id: "${secrets:gw_id}"
+  gw_mac: "${secrets:gw_mac}"
+  http_server: "${secrets:http_server}"
+  https_server: "${secrets:https_server}"
+  navigationTimeout: 2000
+  preClickDelay: 1000
+  postClickDelay: 1000
+
+pages:
+  - page?: "#page-auth"
+    steps:
+      - if: isInvisible "#auth-user_login"
+        then: fail "Remote access is disabled"
+      - if: isEnabled "#auth-user"
+        then:
+          - do: fail "Custom username/password is requited"
+        #          - do: fillInput "#auth-user" "${env:username}"
+        #          - do: fillInput "#auth-pass" "${env:password}"
+        else:
+          - do: fillInput "#auth-pass" "${env:gw_id}"
+      - do: clickAndNavigate "#auth-button-login"
+        params:
+          postClickDelay: 3000
+          navigationTimeout: 5000
+
+  - page: "#page-welcome"
+    steps:
+      - do: clickAndNavigate "#page-welcome-button-get-started"  # Click on 'Let's get started' button
+
+  - page: "#page-network_type"
+    steps:
+      - do: clickAndNavigate "#page-network_type-button-skip"  # Click on 'Skip' button
+
+  - page: "#page-software_update"
+    steps:
+      - do: waitUntilLoaded 40000  # Wait until the information about the software update is loaded
+      - do: clickAndNavigate "#page-software_update-button-continue"  # Click on 'Next' or 'Continue and skip update' button
+
+  - page: "#page-remote_cfg"
+    steps:
+      - do: clickAndNavigate "#page-remote_cfg-button-continue"  # Click on 'Next' button
+
+  - page: "#page-update_schedule"
+    steps:
+      - do: clickAndNavigate "#page-update_schedule-button-continue"  # Click on 'Next' button
+
+  - page: "#page-settings_lan_auth"
+    steps:
+      - do: clickAndNavigate "#page-lan_auth_type-button-continue"  # Click on 'Next' button
+
+  - page: "#page-cloud_options"
+    steps:
+      - do: showAdvancedSettings "#page-cloud_options-advanced-button"
+      - do: selectRadio "#use_custom"  # Select radio 'Use Ruuvi Cloud and/or a custom server and configure other advanced settings'
+      - do: clickAndNavigate "#page-cloud_options-button-continue"  # Click on 'Next' button
+
+  - page: "#page-custom_server"
+    steps:
+      - do: checkCheckbox "#use_http_ruuvi"  # Check checkbox 'Ruuvi Cloud'
+      - do: checkCheckbox "#use_http"  # Check checkbox 'HTTP(S)'
+      - do: fillInput "#http_url" "${env:http_server}"  # Fill the input 'URL address'
+      - do: selectRadio "#http_data_format_ruuvi"  # Select 'Data format' radio: 'Don't decode, send data in raw format (default)'
+      - do: fillInput "#http_period" "30"  # Fill the input 'Sending interval (10-3600 seconds)'
+      - do: uncheckCheckbox "#use_http_auth"  # Uncheck checkbox 'Use authentication'
+      - do: uncheckCheckbox "#http_use_client_ssl_cert"  # Uncheck checkbox 'Use client SSL certificate'
+      - do: uncheckCheckbox "#http_use_client_ssl_cert"  # Uncheck checkbox 'Use custom SSL certificate for the server'
+
+      - do: uncheckCheckbox "#use_mqtt"  # Uncheck checkbox 'MQTT'
+
+      - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
+      - do: waitUntilLoaded 20000  # Wait until checking is done
+      - if: isInvisible "#page-custom_server-http_validation_error"
+        then: fail "HTTP server check failed"
+
+      - do: checkCheckbox "#use_http_auth"  # Check checkbox 'Use authentication'
+      - do: fillInput "#http_user" "user1"  # Fill the input 'Username'
+      - do: fillInput "#http_pass" "pass2"  # Fill the input 'Password'
+
+      - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
+      - do: waitUntilLoaded 20000  # Wait until checking is done
+      - if: isInvisible "#page-custom_server-http_validation_error"
+        then: fail "HTTP server check failed"
+
+      - do: fillInput "#http_pass" "pass1"  # Fill the input 'Password'
+
+      - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
+      - do: waitUntilLoaded 20000  # Wait until checking is done
+      - if: isVisible "#page-custom_server-http_validation_error"
+        then: fail "HTTP server check failed"
+
+      - do: delay 3000
+      - do: clickAndNavigate "#page-custom_server-button-continue"  # Click on 'Next' button
+
+  - page: "#page-ntp_config"
+    steps:
+      - do: clickAndNavigate "#page-ntp_config-button-continue"  # Click on 'Next' button
+
+  - page: "#page-scanning"
+    steps:
+      - do: clickAndNavigate "#page-scanning-button-continue"  # Click on 'Next' button
+
+  - page: "#page-finished"
+    steps:
+      - do: delay 3000
