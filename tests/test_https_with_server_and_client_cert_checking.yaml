@@ -4,9 +4,9 @@ env:
   gw_mac: "${secrets:gw_mac}"
   http_server: "${secrets:http_server}"
   https_server: "${secrets:https_server}"
-  navigationTimeout: 2000
+  navigationTimeout: 3000
   preClickDelay: 1000
-  postClickDelay: 1000
+  postClickDelay: 1500
 
 pages:
   - page?: "#page-auth"
@@ -68,7 +68,7 @@ pages:
       - do: checkCheckbox "#http_use_server_ssl_cert"  # Check checkbox 'Use custom SSL certificate for the server'
       - if: hasClassDisableClick "#http-button_upload_server_cert"
         then: clickButton "#http-button_remove_server_cert"  # Remove the server certificate
-      - do: clickButtonUploadFile "#http-button_upload_server_cert" "../integration_tests/.test_results/server_cert.pem" false  # Click on button 'Upload certificate'
+      - do: clickButtonUploadFile "#http-button_upload_server_cert" "../integration_tests/.test_results/TST-007/server_cert.pem" false  # Click on button 'Upload certificate'
 
       - do: uncheckCheckbox "#use_mqtt"  # Uncheck checkbox 'MQTT'
 
@@ -82,8 +82,8 @@ pages:
         then: clickButton "#http-button_remove_client_cert_and_key"  # Remove the client certificate and key
       - if: hasClassDisableClick "#http-button_upload_client_key"
         then: clickButton "#http-button_remove_client_cert_and_key"  # Remove the client certificate and key
-      - do: clickButtonUploadFile "#http-button_upload_client_cert" "../integration_tests/.test_results/client_cert.pem" false  # Click on button 'Upload certificate'
-      - do: clickButtonUploadFile "#http-button_upload_client_key" "../integration_tests/.test_results/client_key.pem" false  # Click on button 'Upload private key'
+      - do: clickButtonUploadFile "#http-button_upload_client_cert" "../integration_tests/.test_results/TST-007/client_cert.pem" false  # Click on button 'Upload certificate'
+      - do: clickButtonUploadFile "#http-button_upload_client_key" "../integration_tests/.test_results/TST-007/client_key.pem" false  # Click on button 'Upload private key'
 
       - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
       - do: waitUntilLoaded 20000  # Wait until checking is done

@@ -6,6 +6,33 @@
 import puppeteer, {Page} from 'puppeteer';
 import fs from 'fs';
 import path from "path";
+import fetch from 'node-fetch';
+
+async function readJsonFromFile(file_name) {
+  try {
+    const jsonString = await fs.promises.readFile(file_name, 'utf8');
+    return JSON.parse(jsonString);
+  } catch (err) {
+    throw new Error(`Error reading file ${file_name}: ${err}`);
+  }
+}
+
+async function deleteFileIfExist(filePath) {
+  console.log(`DeleteFileIfExist: ${filePath}`);
+  try {
+    await fs.promises.access(filePath);
+    await fs.promises.unlink(filePath);
+    console.log(`File ${filePath} has been deleted`);
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      throw error;
+    }
+  }
+}
+
+const getValue = (object, path) => {
+  return path.split('.').reduce((o, k) => (o || {})[k], object);
+};
 
 /**
  * Checks if the element specified by selector has a certain class.
@@ -90,7 +117,11 @@ export class UiScriptActionIf {
     IS_DISABLED: "isDisabled",
     IS_ENABLED: "isEnabled",
     HAS_CLASS_DISABLE_CLICK: "hasClassDisableClick",
-    HAS_NO_CLASS_DISABLE_CLICK: "hasNoClassDisableClick"
+    HAS_NO_CLASS_DISABLE_CLICK: "hasNoClassDisableClick",
+    TEST_JSON_VALUE_EQ: "testJsonValueEq",
+    TEST_JSON_VALUE_NOT_EQ: "testJsonValueNotEq",
+    TEST_JSON_VALUE_EXISTS: "testJsonValueExists",
+    TEST_JSON_VALUE_NOT_EXISTS: "testJsonValueNotExists",
   };
 
   /**
@@ -122,6 +153,18 @@ export class UiScriptActionIf {
     }
     if (check === UiScriptActionIf.UiScriptActionIfType.HAS_NO_CLASS_DISABLE_CLICK) {
       return new UiScriptActionIfHasClassDisableClick(true, args);
+    }
+    if (check === UiScriptActionIf.UiScriptActionIfType.TEST_JSON_VALUE_EQ) {
+      return new UiScriptActionIfJsonValueEq(false, args);
+    }
+    if (check === UiScriptActionIf.UiScriptActionIfType.TEST_JSON_VALUE_NOT_EQ) {
+      return new UiScriptActionIfJsonValueEq(true, args);
+    }
+    if (check === UiScriptActionIf.UiScriptActionIfType.TEST_JSON_VALUE_EXISTS) {
+      return new UiScriptActionIfJsonValueExists(false, args);
+    }
+    if (check === UiScriptActionIf.UiScriptActionIfType.TEST_JSON_VALUE_NOT_EXISTS) {
+      return new UiScriptActionIfJsonValueExists(true, args);
     }
     throw new Error(`Invalid check: ${check}`);
   }
@@ -211,6 +254,71 @@ export class UiScriptActionIfHasClassDisableClick extends UiScriptActionIf {
 
 /**
  * @class
+ * @extends UiScriptActionIf
+ * @param {string[]} args
+ */
+export class UiScriptActionIfJsonValueEq extends UiScriptActionIf {
+  constructor(is_inverse, args) {
+    super(is_inverse);
+    if (args.length !== 3) {
+      throw new Error(`UiScriptActionIfJsonValueEq: Expected 3 arguments, got ${args.length}, args: ${args}`);
+    }
+    this.file_name = args[0];
+    this.json_selector = args[1];
+    this.expected_value = args[2];
+  }
+  /**
+   * @param {Page} page
+   * @returns {Promise<boolean>}
+   */
+  async check(page) {
+    console.log(`Check: JsonValueEq: '${this.file_name}', '${this.json_selector}', '${this.expected_value}'`);
+    const json_obj = await readJsonFromFile(this.file_name);
+    const value = getValue(json_obj, this.json_selector);
+    console.log(`JsonValueEq: value='${value}'`);
+    const isEq = value === this.expected_value;
+    if (this.is_inverse) {
+      return !isEq;
+    } else {
+      return isEq;
+    }
+  }
+}
+
+/**
+ * @class
+ * @extends UiScriptActionIf
+ * @param {string[]} args
+ */
+export class UiScriptActionIfJsonValueExists extends UiScriptActionIf {
+  constructor(is_inverse, args) {
+    super(is_inverse);
+    if (args.length !== 2) {
+      throw new Error(`UiScriptActionIfJsonValueExists: Expected 2 arguments, got ${args.length}, args: ${args}`);
+    }
+    this.file_name = args[0];
+    this.json_selector = args[1];
+  }
+  /**
+   * @param {Page} page
+   * @returns {Promise<boolean>}
+   */
+  async check(page) {
+    console.log(`Check: JsonValueExists: '${this.file_name}', '${this.json_selector}'`);
+    const json_obj = await readJsonFromFile(this.file_name);
+    const value = getValue(json_obj, this.json_selector);
+    const isExist = value !== undefined;
+    console.log(`JsonValueEq: isExist='${isExist}'`);
+    if (this.is_inverse) {
+      return !isExist;
+    } else {
+      return isExist;
+    }
+  }
+}
+
+/**
+ * @class
  */
 export class UiScriptActionDo extends UiScriptAction {
   static defaultPreClickDelay = 1000;
@@ -235,6 +343,7 @@ export class UiScriptActionDo extends UiScriptAction {
     CLICK_BUTTON: "clickButton",
     CLICK_BUTTON_UPLOAD_FILE: "clickButtonUploadFile",
     SAVE_FILE: "saveFile",
+    HTTP_GET: "httpGet",
   };
 
   /**
@@ -310,6 +419,9 @@ export class UiScriptActionDo extends UiScriptAction {
     }
     if (action_type === UiScriptActionDo.UiScriptActionDoType.SAVE_FILE) {
       return new UiScriptActionDoSaveFile(action_type, args, params);
+    }
+    if (action_type === UiScriptActionDo.UiScriptActionDoType.HTTP_GET) {
+      return new UiScriptActionDoHttpGet(action_type, args, params);
     }
     throw new Error(`Invalid 'do' action: ${action_type}`);
   }
@@ -886,6 +998,57 @@ export class UiScriptActionDoSaveFile extends UiScriptActionDo {
   async execute(page) {
     console.log(`Execute sequence: Save file: '${this.file_path}'`);
     await fs.promises.writeFile(this.file_path, this.file_content);
+  }
+}
+
+/**
+ * @class
+ * @extends UiScriptActionDo
+ */
+export class UiScriptActionDoHttpGet extends UiScriptActionDo {
+  /**
+   * @param {string} action_type
+   * @param {string[]} args
+   * @param {Object | undefined} params
+   */
+  constructor(action_type, args, params) {
+    super(action_type, params);
+    if (args.length !== 2 && args.length !== 3) {
+      throw new Error(`UiScriptActionDoHttpGet: Expected 2 or 3 arguments, got ${args.length}, args: ${args}`);
+    }
+    this.url = args[0];
+    if (args[1] === '-') {
+      this.expected_http_status_code = undefined;
+    } else {
+      this.expected_http_status_code = parseInt(args[1]);
+    }
+    if (args.length === 3) {
+      this.file_name = args[2];
+    } else {
+      this.file_name = undefined;
+    }
+  }
+
+  /**
+   * @param {Page} page
+   * @returns {Promise<void>}
+   */
+  async execute(page) {
+    console.log(`Execute sequence: HTTP GET: '${this.url}'`);
+    if (this.file_name) {
+      await deleteFileIfExist(this.file_name);
+    }
+    const response = await fetch(this.url);
+    console.log(`Status: ${response.status}`);
+    if (this.expected_http_status_code) {
+      if (response.status !== this.expected_http_status_code) {
+        throw new Error(`HTTP GET failed: Expected status code ${this.expected_http_status_code}, got ${response.status}`);
+      }
+      if (this.file_name) {
+        const responseBody = await response.text(); // use .json() for JSON data
+        await fs.promises.writeFile(this.file_name, responseBody);
+      }
+    }
   }
 }
 

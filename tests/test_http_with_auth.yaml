@@ -4,9 +4,9 @@ env:
   gw_mac: "${secrets:gw_mac}"
   http_server: "${secrets:http_server}"
   https_server: "${secrets:https_server}"
-  navigationTimeout: 2000
+  navigationTimeout: 3000
   preClickDelay: 1000
-  postClickDelay: 1000
+  postClickDelay: 1500
 
 pages:
   - page?: "#page-auth"
@@ -103,4 +103,11 @@ pages:
 
   - page: "#page-finished"
     steps:
-      - do: delay 3000
+      - do: httpGet ${env:http_server} -
+      - do: httpGet ${env:http_server} 404
+      - do: delay 40000
+      - do: httpGet ${env:http_server} 200 "../integration_tests/.test_results/TST-007/record.json"
+      - if: testJsonValueNotEq "../integration_tests/.test_results/TST-007/record.json" "data.gw_mac" "${env:gw_mac}"
+        then: fail "Gateway MAC address is not correct"
+      - if: testJsonValueNotExists "../integration_tests/.test_results/TST-007/record.json" "data.tags.${secrets:ruuvi_tag}"
+        then: fail "Tag data not found in the record"

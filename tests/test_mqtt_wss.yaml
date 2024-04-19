@@ -4,9 +4,9 @@ env:
   gw_mac: "${secrets:gw_mac}"
   http_server: "${secrets:http_server}"
   https_server: "${secrets:https_server}"
-  navigationTimeout: 2000
+  navigationTimeout: 3000
   preClickDelay: 1000
-  postClickDelay: 1000
+  postClickDelay: 1500
 
 pages:
   - page?: "#page-auth"

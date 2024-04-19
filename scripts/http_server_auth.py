@@ -16,6 +16,7 @@ import time
 import socket
 
 g_simulate_post_delay = 0
+g_record = None
 
 
 def log(msg):
@@ -96,6 +97,9 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
             log(f'Simulating delay of {g_simulate_post_delay} seconds...')
             time.sleep(g_simulate_post_delay)
             log('Simulated delay done.')
+        if self.path == '/record':
+            global g_record
+            g_record = post_data.decode('utf-8')
         self.send_response(200)
         self.send_header('Ruuvi-HMAC-KEY', 'new_key')
 #         self.send_header('X-Ruuvi-Gateway-Rate', '5')
@@ -104,6 +108,9 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         log(f'POST {self.path}')
+        if self.path == '/kill':
+            log(f'Kill command received, exiting.')
+            self.server.running = False
         if self._auth is None:
             self._do_POST(False)
         else:
@@ -231,6 +238,24 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         resp += content.encode('ascii')
         self.wfile.write(resp)
 
+    def handle_get_record(self):
+        global g_record
+        resp = b''
+        if g_record is not None:
+            file_content = g_record.encode('utf-8')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: Application\r\n'.encode('ascii')
+            resp += f'Content-length: {len(file_content)}\r\n'.encode('ascii')
+            g_record = None
+        else:
+            resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
+            file_content = b'File not found'
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += file_content
+        self.wfile.write(resp)
+
     def do_GET(self):
         log(f'GET {self.path}')
         if self.path == '/firmwareupdate':
@@ -244,6 +269,9 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
             return
         if self.path == '/firmwareupdate_empty':
             self.handle_firmware_update_empty()
+            return
+        if self.path == '/record':
+            self.handle_get_record()
             return
         if self._auth is None:
             self._do_GET(False)
@@ -286,7 +314,10 @@ def httpd_run(HandlerClass=BaseHTTPRequestHandler,
         conn_type = "HTTP" if ssl_cert is None else "HTTPS"
         log(serve_message.format(conn_type=conn_type.upper(), conn_type2=conn_type.lower(), host=sa[0], port=sa[1]))
         try:
-            httpd.serve_forever()
+            httpd.running = True
+            while httpd.running:
+                log("Handle request...")
+                httpd.handle_request()
         except KeyboardInterrupt:
             print('\n')
             log("Keyboard interrupt received, exiting.")
