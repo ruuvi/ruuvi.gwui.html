@@ -76,14 +76,14 @@ pages:
 
       - do: checkCheckbox "#use_http_auth"  # Check checkbox 'Use authentication'
       - do: fillInput "#http_user" "user1"  # Fill the input 'Username'
-      - do: fillInput "#http_pass" "pass2"  # Fill the input 'Password'
+      - do: fillInput "#http_pass" "Qe1_z@3Rt1.incorrect"  # Fill the input 'Password'
 
       - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
       - do: waitUntilLoaded 20000  # Wait until checking is done
       - if: isInvisible "#page-custom_server-http_validation_error"
         then: fail "HTTP server check failed"
 
-      - do: fillInput "#http_pass" "pass1"  # Fill the input 'Password'
+      - do: fillInput "#http_pass" "Qe1_z@3Rt1.j"  # Fill the input 'Password'
 
       - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
       - do: waitUntilLoaded 20000  # Wait until checking is done
@@ -105,9 +105,17 @@ pages:
     steps:
       - do: httpGet ${env:http_server} -
       - do: httpGet ${env:http_server} 404
-      - do: delay 40000
-      - do: httpGet ${env:http_server} 200 "../integration_tests/.test_results/TST-007/record.json"
-      - if: testJsonValueNotEq "../integration_tests/.test_results/TST-007/record.json" "data.gw_mac" "${env:gw_mac}"
-        then: fail "Gateway MAC address is not correct"
-      - if: testJsonValueNotExists "../integration_tests/.test_results/TST-007/record.json" "data.tags.${secrets:ruuvi_tag}"
-        then: fail "Tag data not found in the record"
+      - do: delay 10000
+      - steps:
+          - do: downloadHistory "${env:url}/history" 200 "${dir:test}/history.json"
+          - if: testJsonValueNotEq "${dir:test}/history.json" "data.gw_mac" "${env:gw_mac}"
+            then: fail "Gateway MAC address is not correct in history.json"
+          - if: testJsonValueNotExists "${dir:test}/history.json" "data.tags.${secrets:ruuvi_tag}"
+            then: fail "Tag data not found in history.json"
+      - do: delay 30000
+      - steps:
+        - do: httpGet ${env:http_server} 200 "${dir:test}/record.json"
+        - if: testJsonValueNotEq "${dir:test}/record.json" "data.gw_mac" "${env:gw_mac}"
+          then: fail "Gateway MAC address is not correct"
+        - if: testJsonValueNotExists "${dir:test}/record.json" "data.tags.${secrets:ruuvi_tag}"
+          then: fail "Tag data not found in the record"

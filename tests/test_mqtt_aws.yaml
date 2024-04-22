@@ -63,13 +63,13 @@ pages:
 
       - do: checkCheckbox "#use_mqtt"  # Check checkbox 'MQTT'
       - do: selectRadio "#mqtt_transport_SSL"  # Select radio 'MQTT over SSL'
-      - do: fillInput "#mqtt_server" "a1t7928xlpfw6k-ats.iot.eu-central-1.amazonaws.com"  # Fill the input 'Server'
+      - do: fillInput "#mqtt_server" "${secrets:mqtt_aws_url}"  # Fill the input 'Server'
       - do: fillInput "#mqtt_port" "8883"  # Fill the input 'Port'
       - do: selectRadio "#mqtt_data_format_ruuvi"  # Select the radio 'Don't decode, send data in raw format (default)'
       - do: uncheckCheckbox "#use_mqtt_periodic_sending"  # Uncheck the checkbox 'Define sending interval instead of relaying messages instantly'
       - do: fillInput "#mqtt_user" ""  # Fill the input 'Username'
       - do: fillInput "#mqtt_pass" ""  # Fill the input 'Password'
-      - do: fillInput "#mqtt_client_id" "iotconsole-2118c7c7-9dff-4f45-8274-28d7cdc1e186"  # Fill the input 'Client ID'
+      - do: fillInput "#mqtt_client_id" "${secrets:mqtt_aws_client_id}"  # Fill the input 'Client ID'
       - do: checkCheckbox "#mqtt_disable_retained_messages"  # Check checkbox 'Disable the use of retained messages'
       - do: checkCheckbox "#use_mqtt_prefix_ruuvi"  # Check checkbox "Use ‘ruuvi’ on the prefix"
       - do: checkCheckbox "#use_mqtt_prefix_gw_mac"  # Check checkbox 'Use Ruuvi Gateway's MAC address on the topic prefix'
@@ -80,19 +80,19 @@ pages:
         then: clickButton "#mqtt-button_remove_client_cert_and_key"  # Remove the client certificate and key
       - if: hasClassDisableClick "#mqtt-button_upload_client_key"
         then: clickButton "#mqtt-button_remove_client_cert_and_key"  # Remove the client certificate and key
-      - do: saveFile "mqtt_client_cert.crt" "${secrets:mqtt_client_cert}"  # Save certificate to file
-      - do: clickButtonUploadFile "#mqtt-button_upload_client_cert" "mqtt_client_cert.crt" true  # Click on button 'Upload certificate'
-      - do: saveFile "mqtt_client_key.key" "${secrets:mqtt_client_key}"  # Save private key to file
-      - do: clickButtonUploadFile "#mqtt-button_upload_client_key" "mqtt_client_key.key" true  # Click on button 'Upload certificate'
+      - do: saveFile "${dir:test}/mqtt_client_cert.crt" "${secrets:mqtt_client_cert}"  # Save certificate to file
+      - do: clickButtonUploadFile "#mqtt-button_upload_client_cert" "${dir:test}/mqtt_client_cert.crt" false  # Click on button 'Upload certificate'
+      - do: saveFile "${dir:test}/mqtt_client_key.key" "${secrets:mqtt_client_key}"  # Save private key to file
+      - do: clickButtonUploadFile "#mqtt-button_upload_client_key" "${dir:test}/mqtt_client_key.key" false  # Click on button 'Upload certificate'
 
       - do: checkCheckbox "#mqtt_use_server_ssl_cert"  # Enable checkbox 'Use custom SSL certificate for the server'
       - if: hasClassDisableClick "#mqtt-button_upload_server_cert"
         then: clickButton "#mqtt-button_remove_server_cert"  # Remove the server certificate
-      - do: saveFile "mqtt_server_cert.pem" "${secrets:mqtt_server_cert}"  # Save private key to file
-      - do: clickButtonUploadFile "#mqtt-button_upload_server_cert" "mqtt_server_cert.pem" true  # Click on button 'Upload certificate'
+      - do: saveFile "${dir:test}/mqtt_server_cert.pem" "${secrets:mqtt_server_cert}"  # Save private key to file
+      - do: clickButtonUploadFile "#mqtt-button_upload_server_cert" "${dir:test}/mqtt_server_cert.pem" false  # Click on button 'Upload certificate'
 
       - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
-      - do: waitUntilLoaded 20000  # Wait until checking is done
+      - do: waitUntilLoaded 30000  # Wait until checking is done
       - if: isVisible "#page-custom_server-mqtt_validation_error"
         then: fail "MQTT server check failed"
       - do: delay 3000
@@ -108,4 +108,16 @@ pages:
 
   - page: "#page-finished"
     steps:
-      - do: delay 3000
+      - do: delay 10000
+      - steps:
+          - do: downloadHistory "${env:url}/history" 200 "${dir:test}/history.json"
+          - if: testJsonValueNotEq "${dir:test}/history.json" "data.gw_mac" "${env:gw_mac}"
+            then: fail "Gateway MAC address is not correct in history.json"
+          - if: testJsonValueNotExists "${dir:test}/history.json" "data.tags.${secrets:ruuvi_tag}"
+            then: fail "Tag data not found in history.json"
+      - steps:
+          - do: exec "mosquitto_sub -h ${secrets:mqtt_aws_url} -p 8883 -t "ruuvi/${env:gw_mac}/${secrets:ruuvi_tag}" -v -W 15 -C 1 --cafile "${dir:test}/mqtt_server_cert.pem" --cert "${dir:test}/mqtt_client_cert.crt" --key "${dir:test}/mqtt_client_key.key" | tee "${dir:test}/mqtt.txt"" 20
+          - do: exec "sed 's/[^ ]* *[^ ]* //g' "${dir:test}/mqtt.txt" | tee "${dir:test}/mqtt.json"" 5
+          - if: testJsonValueNotEq "${dir:test}/mqtt.json" "gw_mac" "${env:gw_mac}"
+            then: fail "Gateway MAC address is not correct"
+      - do: delay 2000

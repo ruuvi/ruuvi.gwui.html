@@ -9,6 +9,8 @@ import {hideBin} from 'yargs/helpers';
 import fs from 'fs';
 import yaml from 'js-yaml';
 import {UiScript} from "./ruuvi_gw_ui_script.js";
+import logger from './ruuvi_gw_ui_logger.js';
+import path from "path";
 
 class CmdArgs {
   constructor(args) {
@@ -36,7 +38,7 @@ async function delay(ms, log_msg) {
     return;
   }
   if (log_msg) {
-    console.log(`${log_msg}: ${ms} ms`);
+    logger.info(`${log_msg}: ${ms} ms`);
   }
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -52,7 +54,7 @@ function loadConfig(filePath) {
     const fileContents = fs.readFileSync(filePath, 'utf8');
     return yaml.load(fileContents);
   } catch (error) {
-    console.error(`Error reading YAML from ${filePath}:`, error);
+    logger.error(`Error reading YAML from ${filePath}:`, error);
     throw error;
   }
 }
@@ -68,8 +70,23 @@ function loadJsonFile(filePath) {
     const fileContents = fs.readFileSync(filePath, 'utf8');
     return JSON.parse(fileContents);
   } catch (error) {
-    console.error(`Error reading JSON from ${filePath}:`, error);
+    logger.error(`Error reading JSON from ${filePath}:`, error);
     throw error;
+  }
+}
+
+async function directoryExists(path) {
+  try {
+    await fs.promises.access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function removeDirectory(path) {
+  if(await directoryExists(path)) {
+    await fs.promises.rmdir(path, {recursive: true});
   }
 }
 
@@ -82,6 +99,9 @@ function loadJsonFile(filePath) {
         .options({
           secrets: { type: 'string', demandOption: true, describe: 'Path to the JSON file with the secrets' },
         })
+        .options({
+          dir_test: { type: 'string', demandOption: true, describe: 'Path to the folder with the test data, results and logs' },
+        })
         .argv;
 
     const args = new CmdArgs(argv);
@@ -93,7 +113,10 @@ function loadJsonFile(filePath) {
     }
 
     const params = {
-      secrets: secrets
+      secrets: secrets,
+      dir: {
+        test: argv.dir_test,
+      },
     }
 
     const config = loadConfig(args.config);
@@ -102,31 +125,31 @@ function loadJsonFile(filePath) {
     const screenWidth = uiScript.env.screenWidth ? uiScript.env.screenWidth : 800;
     const screenHeight = uiScript.env.screenWidth ? uiScript.env.screenHeight : 1024;
 
+    const browser_tmp = path.join(argv.dir_test, 'tmp');
+    await removeDirectory(browser_tmp);
     const browser = await puppeteer.launch({
       headless: false,
+      ignoreDefaultArgs: false,
+      args: [
+        `--window-size=${screenWidth},${screenHeight}`,
+        '--disable-infobars',
+        '--noerrdialogs',
+        '--disable-translate',
+        '--disable-extensions',
+        '--disable-features=TranslateUI',
+        '--disk-cache-size=0'
+      ],
       defaultViewport: null, // Disables Puppeteer's default viewport settings
-      args: [`--window-size=${screenWidth},${screenHeight}`] // Set initial window size, height will be adjusted
+      userDataDir: browser_tmp,
     });
-    const page = await browser.newPage();
 
-    await page.goto(uiScript.env.url);
+    await uiScript.execute(browser);
 
-    // Wait for the page to load, which includes completing redirection
-    await page.waitForNavigation({ waitUntil: 'load' });
-    await delay(2000);
-
-    const currentUrl = page.url();
-    console.log(`UI opened, current URL: ${currentUrl}`);
-
-    await uiScript.execute(page);
-
-    await browser.close();
-
-    console.log(`Finished successfully`);
+    logger.info(`Finished successfully`);
 
     process.exit(0);
   } catch (error) {
-    console.error('An error occurred: ', error);
+    logger.error('An error occurred: ', error);
     process.exit(1);
   }
 })();

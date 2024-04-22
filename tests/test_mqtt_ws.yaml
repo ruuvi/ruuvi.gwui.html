@@ -96,4 +96,16 @@ pages:
 
   - page: "#page-finished"
     steps:
-      - do: delay 3000
+      - do: delay 10000
+      - steps:
+          - do: downloadHistory "${env:url}/history" 200 "${dir:test}/history.json"
+          - if: testJsonValueNotEq "${dir:test}/history.json" "data.gw_mac" "${env:gw_mac}"
+            then: fail "Gateway MAC address is not correct in history.json"
+          - if: testJsonValueNotExists "${dir:test}/history.json" "data.tags.${secrets:ruuvi_tag}"
+            then: fail "Tag data not found in history.json"
+      - steps:
+          - do: exec "mosquitto_sub -h test.mosquitto.org -p 1883 -t "ruuvi/${env:gw_mac}/${secrets:ruuvi_tag}" -v -W 15 -C 1 | tee "${dir:test}/mqtt.txt"" 20
+          - do: exec "sed 's/[^ ]* *[^ ]* //g' "${dir:test}/mqtt.txt" | tee "${dir:test}/mqtt.json"" 5
+          - if: testJsonValueNotEq "${dir:test}/mqtt.json" "gw_mac" "${env:gw_mac}"
+            then: fail "Gateway MAC address is not correct"
+      - do: delay 2000

@@ -3,10 +3,30 @@
  * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
  */
 
-import puppeteer, {Page} from 'puppeteer';
+import puppeteer, {Browser, Page} from 'puppeteer';
 import fs from 'fs';
 import path from "path";
 import fetch from 'node-fetch';
+import https from 'https';
+import logger from './ruuvi_gw_ui_logger.js';
+import {exec} from 'child_process';
+
+/** Delay execution for the specified number of milliseconds
+ *
+ * @param {number | string} ms - The number of milliseconds to wait.
+ * @param {string?} log_msg - The message to log.
+ * @returns {Promise<unknown>}
+ */
+async function delay(ms, log_msg) {
+  ms = parseInt(ms || 0);
+  if (ms === 0) {
+    return;
+  }
+  if (log_msg) {
+    logger.info(`${log_msg}: ${ms} ms`);
+  }
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 async function readJsonFromFile(file_name) {
   try {
@@ -18,11 +38,11 @@ async function readJsonFromFile(file_name) {
 }
 
 async function deleteFileIfExist(filePath) {
-  console.log(`DeleteFileIfExist: ${filePath}`);
+  logger.info(`DeleteFileIfExist: ${filePath}`);
   try {
     await fs.promises.access(filePath);
     await fs.promises.unlink(filePath);
-    console.log(`File ${filePath} has been deleted`);
+    logger.info(`File ${filePath} has been deleted`);
   } catch (error) {
     if (error.code !== 'ENOENT') {
       throw error;
@@ -99,10 +119,11 @@ export class UiScriptAction {
 
   /**
    * @abstract
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
+  async execute(browser, page) {
     throw new Error("Method 'execute' must be implemented.");
   }
 }
@@ -129,6 +150,15 @@ export class UiScriptActionIf {
    */
   constructor(is_inverse) {
     this.is_inverse = is_inverse;
+  }
+
+  async scrollToSelector(page, selector) {
+    await page.evaluate(selector => {
+      const element = document.querySelector(selector);
+      if (element) {
+        element.scrollIntoView();
+      }
+    }, selector);
   }
 
   /**
@@ -201,8 +231,13 @@ export class UiScriptActionIfIsInvisible extends UiScriptActionIf {
    * @returns {Promise<boolean>}
    */
   async check(page) {
+    await this.scrollToSelector(page, this.selector);
+    await delay(500);
     const isDisplayNone = await hasStyleDisplayNone(page, this.selector);
-    return this.is_inverse ? !isDisplayNone : isDisplayNone;
+    const result = this.is_inverse ? !isDisplayNone : isDisplayNone;
+    logger.info(`Check: ${this.is_inverse ? 'NOT' : ''} IsInvisible: '${this.selector}', ${result}`);
+    await delay(500);
+    return result;
   }
 }
 
@@ -224,8 +259,13 @@ export class UiScriptActionIfIsDisabled extends UiScriptActionIf {
    * @returns {Promise<boolean>}
    */
   async check(page) {
+    await this.scrollToSelector(page, this.selector);
+    await delay(500);
     const isDisabled = await hasAttributeDisabled(page, this.selector);
-    return this.is_inverse ? !isDisabled : isDisabled;
+    const result = this.is_inverse ? !isDisabled : isDisabled;
+    logger.info(`Check: ${this.is_inverse ? 'NOT' : ''} IsDisabled: '${this.selector}', ${result}`);
+    await delay(500);
+    return result;
   }
 }
 
@@ -247,8 +287,13 @@ export class UiScriptActionIfHasClassDisableClick extends UiScriptActionIf {
    * @returns {Promise<boolean>}
    */
   async check(page) {
+    await this.scrollToSelector(page, this.selector);
+    await delay(500);
     const isDisabled = await hasClass(page, this.selector, 'disable-click');
-    return this.is_inverse ? !isDisabled : isDisabled;
+    const result = this.is_inverse ? !isDisabled : isDisabled;
+    logger.info(`Check: ${this.is_inverse ? 'NOT' : ''} HasClassDisableClick: '${this.selector}', ${result}`);
+    await delay(500);
+    return result;
   }
 }
 
@@ -272,16 +317,15 @@ export class UiScriptActionIfJsonValueEq extends UiScriptActionIf {
    * @returns {Promise<boolean>}
    */
   async check(page) {
-    console.log(`Check: JsonValueEq: '${this.file_name}', '${this.json_selector}', '${this.expected_value}'`);
+    logger.info(`Check: ${this.is_inverse ? 'NOT' : ''} JsonValueEq: '${this.file_name}:${this.json_selector}==${this.expected_value}'`);
+    await delay(500);
     const json_obj = await readJsonFromFile(this.file_name);
     const value = getValue(json_obj, this.json_selector);
-    console.log(`JsonValueEq: value='${value}'`);
     const isEq = value === this.expected_value;
-    if (this.is_inverse) {
-      return !isEq;
-    } else {
-      return isEq;
-    }
+    const result = this.is_inverse ? !isEq : isEq;
+    logger.info(`Check: ${this.is_inverse ? 'NOT' : ''} '${value}==${this.expected_value}': ${result}`);
+    await delay(500);
+    return result;
   }
 }
 
@@ -304,16 +348,15 @@ export class UiScriptActionIfJsonValueExists extends UiScriptActionIf {
    * @returns {Promise<boolean>}
    */
   async check(page) {
-    console.log(`Check: JsonValueExists: '${this.file_name}', '${this.json_selector}'`);
+    logger.info(`Check: ${this.is_inverse ? 'NOT' : ''} JsonValueExists: '${this.file_name}:${this.json_selector}'`);
+    await delay(500);
     const json_obj = await readJsonFromFile(this.file_name);
     const value = getValue(json_obj, this.json_selector);
     const isExist = value !== undefined;
-    console.log(`JsonValueEq: isExist='${isExist}'`);
-    if (this.is_inverse) {
-      return !isExist;
-    } else {
-      return isExist;
-    }
+    const result = this.is_inverse ? !isExist : isExist;
+    logger.info(`Check: ${this.is_inverse ? 'NOT' : ''} IsJsonValueExists '${this.file_name}:${this.json_selector}': ${result}`);
+    await delay(500);
+    return result;
   }
 }
 
@@ -344,6 +387,8 @@ export class UiScriptActionDo extends UiScriptAction {
     CLICK_BUTTON_UPLOAD_FILE: "clickButtonUploadFile",
     SAVE_FILE: "saveFile",
     HTTP_GET: "httpGet",
+    DOWNLOAD_HISTORY: "downloadHistory",
+    EXEC: "exec",
   };
 
   /**
@@ -423,32 +468,22 @@ export class UiScriptActionDo extends UiScriptAction {
     if (action_type === UiScriptActionDo.UiScriptActionDoType.HTTP_GET) {
       return new UiScriptActionDoHttpGet(action_type, args, params);
     }
+    if (action_type === UiScriptActionDo.UiScriptActionDoType.DOWNLOAD_HISTORY) {
+      return new UiScriptActionDoDownloadHistory(action_type, args, params);
+    }
+    if (action_type === UiScriptActionDo.UiScriptActionDoType.EXEC) {
+      return new UiScriptActionDoExec(action_type, args, params);
+    }
     throw new Error(`Invalid 'do' action: ${action_type}`);
-  }
-
-  /** Delay execution for the specified number of milliseconds
-   *
-   * @param {number | string} ms - The number of milliseconds to wait.
-   * @param {string?} log_msg - The message to log.
-   * @returns {Promise<unknown>}
-   */
-  async delay(ms, log_msg) {
-    ms = parseInt(ms || 0);
-    if (ms === 0) {
-      return;
-    }
-    if (log_msg) {
-      console.log(`${log_msg}: ${ms} ms`);
-    }
-    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   /**
    * @abstract
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
+  async execute(browser, page) {
     throw new Error("Method 'execute' must be implemented.");
   }
 }
@@ -473,11 +508,12 @@ export class UiScriptActionDoFillInput extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
-    console.log(`Execute sequence: Fill input: ${this.selector} with ${this.value}`);
+  async execute(browser, page) {
+    logger.info(`Execute sequence: Fill input: ${this.selector} with ${this.value}`);
     await page.waitForSelector(this.selector);
 
     await page.evaluate(selector => {
@@ -487,7 +523,7 @@ export class UiScriptActionDoFillInput extends UiScriptActionDo {
       }
     }, this.selector);
 
-    await this.delay(this.preClickDelay);
+    await delay(this.preClickDelay);
 
     await page.focus(this.selector);
     // Select all text in the input element
@@ -500,7 +536,7 @@ export class UiScriptActionDoFillInput extends UiScriptActionDo {
 
     await page.type(this.selector, this.value);
 
-    await this.delay(this.postClickDelay, "Post click delay");
+    await delay(this.postClickDelay, "Post click delay");
   }
 }
 
@@ -538,10 +574,11 @@ export class UiScriptActionDoClickAndNavigate extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
+  async execute(browser, page) {
     await page.evaluate(selector => {
       const element = document.querySelector(selector);
       if (element) {
@@ -549,15 +586,15 @@ export class UiScriptActionDoClickAndNavigate extends UiScriptActionDo {
       }
     }, this.selector);
 
-    await this.delay(this.preClickDelay);
+    await delay(this.preClickDelay);
 
-    console.log(`Execute sequence: Click on ${this.selector} and waiting for navigation (timeout: ${this.navigationTimeout} ms)...`);
+    logger.info(`Execute sequence: Click on ${this.selector} and waiting for navigation (timeout: ${this.navigationTimeout} ms)...`);
     await Promise.race([
       page.click(this.selector),
       page.waitForNavigation({ timeout: this.navigationTimeout }),
       new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout waiting for navigation')), parseInt(this.navigationTimeout)))
     ]);
-    await this.delay(this.postClickDelay, 'Post click delay');
+    await delay(this.postClickDelay, 'Post click delay');
   }
 }
 
@@ -580,11 +617,12 @@ export class UiScriptActionDoFail extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
-    console.error(`Execute sequence: Fail: ${this.message}`);
+  async execute(browser, page) {
+    logger.error(`Execute sequence: Fail: ${this.message}`);
     process.exit(1);
   }
 }
@@ -608,12 +646,13 @@ export class UiScriptActionDoDelay extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
-    console.log(`Execute sequence: Delay: ${this.delay_ms} ms.`);
-    await this.delay(this.delay_ms);
+  async execute(browser, page) {
+    logger.info(`Execute sequence: Delay: ${this.delay_ms} ms.`);
+    await delay(this.delay_ms);
   }
 }
 
@@ -636,17 +675,19 @@ export class UiScriptActionDoWaitUntilLoaded extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
-    console.log(`Execute sequence: WaitUntilLoaded: with timeout ${this.timeout} ms`);
+  async execute(browser, page) {
+    logger.info(`Execute sequence: WaitUntilLoaded: with timeout ${this.timeout} ms`);
     await this.#waitUntilLoaded(page, this.timeout)
         .catch(error => {
-          console.error('Failed to wait until page is loaded:', error.message);
+          logger.error('Failed to wait until page is loaded:', error.message);
           throw error;  // Stop execution and throw the error
         });
-    console.log(`Execute sequence: WaitUntilLoaded: done`);
+    logger.info(`Execute sequence: WaitUntilLoaded: done`);
+    await delay(this.postClickDelay, 'Post click delay');
   }
 
   /**
@@ -701,15 +742,16 @@ export class UiScriptActionDoShowAdvancedSettings extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
+  async execute(browser, page) {
     const isVisibleAdvancedSettings = await hasStyleDisplayNone(page,
         `${this.selector} .btn-dropdown-arrow-down`);
-    console.log(`Show Advanced settings`);
+    logger.info(`Show Advanced settings`);
     if (isVisibleAdvancedSettings) {
-      console.log(`Advanced settings are already visible`);
+      logger.info(`Advanced settings are already visible`);
       return;
     }
     await page.evaluate(selector => {
@@ -719,10 +761,10 @@ export class UiScriptActionDoShowAdvancedSettings extends UiScriptActionDo {
       }
     }, this.selector);
 
-    await this.delay(this.preClickDelay);
-    console.log(`Execute sequence: Click on ${this.selector}`);
+    await delay(this.preClickDelay);
+    logger.info(`Execute sequence: Click on ${this.selector}`);
     await page.click(this.selector);
-    await this.delay(this.postClickDelay, 'Post click delay');
+    await delay(this.postClickDelay, 'Post click delay');
   }
 }
 
@@ -745,15 +787,16 @@ export class UiScriptActionDoHideAdvancedSettings extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
+  async execute(browser, page) {
     const isVisibleAdvancedSettings = await hasStyleDisplayNone(page,
         `${this.selector} .btn-dropdown-arrow-down`);
-    console.log(`Hide Advanced settings`);
+    logger.info(`Hide Advanced settings`);
     if (!isVisibleAdvancedSettings) {
-      console.log(`Advanced settings are not visible`);
+      logger.info(`Advanced settings are not visible`);
       return;
     }
     await page.evaluate(selector => {
@@ -763,10 +806,10 @@ export class UiScriptActionDoHideAdvancedSettings extends UiScriptActionDo {
       }
     }, this.selector);
 
-    await this.delay(this.preClickDelay);
-    console.log(`Execute sequence: Click on ${this.selector}`);
+    await delay(this.preClickDelay);
+    logger.info(`Execute sequence: Click on ${this.selector}`);
     await page.click(this.selector);
-    await this.delay(this.postClickDelay, 'Post click delay');
+    await delay(this.postClickDelay, 'Post click delay');
   }
 }
 
@@ -789,13 +832,14 @@ export class UiScriptActionDoSelectRadio extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
-    console.log(`Execute sequence: Select radio ${this.selector}`);
+  async execute(browser, page) {
+    logger.info(`Execute sequence: Select radio ${this.selector}`);
 
-    await this.delay(this.preClickDelay);
+    await delay(this.preClickDelay);
 
     const inputHandle = await page.$(this.selector);
     const isRadioInput = await page.evaluate(/** @type {HTMLInputElement} */ elem => {
@@ -814,8 +858,8 @@ export class UiScriptActionDoSelectRadio extends UiScriptActionDo {
       elem.click(); // Perform the click inside the browser context
     }, parentLabelHandle);
 
-    console.log(`Post click delay:  ${this.postClickDelay} ms`);
-    await this.delay(this.postClickDelay);
+    logger.info(`Post click delay:  ${this.postClickDelay} ms`);
+    await delay(this.postClickDelay);
   }
 }
 
@@ -840,11 +884,12 @@ export class UiScriptActionDoCheckbox extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
-    console.log(`Execute sequence: Set checkbox '${this.selector}': ${this.setChecked ? 'checked' : 'unchecked'}`);
+  async execute(browser, page) {
+    logger.info(`Execute sequence: Set checkbox '${this.selector}': ${this.setChecked ? 'checked' : 'unchecked'}`);
 
     const inputHandle = await page.$(this.selector);
     const isCheckboxInput = await page.evaluate(/** @type {HTMLInputElement} */ elem => {
@@ -868,17 +913,17 @@ export class UiScriptActionDoCheckbox extends UiScriptActionDo {
       elem.scrollIntoView();
     }, parentLabelHandle);
 
-    await this.delay(this.preClickDelay);
+    await delay(this.preClickDelay);
 
     if (isCheckboxChecked === this.setChecked) {
-      console.log(`Checkbox ${this.selector} is already ${this.setChecked ? 'checked' : 'unchecked'}`);
+      logger.info(`Checkbox ${this.selector} is already ${this.setChecked ? 'checked' : 'unchecked'}`);
     } else {
       await page.evaluate(elem => {
         elem.click(); // Perform the click inside the browser context
       }, parentLabelHandle);
     }
 
-    await this.delay(this.postClickDelay, "Post click delay");
+    await delay(this.postClickDelay, "Post click delay");
   }
 }
 
@@ -901,10 +946,11 @@ export class UiScriptActionDoClickButton extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
+  async execute(browser, page) {
     await page.evaluate(selector => {
       const element = document.querySelector(selector);
       if (element) {
@@ -912,10 +958,10 @@ export class UiScriptActionDoClickButton extends UiScriptActionDo {
       }
     }, this.selector);
 
-    await this.delay(this.preClickDelay);
-    console.log(`Execute sequence: Click on the button ${this.selector}`);
+    await delay(this.preClickDelay);
+    logger.info(`Execute sequence: Click on the button ${this.selector}`);
     await page.click(this.selector);
-    await this.delay(this.postClickDelay, 'Post click delay');
+    await delay(this.postClickDelay, 'Post click delay');
   }
 }
 
@@ -940,10 +986,11 @@ export class UiScriptActionDoClickButtonUploadFile extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
+  async execute(browser, page) {
     await page.evaluate(selector => {
       const element = document.querySelector(selector);
       if (element) {
@@ -951,8 +998,8 @@ export class UiScriptActionDoClickButtonUploadFile extends UiScriptActionDo {
       }
     }, this.selector);
 
-    await this.delay(this.preClickDelay);
-    console.log(`Execute sequence: Click on the button '${this.selector}' and upload file '${this.file_path}'`);
+    await delay(this.preClickDelay);
+    logger.info(`Execute sequence: Click on the button '${this.selector}' and upload file '${this.file_path}'`);
 
     const fullPath = path.resolve(this.file_path);
     const [fileChooser] = await Promise.all([
@@ -961,14 +1008,14 @@ export class UiScriptActionDoClickButtonUploadFile extends UiScriptActionDo {
     ]);
     await fileChooser.accept([fullPath]);
     if (this.flag_remove_file) {
-      console.log(`Delete file: ${this.file_path}`);
+      logger.info(`Delete file: ${this.file_path}`);
       try {
         await fs.promises.unlink(fullPath);
       } catch (error) {
-        console.log(`Error deleting file: ${fullPath}`, error);
+        logger.error(`Error deleting file: ${fullPath}`, error);
       }
     }
-    await this.delay(this.postClickDelay, 'Post click delay');
+    await delay(this.postClickDelay, 'Post click delay');
   }
 }
 
@@ -992,11 +1039,12 @@ export class UiScriptActionDoSaveFile extends UiScriptActionDo {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
-    console.log(`Execute sequence: Save file: '${this.file_path}'`);
+  async execute(browser, page) {
+    logger.info(`Execute sequence: Save file: '${this.file_path}'`);
     await fs.promises.writeFile(this.file_path, this.file_content);
   }
 }
@@ -1013,8 +1061,8 @@ export class UiScriptActionDoHttpGet extends UiScriptActionDo {
    */
   constructor(action_type, args, params) {
     super(action_type, params);
-    if (args.length !== 2 && args.length !== 3) {
-      throw new Error(`UiScriptActionDoHttpGet: Expected 2 or 3 arguments, got ${args.length}, args: ${args}`);
+    if (args.length < 2 && args.length > 6) {
+      throw new Error(`UiScriptActionDoHttpGet: Expected 2..6 arguments, got ${args.length}, args: ${args}`);
     }
     this.url = args[0];
     if (args[1] === '-') {
@@ -1022,24 +1070,68 @@ export class UiScriptActionDoHttpGet extends UiScriptActionDo {
     } else {
       this.expected_http_status_code = parseInt(args[1]);
     }
-    if (args.length === 3) {
+    if (args.length >= 3) {
       this.file_name = args[2];
+      if (this.file_name === '-') {
+        this.file_name = undefined;
+      }
     } else {
       this.file_name = undefined;
+    }
+    if (args.length >= 4) {
+      this.server_cert = args[3];
+      if (this.server_cert === '-') {
+        this.server_cert = undefined;
+      }
+    } else {
+      this.server_cert = undefined;
+    }
+    if (args.length >= 5) {
+      this.client_cert = args[4];
+      if (this.client_cert === '-') {
+        this.client_cert = undefined;
+      }
+    } else {
+      this.client_cert = undefined;
+    }
+    if (args.length >= 6) {
+      this.client_key = args[5];
+      if (this.client_key === '-') {
+        this.client_key = undefined;
+      }
+    } else {
+      this.client_key = undefined;
     }
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
-    console.log(`Execute sequence: HTTP GET: '${this.url}'`);
+  async execute(browser, page) {
+    logger.info(`Execute sequence: HTTP GET: '${this.url}'`);
     if (this.file_name) {
       await deleteFileIfExist(this.file_name);
     }
-    const response = await fetch(this.url);
-    console.log(`Status: ${response.status}`);
+    let cert_obj = {};
+    if (this.server_cert) {
+      logger.info(`Server certificate: '${this.server_cert}'`);
+      cert_obj['ca'] = await fs.promises.readFile(this.server_cert);
+    }
+    if (this.client_cert) {
+      logger.info(`Client certificate: '${this.client_cert}'`);
+      cert_obj['cert'] = await fs.promises.readFile(this.client_cert);
+    }
+    if (this.client_key) {
+      logger.info(`Client key: '${this.client_key}'`);
+      cert_obj['key'] = await fs.promises.readFile(this.client_key);
+    }
+    const agent = (Object.keys(cert_obj).length > 0) ? new https.Agent(cert_obj) : undefined;
+    const opts = agent ? {agent} : {};
+    const response = await fetch(this.url, opts);
+
+    logger.info(`Status: ${response.status}`);
     if (this.expected_http_status_code) {
       if (response.status !== this.expected_http_status_code) {
         throw new Error(`HTTP GET failed: Expected status code ${this.expected_http_status_code}, got ${response.status}`);
@@ -1049,6 +1141,131 @@ export class UiScriptActionDoHttpGet extends UiScriptActionDo {
         await fs.promises.writeFile(this.file_name, responseBody);
       }
     }
+  }
+}
+
+/**
+ * @class
+ * @extends UiScriptActionDo
+ */
+export class UiScriptActionDoDownloadHistory extends UiScriptActionDo {
+  /**
+   * @param {string} action_type
+   * @param {string[]} args
+   * @param {Object | undefined} params
+   */
+  constructor(action_type, args, params) {
+    super(action_type, params);
+    if (args.length !== 3) {
+      throw new Error(`UiScriptActionDoDownloadHistory: Expected 3 arguments, got ${args.length}, args: ${args}`);
+    }
+    this.url = args[0];
+    if (args[1] === '-') {
+      this.expected_http_status_code = undefined;
+    } else {
+      this.expected_http_status_code = parseInt(args[1]);
+    }
+    this.file_name = args[2];
+    if (this.file_name === '-') {
+      this.file_name = undefined;
+    }
+  }
+
+  /**
+   * @param {Browser} browser
+   * @param {Page} page
+   * @returns {Promise<void>}
+   */
+  async execute(browser, page) {
+    logger.info(`Execute sequence: Download /history: filename='${this.file_name}'`);
+    await deleteFileIfExist(this.file_name);
+    const cookies = await page.cookies();
+    const newTab = await browser.newPage();
+    await newTab.setCookie(...cookies);
+    logger.info(`Open new tab and navigate to ${this.url}`);
+    let response = await newTab.goto(this.url);
+
+    const response_status = response.status();
+    logger.info(`Status: ${response_status}`);
+    if (this.expected_http_status_code) {
+      if (response_status !== this.expected_http_status_code) {
+        throw new Error(`HTTP GET failed: Expected status code ${this.expected_http_status_code}, got ${response_status}`);
+      }
+      if (this.file_name) {
+        const jsonContent = await response.json();
+        await fs.promises.writeFile(this.file_name, JSON.stringify(jsonContent, null, 2));
+      }
+    }
+    await delay(1000);
+    logger.info(`Close new tab`);
+    await newTab.close();
+  }
+}
+
+/**
+ * @class
+ * @extends UiScriptActionDo
+ */
+export class UiScriptActionDoExec extends UiScriptActionDo {
+  /**
+   * @param {string} action_type
+   * @param {string[]} args
+   * @param {Object | undefined} params
+   */
+  constructor(action_type, args, params) {
+    super(action_type, params);
+    if (args.length !== 2) {
+      throw new Error(`UiScriptActionDoExec: Expected 2 argument, got ${args.length}, args: ${args}`);
+    }
+    this.cmd = args[0];
+    if (args[1] === '-') {
+      this.timeout = undefined;
+    } else {
+      this.timeout = parseInt(args[1]);
+    }
+  }
+
+  /**
+   * @param {Browser} browser
+   * @param {Page} page
+   * @returns {Promise<void>}
+   */
+  async execute(browser, page) {
+    logger.info(`Execute sequence: Exec cmd: '${this.cmd}', timeout=${this.timeout} sec`);
+    let exitStatus = -1;
+    try {
+      exitStatus = await this.runCommand(this.cmd, this.timeout * 1000);
+    } catch (error) {
+      throw new Error(`Failed to execute command: ${this.cmd}, error: ${error}`);
+    }
+    logger.info(`Command '${this.cmd}' exited with status ${exitStatus}`);
+    if (exitStatus !== 0) {
+      throw new Error(`Command '${this.cmd}' failed with exit status ${exitStatus}`);
+    }
+  }
+
+  runCommand(cmd, timeout) {
+    return new Promise((resolve, reject) => {
+      const process = exec(cmd, (error, stdout, stderr) => {
+        if (stderr) {
+          logger.error(`exec stderr: ${stderr}`);
+        }
+        if (error) {
+          logger.error(`exec error: ${error}`);
+          reject(error.code);
+        } else {
+          logger.info(`exec stdout: ${stdout}`);
+          resolve(0);  // If process exits normally, status code is 0.
+        }
+      });
+
+      if (timeout) {
+        setTimeout(() => {
+          process.kill();
+          reject(new Error("Process killed due to timeout"));
+        }, timeout);
+      }
+    });
   }
 }
 
@@ -1104,10 +1321,11 @@ export class UiScriptStep {
 
   /**
    * @abstract
+   * @param {Browser} browser
    * @param page
    * @returns {Promise<void>}
    */
-  async execute(page) {
+  async execute(browser, page) {
     throw new Error("Method 'execute' must be implemented.");
   }
 }
@@ -1170,15 +1388,16 @@ export class UiScriptStepIf extends UiScriptStep {
   }
 
   /**
+   * @param {Browser} browser
    * @param page
    * @returns {Promise<void>}
    */
-  async execute(page) {
+  async execute(browser, page) {
     const result = await this.action_if.check(page);
     if (result) {
-      await this.then_part.execute(page);
+      await this.then_part.execute(browser, page);
     } else {
-      await this.else_part.execute(page);
+      await this.else_part.execute(browser, page);
     }
   }
 }
@@ -1233,11 +1452,12 @@ export class UiScriptStepDo extends UiScriptStep {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
-    await this.action_do.execute(page);
+  async execute(browser, page) {
+    await this.action_do.execute(browser, page);
   }
 }
 
@@ -1270,12 +1490,13 @@ export class UiScriptStepSteps extends UiScriptStep {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    * @returns {Promise<void>}
    */
-  async execute(page) {
+  async execute(browser, page) {
     for (const step of this.steps) {
-      await step.execute(page);
+      await step.execute(browser, page);
     }
   }
 }
@@ -1314,17 +1535,18 @@ export class UiScriptPage {
   }
 
   /**
+   * @param {Browser} browser
    * @param {Page} page
    */
-  async execute(page) {
+  async execute(browser, page) {
     if (!page.url().endsWith(this.page_url)) {
       if (this.is_url_optional) {
-        console.log(`Skipping page ${this.page_url}`);
+        logger.info(`Skipping page ${this.page_url}`);
         return;
       }
       throw new Error(`Expected URL ${this.page_url}, actual URL ${page.url()}`);
     }
-    await this.steps.execute(page);
+    await this.steps.execute(browser, page);
   }
 }
 
@@ -1390,25 +1612,6 @@ export class UiScript {
   }
 
   /**
-   * Parses the steps in the UI script.
-   * @param {object[] | string | undefined} steps
-   * @returns {UiScriptStep[]}
-   * @throws {Error} If steps is not an array or string.
-   */
-  static parseSteps(steps) {
-    if (!steps) {
-      return [];
-    }
-    else if (typeof steps === 'string') {
-      return [UiScriptStep.create({ do: steps })];
-    } else if (Array.isArray(steps)) {
-      return steps.map(step => UiScriptStep.create(step));
-    } else {
-      throw new Error(`UiScriptPageSteps: 'steps' must be an array, got '${typeof steps}' instead.`);
-    }
-  }
-
-  /**
    * Recursively substitutes environment and secret placeholders in the configuration object.
    * @param {Object} obj - The configuration object.
    * @param {Object} subst_obj - An object containing values to substitute.
@@ -1433,13 +1636,29 @@ export class UiScript {
   }
 
   /**
-   * @param {Page} page
+   * @param {Browser} browser
    * @returns {Promise<void>}
    */
-  async execute(page) {
+  async execute(browser) {
+    // const context = browser.defaultBrowserContext();
+    // await context.overridePermissions(this.env.url, ['clipboard-read', 'clipboard-write']);
+
+    const page = await browser.newPage();
+
+    await page.goto(this.env.url);
+
+    // Wait for the page to load, which includes completing redirection
+    await page.waitForNavigation({ waitUntil: 'load' });
+    await delay(2000);
+
+    const currentUrl = page.url();
+    logger.info(`UI opened, current URL: ${currentUrl}`);
+
     for (const page_obj of this.pages) {
-      await page_obj.execute(page);
+      await page_obj.execute(browser, page);
     }
+
+    await browser.close();
   }
 }
 
