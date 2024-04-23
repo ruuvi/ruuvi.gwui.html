@@ -1,9 +1,7 @@
 env:
-  url: "${secrets:url}"
+  url: "http://${secrets:gw_hostname}"
   gw_id: "${secrets:gw_id}"
   gw_mac: "${secrets:gw_mac}"
-  http_server: "${secrets:http_server}"
-  https_server: "${secrets:https_server}"
   navigationTimeout: 3000
   preClickDelay: 1000
   postClickDelay: 1500

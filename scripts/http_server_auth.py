@@ -26,11 +26,14 @@ def log(msg):
 def create_ssl_context(cert_file, key_file, ca_file):
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     if cert_file == key_file:
+        log(f'Loading cert file {cert_file} as both cert and key file.')
         context.load_cert_chain(cert_file)
     else:
+        log(f'Loading cert file {cert_file} and key file {key_file}.')
         context.load_cert_chain(cert_file, key_file)
 
     if ca_file is not None:
+        log(f'Loading CA file {ca_file}.')
         context.load_verify_locations(ca_file)
         context.verify_mode = ssl.CERT_REQUIRED
     return context

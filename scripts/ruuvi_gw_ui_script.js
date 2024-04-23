@@ -9,7 +9,10 @@ import path from "path";
 import fetch from 'node-fetch';
 import https from 'https';
 import logger from './ruuvi_gw_ui_logger.js';
-import {exec} from 'child_process';
+import {exec, spawn} from 'child_process';
+import parseArgs from 'string-argv';
+
+let array_of_spawned_processes = [];
 
 /** Delay execution for the specified number of milliseconds
  *
@@ -389,6 +392,7 @@ export class UiScriptActionDo extends UiScriptAction {
     HTTP_GET: "httpGet",
     DOWNLOAD_HISTORY: "downloadHistory",
     EXEC: "exec",
+    SPAWN: "spawn",
   };
 
   /**
@@ -474,6 +478,9 @@ export class UiScriptActionDo extends UiScriptAction {
     if (action_type === UiScriptActionDo.UiScriptActionDoType.EXEC) {
       return new UiScriptActionDoExec(action_type, args, params);
     }
+    if (action_type === UiScriptActionDo.UiScriptActionDoType.SPAWN) {
+      return new UiScriptActionDoSpawn(action_type, args, params);
+    }
     throw new Error(`Invalid 'do' action: ${action_type}`);
   }
 
@@ -527,12 +534,22 @@ export class UiScriptActionDoFillInput extends UiScriptActionDo {
 
     await page.focus(this.selector);
     // Select all text in the input element
-    await page.keyboard.down('Control');
+    if (process.platform === 'darwin') {
+      await page.keyboard.down('Meta');
+    } else {
+      await page.keyboard.down('Control');
+    }
     await page.keyboard.press('KeyA');
-    await page.keyboard.up('Control');
-
+    if (process.platform === 'darwin') {
+      await page.keyboard.up('Meta');
+    } else {
+      await page.keyboard.up('Control');
+    }
     // Press 'Backspace' to delete all selected text
     await page.keyboard.press('Backspace');
+
+    // Clears the input field
+    await page.$eval(this.selector, (el) => el.value = '');
 
     await page.type(this.selector, this.value);
 
@@ -1269,6 +1286,100 @@ export class UiScriptActionDoExec extends UiScriptActionDo {
   }
 }
 
+class ProcessManager {
+  constructor(cmd_line) {
+    const cmd_line_arr = parseArgs(cmd_line);
+    this.cmd = cmd_line_arr[0];
+    this.cmdArgs = cmd_line_arr.slice(1);
+    this.processRunning = false;
+    this.command = null;
+  }
+
+  runCommandInBackground() {
+    logger.info(`Spawn: '${this.cmd}' with args: ${this.cmdArgs}`);
+
+    this.command = spawn(this.cmd, this.cmdArgs, {
+      detached: false,
+      // stdio: 'ignore'
+    });
+    this.processRunning = true;
+    logger.info(`Started command in background with pid: ${this.command.pid}`);
+
+    this.command.on('error', (error) => {
+      logger.error(`Spawn failed with error: ${error.message}`);
+    });
+
+    // Listens for the 'exit' event.
+    this.command.on('exit', (exitCode) => {
+      logger.info(`Command with PID ${this.command.pid} has finished with exit code: ${exitCode}`);
+      this.processRunning = false;
+      this.exitCode = exitCode;
+    })
+
+    this.command.stdout.on('data', (data) => {
+      logger.info(`[PID:${this.command.pid}] stdout: ${data}`);
+    });
+
+    this.command.stderr.on('data', (data) => {
+      logger.error(`[PID:${this.command.pid}] stderr: ${data}`);
+    });
+
+    // Now, you can kill the process like this:
+    // command.kill();
+
+    // To kill the process with 'Ctrl+C' signal:
+    // command.kill('SIGINT');
+    // Keep in mind that this will only work if the child process is not independent (meaning detached is not set to true and unref method is not called).
+  }
+
+  isProcessRunning() {
+    return this.processRunning;
+  }
+
+  killProcess() {
+    if (this.command && this.isProcessRunning()) {
+      logger.info(`Kill process with PID: ${this.command.pid}`);
+      this.command.kill();
+    }
+  }
+}
+
+/**
+ * @class
+ * @extends UiScriptActionDo
+ */
+export class UiScriptActionDoSpawn extends UiScriptActionDo {
+  /**
+   * @param {string} action_type
+   * @param {string[]} args
+   * @param {Object | undefined} params
+   */
+  constructor(action_type, args, params) {
+    super(action_type, params);
+    if (args.length !== 1) {
+      throw new Error(`UiScriptActionDoSpawn: Expected 1 argument, got ${args.length}, args: ${args}`);
+    }
+    this.cmd_line = args[0];
+    this.process = new ProcessManager(this.cmd_line)
+  }
+
+  /**
+   * @param {Browser} browser
+   * @param {Page} page
+   * @returns {Promise<void>}
+   */
+  async execute(browser, page) {
+    logger.info(`Execute sequence: Spawn cmd: '${this.cmd_line}'`);
+    this.process.runCommandInBackground();
+    array_of_spawned_processes.push(this.process);
+    await delay(1000);
+    if (!this.process.isProcessRunning()) {
+      throw new Error(`The spawned process exited with exit code: ${this.process.exitCode}`);
+    }
+  }
+
+}
+
 /**
  * @class
  */
@@ -1629,7 +1740,7 @@ export class UiScript {
           if (subst_obj[name] !== undefined) {
             return subst_obj[name];
           }
-          throw new Error(`Placeholder not found for ${match}`);
+          throw new Error(`Placeholder is not found for ${match}`);
         });
       }
     });
@@ -1656,6 +1767,9 @@ export class UiScript {
 
     for (const page_obj of this.pages) {
       await page_obj.execute(browser, page);
+    }
+    for (const process of array_of_spawned_processes) {
+      process.killProcess();
     }
 
     await browser.close();

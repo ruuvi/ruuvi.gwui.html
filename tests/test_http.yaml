@@ -1,9 +1,9 @@
 env:
-  url: "${secrets:url}"
+  url: "http://${secrets:gw_hostname}"
   gw_id: "${secrets:gw_id}"
   gw_mac: "${secrets:gw_mac}"
-  http_server: "${secrets:http_server}"
-  https_server: "${secrets:https_server}"
+  http_port: 8000
+  http_server: "http://${secrets:hostname}:${env:http_port}/record"
   navigationTimeout: 3000
   preClickDelay: 1000
   postClickDelay: 1500
@@ -11,6 +11,8 @@ env:
 pages:
   - page?: "#page-auth"
     steps:
+      - steps:
+          - do: spawn "python3 scripts/http_server_auth.py --port "${env:http_port}""
       - if: isInvisible "#auth-user_login"
         then: fail "Remote access is disabled"
       - if: isEnabled "#auth-user"

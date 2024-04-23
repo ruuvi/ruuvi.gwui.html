@@ -1,9 +1,11 @@
 env:
-  url: "${secrets:url}"
+  url: "http://${secrets:gw_hostname}"
   gw_id: "${secrets:gw_id}"
   gw_mac: "${secrets:gw_mac}"
-  http_server: "${secrets:http_server}"
-  https_server: "${secrets:https_server}"
+  http_port: 8000
+  http_server: "http://${secrets:hostname}:${env:http_port}/record"
+  http_auth_user: "user1"
+  http_auth_pass: "Qe1_z@3Rt1.j"
   navigationTimeout: 3000
   preClickDelay: 1000
   postClickDelay: 1500
@@ -11,6 +13,8 @@ env:
 pages:
   - page?: "#page-auth"
     steps:
+      - steps:
+          - do: spawn "python3 scripts/http_server_auth.py --port "${env:http_port}" -u "${env:http_auth_user}" -p "${env:http_auth_pass}""
       - if: isInvisible "#auth-user_login"
         then: fail "Remote access is disabled"
       - if: isEnabled "#auth-user"
@@ -76,14 +80,14 @@ pages:
 
       - do: checkCheckbox "#use_http_auth"  # Check checkbox 'Use authentication'
       - do: fillInput "#http_user" "user1"  # Fill the input 'Username'
-      - do: fillInput "#http_pass" "Qe1_z@3Rt1.incorrect"  # Fill the input 'Password'
+      - do: fillInput "#http_pass" "incorrect_password.137!"  # Fill the input 'Password'
 
       - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
       - do: waitUntilLoaded 20000  # Wait until checking is done
       - if: isInvisible "#page-custom_server-http_validation_error"
         then: fail "HTTP server check failed"
 
-      - do: fillInput "#http_pass" "Qe1_z@3Rt1.j"  # Fill the input 'Password'
+      - do: fillInput "#http_pass" "${env:http_auth_pass}"  # Fill the input 'Password'
 
       - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
       - do: waitUntilLoaded 20000  # Wait until checking is done
