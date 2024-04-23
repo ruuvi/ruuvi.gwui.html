@@ -50,6 +50,8 @@ pages:
 
   - page: "#page-update_schedule"
     steps:
+      - do: showAdvancedSettings "#page-update_schedule-advanced-button"
+      - do: selectRadio "#auto_update_cycle-manual"  # Select radio 'Manual updates only (not recommended)'
       - do: clickAndNavigate "#page-update_schedule-button-continue"  # Click on 'Next' button
 
   - page: "#page-settings_lan_auth"
