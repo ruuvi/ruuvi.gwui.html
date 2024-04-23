@@ -1748,31 +1748,35 @@ export class UiScript {
 
   /**
    * @param {Browser} browser
-   * @returns {Promise<void>}
+   * @returns {Promise<boolean>}
    */
   async execute(browser) {
     // const context = browser.defaultBrowserContext();
     // await context.overridePermissions(this.env.url, ['clipboard-read', 'clipboard-write']);
+    let isSuccess = false;
+    try {
+      const page = await browser.newPage();
 
-    const page = await browser.newPage();
+      await page.goto(this.env.url);
 
-    await page.goto(this.env.url);
+      // Wait for the page to load, which includes completing redirection
+      await page.waitForNavigation({ waitUntil: 'load' });
+      await delay(2000);
 
-    // Wait for the page to load, which includes completing redirection
-    await page.waitForNavigation({ waitUntil: 'load' });
-    await delay(2000);
+      const currentUrl = page.url();
+      logger.info(`UI opened, current URL: ${currentUrl}`);
 
-    const currentUrl = page.url();
-    logger.info(`UI opened, current URL: ${currentUrl}`);
-
-    for (const page_obj of this.pages) {
-      await page_obj.execute(browser, page);
+      for (const page_obj of this.pages) {
+        await page_obj.execute(browser, page);
+      }
+      isSuccess = true;
+    } catch (error) {
+      logger.error('An error occurred: ', error);
     }
     for (const process of array_of_spawned_processes) {
       process.killProcess();
     }
-
-    await browser.close();
+    return isSuccess;
   }
 }
 

@@ -143,10 +143,14 @@ async function removeDirectory(path) {
       userDataDir: browser_tmp,
     });
 
-    await uiScript.execute(browser);
+    const isSuccess = await uiScript.execute(browser);
+    await browser.close();
 
+    if (!isSuccess) {
+      logger.info(`Finished unsuccessfully`);
+      process.exit(1);
+    }
     logger.info(`Finished successfully`);
-
     process.exit(0);
   } catch (error) {
     logger.error('An error occurred: ', error);
