@@ -20,7 +20,7 @@ pages:
           - do: fillInput "#auth-pass" "${env:gw_id}"
       - do: clickAndNavigate "#auth-button-login"
         params:
-          postClickDelay: 3000
+          postClickDelay: 5000
           navigationTimeout: 5000
 
   - page: "#page-welcome"
