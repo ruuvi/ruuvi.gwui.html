@@ -640,7 +640,7 @@ export class UiScriptActionDoFail extends UiScriptActionDo {
    */
   async execute(browser, page) {
     logger.error(`Execute sequence: Fail: ${this.message}`);
-    process.exit(1);
+    throw new Error(`Execute sequence: Fail: ${this.message}`);
   }
 }
 
