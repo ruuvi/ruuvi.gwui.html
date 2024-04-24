@@ -138,7 +138,7 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         else:
             log('POST (without auth) %s: %s' % (self.path, post_data.decode('utf-8')))
         log('POST headers: %s' % str(self.headers))
-        logger.debug("POST: %s\nHeaders:\n%s\n\nBody:\n%s\n", str(self.path), str(self.headers), post_data.decode('utf-8'))
+        logger.debug(f"POST: {str(self.path)}\nHeaders:\n{str(self.headers)}\n\nBody:\n{post_data.decode('utf-8')}\n")
         if g_simulate_post_delay != 0:
             log(f'Simulating delay of {g_simulate_post_delay} seconds...')
             time.sleep(g_simulate_post_delay)
