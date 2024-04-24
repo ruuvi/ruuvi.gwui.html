@@ -11,7 +11,6 @@ import os
 import logging
 import ssl
 import sys
-from datetime import datetime
 import time
 import socket
 
@@ -19,8 +18,52 @@ g_simulate_post_delay = 0
 g_record = None
 
 
+# This custom filter will allow through any records with a level less than ERROR
+class StdoutFilter(logging.Filter):
+    def filter(self, record):
+        return record.levelno < logging.ERROR
+
+
+class Logger:
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.INFO)
+
+        formatter = logging.Formatter('[%(asctime)s %(levelname)s] %(message)s', datefmt='%Y-%m-%dT%H:%M:%S')
+
+        handler_out = logging.StreamHandler(sys.stdout)
+        handler_out.setLevel(logging.INFO)
+        handler_out.setFormatter(formatter)
+        handler_out.addFilter(StdoutFilter())
+
+        handler_err = logging.StreamHandler(sys.stderr)
+        handler_err.setLevel(logging.ERROR)
+        handler_err.setFormatter(formatter)
+
+        self.logger.addHandler(handler_out)
+        self.logger.addHandler(handler_err)
+
+    def debug(self, msg):
+        self.logger.debug(msg)
+
+    def info(self, msg):
+        self.logger.info(msg)
+
+    def warning(self, msg):
+        self.logger.warning(msg)
+
+    def error(self, msg):
+        self.logger.error(msg)
+
+    def critical(self, msg):
+        self.logger.critical(msg)
+
+
+logger = Logger()
+
+
 def log(msg):
-    logging.info(f'[{datetime.now().isoformat()}] {msg}')
+    logger.info(msg)
 
 
 def create_ssl_context(cert_file, key_file, ca_file):
@@ -95,7 +138,7 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         else:
             log('POST (without auth) %s: %s' % (self.path, post_data.decode('utf-8')))
         log('POST headers: %s' % str(self.headers))
-        logging.debug("POST: %s\nHeaders:\n%s\n\nBody:\n%s\n", str(self.path), str(self.headers), post_data.decode('utf-8'))
+        logger.debug("POST: %s\nHeaders:\n%s\n\nBody:\n%s\n", str(self.path), str(self.headers), post_data.decode('utf-8'))
         if g_simulate_post_delay != 0:
             log(f'Simulating delay of {g_simulate_post_delay} seconds...')
             time.sleep(g_simulate_post_delay)
@@ -329,8 +372,6 @@ def httpd_run(HandlerClass=BaseHTTPRequestHandler,
 
 if __name__ == "__main__":
     import argparse
-
-    logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
