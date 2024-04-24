@@ -13,6 +13,8 @@ import ssl
 import sys
 import time
 import socket
+from typing import Optional
+import itertools
 
 g_simulate_post_delay = 0
 g_record = None
@@ -29,7 +31,8 @@ class Logger:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
 
-        formatter = logging.Formatter('[%(asctime)s %(levelname)s] %(message)s', datefmt='%Y-%m-%dT%H:%M:%S')
+        formatter = logging.Formatter('[%(asctime)s.%(msecs)03d %(levelname)s] %(message)s',
+                                      datefmt='%Y-%m-%dT%H:%M:%S')
 
         handler_out = logging.StreamHandler(sys.stdout)
         handler_out.setLevel(logging.INFO)
@@ -85,6 +88,11 @@ def create_ssl_context(cert_file, key_file, ca_file):
 class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
     """ Main class to present webpages and authentication. """
 
+    # https://en.wikipedia.org/wiki/List_of_Unicode_characters#Control_codes
+    _control_char_table = str.maketrans(
+        {c: fr'\x{c:02x}' for c in itertools.chain(range(0x20), range(0x7f, 0xa0))})
+    _control_char_table[ord('\\')] = r'\\'
+
     def __init__(self, *args, **kwargs):
         username = kwargs.pop("username")
         password = kwargs.pop("password")
@@ -98,10 +106,27 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         self.close_connection = False
         super().__init__(*args, **kwargs)
 
-    # def handle_one_request(self):
-    #     super(AuthHTTPRequestHandler, self).handle_one_request()
-    #     # self.close_connection = False
-    #     # self.protocol_version = 'HTTP/1.0'
+    def log_message(self, fmt, *fmt_args):
+        """Log an arbitrary message.
+
+        The first argument, FORMAT, is a format string for the
+        message to be logged.  If the format string contains
+        any % escapes requiring parameters, they should be
+        specified as subsequent arguments (it's just like
+        printf!).
+        """
+
+        message = fmt % fmt_args
+        logger.info(f'{self.address_string()} - {message.translate(self._control_char_table)}')
+
+    def log_error(self, fmt, *fmt_args):
+        """Log an error.
+
+        This is called when a request cannot be fulfilled.
+        """
+
+        message = fmt % fmt_args
+        logger.error(f'{self.address_string()} - {message.translate(self._control_char_table)}')
 
     def do_HEAD(self):
         if self.path == '/':
@@ -161,17 +186,29 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
             self._do_POST(False)
         else:
             """ Present frontpage with user authentication. """
-            if self.headers.get("Authorization") is None:
+            auth: Optional[str] = self.headers.get("Authorization")
+            if auth is None:
                 self.do_AUTHHEAD()
-                self.wfile.write(b"no auth header received")
-            elif self.headers.get("Authorization") == "Basic " + self._auth:
-                self._do_POST(True)
-            elif self.headers.get("Authorization") == "Bearer " + self._bearer_token:
-                self._do_POST(True)
+                self.wfile.write(b"no Authorization header received")
             else:
-                self.do_AUTHHEAD()
-                self.wfile.write(self.headers.get("Authorization").encode())
-                self.wfile.write(b"not authenticated")
+                if auth.startswith("Basic "):
+                    if auth == "Basic " + self._auth:
+                        self._do_POST(True)
+                    else:
+                        self.do_AUTHHEAD()
+                        self.wfile.write(auth.encode())
+                        self.wfile.write(b"Basic authorization failed")
+                elif auth.startswith("Bearer "):
+                    if auth == "Bearer " + self._bearer_token:
+                        self._do_POST(True)
+                    else:
+                        self.do_AUTHHEAD()
+                        self.wfile.write(auth.encode())
+                        self.wfile.write(b"Bearer authorization failed")
+                else:
+                    self.do_AUTHHEAD()
+                    self.wfile.write(auth.encode())
+                    self.wfile.write(b"Unsupported auth type")
 
     def _do_GET(self, use_auth):
         # SimpleHTTPRequestHandler.do_GET(self)
