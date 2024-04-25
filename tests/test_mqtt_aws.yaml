@@ -108,7 +108,7 @@ pages:
 
   - page: "#page-finished"
     steps:
-      - do: delay 10000
+      - do: delay 20000
       - steps:
           - do: downloadHistory "${env:url}/history" 200 "${dir:test}/history.json"
           - if: testJsonValueNotEq "${dir:test}/history.json" "data.gw_mac" "${env:gw_mac}"

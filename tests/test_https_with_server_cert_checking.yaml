@@ -99,14 +99,14 @@ pages:
     steps:
       - do: httpGet ${env:https_server} - - "${dir:test}/server_cert.pem"
       - do: httpGet ${env:https_server} 404 - "${dir:test}/server_cert.pem"
-      - do: delay 10000
+      - do: delay 20000
       - steps:
           - do: downloadHistory "${env:url}/history" 200 "${dir:test}/history.json"
           - if: testJsonValueNotEq "${dir:test}/history.json" "data.gw_mac" "${env:gw_mac}"
             then: fail "Gateway MAC address is not correct in history.json"
           - if: testJsonValueNotExists "${dir:test}/history.json" "data.tags.${secrets:ruuvi_tag}"
             then: fail "Tag data not found in history.json"
-      - do: delay 30000
+      - do: delay 20000
       - steps:
         - do: httpGet ${env:https_server} 200 "${dir:test}/record.json" "${dir:test}/server_cert.pem"
         - if: testJsonValueNotEq "${dir:test}/record.json" "data.gw_mac" "${env:gw_mac}"
