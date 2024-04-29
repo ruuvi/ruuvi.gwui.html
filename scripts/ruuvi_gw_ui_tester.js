@@ -102,6 +102,9 @@ async function removeDirectory(path) {
         .options({
           dir_test: { type: 'string', demandOption: true, describe: 'Path to the folder with the test data, results and logs' },
         })
+        .options({
+          docker: { type: 'boolean', demandOption: false, describe: 'Run the test inside a docker instance' },
+        })
         .argv;
 
     const args = new CmdArgs(argv);
@@ -127,18 +130,25 @@ async function removeDirectory(path) {
 
     const browser_tmp = path.join(argv.dir_test, 'tmp');
     await removeDirectory(browser_tmp);
+    let browser_args = [
+      `--window-size=${screenWidth},${screenHeight}`,
+      '--disable-infobars',
+      '--noerrdialogs',
+      '--disable-translate',
+      '--disable-extensions',
+      '--disable-features=TranslateUI',
+      '--disk-cache-size=0'
+    ];
+    let flag_headless = false;
+    if (argv.docker) {
+      flag_headless = true;
+      browser_args.push('--no-sandbox');
+      browser_args.push('--disable-setuid-sandbox');
+    }
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: flag_headless,
       ignoreDefaultArgs: false,
-      args: [
-        `--window-size=${screenWidth},${screenHeight}`,
-        '--disable-infobars',
-        '--noerrdialogs',
-        '--disable-translate',
-        '--disable-extensions',
-        '--disable-features=TranslateUI',
-        '--disk-cache-size=0'
-      ],
+      args: browser_args,
       defaultViewport: null, // Disables Puppeteer's default viewport settings
       userDataDir: browser_tmp,
     });
