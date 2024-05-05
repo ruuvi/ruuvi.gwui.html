@@ -1,0 +1,130 @@
+env:
+  url: "http://${secrets:gw_hostname}"
+  gw_id: "${secrets:gw_id}"
+  gw_mac: "${secrets:gw_mac}"
+  https_port: 8001
+  https_server: "https://${secrets:hostname}:${env:https_port}/record"
+  navigationTimeout: 3000
+  preClickDelay: 1000
+  postClickDelay: 1500
+
+pages:
+  - page?: "#page-auth"
+    steps:
+      - steps:
+          - do: exec "openssl genrsa -out ${dir:test}/server_key.pem 2048" 5
+          - do: exec "openssl req -new -key ${dir:test}/server_key.pem -out ${dir:test}/server_csr.pem -subj "/C=FI/ST=Uusimaa/L=Helsinki/O=Ruuvi/OU=/CN=${secrets:hostname}"" 5
+          - do: exec "openssl x509 -req -in ${dir:test}/server_csr.pem -signkey ${dir:test}/server_key.pem -out ${dir:test}/server_cert.pem -days 365" 5
+          - do: exec "openssl genrsa -out ${dir:test}/client_key.pem 2048" 5
+          - do: exec "openssl req -new -key ${dir:test}/client_key.pem -out ${dir:test}/client_csr.pem -subj "/C=FI/ST=Uusimaa/L=Helsinki/O=Ruuvi/OU=/CN=${secrets:gw_hostname}"" 5
+          - do: exec "openssl x509 -req -in ${dir:test}/client_csr.pem -signkey ${dir:test}/client_key.pem -out ${dir:test}/client_cert.pem -days 365" 5
+          - do: spawn "python3 scripts/http_server_auth.py --port "${env:https_port}" --ssl_cert "${dir:test}/server_cert.pem" --ssl_key "${dir:test}/server_key.pem" --ca_cert "${dir:test}/client_cert.pem""
+      - if: isInvisible "#auth-user_login"
+        then: fail "Remote access is disabled"
+      - if: isEnabled "#auth-user"
+        then:
+          - do: fail "Custom username/password is requited"
+#          - do: fillInput "#auth-user" "${env:username}"
+#          - do: fillInput "#auth-pass" "${env:password}"
+        else:
+          - do: fillInput "#auth-pass" "${env:gw_id}"
+      - do: clickAndNavigate "#auth-button-login"
+        params:
+          postClickDelay: 5000
+          navigationTimeout: 5000
+
+  - page: "#page-welcome"
+    steps:
+      - do: clickAndNavigate "#page-welcome-button-get-started"  # Click on 'Let's get started' button
+
+  - page: "#page-network_type"
+    steps:
+      - do: clickAndNavigate "#page-network_type-button-skip"  # Click on 'Skip' button
+
+  - page: "#page-software_update"
+    steps:
+      - do: waitUntilLoaded 40000  # Wait until the information about the software update is loaded
+      - do: clickAndNavigate "#page-software_update-button-continue"  # Click on 'Next' or 'Continue and skip update' button
+
+  - page: "#page-remote_cfg"
+    steps:
+      - do: clickAndNavigate "#page-remote_cfg-button-continue"  # Click on 'Next' button
+
+  - page: "#page-update_schedule"
+    steps:
+      - do: showAdvancedSettings "#page-update_schedule-advanced-button"
+      - do: selectRadio "#auto_update_cycle-manual"  # Select radio 'Manual updates only (not recommended)'
+      - do: clickAndNavigate "#page-update_schedule-button-continue"  # Click on 'Next' button
+
+  - page: "#page-settings_lan_auth"
+    steps:
+      - do: clickAndNavigate "#page-lan_auth_type-button-continue"  # Click on 'Next' button
+
+  - page: "#page-cloud_options"
+    steps:
+      - do: showAdvancedSettings "#page-cloud_options-advanced-button"
+      - do: selectRadio "#use_custom"  # Select radio 'Use Ruuvi Cloud and/or a custom server and configure other advanced settings'
+      - do: clickAndNavigate "#page-cloud_options-button-continue"  # Click on 'Next' button
+
+  - page: "#page-custom_server"
+    steps:
+      - do: checkCheckbox "#use_http_ruuvi"  # Check checkbox 'Ruuvi Cloud'
+      - do: checkCheckbox "#use_http"  # Check checkbox 'HTTP(S)'
+      - do: fillInput "#http_url" "${env:https_server}"  # Fill the input 'URL address'
+      - do: selectRadio "#http_data_format_ruuvi"  # Select 'Data format' radio: 'Don't decode, send data in raw format (default)'
+      - do: fillInput "#http_period" "30"  # Fill the input 'Sending interval (10-3600 seconds)'
+      - do: uncheckCheckbox "#use_http_auth"  # Uncheck checkbox 'Use authentication'
+      - do: uncheckCheckbox "#http_use_client_ssl_cert"  # Uncheck checkbox 'Use client SSL certificate'
+      - do: checkCheckbox "#http_use_server_ssl_cert"  # Check checkbox 'Use custom SSL certificate for the server'
+      - if: hasClassDisableClick "#http-button_upload_server_cert"
+        then: clickButton "#http-button_remove_server_cert"  # Remove the server certificate
+      - do: clickButtonUploadFile "#http-button_upload_server_cert" "${dir:test}/server_cert.pem" false  # Click on button 'Upload certificate'
+
+      - do: uncheckCheckbox "#use_mqtt"  # Uncheck checkbox 'MQTT'
+
+      - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
+      - do: waitUntilLoaded 20000  # Wait until checking is done
+      - if: isInvisible "#page-custom_server-http_validation_error"
+        then: fail "HTTPS server check failed (access without client certificate)"
+
+      - do: checkCheckbox "#http_use_client_ssl_cert"  # Check checkbox 'Use client SSL certificate'
+      - if: hasClassDisableClick "#http-button_upload_client_cert"
+        then: clickButton "#http-button_remove_client_cert_and_key"  # Remove the client certificate and key
+      - if: hasClassDisableClick "#http-button_upload_client_key"
+        then: clickButton "#http-button_remove_client_cert_and_key"  # Remove the client certificate and key
+      - do: clickButtonUploadFile "#http-button_upload_client_cert" "${dir:test}/client_cert.pem" false  # Click on button 'Upload certificate'
+      - do: clickButtonUploadFile "#http-button_upload_client_key" "${dir:test}/client_key.pem" false  # Click on button 'Upload private key'
+
+      - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
+      - do: waitUntilLoaded 20000  # Wait until checking is done
+      - if: isVisible "#page-custom_server-http_validation_error"
+        then: fail "HTTP server check failed"
+      - do: delay 3000
+      - do: clickAndNavigate "#page-custom_server-button-continue"  # Click on 'Next' button
+
+  - page: "#page-ntp_config"
+    steps:
+      - do: clickAndNavigate "#page-ntp_config-button-continue"  # Click on 'Next' button
+
+  - page: "#page-scanning"
+    steps:
+      - do: clickAndNavigate "#page-scanning-button-continue"  # Click on 'Next' button
+
+  - page: "#page-finished"
+    steps:
+      - do: httpGet ${env:https_server} - - "${dir:test}/server_cert.pem" "${dir:test}/client_cert.pem" "${dir:test}/client_key.pem"
+      - do: httpGet ${env:https_server} 404 - "${dir:test}/server_cert.pem" "${dir:test}/client_cert.pem" "${dir:test}/client_key.pem"
+      - do: delay 20000
+      - steps:
+          - do: downloadHistory "${env:url}/history" 200 "${dir:test}/history.json"
+          - if: testJsonValueNotEq "${dir:test}/history.json" "data.gw_mac" "${env:gw_mac}"
+            then: fail "Gateway MAC address is not correct in history.json"
+          - if: testJsonValueNotExists "${dir:test}/history.json" "data.tags.${secrets:ruuvi_tag}"
+            then: fail "Tag data not found in history.json"
+      - do: delay 20000
+      - steps:
+        - do: httpGet ${env:https_server} 200 "${dir:test}/record.json" "${dir:test}/server_cert.pem" "${dir:test}/client_cert.pem" "${dir:test}/client_key.pem"
+        - if: testJsonValueNotEq "${dir:test}/record.json" "data.gw_mac" "${env:gw_mac}"
+          then: fail "Gateway MAC address is not correct"
+        - if: testJsonValueNotExists "${dir:test}/record.json" "data.tags.${secrets:ruuvi_tag}"
+          then: fail "Tag data not found in the record"

@@ -11,25 +11,75 @@ import os
 import logging
 import ssl
 import sys
-from datetime import datetime
 import time
 import socket
+from typing import Optional
+import itertools
 
 g_simulate_post_delay = 0
+g_record = None
+
+
+# This custom filter will allow through any records with a level less than ERROR
+class StdoutFilter(logging.Filter):
+    def filter(self, record):
+        return record.levelno < logging.ERROR
+
+
+class Logger:
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.INFO)
+
+        formatter = logging.Formatter('[%(asctime)s.%(msecs)03d %(levelname)s] %(message)s',
+                                      datefmt='%Y-%m-%dT%H:%M:%S')
+
+        handler_out = logging.StreamHandler(sys.stdout)
+        handler_out.setLevel(logging.INFO)
+        handler_out.setFormatter(formatter)
+        handler_out.addFilter(StdoutFilter())
+
+        handler_err = logging.StreamHandler(sys.stderr)
+        handler_err.setLevel(logging.ERROR)
+        handler_err.setFormatter(formatter)
+
+        self.logger.addHandler(handler_out)
+        self.logger.addHandler(handler_err)
+
+    def debug(self, msg):
+        self.logger.debug(msg)
+
+    def info(self, msg):
+        self.logger.info(msg)
+
+    def warning(self, msg):
+        self.logger.warning(msg)
+
+    def error(self, msg):
+        self.logger.error(msg)
+
+    def critical(self, msg):
+        self.logger.critical(msg)
+
+
+logger = Logger()
 
 
 def log(msg):
-    logging.info(f'[{datetime.now().isoformat()}] {msg}')
+    logger.info(msg)
 
 
 def create_ssl_context(cert_file, key_file, ca_file):
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     if cert_file == key_file:
+        log(f'Loading cert file {cert_file} as both cert and key file.')
         context.load_cert_chain(cert_file)
     else:
+        log(f'Loading cert file {cert_file} and key file {key_file}.')
         context.load_cert_chain(cert_file, key_file)
 
     if ca_file is not None:
+        log(f'Loading CA file {ca_file}.')
         context.load_verify_locations(ca_file)
         context.verify_mode = ssl.CERT_REQUIRED
     return context
@@ -37,6 +87,11 @@ def create_ssl_context(cert_file, key_file, ca_file):
 
 class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
     """ Main class to present webpages and authentication. """
+
+    # https://en.wikipedia.org/wiki/List_of_Unicode_characters#Control_codes
+    _control_char_table = str.maketrans(
+        {c: fr'\x{c:02x}' for c in itertools.chain(range(0x20), range(0x7f, 0xa0))})
+    _control_char_table[ord('\\')] = r'\\'
 
     def __init__(self, *args, **kwargs):
         username = kwargs.pop("username")
@@ -51,10 +106,27 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         self.close_connection = False
         super().__init__(*args, **kwargs)
 
-    # def handle_one_request(self):
-    #     super(AuthHTTPRequestHandler, self).handle_one_request()
-    #     # self.close_connection = False
-    #     # self.protocol_version = 'HTTP/1.0'
+    def log_message(self, fmt, *fmt_args):
+        """Log an arbitrary message.
+
+        The first argument, FORMAT, is a format string for the
+        message to be logged.  If the format string contains
+        any % escapes requiring parameters, they should be
+        specified as subsequent arguments (it's just like
+        printf!).
+        """
+
+        message = fmt % fmt_args
+        logger.info(f'{self.address_string()} - {message.translate(self._control_char_table)}')
+
+    def log_error(self, fmt, *fmt_args):
+        """Log an error.
+
+        This is called when a request cannot be fulfilled.
+        """
+
+        message = fmt % fmt_args
+        logger.error(f'{self.address_string()} - {message.translate(self._control_char_table)}')
 
     def do_HEAD(self):
         if self.path == '/':
@@ -70,6 +142,7 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
             if os.path.isfile(file_path):
                 self.send_response(200)
                 self.send_header("Content-type", self.guess_type(file_path))
+                self.send_header("Content-length", str(os.stat(file_path).st_size))
                 self.end_headers()
             else:
                 # File not found, return 404
@@ -90,11 +163,14 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         else:
             log('POST (without auth) %s: %s' % (self.path, post_data.decode('utf-8')))
         log('POST headers: %s' % str(self.headers))
-        logging.debug("POST: %s\nHeaders:\n%s\n\nBody:\n%s\n", str(self.path), str(self.headers), post_data.decode('utf-8'))
+        logger.debug(f"POST: {str(self.path)}\nHeaders:\n{str(self.headers)}\n\nBody:\n{post_data.decode('utf-8')}\n")
         if g_simulate_post_delay != 0:
             log(f'Simulating delay of {g_simulate_post_delay} seconds...')
             time.sleep(g_simulate_post_delay)
             log('Simulated delay done.')
+        if self.path == '/record':
+            global g_record
+            g_record = post_data.decode('utf-8')
         self.send_response(200)
         self.send_header('Ruuvi-HMAC-KEY', 'new_key')
 #         self.send_header('X-Ruuvi-Gateway-Rate', '5')
@@ -103,21 +179,36 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         log(f'POST {self.path}')
+        if self.path == '/kill':
+            log(f'Kill command received, exiting.')
+            self.server.running = False
         if self._auth is None:
             self._do_POST(False)
         else:
             """ Present frontpage with user authentication. """
-            if self.headers.get("Authorization") is None:
+            auth: Optional[str] = self.headers.get("Authorization")
+            if auth is None:
                 self.do_AUTHHEAD()
-                self.wfile.write(b"no auth header received")
-            elif self.headers.get("Authorization") == "Basic " + self._auth:
-                self._do_POST(True)
-            elif self.headers.get("Authorization") == "Bearer " + self._bearer_token:
-                self._do_POST(True)
+                self.wfile.write(b"no Authorization header received")
             else:
-                self.do_AUTHHEAD()
-                self.wfile.write(self.headers.get("Authorization").encode())
-                self.wfile.write(b"not authenticated")
+                if auth.startswith("Basic "):
+                    if auth == "Basic " + self._auth:
+                        self._do_POST(True)
+                    else:
+                        self.do_AUTHHEAD()
+                        self.wfile.write(auth.encode())
+                        self.wfile.write(b"Basic authorization failed")
+                elif auth.startswith("Bearer "):
+                    if auth == "Bearer " + self._bearer_token:
+                        self._do_POST(True)
+                    else:
+                        self.do_AUTHHEAD()
+                        self.wfile.write(auth.encode())
+                        self.wfile.write(b"Bearer authorization failed")
+                else:
+                    self.do_AUTHHEAD()
+                    self.wfile.write(auth.encode())
+                    self.wfile.write(b"Unsupported auth type")
 
     def _do_GET(self, use_auth):
         # SimpleHTTPRequestHandler.do_GET(self)
@@ -135,6 +226,7 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
                 resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                 # You might want to dynamically set the Content-type based on the file type
                 resp += f'Content-type: {self.guess_type(file_path)}\r\n'.encode('ascii')
+                resp += f'Content-length: {str(os.stat(file_path).st_size)}\r\n'.encode('ascii')
             else:
                 # File not found, return 404
                 resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
@@ -229,6 +321,24 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         resp += content.encode('ascii')
         self.wfile.write(resp)
 
+    def handle_get_record(self):
+        global g_record
+        resp = b''
+        if g_record is not None:
+            file_content = g_record.encode('utf-8')
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'Content-type: Application\r\n'.encode('ascii')
+            resp += f'Content-length: {len(file_content)}\r\n'.encode('ascii')
+            g_record = None
+        else:
+            resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
+            file_content = b'File not found'
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += file_content
+        self.wfile.write(resp)
+
     def do_GET(self):
         log(f'GET {self.path}')
         if self.path == '/firmwareupdate':
@@ -242,6 +352,9 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
             return
         if self.path == '/firmwareupdate_empty':
             self.handle_firmware_update_empty()
+            return
+        if self.path == '/record':
+            self.handle_get_record()
             return
         if self._auth is None:
             self._do_GET(False)
@@ -284,7 +397,10 @@ def httpd_run(HandlerClass=BaseHTTPRequestHandler,
         conn_type = "HTTP" if ssl_cert is None else "HTTPS"
         log(serve_message.format(conn_type=conn_type.upper(), conn_type2=conn_type.lower(), host=sa[0], port=sa[1]))
         try:
-            httpd.serve_forever()
+            httpd.running = True
+            while httpd.running:
+                log("Handle request...")
+                httpd.handle_request()
         except KeyboardInterrupt:
             print('\n')
             log("Keyboard interrupt received, exiting.")
@@ -293,8 +409,6 @@ def httpd_run(HandlerClass=BaseHTTPRequestHandler,
 
 if __name__ == "__main__":
     import argparse
-
-    logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
