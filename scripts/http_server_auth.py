@@ -17,6 +17,7 @@ from typing import Optional
 import itertools
 
 g_simulate_post_delay = 0
+g_flag_no_content_len = False
 g_record = None
 
 
@@ -142,7 +143,9 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
             if os.path.isfile(file_path):
                 self.send_response(200)
                 self.send_header("Content-type", self.guess_type(file_path))
-                self.send_header("Content-length", str(os.stat(file_path).st_size))
+                global g_flag_no_content_len
+                if not g_flag_no_content_len:
+                    self.send_header("Content-length", str(os.stat(file_path).st_size))
                 self.end_headers()
             else:
                 # File not found, return 404
@@ -226,7 +229,9 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
                 resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
                 # You might want to dynamically set the Content-type based on the file type
                 resp += f'Content-type: {self.guess_type(file_path)}\r\n'.encode('ascii')
-                resp += f'Content-length: {str(os.stat(file_path).st_size)}\r\n'.encode('ascii')
+                global g_flag_no_content_len
+                if not g_flag_no_content_len:
+                    resp += f'Content-length: {str(os.stat(file_path).st_size)}\r\n'.encode('ascii')
             else:
                 # File not found, return 404
                 resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
@@ -438,6 +443,11 @@ if __name__ == "__main__":
         help="Just listen on the port, don't serve anything",
     )
     parser.add_argument(
+        "--no_content_len",
+        action="store_true",
+        help="Don't send Content-Length header in response",
+    )
+    parser.add_argument(
         "--simulate_just_accept_connection",
         action="store_true",
         help="Just accept a connection, don't serve anything",
@@ -466,6 +476,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     g_simulate_post_delay = args.simulate_post_delay
+    g_flag_no_content_len = args.no_content_len
     if args.simulate_just_listen_port and args.simulate_just_accept_connection:
         print("Options --simulate_just_listen_port and --simulate_just_accept_connection are mutually exclusive.")
         sys.exit(1)
