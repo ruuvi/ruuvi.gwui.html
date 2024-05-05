@@ -473,16 +473,34 @@ if __name__ == "__main__":
         help="Just accept a connection, don't serve anything",
     )
     parser.add_argument(
-        "--ssl_cert",
+        "--cert",
+        dest="ssl_cert",
         help="Path to server.pem (for HTTPS), if it contains private key, then --ssl_key is not needed",
     )
     parser.add_argument(
-        "--ssl_key",
+        "--ssl_cert",  # --cert
+        dest="ssl_cert",
+        help="The same as --cert, for compatibility with python -m http.server",
+    )
+    parser.add_argument(
+        "--key",
+        dest="ssl_key",
         help="Path to server_key.pem (for HTTPS)",
     )
     parser.add_argument(
-        "--ca_cert",
-        help="Path to ca_cert.pem (for HTTPS)",
+        "--ssl_key",  # --key
+        dest="ssl_key",
+        help="The same as --key, for compatibility with python -m http.server",
+    )
+    parser.add_argument(
+        "--cacert",
+        dest="ca_cert",
+        help="Path to ca_cert.pem (certificate authority file) (for HTTPS)",
+    )
+    parser.add_argument(
+        "--ca_cert",  # --cacert
+        dest="ca_cert",
+        help="The same as --cacert, for compatibility with python -m http.server",
     )
     parser.add_argument("--username", "-u", metavar="USERNAME")
     parser.add_argument("--password", "-p", metavar="PASSWORD")
