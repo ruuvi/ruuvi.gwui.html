@@ -18,6 +18,8 @@ import itertools
 
 g_simulate_post_delay = 0
 g_flag_no_content_len = False
+g_flag_delay_before_http_get = False
+g_flag_delay_before_http_head = False
 g_record = None
 
 
@@ -140,6 +142,9 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
             # SimpleHTTPRequestHandler class has built-in measures to prevent directory traversal attacks,
             # so we don't need to sanitize the path to ensure that it cannot navigate outside the current directory
             # using relative paths like '..'.
+            global g_flag_delay_before_http_head
+            if g_flag_delay_before_http_head:
+                time.sleep(1.0)
             if os.path.isfile(file_path):
                 self.send_response(200)
                 self.send_header("Content-type", self.guess_type(file_path))
@@ -151,6 +156,8 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
                 # File not found, return 404
                 self.send_response(404)
                 self.end_headers()
+            if g_flag_delay_before_http_head:
+                time.sleep(1.0)
 
     def do_AUTHHEAD(self):
         self.send_response(401)
@@ -224,6 +231,9 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
             # using relative paths like '..'.
             if os.path.isfile(file_path):
                 # File exists, serve it
+                global g_flag_delay_before_http_get
+                if g_flag_delay_before_http_get:
+                    time.sleep(0.5)
                 with open(file_path, 'rb') as file:
                     file_content = file.read()
                 resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
@@ -448,6 +458,16 @@ if __name__ == "__main__":
         help="Don't send Content-Length header in response",
     )
     parser.add_argument(
+        "--delay_before_http_get",
+        action="store_true",
+        help="Delay before sending HTTP GET response",
+    )
+    parser.add_argument(
+        "--delay_before_http_head",
+        action="store_true",
+        help="Delay before sending HTTP HEAD response",
+    )
+    parser.add_argument(
         "--simulate_just_accept_connection",
         action="store_true",
         help="Just accept a connection, don't serve anything",
@@ -477,6 +497,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     g_simulate_post_delay = args.simulate_post_delay
     g_flag_no_content_len = args.no_content_len
+    g_flag_delay_before_http_get = args.delay_before_http_get
+    g_flag_delay_before_http_head = args.delay_before_http_head
     if args.simulate_just_listen_port and args.simulate_just_accept_connection:
         print("Options --simulate_just_listen_port and --simulate_just_accept_connection are mutually exclusive.")
         sys.exit(1)
