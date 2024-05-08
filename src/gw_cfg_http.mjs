@@ -16,6 +16,7 @@ export const HTTP_AUTH = Object.freeze({
   'basic': 'basic',
   'bearer': 'bearer',
   'token': 'token',
+  'api_key': 'api_key',
 })
 
 export class GwCfgHttpDataFormat {
@@ -109,6 +110,14 @@ export class GwCfgHttpAuth {
 
   setToken () {
     this.http_auth = HTTP_AUTH.token
+  }
+
+  isApiKey () {
+    return this.http_auth === HTTP_AUTH.api_key
+  }
+
+  setApiKey () {
+    this.http_auth = HTTP_AUTH.api_key
   }
 }
 
