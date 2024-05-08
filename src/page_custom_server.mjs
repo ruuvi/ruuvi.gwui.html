@@ -19,7 +19,7 @@ import {GwCfgMqtt} from './gw_cfg_mqtt.mjs'
 import gui_loading from './gui_loading.mjs'
 import GwStatus from './gw_status.mjs'
 import Navigation from './navigation.mjs'
-import {GwCfgHttp} from './gw_cfg_http.mjs'
+import {GwCfgHttp, HTTP_AUTH} from './gw_cfg_http.mjs';
 import GuiInputTokenWithValidation from './gui_input_token_with_validation.mjs'
 import Network from './network.mjs'
 import GuiButtonUpload from "./gui_button_upload.mjs";
@@ -61,6 +61,8 @@ class PageCustomServer {
     #radio_http_auth_bearer
     /** @type GuiRadioButtonOption */
     #radio_http_auth_token
+    /** @type GuiRadioButtonOption */
+    #radio_http_auth_apikey
 
     #div_http_auth_options = new GuiDiv($('#http_auth_options'))
     #div_http_auth_basic_params = new GuiDiv($('#http_auth_basic_params'))
@@ -70,6 +72,8 @@ class PageCustomServer {
     #input_http_auth_bearer_token = new GuiInputTokenWithValidation($('#http_auth_bearer_api_key'))
     #div_http_auth_token_params = new GuiDiv($('#http_auth_token_params'))
     #input_http_auth_token_api_key = new GuiInputTokenWithValidation($('#http_auth_token_api_key'))
+    #div_http_auth_apikey_params = new GuiDiv($('#http_auth-api_key-params'))
+    #input_http_auth_apikey_value = new GuiInputTokenWithValidation($('#http_auth-api_key-value'))
 
     #checkbox_http_use_client_ssl_cert = new GuiCheckbox($('#http_use_client_ssl_cert'))
     #div_http_use_client_ssl_cert_options = new GuiDiv($('#http_use_client_ssl_cert_options'))
@@ -196,6 +200,7 @@ class PageCustomServer {
         this.#radio_http_auth_basic = this.#radio_http_auth.addOption('http_auth_basic', false)
         this.#radio_http_auth_bearer = this.#radio_http_auth.addOption('http_auth_bearer', false)
         this.#radio_http_auth_token = this.#radio_http_auth.addOption('http_auth_token', false)
+        this.#radio_http_auth_apikey = this.#radio_http_auth.addOption('http_auth-api_key', false)
         this.#checkbox_http_use_client_ssl_cert.on_change(() => this.#onChangeUseClientSslCertHttp())
         this.#checkbox_http_use_server_ssl_cert.on_change(() => this.#onChangeUseServerSslCertHttp())
         this.#button_http_remove_client_cert_and_key.on_click(async () => this.#onRemoveClientCertAndKeyHttp())
@@ -226,6 +231,7 @@ class PageCustomServer {
         this.#radio_http_auth_basic.on_click(() => this.#onChangeHttpAuth())
         this.#radio_http_auth_bearer.on_click(() => this.#onChangeHttpAuth())
         this.#radio_http_auth_token.on_click(() => this.#onChangeHttpAuth())
+        this.#radio_http_auth_apikey.on_click(() => this.#onChangeHttpAuth())
 
         this.#radio_statistics_use_ruuvi.on_click(() => this.#onChangeUseStatistics())
         this.#radio_statistics_use_custom.on_click(() => this.#onChangeUseStatistics())
@@ -323,6 +329,9 @@ class PageCustomServer {
         } else if (this.#gwCfg.http.http_auth.isToken()) {
             this.#checkbox_use_http_auth.setChecked()
             this.#radio_http_auth_token.setChecked()
+        } else if (this.#gwCfg.http.http_auth.isApiKey()) {
+            this.#checkbox_use_http_auth.setChecked()
+            this.#radio_http_auth_apikey.setChecked()
         }
 
         this.#checkbox_http_use_client_ssl_cert.setState(this.#gwCfg.http.http_use_ssl_client_cert)
@@ -483,6 +492,9 @@ class PageCustomServer {
                 } else if (this.#radio_http_auth_token.isChecked()) {
                     this.#gwCfg.http.http_auth.setToken()
                     this.#gwCfg.http.http_api_key = this.#input_http_auth_token_api_key.getVal()
+                } else if (this.#radio_http_auth_apikey.isChecked()) {
+                    this.#gwCfg.http.http_auth.setApiKey()
+                    this.#gwCfg.http.http_api_key = this.#input_http_auth_apikey_value.getVal()
                 } else {
                     throw new Error(`Unknown http_auth`)
                 }
@@ -1250,14 +1262,22 @@ class PageCustomServer {
                 this.#div_http_auth_basic_params.show()
                 this.#div_http_auth_bearer_params.hide()
                 this.#div_http_auth_token_params.hide()
+                this.#div_http_auth_apikey_params.hide()
             } else if (this.#radio_http_auth_bearer.isChecked()) {
                 this.#div_http_auth_basic_params.hide()
                 this.#div_http_auth_bearer_params.show()
                 this.#div_http_auth_token_params.hide()
+                this.#div_http_auth_apikey_params.hide()
             } else if (this.#radio_http_auth_token.isChecked()) {
                 this.#div_http_auth_basic_params.hide()
                 this.#div_http_auth_bearer_params.hide()
                 this.#div_http_auth_token_params.show()
+                this.#div_http_auth_apikey_params.hide()
+            } else if (this.#radio_http_auth_apikey.isChecked()) {
+                this.#div_http_auth_basic_params.hide()
+                this.#div_http_auth_bearer_params.hide()
+                this.#div_http_auth_token_params.hide()
+                this.#div_http_auth_apikey_params.show()
             }
         } else {
             this.#div_http_auth_options.hide()
@@ -1543,7 +1563,7 @@ class PageCustomServer {
         }
 
         if (!this.#checkbox_use_http_auth.isChecked()) {
-            const auth_type = 'none'
+            const auth_type = HTTP_AUTH.none
             return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
                 input_url: this.#input_http_url,
                 use_ssl_client_cert: this.#checkbox_http_use_client_ssl_cert.isChecked(),
@@ -1561,7 +1581,7 @@ class PageCustomServer {
                         resolve(true)
                     })
                 }
-                const auth_type = 'basic'
+                const auth_type = HTTP_AUTH.basic
                 return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
                     input_url: this.#input_http_url,
                     input_user: this.#input_http_auth_basic_user,
@@ -1578,7 +1598,7 @@ class PageCustomServer {
                         resolve(true)
                     })
                 }
-                const auth_type = 'bearer'
+                const auth_type = HTTP_AUTH.bearer
                 return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
                     input_url: this.#input_http_url,
                     input_token: this.#input_http_auth_bearer_token,
@@ -1594,10 +1614,26 @@ class PageCustomServer {
                         resolve(true)
                     })
                 }
-                const auth_type = 'token'
+                const auth_type = HTTP_AUTH.token
                 return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
                     input_url: this.#input_http_url,
                     input_token: this.#input_http_auth_token_api_key,
+                    error: this.#text_http_validation_error_desc,
+                    div_status: this.#div_http_validation_error,
+                })
+            } else if (this.#radio_http_auth_apikey.isChecked()) {
+                if (this.#input_http_auth_apikey_value.getVal() === '') {
+                    this.#input_http_auth_apikey_value.setInvalid()
+                    this.#text_http_validation_error_desc.setVal(`API key is empty`)
+                    this.#div_http_validation_error.show()
+                    return new Promise(function (resolve) {
+                        resolve(true)
+                    })
+                }
+                const auth_type = HTTP_AUTH.api_key
+                return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
+                    input_url: this.#input_http_url,
+                    input_token: this.#input_http_auth_apikey_value,
                     error: this.#text_http_validation_error_desc,
                     div_status: this.#div_http_validation_error,
                 })

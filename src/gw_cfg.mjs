@@ -140,6 +140,8 @@ export class GwCfg {
       data.http_bearer_token = this.http.http_bearer_token
     } else if (this.http.http_auth.isToken()) {
       data.http_api_key = this.http.http_api_key
+    } else if (this.http.http_auth.isApiKey()) {
+      data.http_api_key = this.http.http_api_key
     }
     data.http_use_ssl_client_cert = this.http.http_use_ssl_client_cert
     data.http_use_ssl_server_cert = this.http.http_use_ssl_server_cert
