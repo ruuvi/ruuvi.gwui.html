@@ -185,10 +185,6 @@ class PageScanning {
         } else {
             this.#sect_advanced.show()
         }
-
-        if (this.#checkbox_scan_filtering.isChecked()) {
-            await this.#refreshListOfMac()
-        }
     }
 
     #extractMacAddrFromRowId(prefixedMacAddr) {
