@@ -3,7 +3,7 @@ env:
   gw_id: "${secrets:gw_id}"
   gw_mac: "${secrets:gw_mac}"
   http_port: 8000
-  http_server: "http://${secrets:hostname}:${env:http_port}/record"
+  http_server: "http://${secrets:hostname}:${env:http_port}"
   navigationTimeout: 3000
   preClickDelay: 1000
   postClickDelay: 1500
@@ -64,20 +64,27 @@ pages:
     steps:
       - do: checkCheckbox "#use_http_ruuvi"  # Check checkbox 'Ruuvi Cloud'
       - do: checkCheckbox "#use_http"  # Check checkbox 'HTTP(S)'
-      - do: fillInput "#http_url" "${env:http_server}"  # Fill the input 'URL address'
       - do: selectRadio "#http_data_format_ruuvi"  # Select 'Data format' radio: 'Don't decode, send data in raw format (default)'
       - do: fillInput "#http_period" "30"  # Fill the input 'Sending interval (10-3600 seconds)'
       - do: uncheckCheckbox "#use_http_auth"  # Uncheck checkbox 'Use authentication'
       - do: uncheckCheckbox "#http_use_client_ssl_cert"  # Uncheck checkbox 'Use client SSL certificate'
       - do: uncheckCheckbox "#http_use_client_ssl_cert"  # Uncheck checkbox 'Use custom SSL certificate for the server'
-
       - do: uncheckCheckbox "#use_mqtt"  # Uncheck checkbox 'MQTT'
 
+      - do: fillInput "#http_url" "${env:http_server}/record204"  # Fill the input 'URL address' that will return HTTP status 204
       - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
       - do: waitUntilLoaded 20000  # Wait until checking is done
       - if: isVisible "#page-custom_server-http_validation_error"
         then: fail "HTTP server check failed"
       - do: delay 3000
+
+      - do: fillInput "#http_url" "${env:http_server}/record"  # Fill the input 'URL address'
+      - do: clickButton "#page-custom_server-button-check"  # Click on button 'Check'
+      - do: waitUntilLoaded 20000  # Wait until checking is done
+      - if: isVisible "#page-custom_server-http_validation_error"
+        then: fail "HTTP server check failed"
+      - do: delay 3000
+
       - do: clickAndNavigate "#page-custom_server-button-continue"  # Click on 'Next' button
 
   - page: "#page-ntp_config"
@@ -90,8 +97,8 @@ pages:
 
   - page: "#page-finished"
     steps:
-      - do: httpGet ${env:http_server} -
-      - do: httpGet ${env:http_server} 404
+      - do: httpGet ${env:http_server}/record -
+      - do: httpGet ${env:http_server}/record 404
       - do: delay 20000
       - steps:
         - do: downloadHistory "${env:url}/history" 200 "${dir:test}/history.json"
@@ -101,7 +108,7 @@ pages:
           then: fail "Tag data not found in history.json"
       - do: delay 20000
       - steps:
-        - do: httpGet ${env:http_server} 200 "${dir:test}/record.json"
+        - do: httpGet ${env:http_server}/record 200 "${dir:test}/record.json"
         - if: testJsonValueNotEq "${dir:test}/record.json" "data.gw_mac" "${env:gw_mac}"
           then: fail "Gateway MAC address is not correct"
         - if: testJsonValueNotExists "${dir:test}/record.json" "data.tags.${secrets:ruuvi_tag}"
