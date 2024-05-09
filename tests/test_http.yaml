@@ -8,11 +8,13 @@ env:
   preClickDelay: 1000
   postClickDelay: 1500
 
+setup:
+  - do: spawn "python3 scripts/http_server_auth.py --port "${env:http_port}""
+  - do: delay 1000
+
 pages:
   - page?: "#page-auth"
     steps:
-      - steps:
-          - do: spawn "python3 scripts/http_server_auth.py --port "${env:http_port}""
       - if: isInvisible "#auth-user_login"
         then: fail "Remote access is disabled"
       - if: isEnabled "#auth-user"

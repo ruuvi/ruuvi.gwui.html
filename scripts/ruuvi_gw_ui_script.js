@@ -1687,7 +1687,7 @@ export class UiScript {
 
     // Remove 'env' and 'pages' keys from the object
     const emptyStatement = Object.entries(script_obj)
-        .filter(([key, _]) => !['env', 'pages'].includes(key))
+        .filter(([key, _]) => !['env', 'setup', 'pages'].includes(key))
         .reduce((obj, [key, value]) => ({...obj, [key]: value}), {});
     if (Object.keys(emptyStatement).length !== 0) {
       throw new Error(`UiScript: Unexpected key(s) found: '${Object.keys(emptyStatement)}'.`);
@@ -1719,6 +1719,7 @@ export class UiScript {
       delete script_obj.env;
     }
 
+    this.setup_steps = new UiScriptStepSteps({ steps: script_obj.setup });
     this.pages = script_obj.pages.map(page => new UiScriptPage(page));
   }
 
@@ -1756,6 +1757,8 @@ export class UiScript {
     let isSuccess = false;
     try {
       const page = await browser.newPage();
+
+      await this.setup_steps.execute(browser, page);
 
       await page.goto(this.env.url);
 
