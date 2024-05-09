@@ -8,15 +8,17 @@ env:
   preClickDelay: 1000
   postClickDelay: 1500
 
+setup:
+  - do: exec "openssl genrsa -out ${dir:test}/server_key.pem 2048" 5
+  - do: exec "openssl req -new -key ${dir:test}/server_key.pem -out ${dir:test}/server_csr.pem -subj "/C=FI/ST=Uusimaa/L=Helsinki/O=Ruuvi/OU=/CN=${secrets:hostname}"" 5
+  - do: exec "openssl x509 -req -in ${dir:test}/server_csr.pem -signkey ${dir:test}/server_key.pem -out ${dir:test}/server_cert.pem -days 365" 5
+  - do: delay 1000
+  - do: spawn "python3 scripts/http_server_auth.py --port "${env:https_port}" --ssl_cert "${dir:test}/server_cert.pem" --ssl_key "${dir:test}/server_key.pem""
+  - do: delay 1000
+
 pages:
   - page?: "#page-auth"
     steps:
-      - steps:
-          - do: exec "openssl genrsa -out ${dir:test}/server_key.pem 2048" 5
-          - do: exec "openssl req -new -key ${dir:test}/server_key.pem -out ${dir:test}/server_csr.pem -subj "/C=FI/ST=Uusimaa/L=Helsinki/O=Ruuvi/OU=/CN=${secrets:hostname}"" 5
-          - do: exec "openssl x509 -req -in ${dir:test}/server_csr.pem -signkey ${dir:test}/server_key.pem -out ${dir:test}/server_cert.pem -days 365" 5
-          - do: delay 1000
-          - do: spawn "python3 scripts/http_server_auth.py --port "${env:https_port}" --ssl_cert "${dir:test}/server_cert.pem" --ssl_key "${dir:test}/server_key.pem""
       - if: isInvisible "#auth-user_login"
         then: fail "Remote access is disabled"
       - if: isEnabled "#auth-user"
@@ -93,6 +95,7 @@ pages:
 
   - page: "#page-scanning"
     steps:
+      - do: waitUntilLoaded 15000  # Wait until loaded
       - do: clickAndNavigate "#page-scanning-button-continue"  # Click on 'Next' button
 
   - page: "#page-finished"
