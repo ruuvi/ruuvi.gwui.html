@@ -92,6 +92,7 @@ pages:
 
   - page: "#page-scanning"
     steps:
+      - do: waitUntilLoaded 15000  # Wait until loaded
       - do: clickAndNavigate "#page-scanning-button-continue"  # Click on 'Next' button
 
   - page: "#page-finished"
