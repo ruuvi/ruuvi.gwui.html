@@ -181,7 +181,12 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         if self.path == '/record':
             global g_record
             g_record = post_data.decode('utf-8')
-        self.send_response(200)
+        http_response_status = 200
+        if self.path == '/record201':
+            http_response_status = 201
+        elif self.path == '/record204':
+            http_response_status = 204
+        self.send_response(http_response_status)
         self.send_header('Ruuvi-HMAC-KEY', 'new_key')
 #         self.send_header('X-Ruuvi-Gateway-Rate', '5')
         self.send_header('Content-Length', '0')
