@@ -351,7 +351,7 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
             validity_icons_clear(params)
             let result = true
             if (response_status === 200 && resp.status !== undefined) {
-              if (resp.status === 200) {
+              if (resp.status >= 200 && resp.status <= 299) {
                 validity_icons_set_valid(params)
                 if (resp.json !== undefined) {
                   result = resp.json
