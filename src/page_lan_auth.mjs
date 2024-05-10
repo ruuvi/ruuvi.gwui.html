@@ -145,6 +145,8 @@ class PageLanAuth {
 
   async #onHide () {
     console.log(log_wrap('section#page-settings_lan_auth: onHide'))
+    this.#input_api_key.hidePassword()
+    this.#input_api_key_rw.hidePassword()
     if (this.#radio_lan_auth_type_default.isChecked()) {
       this.#gwCfgLanAuth.lan_auth_type.setAuthDefault()
       this.#gwCfgLanAuth.setDefaultUser()
