@@ -462,6 +462,12 @@ class PageCustomServer {
 
     async #onHide() {
         console.log(log_wrap('section#page-custom_server: onHide'))
+        this.#input_http_auth_basic_pass.hidePassword()
+        this.#input_http_auth_bearer_token.hidePassword()
+        this.#input_http_auth_token_api_key.hidePassword()
+        this.#input_http_auth_apikey_value.hidePassword()
+        this.#input_mqtt_pass.hidePassword()
+        this.#input_http_stat_pass.hidePassword()
         this.#gwCfg.http.use_http_ruuvi = this.#checkbox_use_http_ruuvi.isChecked()
         this.#gwCfg.http.use_http = this.#checkbox_use_http.isChecked()
         if (this.#checkbox_use_http.isChecked()) {
@@ -1214,6 +1220,12 @@ class PageCustomServer {
     }
 
     async #onButtonCheck() {
+        this.#input_http_auth_basic_pass.hidePassword()
+        this.#input_http_auth_bearer_token.hidePassword()
+        this.#input_http_auth_token_api_key.hidePassword()
+        this.#input_http_auth_apikey_value.hidePassword()
+        this.#input_mqtt_pass.hidePassword()
+        this.#input_http_stat_pass.hidePassword()
         if (!this.#input_http_url.getVal().startsWith('http://') && !this.#input_http_url.getVal().startsWith('https://')) {
             this.#input_http_url.setVal('http://' + this.#input_http_url.getVal())
             this.#input_http_url.setValidationRequired()

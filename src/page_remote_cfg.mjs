@@ -175,6 +175,8 @@ class PageRemoteCfg {
 
     async #onHide() {
         console.log(log_wrap('section#page-remote_cfg: onHide'))
+        this.#input_auth_basic_pass.hidePassword()
+        this.#input_auth_bearer_token.hidePassword()
         this.#updateGwCfg()
     }
 
