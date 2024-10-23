@@ -181,10 +181,11 @@ g_ruuvi_dict = {
     'coordinates': "",
     'scan_coded_phy': False,
     'scan_1mbit_phy': True,
-    'scan_extended_payload': True,
+    'scan_2mbit_phy': True,
     'scan_channel_37': True,
     'scan_channel_38': True,
     'scan_channel_39': True,
+    'scan_default': True,
     'scan_filter_allow_listed': False,
     'scan_filter_list': [
         # 'AA:BB:CC:00:00:01',
@@ -707,6 +708,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             print(f'Response: {resp}')
             self.wfile.write(resp)
             return
+        print(f'Content: {req_dict}')
         lan_auth_type = None
         lan_auth_user = None
         lan_auth_pass = None
