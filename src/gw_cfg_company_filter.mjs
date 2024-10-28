@@ -9,7 +9,7 @@ export class GwCfgCompanyFilter {
   static DEFAULT_COMPANY_ID = 0x0499
 
   company_use_filtering = null
-  company_id = null
+  company_id = GwCfgCompanyFilter.DEFAULT_COMPANY_ID
 
   parse (data) {
     this.company_use_filtering = utils.fetchBoolKeyFromData(data, 'company_use_filtering', true)
