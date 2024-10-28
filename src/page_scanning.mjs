@@ -148,7 +148,7 @@ class PageScanning {
         } else {
             this.#radio_company_use_filtering_0.setChecked()
         }
-        this.#input_company_id.setVal(this.#gwCfg.company_filter.company_id)
+        this.#set_company_id(this.#gwCfg.company_filter.company_id)
         this.#on_settings_scan_filtering_changed(false)
 
         this.#onChangeInputFilter()
@@ -255,7 +255,7 @@ class PageScanning {
                 this.#div_filter_beacons.hide()
                 this.#div_scan_options.hide()
             }
-            this.#input_company_id.setVal(GwCfgCompanyFilter.DEFAULT_COMPANY_ID)
+            this.#set_company_id(GwCfgCompanyFilter.DEFAULT_COMPANY_ID)
             this.#checkbox_scan_phy_1mb.setChecked()
             this.#checkbox_scan_phy_2mb.setChecked()
             this.#checkbox_scan_phy_coded.setUnchecked()
@@ -291,16 +291,30 @@ class PageScanning {
         } else {
             let number
             if (typeof company_id === 'string' && company_id.startsWith('0x')) {
-                number = parseInt(company_id, 16)
+                if (!/^0x[0-9a-fA-F]+$/.test(company_id)) {
+                    return NaN;
+                }
+                number = parseInt(company_id, 16);
             } else {
                 number = Number(company_id)
             }
-            if (!isNaN(number) && number >= 0 && number <= 65535) {
-                return number
-            } else {
-                return NaN
+            if (Number.isNaN(number) || number < 0 || number > 65535) {
+                return NaN;
             }
+            return number;
         }
+    }
+
+    #hex_company_id(manufacturer_id) {
+        return `0x${manufacturer_id.toString(16).padStart(4, '0')}`
+    }
+
+    /**
+     * @brief Set company_id to the input field
+     * @param manufacturer_id {number}
+     */
+    #set_company_id(manufacturer_id) {
+        this.#input_company_id.setVal(this.#hex_company_id(manufacturer_id))
     }
 
     #on_scan_company_id_changed() {
@@ -311,6 +325,11 @@ class PageScanning {
             flag_all_fields_valid = false
         } else {
             this.#input_company_id.setValid()
+            if ((this.#input_company_id.getVal() !== "0") &&
+                (!this.#input_company_id.getVal().startsWith('0x') ||
+                    this.#input_company_id.getVal().length > 6)) {
+                this.#set_company_id(company_id)
+            }
             flag_all_fields_valid = true
         }
         this.#button_continue.setEnabled(flag_all_fields_valid)
