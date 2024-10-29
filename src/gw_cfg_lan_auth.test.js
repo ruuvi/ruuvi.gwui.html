@@ -42,9 +42,9 @@ describe('GwCfgLanAuth', () => {
     expect(lan_auth.lan_auth_user).to.equal('Admin')
     expect(lan_auth.lan_auth_pass).to.be.undefined
     expect(lan_auth.lan_auth_api_key_use).to.be.false
-    expect(lan_auth.lan_auth_api_key).to.be.undefined
+    expect(lan_auth.lan_auth_api_key).to.equal('')
     expect(lan_auth.lan_auth_api_key_rw_use).to.be.false
-    expect(lan_auth.lan_auth_api_key_rw).to.be.undefined
+    expect(lan_auth.lan_auth_api_key_rw).to.equal('')
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -70,7 +70,7 @@ describe('GwCfgLanAuth', () => {
     expect(lan_auth.lan_auth_api_key_use).to.be.true
     expect(lan_auth.lan_auth_api_key).to.be.undefined
     expect(lan_auth.lan_auth_api_key_rw_use).to.be.false
-    expect(lan_auth.lan_auth_api_key_rw).to.be.undefined
+    expect(lan_auth.lan_auth_api_key_rw).to.equal('')
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -94,7 +94,7 @@ describe('GwCfgLanAuth', () => {
     expect(lan_auth.lan_auth_user).to.equal('user2')
     expect(lan_auth.lan_auth_pass).to.be.undefined
     expect(lan_auth.lan_auth_api_key_use).to.be.false
-    expect(lan_auth.lan_auth_api_key).to.be.undefined
+    expect(lan_auth.lan_auth_api_key).to.equal('')
     expect(lan_auth.lan_auth_api_key_rw_use).to.be.true
     expect(lan_auth.lan_auth_api_key_rw).to.be.undefined
     expect(Object.keys(data).length).to.equal(0)
@@ -120,9 +120,9 @@ describe('GwCfgLanAuth', () => {
     expect(lan_auth.lan_auth_user).to.equal('user1')
     expect(lan_auth.lan_auth_pass).to.be.undefined
     expect(lan_auth.lan_auth_api_key_use).to.be.false
-    expect(lan_auth.lan_auth_api_key).to.be.undefined
+    expect(lan_auth.lan_auth_api_key).to.equal('')
     expect(lan_auth.lan_auth_api_key_rw_use).to.be.false
-    expect(lan_auth.lan_auth_api_key_rw).to.be.undefined
+    expect(lan_auth.lan_auth_api_key_rw).to.equal('')
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -146,9 +146,9 @@ describe('GwCfgLanAuth', () => {
     expect(lan_auth.lan_auth_user).to.equal('user1')
     expect(lan_auth.lan_auth_pass).to.be.undefined
     expect(lan_auth.lan_auth_api_key_use).to.be.false
-    expect(lan_auth.lan_auth_api_key).to.be.undefined
+    expect(lan_auth.lan_auth_api_key).to.equal('')
     expect(lan_auth.lan_auth_api_key_rw_use).to.be.false
-    expect(lan_auth.lan_auth_api_key_rw).to.be.undefined
+    expect(lan_auth.lan_auth_api_key_rw).to.equal('')
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -172,9 +172,9 @@ describe('GwCfgLanAuth', () => {
     expect(lan_auth.lan_auth_user).to.equal('user1')
     expect(lan_auth.lan_auth_pass).to.be.undefined
     expect(lan_auth.lan_auth_api_key_use).to.be.false
-    expect(lan_auth.lan_auth_api_key).to.be.undefined
+    expect(lan_auth.lan_auth_api_key).to.equal('')
     expect(lan_auth.lan_auth_api_key_rw_use).to.be.false
-    expect(lan_auth.lan_auth_api_key_rw).to.be.undefined
+    expect(lan_auth.lan_auth_api_key_rw).to.equal('')
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -198,9 +198,9 @@ describe('GwCfgLanAuth', () => {
     expect(lan_auth.lan_auth_user).to.equal('user1')
     expect(lan_auth.lan_auth_pass).to.be.undefined
     expect(lan_auth.lan_auth_api_key_use).to.be.false
-    expect(lan_auth.lan_auth_api_key).to.be.undefined
+    expect(lan_auth.lan_auth_api_key).to.equal('')
     expect(lan_auth.lan_auth_api_key_rw_use).to.be.false
-    expect(lan_auth.lan_auth_api_key_rw).to.be.undefined
+    expect(lan_auth.lan_auth_api_key_rw).to.equal('')
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -221,9 +221,9 @@ describe('GwCfgLanAuth', () => {
     expect(lan_auth.lan_auth_user).to.equal('Admin')
     expect(lan_auth.lan_auth_pass).to.be.undefined
     expect(lan_auth.lan_auth_api_key_use).to.be.false
-    expect(lan_auth.lan_auth_api_key).to.be.undefined
+    expect(lan_auth.lan_auth_api_key).to.equal('')
     expect(lan_auth.lan_auth_api_key_rw_use).to.be.false
-    expect(lan_auth.lan_auth_api_key_rw).to.be.undefined
+    expect(lan_auth.lan_auth_api_key_rw).to.equal('')
     expect(Object.keys(data).length).to.equal(0)
   })
 

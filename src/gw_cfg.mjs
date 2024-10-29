@@ -49,6 +49,11 @@ export class GwCfg {
         this.scan.is_default()
   }
 
+  is_use_ruuvi_scan_with_default_options () {
+    return this.company_filter.is_default() &&
+        this.scan.is_default()
+  }
+
   #parseResponse (data) {
     this.info.parse(data)
     this.eth.parse(data)
@@ -77,7 +82,7 @@ export class GwCfg {
     this.#parseResponse(data)
   }
 
-  async saveNetworkConfig (auth) {
+  async #prepNetworkConfig () {
     let data = {}
     data.use_eth = this.eth.use_eth
     if (this.eth.use_eth) {
@@ -93,16 +98,34 @@ export class GwCfg {
       data.wifi_ap_config = {}
       data.wifi_ap_config.channel = this.wifi_ap_cfg.channel
     }
+    return data;
+  }
+
+  async testPrepNetworkConfig() {
+    return await this.#prepNetworkConfig()
+  }
+
+  async saveNetworkConfig (auth) {
+    const data = await this.#prepNetworkConfig()
     return Network.httpEncryptAndPostJson(auth, '/ruuvi.json', 5000, data)
+  }
+
+  async #prepFwUpdateUrl () {
+    let data = {}
+    data.fw_update_url = this.fw_update_url.fw_update_url
+    return data
+  }
+
+  async testPrepFwUpdateUrl() {
+    return await this.#prepFwUpdateUrl()
   }
 
   async saveFwUpdateUrl (auth) {
-    let data = {}
-    data.fw_update_url = this.fw_update_url.fw_update_url
+    const data = await this.#prepFwUpdateUrl()
     return Network.httpEncryptAndPostJson(auth, '/ruuvi.json', 5000, data)
   }
 
-  async saveConfig (auth) {
+  async #prepConfig () {
     let data = {}
 
     data.remote_cfg_use = this.remote_cfg.remote_cfg_use
@@ -185,13 +208,18 @@ export class GwCfg {
     }
 
     data.company_use_filtering = this.company_filter.company_use_filtering
+    data.company_id = this.company_filter.company_id
 
-    data.scan_coded_phy = this.scan.scan_coded_phy
-    data.scan_1mbit_phy = this.scan.scan_1mbit_phy
-    data.scan_extended_payload = this.scan.scan_extended_payload
-    data.scan_channel_37 = this.scan.scan_channel_37
-    data.scan_channel_38 = this.scan.scan_channel_38
-    data.scan_channel_39 = this.scan.scan_channel_39
+    if (!this.scan.scan_default) {
+      data.scan_coded_phy = this.scan.scan_coded_phy
+      data.scan_1mbit_phy = this.scan.scan_1mbit_phy
+      data.scan_2mbit_phy = this.scan.scan_2mbit_phy
+      data.scan_channel_37 = this.scan.scan_channel_37
+      data.scan_channel_38 = this.scan.scan_channel_38
+      data.scan_channel_39 = this.scan.scan_channel_39
+    }
+    data.scan_default = this.scan.scan_default
+
     data.scan_filter_allow_listed = this.scan.scan_filter_allow_listed
     data.scan_filter_list = this.scan.scan_filter_list
 
@@ -211,39 +239,121 @@ export class GwCfg {
         data.ntp_server4 = this.ntp.ntp_server4
       }
     }
+    return data
+  }
 
+  async testPrepConfig() {
+    return await this.#prepConfig()
+  }
+
+  async saveConfig (auth) {
+    const data = await this.#prepConfig()
     return Network.httpEncryptAndPostJson(auth, '/ruuvi.json', 10000, data)
+  }
+
+  /**
+   * @param {Boolean} company_use_filtering
+   * @param {Number} company_id
+   * @param {Boolean} scan_coded_phy
+   * @param {Boolean} scan_1mbit_phy
+   * @param {Boolean} scan_2mbit_phy
+   * @param {Boolean} scan_channel_37
+   * @param {Boolean} scan_channel_38
+   * @param {Boolean} scan_channel_39
+   * @param {Boolean} scan_default
+   * @returns {Promise<Object>}
+   */
+  async #prepBluetoothScanningConfig(company_use_filtering,
+                                    company_id,
+                                    scan_coded_phy,
+                                    scan_1mbit_phy,
+                                    scan_2mbit_phy,
+                                    scan_channel_37,
+                                    scan_channel_38,
+                                    scan_channel_39,
+                                    scan_default) {
+    let data = {}
+
+    data.company_use_filtering = company_use_filtering
+    data.company_id = company_id
+
+    data.scan_default = scan_default
+    if (!data.scan_default) {
+      data.scan_coded_phy = scan_coded_phy
+      data.scan_1mbit_phy = scan_1mbit_phy
+      data.scan_2mbit_phy = scan_2mbit_phy
+      data.scan_channel_37 = scan_channel_37
+      data.scan_channel_38 = scan_channel_38
+      data.scan_channel_39 = scan_channel_39
+    }
+    return data
+  }
+
+  /**
+   * @param {Boolean} company_use_filtering
+   * @param {Number} company_id
+   * @param {Boolean} scan_coded_phy
+   * @param {Boolean} scan_1mbit_phy
+   * @param {Boolean} scan_2mbit_phy
+   * @param {Boolean} scan_channel_37
+   * @param {Boolean} scan_channel_38
+   * @param {Boolean} scan_channel_39
+   * @param {Boolean} scan_default
+   * @returns {Promise<Object>}
+   */
+  async testPrepBluetoothScanningConfig(company_use_filtering,
+                                        company_id,
+                                        scan_coded_phy,
+                                        scan_1mbit_phy,
+                                        scan_2mbit_phy,
+                                        scan_channel_37,
+                                        scan_channel_38,
+                                        scan_channel_39,
+                                        scan_default) {
+    return this.#prepBluetoothScanningConfig(company_use_filtering,
+        company_id,
+        scan_coded_phy,
+        scan_1mbit_phy,
+        scan_2mbit_phy,
+        scan_channel_37,
+        scan_channel_38,
+        scan_channel_39,
+        scan_default)
   }
 
   /**
    * @param {Auth} auth
    * @param {Boolean} company_use_filtering
+   * @param {Number} company_id
    * @param {Boolean} scan_coded_phy
    * @param {Boolean} scan_1mbit_phy
-   * @param {Boolean} scan_extended_payload
+   * @param {Boolean} scan_2mbit_phy
    * @param {Boolean} scan_channel_37
    * @param {Boolean} scan_channel_38
    * @param {Boolean} scan_channel_39
+   * @param {Boolean} scan_default
+   * @return {Promise<Object>}
    */
   async saveBluetoothScanningConfig(auth,
                                     company_use_filtering,
+                                    company_id,
                                     scan_coded_phy,
                                     scan_1mbit_phy,
-                                    scan_extended_payload,
+                                    scan_2mbit_phy,
                                     scan_channel_37,
                                     scan_channel_38,
-                                    scan_channel_39) {
-    let data = {}
-
-    data.company_use_filtering = company_use_filtering
-
-    data.scan_coded_phy = scan_coded_phy
-    data.scan_1mbit_phy = scan_1mbit_phy
-    data.scan_extended_payload = scan_extended_payload
-    data.scan_channel_37 = scan_channel_37
-    data.scan_channel_38 = scan_channel_38
-    data.scan_channel_39 = scan_channel_39
-
+                                    scan_channel_39,
+                                    scan_default) {
+    const data = this.#prepBluetoothScanningConfig(
+        company_use_filtering,
+        company_id,
+        scan_coded_phy,
+        scan_1mbit_phy,
+        scan_2mbit_phy,
+        scan_channel_37,
+        scan_channel_38,
+        scan_channel_39,
+        scan_default)
     return Network.httpEncryptAndPostJson(auth, '/bluetooth_scanning.json', 10000, data)
   }
 }

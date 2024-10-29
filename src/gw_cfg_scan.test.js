@@ -1,7 +1,10 @@
+// noinspection DuplicatedCode
+
 /**
  * @author TheSomeMan
  * @copyright Ruuvi Innovations Ltd, license BSD-3-Clause.
  */
+
 
 import { GwCfgScan } from './gw_cfg_scan.mjs'
 import chai from 'chai'
@@ -26,10 +29,11 @@ describe('GwCfgScan', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: true,
+      scan_default: true,
       scan_filter_allow_listed: false,
       scan_filter_list: []
     }
@@ -37,10 +41,11 @@ describe('GwCfgScan', () => {
     scan.parse(data)
     expect(scan.scan_coded_phy).to.be.false
     expect(scan.scan_1mbit_phy).to.be.true
-    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_2mbit_phy).to.be.true
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_default).to.be.true
     expect(scan.scan_filter_allow_listed).to.be.false
     expect(scan.scan_filter_list).to.deep.equal([])
   })
@@ -49,10 +54,11 @@ describe('GwCfgScan', () => {
     let data = {
       scan_coded_phy: true,
       scan_1mbit_phy: true,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: true,
+      scan_default: false,
       scan_filter_allow_listed: false,
       scan_filter_list: []
     }
@@ -60,10 +66,11 @@ describe('GwCfgScan', () => {
     scan.parse(data)
     expect(scan.scan_coded_phy).to.be.true
     expect(scan.scan_1mbit_phy).to.be.true
-    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_2mbit_phy).to.be.true
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_default).to.be.false
     expect(scan.scan_filter_allow_listed).to.be.false
     expect(scan.scan_filter_list).to.deep.equal([])
   })
@@ -72,10 +79,11 @@ describe('GwCfgScan', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: false,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: true,
+      scan_default: false,
       scan_filter_allow_listed: false,
       scan_filter_list: []
     }
@@ -83,22 +91,24 @@ describe('GwCfgScan', () => {
     scan.parse(data)
     expect(scan.scan_coded_phy).to.be.false
     expect(scan.scan_1mbit_phy).to.be.false
-    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_2mbit_phy).to.be.true
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_default).to.be.false
     expect(scan.scan_filter_allow_listed).to.be.false
     expect(scan.scan_filter_list).to.deep.equal([])
   })
 
-  it('should check non default scan_extended_payload', () => {
+  it('should check non default scan_2mbit_phy', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
-      scan_extended_payload: false,
+      scan_2mbit_phy: false,
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: true,
+      scan_default: false,
       scan_filter_allow_listed: false,
       scan_filter_list: []
     }
@@ -106,10 +116,11 @@ describe('GwCfgScan', () => {
     scan.parse(data)
     expect(scan.scan_coded_phy).to.be.false
     expect(scan.scan_1mbit_phy).to.be.true
-    expect(scan.scan_extended_payload).to.be.false
+    expect(scan.scan_2mbit_phy).to.be.false
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_default).to.be.false
     expect(scan.scan_filter_allow_listed).to.be.false
     expect(scan.scan_filter_list).to.deep.equal([])
   })
@@ -118,10 +129,11 @@ describe('GwCfgScan', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
       scan_channel_37: false,
       scan_channel_38: true,
       scan_channel_39: true,
+      scan_default: false,
       scan_filter_allow_listed: false,
       scan_filter_list: []
     }
@@ -129,10 +141,11 @@ describe('GwCfgScan', () => {
     scan.parse(data)
     expect(scan.scan_coded_phy).to.be.false
     expect(scan.scan_1mbit_phy).to.be.true
-    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_2mbit_phy).to.be.true
     expect(scan.scan_channel_37).to.be.false
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_default).to.be.false
     expect(scan.scan_filter_allow_listed).to.be.false
     expect(scan.scan_filter_list).to.deep.equal([])
   })
@@ -141,10 +154,11 @@ describe('GwCfgScan', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
       scan_channel_37: true,
       scan_channel_38: false,
       scan_channel_39: true,
+      scan_default: false,
       scan_filter_allow_listed: false,
       scan_filter_list: []
     }
@@ -152,10 +166,11 @@ describe('GwCfgScan', () => {
     scan.parse(data)
     expect(scan.scan_coded_phy).to.be.false
     expect(scan.scan_1mbit_phy).to.be.true
-    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_2mbit_phy).to.be.true
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.false
     expect(scan.scan_channel_39).to.be.true
+    expect(scan.scan_default).to.be.false
     expect(scan.scan_filter_allow_listed).to.be.false
     expect(scan.scan_filter_list).to.deep.equal([])
   })
@@ -164,10 +179,11 @@ describe('GwCfgScan', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: false,
+      scan_default: false,
       scan_filter_allow_listed: false,
       scan_filter_list: []
     }
@@ -175,10 +191,11 @@ describe('GwCfgScan', () => {
     scan.parse(data)
     expect(scan.scan_coded_phy).to.be.false
     expect(scan.scan_1mbit_phy).to.be.true
-    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_2mbit_phy).to.be.true
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.false
+    expect(scan.scan_default).to.be.false
     expect(scan.scan_filter_allow_listed).to.be.false
     expect(scan.scan_filter_list).to.deep.equal([])
   })
@@ -187,10 +204,11 @@ describe('GwCfgScan', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: false,
+      scan_default: true,
       scan_filter_allow_listed: false,
       scan_filter_list: ['AA:BB:CC:00:00:01', 'AA:BB:CC:00:00:02']
     }
@@ -198,10 +216,11 @@ describe('GwCfgScan', () => {
     scan.parse(data)
     expect(scan.scan_coded_phy).to.be.false
     expect(scan.scan_1mbit_phy).to.be.true
-    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_2mbit_phy).to.be.true
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.false
+    expect(scan.scan_default).to.be.true
     expect(scan.scan_filter_allow_listed).to.be.false
     expect(scan.scan_filter_list).to.deep.equal(['AA:BB:CC:00:00:01', 'AA:BB:CC:00:00:02'])
   })
@@ -210,10 +229,11 @@ describe('GwCfgScan', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: false,
+      scan_default: true,
       scan_filter_allow_listed: true,
       scan_filter_list: ['AA:BB:CC:00:00:01']
     }
@@ -221,10 +241,11 @@ describe('GwCfgScan', () => {
     scan.parse(data)
     expect(scan.scan_coded_phy).to.be.false
     expect(scan.scan_1mbit_phy).to.be.true
-    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_2mbit_phy).to.be.true
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.false
+    expect(scan.scan_default).to.be.true
     expect(scan.scan_filter_allow_listed).to.be.true
     expect(scan.scan_filter_list).to.deep.equal(['AA:BB:CC:00:00:01'])
   })
@@ -233,30 +254,46 @@ describe('GwCfgScan', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
       scan_channel_37: true,
       scan_channel_38: true,
       scan_channel_39: false,
+      scan_default: true,
     }
     let scan = new GwCfgScan()
     scan.parse(data)
     expect(scan.scan_coded_phy).to.be.false
     expect(scan.scan_1mbit_phy).to.be.true
-    expect(scan.scan_extended_payload).to.be.true
+    expect(scan.scan_2mbit_phy).to.be.true
     expect(scan.scan_channel_37).to.be.true
     expect(scan.scan_channel_38).to.be.true
     expect(scan.scan_channel_39).to.be.false
+    expect(scan.scan_default).to.be.true
     expect(scan.scan_filter_allow_listed).to.be.false
     expect(scan.scan_filter_list).to.deep.equal([])
+  })
+
+  it('should check missing scan_default', () => {
+    let data = {
+      scan_coded_phy: false,
+      scan_1mbit_phy: true,
+      scan_2mbit_phy: true,
+      scan_channel_37: true,
+      scan_channel_38: true,
+      scan_channel_39: true,
+    }
+    let scan = new GwCfgScan()
+    expect(() => scan.parse(data)).to.throw(Error, 'Missing \'scan_default\' key in the data.')
   })
 
   it('should check missing scan_channel_39', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
       scan_channel_37: true,
       scan_channel_38: true,
+      scan_default: true,
     }
     let scan = new GwCfgScan()
     expect(() => scan.parse(data)).to.throw(Error, 'Missing \'scan_channel_39\' key in the data.')
@@ -266,7 +303,7 @@ describe('GwCfgScan', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
       scan_channel_37: true,
     }
     let scan = new GwCfgScan()
@@ -277,19 +314,19 @@ describe('GwCfgScan', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
-      scan_extended_payload: true,
+      scan_2mbit_phy: true,
     }
     let scan = new GwCfgScan()
     expect(() => scan.parse(data)).to.throw(Error, 'Missing \'scan_channel_37\' key in the data.')
   })
 
-  it('should check missing scan_extended_payload', () => {
+  it('should check missing scan_2mbit_phy', () => {
     let data = {
       scan_coded_phy: false,
       scan_1mbit_phy: true,
     }
     let scan = new GwCfgScan()
-    expect(() => scan.parse(data)).to.throw(Error, 'Missing \'scan_extended_payload\' key in the data.')
+    expect(() => scan.parse(data)).to.throw(Error, 'Missing \'scan_2mbit_phy\' key in the data.')
   })
 
   it('should check missing scan_1mbit_phy', () => {

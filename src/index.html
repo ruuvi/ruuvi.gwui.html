@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 
 <head>
     <meta charset="utf-8"/>
@@ -1901,8 +1901,8 @@
                     <span lang="fi">Dataformaatti</span>
                 </h3>
                 <p>
-                    <span lang="en">Choose the data format to use for relaying received Bluetooth advertisement data. For more detailed instructions, refer to docs.ruuvi.com.</span>
-                    <span lang="fi">Valitse vastaanotettujen Bluetooth-mainospakettien välittämiseen käytettävä dataformaatti. Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com.</span>
+                    <span lang="en">Choose the data format to use for relaying received Bluetooth broadcast advertisement data. For more detailed instructions, refer to docs.ruuvi.com.</span>
+                    <span lang="fi">Valitse vastaanotettujen Bluetooth -broadcast-viestien välittämiseen käytettävä dataformaatti. Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com.</span>
                 </p>
                 <label class="control control-radio">
                     <span lang="en">Don't decode, send data in raw format (default)</span>
@@ -2260,8 +2260,8 @@
                         <span lang="fi">Dataformaatti</span>
                     </h3>
                     <p>
-                    <span lang="en">Choose the data format to use for relaying received Bluetooth advertisement data. For more detailed instructions, refer to docs.ruuvi.com.</span>
-                    <span lang="fi">Valitse vastaanotettujen Bluetooth-mainospakettien välittämiseen käytettävä dataformaatti. Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com.</span>
+                    <span lang="en">Choose the data format to use for relaying received Bluetooth broadcast advertisement data. For more detailed instructions, refer to docs.ruuvi.com.</span>
+                    <span lang="fi">Valitse vastaanotettujen Bluetooth -broadcast-viestien välittämiseen käytettävä dataformaatti. Tarkemmat ohjeet löydät osoitteesta docs.ruuvi.com.</span>
                     </p>
                     <label class="control control-radio">
                         <span lang="en">Don't decode, send data in raw format (default)</span>
@@ -2887,17 +2887,31 @@
             </div>
 
             <div id="page-scanning-advanced-dropdown" class="hidden">
-                <div class="info-icon-row">
-                    <div class="info-icon-left-column">
-                        <label class="control control-radio info-icon-container">
-                            <span lang="en">Listen to Ruuvi sensors (including long range sensors)</span>
-                            <span lang="fi">Kuuntele Ruuvi-antureita (myös pitkän kantaman anturit)</span>
-                            <input type="radio" name="company_use_filtering" value="2">
-                            <span class="control_indicator"></span>
-                        </label>
-                    </div>
-                    <div class="info-icon-right-column">
-                        <a class="info-icon-button" href="#popup-info-icon-scanning"><span>i</span></a>
+                <div>
+                    <label class="control control-radio info-icon-container">
+                        <span lang="en">Filter Bluetooth messages by manufacturer ID</span>
+                        <span lang="fi">Suodata Bluetooth-viestit valmistajan tunnuksen mukaan</span>
+                        <input type="radio" name="company_use_filtering" value="2">
+                        <span class="control_indicator"></span>
+                    </label>
+                </div>
+                <div id="page-scanning-filter_beacons" class="indent hidden">
+                    <div>
+                        <h3>
+                            <label for="scan_company_id">
+                                <span lang="en"></span>
+                                <span lang="fi"></span>
+                            </label>
+                        </h3>
+                        <div class="input-with_validity_check" style="flex-grow: unset; width: auto;">
+                            <input type="text" id="scan_company_id" style="width: calc(15ch + 4px + 2 * var(--input-padding-right-and-left));">
+                            <div class="input-with_validity_check-icon">
+                            </div>
+                            <div class="input-placeholder">
+                                <span lang="en">0x0499 for Ruuvi</span>
+                                <span lang="fi">Ruuvin valmistajatunnus 0x0499</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -2909,41 +2923,46 @@
                         <span class="control_indicator"></span>
                     </label>
                 </div>
-                <div id="page-scanning-all_nearby_beacons-scanning_options" class="indent hidden">
+                <div id="page-scanning-scan_options" >
                     <h3>
                         <span lang="en">Listen to protocol</span>
                         <span lang="fi">Kuunneltava protokolla</span>
                     </h3>
                     <div class="indent">
                         <div>
-                            <label class="control control-radio">
-                                <span lang="en">Listen to 1 MBit/s advertisements</span>
-                                <span lang="fi">Kuuntele 1 MBit/s -majakkaviestejä</span>
-                                <input type="radio" name="scan_phy" value="scan_phy_1mbit">
+                            <label class="control control-checkbox">
+                                <span lang="en">Listen to BLE 1MB PHY (regular broadcast advertisements)</span>
+                                <span lang="fi">Kuuntele BLE 1MB PHY (tavalliset broadcast-viestit)</span>
+                                <input type="checkbox" id="scan_phy_1mb">
                                 <span class="control_indicator"></span>
                             </label>
                         </div>
                         <div>
-                            <label class="control control-radio">
-                                <span lang="en">Listen to coded PHY (long range) advertisements</span>
-                                <span lang="fi">Kuuntele pitkän kantaman protokollalla (PHY) koodattuja majakkaviestejä</span>
-                                <input type="radio" name="scan_phy" value="scan_phy_coded">
+                            <label class="control control-checkbox">
+                                <span lang="en">Listen to BLE 2MB PHY (extended broadcast advertisements)</span>
+                                <span lang="fi">Kuuntele BLE 2MB PHY (laajennetut broadcast-viestit)</span>
+                                <input type="checkbox" id="scan_phy_2mb">
                                 <span class="control_indicator"></span>
                             </label>
                         </div>
-                        <div>
-                            <label class="control control-radio">
-                                <span lang="en">Listen to 1 MBit/s and coded PHY (long range) advertisements</span>
-                                <span lang="fi">Kuuntele 1 MBit/s ja pitkän kantaman protokollalla (PHY) koodattuja majakkaviestejä</span>
-                                <input type="radio" name="scan_phy" value="scan_phy_1mbit_and_coded">
-                                <span class="control_indicator"></span>
-                            </label>
+                        <div class="info-icon-row">
+                            <div class="info-icon-left-column">
+                                <label class="control control-checkbox">
+                                    <span lang="en">Listen to BLE Coded PHY (Long range extended broadcast advertisements)</span>
+                                    <span lang="fi">Kuuntele BLE Coded PHY (pitkän kantaman laajennetut broadcast-viestit)</span>
+                                    <input type="checkbox" id="scan_phy_coded">
+                                    <span class="control_indicator"></span>
+                                </label>
+                            </div>
+                            <div class="info-icon-right-column">
+                                <a class="info-icon-button" href="#popup-info-icon-scanning"><span>i</span></a>
+                            </div>
                         </div>
                     </div>
                     <div id="scan_extended_payload-div" class="hidden">
                         <label class="control control-checkbox">
                             <span lang="en">Use extended payload</span>
-                            <span lang="fi">Skannaa pidennettyjä lähetyksiä</span>
+                            <span lang="fi">Skannaa laajennettuja lähetyksiä</span>
                             <input type="checkbox" id="scan_extended_payload">
                             <span class="control_indicator"></span>
                         </label>

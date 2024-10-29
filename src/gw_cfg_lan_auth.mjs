@@ -83,7 +83,17 @@ export class GwCfgLanAuth {
     this.lan_auth_type = new GwCfgLanAuthType(utils.fetchStringKeyFromData(data, 'lan_auth_type', true))
     this.lan_auth_user = utils.fetchStringKeyFromData(data, 'lan_auth_user', false, 'Admin')
     this.lan_auth_api_key_use = utils.fetchBoolKeyFromData(data, 'lan_auth_api_key_use', false, false)
+    if (this.lan_auth_api_key_use) {
+      this.lan_auth_api_key = undefined
+    } else {
+      this.lan_auth_api_key = ''
+    }
     this.lan_auth_api_key_rw_use = utils.fetchBoolKeyFromData(data, 'lan_auth_api_key_rw_use', false, false)
+    if (this.lan_auth_api_key_rw_use) {
+      this.lan_auth_api_key_rw = undefined
+    } else {
+      this.lan_auth_api_key_rw = ''
+    }
   }
 
   setDefaultUser() {

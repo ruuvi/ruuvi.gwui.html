@@ -20,6 +20,7 @@ import {GwCfg} from "./gw_cfg.mjs";
 import GuiOverlay from "./gui_overlay.mjs";
 import GwStatus from "./gw_status.mjs";
 import Network from "./network.mjs";
+import {GwCfgCompanyFilter} from "./gw_cfg_company_filter.mjs";
 
 class PageScanning {
     /** @type GwCfg */
@@ -29,15 +30,6 @@ class PageScanning {
     #auth
 
     #section = $('section#page-scanning')
-
-    #radio_scan_phy = new GuiRadioButton('scan_phy')
-
-    /** @type GuiRadioButtonOption */
-    #radio_scan_phy_1mbit
-    /** @type GuiRadioButtonOption */
-    #radio_scan_phy_coded
-    /** @type GuiRadioButtonOption */
-    #radio_scan_phy_1mbit_and_coded
 
     #radio_company_use_filtering = new GuiRadioButton('company_use_filtering')
 
@@ -50,13 +42,16 @@ class PageScanning {
 
     #sect_advanced = new GuiSectAdvanced($('#page-scanning-advanced-button'))
 
-    #div_all_nearby_beacons_scanning_options = new GuiDiv($('#page-scanning-all_nearby_beacons-scanning_options'))
-    #checkbox_scan_extended_payload = new GuiCheckbox($('#scan_extended_payload'))
+    #div_filter_beacons = new GuiDiv($('#page-scanning-filter_beacons'))
+    #div_scan_options = new GuiDiv($('#page-scanning-scan_options'))
+    #checkbox_scan_phy_1mb = new GuiCheckbox($('#scan_phy_1mb'))
+    #checkbox_scan_phy_2mb = new GuiCheckbox($('#scan_phy_2mb'))
+    #checkbox_scan_phy_coded = new GuiCheckbox($('#scan_phy_coded'))
     #checkbox_scan_channel_37 = new GuiCheckbox($('#scan_channel_37'))
     #checkbox_scan_channel_38 = new GuiCheckbox($('#scan_channel_38'))
     #checkbox_scan_channel_39 = new GuiCheckbox($('#scan_channel_39'))
 
-    #div_scan_extended_payload = new GuiDiv($('#scan_extended_payload-div'))
+    #input_company_id = new GuiInputTextWithValidation($('#scan_company_id'))
 
     #checkbox_scan_filtering = new GuiCheckbox($('#scan_filtering'))
     #div_scan_filtering_options = new GuiDiv($('#scan_filtering-options'))
@@ -85,10 +80,6 @@ class PageScanning {
         this.#gwCfg = gwCfg
         this.#auth = auth
 
-        this.#radio_scan_phy_1mbit = this.#radio_scan_phy.addOption('scan_phy_1mbit', false)
-        this.#radio_scan_phy_coded = this.#radio_scan_phy.addOption('scan_phy_coded', false)
-        this.#radio_scan_phy_1mbit_and_coded = this.#radio_scan_phy.addOption('scan_phy_1mbit_and_coded', false)
-
         this.#radio_company_use_filtering_0 = this.#radio_company_use_filtering.addOption('0', false)
         this.#radio_company_use_filtering_1 = this.#radio_company_use_filtering.addOption('1', false)
         this.#radio_company_use_filtering_2 = this.#radio_company_use_filtering.addOption('2', false)
@@ -108,10 +99,11 @@ class PageScanning {
         this.#radio_company_use_filtering_1.on_click(() => this.#on_settings_scan_filtering_changed())
         this.#radio_company_use_filtering_2.on_click(() => this.#on_settings_scan_filtering_changed())
 
-        this.#radio_scan_phy_1mbit.on_click(() => this.#on_bluetooth_scanning_changed())
-        this.#radio_scan_phy_coded.on_click(() => this.#on_bluetooth_scanning_changed())
-        this.#radio_scan_phy_1mbit_and_coded.on_click(() => this.#on_bluetooth_scanning_changed())
-        this.#checkbox_scan_extended_payload.on_change(() => this.#on_bluetooth_scanning_changed())
+        this.#input_company_id.on_change(() => this.#on_scan_company_id_changed())
+
+        this.#checkbox_scan_phy_1mb.on_change(() => this.#on_bluetooth_scanning_changed())
+        this.#checkbox_scan_phy_2mb.on_change(() => this.#on_bluetooth_scanning_changed())
+        this.#checkbox_scan_phy_coded.on_change(() => this.#on_bluetooth_scanning_changed())
         this.#checkbox_scan_channel_37.on_change(() => this.#on_bluetooth_scanning_changed())
         this.#checkbox_scan_channel_38.on_change(() => this.#on_bluetooth_scanning_changed())
         this.#checkbox_scan_channel_39.on_change(() => this.#on_bluetooth_scanning_changed())
@@ -122,14 +114,6 @@ class PageScanning {
         this.#button_add_mac_filter_manually.on_click(() => this.#onClickButtonAddFilterManually())
 
         this.#button_continue.on_click(() => Navigation.change_page_to_finished(11))
-
-        if (this.#gwCfg.scan.scan_1mbit_phy && this.#gwCfg.scan.scan_coded_phy) {
-            this.#radio_scan_phy_1mbit_and_coded.setChecked()
-        } else if (this.#gwCfg.scan.scan_coded_phy) {
-            this.#radio_scan_phy_coded.setChecked()
-        } else {
-            this.#radio_scan_phy_1mbit.setChecked()
-        }
 
         if (this.#gwCfg.scan.scan_filter_list.length === 0) {
             this.#checkbox_scan_filtering.setUnchecked()
@@ -149,38 +133,27 @@ class PageScanning {
     async #onShow() {
         console.log(log_wrap('section#page-scanning: onShow'))
 
-        if (this.#gwCfg.scan.scan_1mbit_phy && this.#gwCfg.scan.scan_coded_phy) {
-            this.#radio_scan_phy_1mbit_and_coded.setChecked()
-        } else if (this.#gwCfg.scan.scan_coded_phy) {
-            this.#radio_scan_phy_coded.setChecked()
-        } else {
-            this.#radio_scan_phy_1mbit.setChecked()
-        }
-
-        if (this.#div_scan_extended_payload.isHidden()) {
-            this.#checkbox_scan_extended_payload.setState(false)
-        } else {
-            this.#checkbox_scan_extended_payload.setState(this.#gwCfg.scan.scan_extended_payload)
-        }
+        this.#checkbox_scan_phy_1mb.setState(this.#gwCfg.scan.scan_1mbit_phy)
+        this.#checkbox_scan_phy_2mb.setState(this.#gwCfg.scan.scan_2mbit_phy)
+        this.#checkbox_scan_phy_coded.setState(this.#gwCfg.scan.scan_coded_phy)
 
         this.#checkbox_scan_channel_37.setState(this.#gwCfg.scan.scan_channel_37)
         this.#checkbox_scan_channel_38.setState(this.#gwCfg.scan.scan_channel_38)
         this.#checkbox_scan_channel_39.setState(this.#gwCfg.scan.scan_channel_39)
 
-        if (!this.#gwCfg.company_filter.company_use_filtering) {
-            this.#radio_company_use_filtering_0.setChecked()
+        if (this.#gwCfg.scan.is_default()) {
+            this.#radio_company_use_filtering_1.setChecked()
+        } else if (this.#gwCfg.company_filter.company_use_filtering) {
+            this.#radio_company_use_filtering_2.setChecked()
         } else {
-            if (this.#gwCfg.scan.scan_coded_phy) {
-                this.#radio_company_use_filtering_2.setChecked()
-            } else {
-                this.#radio_company_use_filtering_1.setChecked()
-            }
+            this.#radio_company_use_filtering_0.setChecked()
         }
+        this.#set_company_id(this.#gwCfg.company_filter.company_id)
         this.#on_settings_scan_filtering_changed(false)
 
         this.#onChangeInputFilter()
 
-        if (this.#radio_company_use_filtering_1.isChecked() && !this.#checkbox_scan_filtering.isChecked()) {
+        if (this.#gwCfg.is_use_ruuvi_scan_with_default_options()) {
             this.#sect_advanced.hide()
         } else {
             this.#sect_advanced.show()
@@ -197,32 +170,21 @@ class PageScanning {
     async #onHide() {
         console.log(log_wrap('section#page-scanning: onHide'))
 
-        if (this.#div_scan_extended_payload.isHidden())
-        {
-            this.#checkbox_scan_extended_payload.setState(false)
-        }
-
         this.#input_add_mac_filter.setVal('')
         this.#input_add_mac_filter.clearValidationIcon('')
 
         this.#gwCfg.company_filter.company_use_filtering = !this.#radio_company_use_filtering_0.isChecked()
-        if (this.#radio_scan_phy_1mbit.isChecked()) {
-            this.#gwCfg.scan.scan_1mbit_phy = true
-            this.#gwCfg.scan.scan_coded_phy = false
-        } else if (this.#radio_scan_phy_coded.isChecked()) {
-            this.#gwCfg.scan.scan_1mbit_phy = false
-            this.#gwCfg.scan.scan_coded_phy = true
-        } else if (this.#radio_scan_phy_1mbit_and_coded.isChecked()) {
-            this.#gwCfg.scan.scan_1mbit_phy = true
-            this.#gwCfg.scan.scan_coded_phy = true
-        } else {
-            this.#gwCfg.scan.scan_1mbit_phy = true
-            this.#gwCfg.scan.scan_coded_phy = false
-        }
-        this.#gwCfg.scan.scan_extended_payload = this.#checkbox_scan_extended_payload.isChecked()
+        this.#gwCfg.company_filter.company_id = this.#get_company_id()
+
+        this.#gwCfg.scan.scan_1mbit_phy = this.#checkbox_scan_phy_1mb.isChecked()
+        this.#gwCfg.scan.scan_2mbit_phy = this.#checkbox_scan_phy_2mb.isChecked()
+        this.#gwCfg.scan.scan_coded_phy = this.#checkbox_scan_phy_coded.isChecked()
+
         this.#gwCfg.scan.scan_channel_37 = this.#checkbox_scan_channel_37.isChecked()
         this.#gwCfg.scan.scan_channel_38 = this.#checkbox_scan_channel_38.isChecked()
         this.#gwCfg.scan.scan_channel_39 = this.#checkbox_scan_channel_39.isChecked()
+
+        this.#gwCfg.scan.scan_default = this.#radio_company_use_filtering_1.isChecked()
 
         let list_of_mac = []
         if (this.#checkbox_scan_filtering.isChecked()) {
@@ -249,27 +211,18 @@ class PageScanning {
 
         GwStatus.stopCheckingStatus()
         Network.waitWhileInProgress().then(() => {
-            let scan_1mbit_phy = false
-            let scan_coded_phy = false
-            if (this.#radio_scan_phy_1mbit.isChecked()) {
-                scan_1mbit_phy = true
-            } else if (this.#radio_scan_phy_coded.isChecked()) {
-                scan_coded_phy = true
-            } else if (this.#radio_scan_phy_1mbit_and_coded.isChecked()) {
-                scan_1mbit_phy = true
-                scan_coded_phy = true
-            } else {
-                scan_1mbit_phy = true
-            }
-
+            let flag_company_use_filtering = !this.#radio_company_use_filtering_0.isChecked()
+            let flag_scan_default = this.#radio_company_use_filtering_1.isChecked()
             this.#gwCfg.saveBluetoothScanningConfig(this.#auth,
-                !this.#radio_company_use_filtering_0.isChecked(),
-                scan_coded_phy,
-                scan_1mbit_phy,
-                this.#checkbox_scan_extended_payload.isChecked(),
+                flag_company_use_filtering,
+                this.#get_company_id(),
+                this.#checkbox_scan_phy_coded.isChecked(),
+                this.#checkbox_scan_phy_1mb.isChecked(),
+                this.#checkbox_scan_phy_2mb.isChecked(),
                 this.#checkbox_scan_channel_37.isChecked(),
                 this.#checkbox_scan_channel_38.isChecked(),
-                this.#checkbox_scan_channel_39.isChecked()).then(() => {
+                this.#checkbox_scan_channel_39.isChecked(),
+                flag_scan_default).then(() => {
                 console.log(log_wrap(`saveBluetoothScanningConfig ok`))
             }).catch((err) => {
                 console.log(log_wrap(`saveBluetoothScanningConfig failed: ${err}`))
@@ -288,39 +241,98 @@ class PageScanning {
     #on_settings_scan_filtering_changed(flag_smoothly = true) {
         if (this.#radio_company_use_filtering_0.isChecked()) {
             if (flag_smoothly) {
-                this.#div_all_nearby_beacons_scanning_options.slideDown()
+                this.#div_filter_beacons.slideUp()
+                this.#div_scan_options.slideDown()
             } else {
-                this.#div_all_nearby_beacons_scanning_options.show()
+                this.#div_filter_beacons.hide()
+                this.#div_scan_options.show()
             }
         } else if (this.#radio_company_use_filtering_1.isChecked()) {
             if (flag_smoothly) {
-                this.#div_all_nearby_beacons_scanning_options.slideUp()
+                this.#div_filter_beacons.slideUp()
+                this.#div_scan_options.slideUp()
             } else {
-                this.#div_all_nearby_beacons_scanning_options.hide()
+                this.#div_filter_beacons.hide()
+                this.#div_scan_options.hide()
             }
-            this.#radio_scan_phy_1mbit.setChecked()
-            this.#checkbox_scan_extended_payload.setUnchecked()
+            this.#set_company_id(GwCfgCompanyFilter.DEFAULT_COMPANY_ID)
+            this.#checkbox_scan_phy_1mb.setChecked()
+            this.#checkbox_scan_phy_2mb.setChecked()
+            this.#checkbox_scan_phy_coded.setUnchecked()
             this.#checkbox_scan_channel_37.setChecked()
             this.#checkbox_scan_channel_38.setChecked()
             this.#checkbox_scan_channel_38.setChecked()
         } else if (this.#radio_company_use_filtering_2.isChecked()) {
             if (flag_smoothly) {
-                this.#div_all_nearby_beacons_scanning_options.slideUp()
+                this.#div_filter_beacons.slideDown()
+                this.#div_scan_options.slideDown()
             } else {
-                this.#div_all_nearby_beacons_scanning_options.hide()
+                this.#div_filter_beacons.show()
+                this.#div_scan_options.show()
             }
-            this.#radio_scan_phy_1mbit_and_coded.setChecked()
-            this.#checkbox_scan_extended_payload.setUnchecked()
-            this.#checkbox_scan_channel_37.setChecked()
-            this.#checkbox_scan_channel_38.setChecked()
-            this.#checkbox_scan_channel_39.setChecked()
         } else {
             throw new Error('Unsupported scan_filtering')
         }
+        this.#on_scan_company_id_changed()
 
         if (this.#checkbox_scan_filtering.isChecked()) {
             this.#update_bluetooth_scanning_options()
         }
+    }
+
+    /**
+     * @brief Get company_id from the input field
+     * @returns {number|NaN}
+     */
+    #get_company_id() {
+        const company_id = this.#input_company_id.getVal()
+        if (company_id === '') {
+            return NaN
+        } else {
+            let number
+            if (typeof company_id === 'string' && company_id.startsWith('0x')) {
+                if (!/^0x[0-9a-fA-F]+$/.test(company_id)) {
+                    return NaN;
+                }
+                number = parseInt(company_id, 16);
+            } else {
+                number = Number(company_id)
+            }
+            if (Number.isNaN(number) || number < 0 || number > 65535) {
+                return NaN;
+            }
+            return number;
+        }
+    }
+
+    #hex_company_id(manufacturer_id) {
+        return `0x${manufacturer_id.toString(16).padStart(4, '0')}`
+    }
+
+    /**
+     * @brief Set company_id to the input field
+     * @param manufacturer_id {number}
+     */
+    #set_company_id(manufacturer_id) {
+        this.#input_company_id.setVal(this.#hex_company_id(manufacturer_id))
+    }
+
+    #on_scan_company_id_changed() {
+        const company_id = this.#get_company_id()
+        let flag_all_fields_valid = false
+        if (isNaN(company_id)) {
+            this.#input_company_id.setInvalid()
+            flag_all_fields_valid = false
+        } else {
+            this.#input_company_id.setValid()
+            if ((this.#input_company_id.getVal() !== "0") &&
+                (!this.#input_company_id.getVal().startsWith('0x') ||
+                    this.#input_company_id.getVal().length > 6)) {
+                this.#set_company_id(company_id)
+            }
+            flag_all_fields_valid = true
+        }
+        this.#button_continue.setEnabled(flag_all_fields_valid)
     }
 
     #on_bluetooth_scanning_changed() {
