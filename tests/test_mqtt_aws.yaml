@@ -100,11 +100,13 @@ pages:
 
   - page: "#page-ntp_config"
     steps:
+      - do: selectRadio "#ntp_sync_default"  # Select radio 'Use default set of time servers (NTP servers) for time synchronisation'
       - do: clickAndNavigate "#page-ntp_config-button-continue"  # Click on 'Next' button
 
   - page: "#page-scanning"
     steps:
       - do: waitUntilLoaded 15000  # Wait until loaded
+      - do: selectRadio "#company_use_filtering_default"  # Select radio 'Listen to Ruuvi sensors only (default)'
       - do: clickAndNavigate "#page-scanning-button-continue"  # Click on 'Next' button
 
   - page: "#page-finished"

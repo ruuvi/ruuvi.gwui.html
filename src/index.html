@@ -2873,7 +2873,7 @@
             <label class="control control-radio">
                 <span lang="en">Listen to Ruuvi sensors only (default)</span>
                 <span lang="fi">Kuuntele ainoastaan Ruuvi-antureita (oletus)</span>
-                <input type="radio" name="company_use_filtering" value="1" checked>
+                <input type="radio" id="company_use_filtering_default" name="company_use_filtering" value="1" checked>
                 <span class="control_indicator"></span>
             </label>
 
@@ -2891,7 +2891,7 @@
                     <label class="control control-radio info-icon-container">
                         <span lang="en">Filter Bluetooth messages by manufacturer ID</span>
                         <span lang="fi">Suodata Bluetooth-viestit valmistajan tunnuksen mukaan</span>
-                        <input type="radio" name="company_use_filtering" value="2">
+                        <input type="radio" id="company_use_filtering_by_id" name="company_use_filtering" value="2">
                         <span class="control_indicator"></span>
                     </label>
                 </div>
@@ -2919,7 +2919,7 @@
                     <label class="control control-radio">
                         <span lang="en">Listen to all Bluetooth beacon messages (not just Ruuvi sensors)</span>
                         <span lang="fi">Kuuntele kaikkia Bluetooth-majakkaviestejä (ei ainoastaan Ruuvi-antureita)</span>
-                        <input type="radio" name="company_use_filtering" value="0">
+                        <input type="radio" id="company_use_filtering_no_id" name="company_use_filtering" value="0">
                         <span class="control_indicator"></span>
                     </label>
                 </div>
