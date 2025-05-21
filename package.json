@@ -52,7 +52,7 @@
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "js-yaml": "^4.1.0",
-    "mocha": "^10.2.0",
+    "mocha": "^10.8.2",
     "node-fetch": "^2.6.9",
     "puppeteer": "^22.11.2",
     "sass": "^1.59.2",
