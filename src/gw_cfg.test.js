@@ -553,7 +553,7 @@ describe('GwCfg', () => {
       const scan_channel_38 = false
       const scan_channel_39 = false
       const scan_default = false
-      const result = await gw_cfg.testPrepBluetoothScanningConfig(
+      const result = gw_cfg.testPrepBluetoothScanningConfig(
           company_use_filtering,
           company_id,
           scan_coded_phy,
@@ -587,7 +587,7 @@ describe('GwCfg', () => {
       const scan_channel_38 = false
       const scan_channel_39 = false
       const scan_default = false
-      const result = await gw_cfg.testPrepBluetoothScanningConfig(
+      const result = gw_cfg.testPrepBluetoothScanningConfig(
           company_use_filtering,
           company_id,
           scan_coded_phy,
@@ -621,7 +621,7 @@ describe('GwCfg', () => {
       const scan_channel_38 = false
       const scan_channel_39 = false
       const scan_default = false
-      const result = await gw_cfg.testPrepBluetoothScanningConfig(
+      const result = gw_cfg.testPrepBluetoothScanningConfig(
           company_use_filtering,
           company_id,
           scan_coded_phy,
@@ -655,7 +655,7 @@ describe('GwCfg', () => {
       const scan_channel_38 = false
       const scan_channel_39 = false
       const scan_default = false
-      const result = await gw_cfg.testPrepBluetoothScanningConfig(
+      const result = gw_cfg.testPrepBluetoothScanningConfig(
           company_use_filtering,
           company_id,
           scan_coded_phy,
@@ -689,7 +689,7 @@ describe('GwCfg', () => {
       const scan_channel_38 = false
       const scan_channel_39 = false
       const scan_default = false
-      const result = await gw_cfg.testPrepBluetoothScanningConfig(
+      const result = gw_cfg.testPrepBluetoothScanningConfig(
           company_use_filtering,
           company_id,
           scan_coded_phy,
@@ -723,7 +723,7 @@ describe('GwCfg', () => {
       const scan_channel_38 = false
       const scan_channel_39 = false
       const scan_default = false
-      const result = await gw_cfg.testPrepBluetoothScanningConfig(
+      const result = gw_cfg.testPrepBluetoothScanningConfig(
           company_use_filtering,
           company_id,
           scan_coded_phy,
@@ -757,7 +757,7 @@ describe('GwCfg', () => {
       const scan_channel_38 = true
       const scan_channel_39 = false
       const scan_default = false
-      const result = await gw_cfg.testPrepBluetoothScanningConfig(
+      const result = gw_cfg.testPrepBluetoothScanningConfig(
           company_use_filtering,
           company_id,
           scan_coded_phy,
@@ -791,7 +791,7 @@ describe('GwCfg', () => {
       const scan_channel_38 = false
       const scan_channel_39 = true
       const scan_default = false
-      const result = await gw_cfg.testPrepBluetoothScanningConfig(
+      const result = gw_cfg.testPrepBluetoothScanningConfig(
           company_use_filtering,
           company_id,
           scan_coded_phy,
@@ -819,7 +819,7 @@ describe('GwCfg', () => {
       const scan_channel_38 = false
       const scan_channel_39 = false
       const scan_default = true
-      const result = await gw_cfg.testPrepBluetoothScanningConfig(
+      const result = gw_cfg.testPrepBluetoothScanningConfig(
           company_use_filtering,
           company_id,
           scan_coded_phy,
