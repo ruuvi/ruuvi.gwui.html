@@ -13,6 +13,12 @@ This repository contains files related to the web interface of the Gateway confi
 * Install the Node.js modules that ruuvi.gwui.html depends on:
 
   `npm install`
+ 
+## Run unit-tests
+
+```shell
+npm test
+```
 
 ## Gateway simulator
 
