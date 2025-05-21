@@ -31,6 +31,8 @@ from Crypto.Hash import SHA256
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 
+g_flag_access_from_lan = False
+
 GET_AP_JSON_TIMEOUT = 0.25
 GET_HISTORY_JSON_TIMEOUT = 0.25
 NETWORK_CONNECTION_TIMEOUT = 0.25
@@ -88,7 +90,6 @@ g_auto_toggle_cnt = 0
 g_flag_toggle_history_json = False
 g_gw_mac = "AA:BB:CC:DD:EE:FF"
 g_gw_unique_id = "00:11:22:33:44:55:66:77"
-g_flag_access_from_lan = False
 g_aes_key = None
 g_flag_save_wifi_cfg_fails = False
 
@@ -621,6 +622,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             print(f'Response: {resp}')
             self.wfile.write(resp)
             return
+        print(f'Content: {req_dict}')
         ssid = req_dict['ssid']
         password = req_dict['password']
         if ssid is None and password is None:
@@ -679,6 +681,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             print(f'Response: {resp}')
             self.wfile.write(resp)
             return
+        print(f'Content: {req_dict}')
         g_ssid = 'Pantum-AP-A6D49F'
         g_password = '12345678'
         g_timestamp = time.time()
@@ -793,6 +796,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'\r\n'.encode('ascii')
             self.wfile.write(resp)
             return
+        print(f'Content: {req_dict}')
         for key, value in req_dict.items():
             print(f'Bluetooth scanning: "{key}": "{value}"')
         content = '{}'
@@ -1163,10 +1167,27 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_ruuvi_dict
         global g_login_session
         global g_flag_access_from_lan
-        print(f"LAN auth: {g_ruuvi_dict['lan_auth_type']}")
+        print(f"LAN auth: {g_ruuvi_dict['lan_auth_type']}, flag_access_from_lan: {g_flag_access_from_lan}")
         pub_key_b64_cli = self._ecdh_handshake(self._get_value_from_headers('Ruuvi-Ecdh-Pub-Key: '))
 
-        if g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DENY:
+        if g_flag_access_from_lan or g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_ALLOW:
+            resp = b''
+            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+            resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
+            if pub_key_b64_cli is not None:
+                resp += f'Ruuvi-Ecdh-Pub-Key: {pub_key_b64_cli}\r\n'.encode('ascii')
+            cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
+            resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
+            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+            resp += f'Pragma: no-cache\r\n'.encode('ascii')
+            resp_content = self._gen_auth_resp_content(g_flag_access_from_lan)
+            resp_content_encoded = resp_content.encode('utf-8')
+            resp += f'Content-type: application/json\r\n'.encode('ascii')
+            resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
+            resp += f'\r\n'.encode('ascii')
+            resp += resp_content_encoded
+            self.wfile.write(resp)
+        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_DENY:
             print(f"Resp: 403 Forbidden")
             resp = b''
             resp += f'HTTP/1.0 403 Forbidden\r\n'.encode('ascii')
@@ -1276,23 +1297,6 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 self._on_post_resp_401()
                 return
 
-            resp = b''
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-            resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
-            if pub_key_b64_cli is not None:
-                resp += f'Ruuvi-Ecdh-Pub-Key: {pub_key_b64_cli}\r\n'.encode('ascii')
-            cur_time_str = datetime.datetime.now().strftime('%a %d %b %Y %H:%M:%S %Z')
-            resp += f'Date: {cur_time_str}\r\n'.encode('ascii')
-            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-            resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp_content = self._gen_auth_resp_content(g_flag_access_from_lan)
-            resp_content_encoded = resp_content.encode('utf-8')
-            resp += f'Content-type: application/json\r\n'.encode('ascii')
-            resp += f'Content-Length: {len(resp_content_encoded)}\r\n'.encode('ascii')
-            resp += f'\r\n'.encode('ascii')
-            resp += resp_content_encoded
-            self.wfile.write(resp)
-        elif g_ruuvi_dict['lan_auth_type'] == LAN_AUTH_TYPE_ALLOW:
             resp = b''
             resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
             resp += f'Server: Ruuvi Gateway\r\n'.encode('ascii')
