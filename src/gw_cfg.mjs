@@ -261,9 +261,9 @@ export class GwCfg {
    * @param {Boolean} scan_channel_38
    * @param {Boolean} scan_channel_39
    * @param {Boolean} scan_default
-   * @returns {Promise<Object>}
+   * @returns {Object}
    */
-  async #prepBluetoothScanningConfig(company_use_filtering,
+  #prepBluetoothScanningConfig(company_use_filtering,
                                     company_id,
                                     scan_coded_phy,
                                     scan_1mbit_phy,
@@ -301,7 +301,7 @@ export class GwCfg {
    * @param {Boolean} scan_default
    * @returns {Promise<Object>}
    */
-  async testPrepBluetoothScanningConfig(company_use_filtering,
+  testPrepBluetoothScanningConfig(company_use_filtering,
                                         company_id,
                                         scan_coded_phy,
                                         scan_1mbit_phy,
