@@ -132,7 +132,7 @@ class Pages {
     this.page_remote_cfg = new PageRemoteCfg(gw_cfg, auth)
     this.page_update_schedule = new PageUpdateSchedule(gw_cfg.auto_update)
     this.page_lan_auth = new PageLanAuth(gw_cfg.lan_auth, auth)
-    this.page_cloud_options = new PageCloudOptions(gw_cfg)
+    this.page_cloud_options = new PageCloudOptions(gw_cfg, auth)
     this.page_custom_server = new PageCustomServer(gw_cfg, auth)
     this.page_time_sync = new PageTimeSync(gw_cfg.ntp)
     this.page_scanning = new PageScanning(gw_cfg, auth)

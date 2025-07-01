@@ -13,7 +13,13 @@ class GuiInputValidationIcon extends GuiObj {
     super('GuiInputValidationIcon', obj, 'INPUT')
     let parent = obj.parent()
     if (parent.prop('tagName') === 'LABEL') {
-      parent = parent.parent().parent()
+      if (parent.parent().prop('tagName') === 'DIV' && parent.parent().hasClass('input-with_validity_check')) {
+        parent = parent.parent()
+      } else if (parent.parent().parent().prop('tagName') === 'DIV' && parent.parent().parent().hasClass('input-with_validity_check')) {
+        parent = parent.parent().parent()
+      } else {
+        throw new Error(`GuiInputWithValidation: Parent class must be a DIV element with 'input-with_validity_check' CSS class.`)
+      }
     }
     this.#parent = parent
     if (this.#parent.prop('tagName') !== 'DIV') {
@@ -23,7 +29,7 @@ class GuiInputValidationIcon extends GuiObj {
       throw new Error(`GuiInputWithValidation: Parent class must have 'input-with_validity_check' CSS class.`)
     }
     this.#icon = this.#parent.children('.input-with_validity_check-icon')
-    if (this.#icon === undefined || this.#icon === null) {
+    if (this.#icon === undefined || this.#icon === null || this.#icon.length === 0) {
       throw new Error(`GuiInputWithValidation: There is no children with 'input-with_validity_check-icon' CSS class.`)
     }
     if (this.#icon.prop('tagName') !== 'DIV') {

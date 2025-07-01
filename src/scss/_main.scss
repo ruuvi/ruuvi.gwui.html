@@ -600,10 +600,6 @@ select {
 	}
 }
 
-input.input-row {
-	margin: 0 0 0;
-}
-
 .input-password {
 	position: relative
 }
@@ -646,7 +642,7 @@ input.input-row {
 	right: calc(5px + var(--fontawesome-icon-width) + 5px);
 }
 
-.input-with_validity_check input {
+.input-with_validity_check input[type="text"] {
 	margin-right: calc(var(--fontawesome-icon-width) + 5px);
 	width: calc(100% - var(--fontawesome-icon-width) - 5px);
 }
@@ -659,8 +655,9 @@ input.input-row {
 	right: 0;
 }
 
-.input-with_validity_check-icon.input-row {
-	top: calc(var(--input-border) + var(--input-padding-top-and-bottom));
+.control-with_validity_check-icon
+{
+	top: var(--control-padding);
 }
 
 .input-valid {

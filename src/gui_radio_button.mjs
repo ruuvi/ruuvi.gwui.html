@@ -4,6 +4,7 @@
  */
 
 import $ from 'jquery'
+import GuiInputValidationIcon from "./gui_input_validation_icon.mjs";
 
 export class GuiRadioButtonOption {
   #obj
@@ -51,7 +52,52 @@ export class GuiRadioButtonOption {
       fn()
     })
   }
+}
 
+class GuiRadioButtonOptionWithValidation extends GuiRadioButtonOption {
+  /** @type GuiInputValidationIcon */
+  #validation
+
+  constructor (obj, flagChecked) {
+    super(obj, flagChecked)
+    this.#validation = new GuiInputValidationIcon(obj)
+  }
+
+  isValidationRequired () {
+    return this.#validation.isValidationRequired()
+  }
+
+  setValidationRequired () {
+    return this.#validation.setValidationRequired()
+  }
+
+  clearValidationRequired () {
+    return this.#validation.clearValidationRequired()
+  }
+
+  clearValidationIcon () {
+    this.#validation.clearValidationIcon()
+  }
+
+  setCheckingIsValid () {
+    this.#validation.setCheckingIsValid()
+  }
+
+  setValid () {
+    this.#validation.setValid()
+  }
+
+  setInvalid () {
+    this.#validation.setInvalid()
+  }
+
+  isInvalid () {
+    return this.#validation.isInvalid()
+  }
+
+  isValidityChecked () {
+    return this.#validation.isValidityChecked()
+  }
 }
 
 export class GuiRadioButton {
@@ -68,7 +114,6 @@ export class GuiRadioButton {
   }
 
   /**
-   *
    * @param {string} value
    * @param {boolean} flagChecked
    * @returns {GuiRadioButtonOption}
@@ -76,6 +121,18 @@ export class GuiRadioButton {
   addOption (value, flagChecked) {
     const obj = $(`input[type=radio][name=${this.#name}][value='${value}']`)
     const opt = new GuiRadioButtonOption(obj, flagChecked)
+    this.#dict[value] = opt
+    return opt
+  }
+
+  /**
+   * @param {string} value
+   * @param {boolean} flagChecked
+   * @returns {GuiRadioButtonOptionWithValidation}
+   */
+  addOptionWithValidation (value, flagChecked) {
+    const obj = $(`input[type=radio][name=${this.#name}][value='${value}']`)
+    const opt = new GuiRadioButtonOptionWithValidation(obj, flagChecked)
     this.#dict[value] = opt
     return opt
   }
