@@ -6,6 +6,7 @@
 import $ from 'jquery'
 import {log_wrap, validate_url, parseIntegerString} from './utils.mjs'
 import GuiCheckbox from './gui_checkbox.mjs'
+import GuiCheckboxWithValidation from "./gui_checkbox_with_validation.mjs";
 import GuiInputTextWithValidation from './gui_input_text_with_validation.mjs'
 import GuiInputPasswordWithValidation from './gui_input_password_with_validataion.mjs'
 import GuiDiv from './gui_div.mjs'
@@ -34,18 +35,19 @@ class PageCustomServer {
 
     #section = $('section#page-custom_server')
 
-    #checkbox_use_http_ruuvi = new GuiCheckbox($('#use_http_ruuvi'))
-
+    #checkbox_use_http_ruuvi = new GuiCheckboxWithValidation($('#use_http_ruuvi'))
     #checkbox_use_http = new GuiCheckbox($('#use_http'))
     #div_settings_http = new GuiDiv($('#conf-settings-http'))
     #input_http_url = new GuiInputTextWithValidation($('#http_url'))
+    #div_http_ruuvi_validation_error = new GuiDiv($('#page-custom_server-http_ruuvi-validation_error'))
+    #text_http_ruuvi_validation_error_desc = new GuiText($('#page-custom_server-http_ruuvi-validation_error-desc'))
     #div_http_validation_error = new GuiDiv($('#page-custom_server-http_validation_error'))
     #text_http_validation_error_desc = new GuiText($('#page-custom_server-http_validation_error-desc'))
     #input_http_period = new GuiInputTextWithValidation($('#http_period'))
 
     #radio_http_data_format = new GuiRadioButton('http_data_format')
 
-    /** @type GuiRadioButtonOption */
+    /** @type GuiRadioButtonOption*/
     #radio_http_data_format_ruuvi
     /** @type GuiRadioButtonOption */
     #radio_http_data_format_ruuvi_raw_and_decoded
@@ -455,6 +457,9 @@ class PageCustomServer {
         this.#checkbox_mqtt_use_client_ssl_cert.setState(this.#gwCfg.mqtt.mqtt_use_ssl_client_cert)
         this.#checkbox_mqtt_use_server_ssl_cert.setState(this.#gwCfg.mqtt.mqtt_use_ssl_server_cert)
 
+        if (this.#checkbox_use_http_ruuvi.isChecked()) {
+            this.#checkbox_use_http_ruuvi.setValidationRequired()
+        }
         this.#on_custom_connection_type_changed()
         this.#on_custom_server_url_changed(true)
         this.#on_edit_mqtt_settings()
@@ -917,6 +922,13 @@ class PageCustomServer {
     }
 
     #onChangeUseHttpRuuvi() {
+        this.#checkbox_use_http_ruuvi.clearValidationIcon()
+        this.#div_http_ruuvi_validation_error.hide()
+        this.#text_http_ruuvi_validation_error_desc.setVal('')
+        this.#checkbox_use_http_ruuvi.clearValidationRequired()
+        if (this.#checkbox_use_http_ruuvi.isChecked()) {
+            this.#checkbox_use_http_ruuvi.setValidationRequired()
+        }
         this.#on_custom_connection_type_changed()
         this.#on_custom_server_url_changed()
     }
@@ -924,6 +936,7 @@ class PageCustomServer {
     #onChangeUseHttpCustom() {
         this.#input_http_url.clearValidationIcon()
         this.#div_http_validation_error.hide()
+        this.#text_http_validation_error_desc.setVal('')
         this.#input_http_url.clearValidationRequired()
         if (this.#checkbox_use_http.isChecked()) {
             if (this.#input_http_url.getVal() === GwCfgHttp.HTTP_URL_DEFAULT) {
@@ -1226,12 +1239,17 @@ class PageCustomServer {
         this.#input_http_auth_apikey_value.hidePassword()
         this.#input_mqtt_pass.hidePassword()
         this.#input_http_stat_pass.hidePassword()
+
+        if (this.#checkbox_use_http_ruuvi.isInvalid()) {
+            this.#checkbox_use_http_ruuvi.clearValidationIcon()
+            this.#checkbox_use_http_ruuvi.setValidationRequired()
+        }
+
         if (!this.#input_http_url.getVal().startsWith('http://') && !this.#input_http_url.getVal().startsWith('https://')) {
             this.#input_http_url.setVal('http://' + this.#input_http_url.getVal())
             this.#input_http_url.setValidationRequired()
         }
         if (this.#input_http_url.isInvalid() || this.#input_http_url.isValidationRequired()) {
-            this.#input_http_url.clearValidationIcon()
             this.#input_http_url.clearValidationIcon()
             this.#input_http_url.setValidationRequired()
             this.#input_http_auth_basic_user.clearValidationIcon()
@@ -1330,6 +1348,19 @@ class PageCustomServer {
     #on_custom_server_url_changed(flag_force_check_url = false) {
         let flag_need_check_url = false
         let flag_url_validation_failed = false
+
+        if (this.#checkbox_use_http_ruuvi.isChecked()) {
+            if (flag_force_check_url) {
+                this.#checkbox_use_http_ruuvi.setValidationRequired()
+            }
+            if (this.#checkbox_use_http_ruuvi.isValidationRequired()) {
+                flag_need_check_url = true
+            } else {
+                if (this.#checkbox_use_http_ruuvi.isInvalid()) {
+                    flag_url_validation_failed = true
+                }
+            }
+        }
 
         if (this.#checkbox_use_http.isChecked()) {
             if (flag_force_check_url) {
@@ -1467,11 +1498,10 @@ class PageCustomServer {
             this.#button_ignore_errors_and_continue.show()
             if (flag_need_check_url) {
                 this.#button_ignore_errors_and_continue.disable()
-                this.#button_check.enable()
             } else {
                 this.#button_ignore_errors_and_continue.enable()
-                this.#button_check.disable()
             }
+            this.#button_check.enable()
         } else {
             this.#button_ignore_errors_and_continue.hide()
             this.#button_continue.show()
@@ -1539,7 +1569,8 @@ class PageCustomServer {
 
         await Network.waitWhileInProgress()
 
-        this.#custom_server_validate_url_http()
+        this.#custom_server_validate_url_http_ruuvi()
+            .then(() => this.#custom_server_validate_url_http())
             .then(() => this.#custom_server_validate_url_http_stat())
             .then(() => this.#custom_server_validate_url_mqtt())
             .finally(() => {
@@ -1547,6 +1578,23 @@ class PageCustomServer {
                 gui_loading.bodyClassLoadingRemove()
                 GwStatus.startCheckingStatus()
             })
+    }
+
+    #custom_server_validate_url_http_ruuvi() {
+        if (!this.#checkbox_use_http_ruuvi.isChecked()) {
+            console.log(log_wrap(`HTTP URL validation not needed (Ruuvi HTTP is not active)`))
+            return new Promise(function (resolve) {
+                resolve(true)
+            })
+        }
+        const auth_type = HTTP_AUTH.none
+        return validate_url(this.#auth, GwCfgHttp.HTTP_URL_DEFAULT, 'check_post_advs', auth_type, {
+            input_url: this.#checkbox_use_http_ruuvi,
+            use_ssl_client_cert: false,
+            use_ssl_server_cert: false,
+            error: this.#text_http_ruuvi_validation_error_desc,
+            div_status: this.#div_http_ruuvi_validation_error,
+        })
     }
 
     #custom_server_validate_url_http() {

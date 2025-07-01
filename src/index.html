@@ -1780,13 +1780,26 @@
             </div>
 
             <div id="conf-ruuvi">
-                <label class="control control-radio ">
-                    <span lang="en">Ruuvi Cloud (recommended)</span>
-                    <span lang="fi">Ruuvi Cloud -pilvipalvelu (suositeltu)</span>
-                    <input type="radio" id="use_ruuvi" name="connection_type" value="ruuvi" class="conf-checkbox"
-                           checked>
-                    <span class="control_indicator"></span>
-                </label>
+                <div class="input-with_validity_check">
+                    <label class="control control-radio">
+                        <span lang="en">Ruuvi Cloud (recommended)</span>
+                        <span lang="fi">Ruuvi Cloud -pilvipalvelu (suositeltu)</span>
+                        <input type="radio" id="use_ruuvi" name="connection_type" value="ruuvi" class="conf-checkbox"
+                               checked>
+                        <span class="control_indicator"></span>
+                    </label>
+                    <div class="input-with_validity_check-icon control-with_validity_check-icon">
+                    </div>
+                </div>
+
+                <div id="page-cloud_options-http_validation_error" class="err-message hidden">
+                    <div class="block-centered">
+                        <span lang="en">Connection failed</span>
+                        <span lang="fi">Yhteys epäonnistui</span>
+                    </div>
+                    <div id="page-cloud_options-http_validation_error-desc" class="block-centered">
+                    </div>
+                </div>
             </div>
 
             <div id="page-cloud_options-advanced-button" class="btn-dropdown">
@@ -1817,9 +1830,17 @@
                     <span lang="en">Back</span>
                     <span lang="fi">Edellinen</span>
                 </a>
+                <a href="" id="page-cloud_options-button-check" class="btn btn-narrow hidden">
+                    <span lang="en">Check</span>
+                    <span lang="fi">Tarkasta</span>
+                </a>
                 <a href="" id="page-cloud_options-button-continue" class="btn">
                     <span lang="en">Next</span>
                     <span lang="fi">Seuraava</span>
+                </a>
+                <a href="" id="page-cloud_options-button-ignore_errors_and_continue" class="btn btn-narrow hidden">
+                    <span lang="en">Ignore errors and continue</span>
+                    <span lang="fi">Jatka virheistä huolimatta</span>
                 </a>
             </div>
         </section>
@@ -1855,12 +1876,24 @@
                 </p>
             </div>
 
-            <label class="control control-checkbox">
-                <span lang="en">Ruuvi Cloud</span>
-                <span lang="fi">Ruuvi Cloud</span>
-                <input type="checkbox" id="use_http_ruuvi">
-                <span class="control_indicator"></span>
-            </label>
+            <div class="input-with_validity_check">
+                <label class="control control-checkbox">
+                    <span lang="en">Ruuvi Cloud</span>
+                    <span lang="fi">Ruuvi Cloud</span>
+                    <input type="checkbox" id="use_http_ruuvi">
+                    <span class="control_indicator"></span>
+                </label>
+                <div class="input-with_validity_check-icon control-with_validity_check-icon">
+                </div>
+            </div>
+            <div id="page-custom_server-http_ruuvi-validation_error" class="err-message hidden">
+                <div class="block-centered">
+                    <span lang="en">Validation failed</span>
+                    <span lang="fi">Vahvistus epäonnistui</span>
+                </div>
+                <div id="page-custom_server-http_ruuvi-validation_error-desc" class="block-centered">
+                </div>
+            </div>
 
             <div class="border"></div>
 

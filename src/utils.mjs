@@ -233,7 +233,9 @@ function generate_url_for_validation (auth, url_to_validate, validate_type, auth
 
 export function validate_url (auth, url_to_validate, validate_type, auth_type, params) {
   function validity_icons_clear (params) {
-    params['input_url'].clearValidationIcon()
+    if ('input_url' in params) {
+      params['input_url'].clearValidationIcon()
+    }
     if ('input_url_port' in params) {
       params['input_url_port'].clearValidationIcon()
     }
@@ -246,7 +248,9 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
   }
 
   function validity_icons_set_checking (params) {
-    params['input_url'].setCheckingIsValid()
+    if ('input_url' in params) {
+      params['input_url'].setCheckingIsValid()
+    }
     if ('input_url_port' in params) {
       params['input_url_port'].setCheckingIsValid()
     }
@@ -264,7 +268,9 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
   }
 
   function validity_icons_set_valid (params) {
-    params['input_url'].setValid()
+    if ('input_url' in params) {
+      params['input_url'].setValid()
+    }
     if ('input_url_port' in params) {
       params['input_url_port'].setValid()
     }
@@ -284,7 +290,9 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
   }
 
   function validity_icons_set_invalid (params) {
-    params['input_url'].setInvalid()
+    if ('input_url' in params) {
+      params['input_url'].setInvalid()
+    }
     if ('input_url_port' in params) {
       params['input_url_port'].setInvalid()
     }
@@ -322,10 +330,12 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
   return new Promise((resolve, reject) => {
     let input_url = params['input_url']
     let input_url_port = params['input_url_port']
-    if (!input_url.isValidationRequired() || input_url.isValidityChecked()) {
-      console.log(log_wrap(`Skip URL validation (${validate_type}): ${url_to_validate}`))
-      resolve(true)
-      return
+    if ('input_url' in params) {
+      if (!input_url.isValidationRequired() || input_url.isValidityChecked()) {
+        console.log(log_wrap(`Skip URL validation (${validate_type}): ${url_to_validate}`))
+        resolve(true)
+        return
+      }
     }
     console.log(log_wrap(`Validate URL (${validate_type}): ${url_to_validate}`))
     let url = generate_url_for_validation(auth, url_to_validate, validate_type, auth_type, params)
@@ -357,10 +367,15 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
                   result = resp.json
                 }
               } else if (resp.status === 401) {
+                result = false
                 validity_icons_set_invalid(params)
                 set_error_message(params, `HTTP error 401 (Unauthorized): ${resp.message}`)
               } else {
-                let params2 = { input_url: params['input_url'] }
+                result = false
+                let params2 = { }
+                if ('input_url' in params) {
+                  params2['input_url'] = params['input_url']
+                }
                 if ('input_url_port' in params) {
                   params2['input_url_port'] = params['input_url_port']
                 }
@@ -378,6 +393,7 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
                 }
               }
             } else {
+              result = false
               set_error_message(params, `HTTP response status: ${response_status}`)
             }
             resolve(result)
