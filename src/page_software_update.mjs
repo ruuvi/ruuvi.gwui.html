@@ -17,8 +17,8 @@ import Network from './network.mjs'
 import Navigation from './navigation.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import GuiButton from './gui_button.mjs'
-import GuiTableRow from "./gui_table_row.mjs";
-import GuiRadioButton from "./gui_radio_button.mjs";
+import GuiTableRow from './gui_table_row.mjs'
+import GuiRadioButton from './gui_radio_button.mjs'
 
 const SwUpdateStatus = {
   empty: 'empty',
@@ -100,8 +100,8 @@ class PageSoftwareUpdate {
     this.#radio_software_update_source_latest = this.#radio_software_update_source.addOption('software_update_latest', true)
     this.#radio_software_update_source_beta = this.#radio_software_update_source.addOption('software_update_beta', false)
 
-    this.#radio_software_update_source_latest.on_click(() => this.#onChangeSoftwareUpdateSource())
-    this.#radio_software_update_source_beta.on_click(() => this.#onChangeSoftwareUpdateSource())
+    this.#radio_software_update_source_latest.on_click(() => this.#on_change_software_update_source())
+    this.#radio_software_update_source_beta.on_click(() => this.#on_change_software_update_source())
 
     this.#input_fw_update_server_url.on_change(() => this.#on_change_url_fw_update_server())
     this.#button_fw_update_server_check.on_click(async () => this.#on_button_url_fw_update_server_check())
@@ -157,20 +157,13 @@ class PageSoftwareUpdate {
     this.#on_change_url_fw_update_binary_files()
   }
 
-  #onChangeSoftwareUpdateSource() {
+  #on_change_software_update_source() {
     let version_available_for_update = this.#latest_version
     let version_available_for_update_url = this.#latest_url
 
-    if (!this.#radio_software_update_source_latest.isChecked()) {
+    if (this.#radio_software_update_source_beta.isChecked()) {
       version_available_for_update = this.#beta_version
       version_available_for_update_url = this.#beta_url
-    }
-    if (version_available_for_update !== this.#text_version_current.getVal()) {
-      this.#div_in_button_continue_no_update.hide()
-      this.#div_in_button_continue_without_update.show()
-    } else {
-      this.#div_in_button_continue_no_update.show()
-      this.#div_in_button_continue_without_update.hide()
     }
     this.#input_fw_update_binary_files_url.setVal(version_available_for_update_url)
 
@@ -178,9 +171,13 @@ class PageSoftwareUpdate {
       this.#set_software_update_status_ok_latest_not_supported()
     } else {
       if (this.#text_version_current.getVal() === version_available_for_update) {
+        this.#div_in_button_continue_no_update.show()
+        this.#div_in_button_continue_without_update.hide()
         this.#set_software_update_status_ok_already_latest()
         this.#button_upgrade.disable()
       } else {
+        this.#div_in_button_continue_no_update.hide()
+        this.#div_in_button_continue_without_update.show()
         this.#set_software_update_status_ok_update_available()
         this.#button_upgrade.enable()
       }
@@ -301,7 +298,7 @@ class PageSoftwareUpdate {
       this.#radio_software_update_source_latest.setChecked()
     }
 
-    this.#onChangeSoftwareUpdateSource()
+    this.#on_change_software_update_source()
 
     this.#sect_advanced.enable()
 
