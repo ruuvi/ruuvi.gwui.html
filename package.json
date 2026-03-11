@@ -51,7 +51,7 @@
     "fetch-mock": "^9.11.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.1.1",
     "mocha": "^10.8.2",
     "node-fetch": "^2.6.9",
     "puppeteer": "^22.15.0",
