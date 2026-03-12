@@ -155,7 +155,7 @@ class PageSoftwareUpdate {
     const available_version_url = this.#get_available_version_url()
     if (available_version !== '') {
       this.#input_fw_update_binary_files_url.setVal(available_version_url)
-      this.#on_change_software_update_source();
+      this.#on_change_software_update_source()
       return
     }
 
