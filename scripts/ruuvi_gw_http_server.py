@@ -836,11 +836,14 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global g_software_update_percentage
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length).decode('ascii')
+        print(f"Received firmware update JSON data: {post_data}")
         new_dict = json.loads(post_data)
+        print(f"Received new firmware update URL: {new_dict['url']}")
         g_software_update_url = new_dict['url']
         if g_software_update_url.startswith('http://'):
             content = '{"status": 400, "message": "Invalid URL"}'
-        elif g_software_update_url.startswith('https://fwupdate.ruuvi.com/'):
+        elif (g_software_update_url.startswith('https://fwupdate.ruuvi.com/') or
+              g_software_update_url.startswith('https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/')):
             g_software_update_stage = SOFTWARE_UPDATE_STAGE_1_DOWNLOAD_MAIN_FW
             g_software_update_percentage = 0
             content = '{"status": 200, "message": "OK"}'

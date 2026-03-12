@@ -92,7 +92,6 @@ class Network {
         throw new Error(`Unknown type of json_data: ${typeof json_data}`)
       }
     }
-
     console.log(log_wrap(`${method} ${url}`))
 
     if (this.#timeoutId) {

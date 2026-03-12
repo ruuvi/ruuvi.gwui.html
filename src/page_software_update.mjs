@@ -17,6 +17,8 @@ import Network from './network.mjs'
 import Navigation from './navigation.mjs'
 import GuiButtonBack from './gui_button_back.mjs'
 import GuiButton from './gui_button.mjs'
+import GuiTableRow from './gui_table_row.mjs'
+import GuiRadioButton from './gui_radio_button.mjs'
 
 const SwUpdateStatus = {
   empty: 'empty',
@@ -35,6 +37,8 @@ class PageSoftwareUpdate {
 
   #latest_version = null
   #latest_url = null
+  #beta_version = null
+  #beta_url = null
   #flagLatestFirmwareVersionSupported = false
   #section = $('section#page-software_update')
   #checkbox_software_update_set_url_manually = new GuiCheckbox($('#software_update-set-url-manually'))
@@ -59,7 +63,16 @@ class PageSoftwareUpdate {
 
   #div_version_info = new GuiDiv($('#page-software_update-version_info'))
   #text_version_latest = new GuiText($('#software_update-version-latest'))
+  #text_version_beta = new GuiText($('#software_update-version-beta'))
   #text_version_current = new GuiText($('#software_update-version-current'))
+  #tr_version_latest = new GuiTableRow($('#page-software_update-version-latest-row'))
+  #tr_version_beta = new GuiTableRow($('#page-software_update-version-beta-row'))
+
+  #radio_software_update_source = new GuiRadioButton('software_update_source')
+  /** @type GuiRadioButtonOption */
+  #radio_software_update_source_latest
+  /** @type GuiRadioButtonOption */
+  #radio_software_update_source_beta
 
   #div_in_progress = new GuiDiv($('#page-software_update-in_progress'))
 
@@ -84,6 +97,12 @@ class PageSoftwareUpdate {
     this.#section.bind('onShow', async () => this.#onShow())
     this.#section.bind('onHide', async () => this.#onHide())
 
+    this.#radio_software_update_source_latest = this.#radio_software_update_source.addOption('software_update_latest', true)
+    this.#radio_software_update_source_beta = this.#radio_software_update_source.addOption('software_update_beta', false)
+
+    this.#radio_software_update_source_latest.on_click(() => this.#on_change_software_update_source())
+    this.#radio_software_update_source_beta.on_click(() => this.#on_change_software_update_source())
+
     this.#input_fw_update_server_url.on_change(() => this.#on_change_url_fw_update_server())
     this.#button_fw_update_server_check.on_click(async () => this.#on_button_url_fw_update_server_check())
     this.#button_fw_update_server_save.on_click(async () => this.#on_button_url_fw_update_server_save())
@@ -97,15 +116,52 @@ class PageSoftwareUpdate {
     this.#text_version_current.setVal(gwCfg.info.fw_ver)
   }
 
+  #get_available_version() {
+    return (this.#radio_software_update_source_beta.isChecked()
+        ? ((this.#beta_version && this.#beta_url)
+            ? this.#beta_version : this.#latest_version)
+        : this.#latest_version) ?? ''
+  }
+
+  #get_available_version_url() {
+    return (this.#radio_software_update_source_beta.isChecked()
+        ? ((this.#beta_version && this.#beta_url)
+            ? this.#beta_url : this.#latest_url)
+        : this.#latest_url) ?? ''
+  }
+
+  #update_table_row_version_beta () {
+    if (!this.#gwCfg.auto_update.auto_update_cycle.isRegular() && this.#beta_version && this.#beta_url) {
+      this.#tr_version_beta.show()
+      if (this.#gwCfg.auto_update.auto_update_cycle.isBetaTester()) {
+        this.#tr_version_latest.hide()
+        this.#radio_software_update_source_beta.setChecked()
+      } else {
+        this.#tr_version_latest.show()
+        this.#radio_software_update_source_latest.setChecked()
+      }
+    } else {
+      this.#tr_version_latest.show()
+      this.#tr_version_beta.hide()
+      this.#radio_software_update_source_latest.setChecked()
+    }
+  }
+
   async #onShow () {
     console.log(log_wrap('section#page-software_update: onShow'))
     this.#checkbox_software_update_set_url_manually.setUnchecked()
-    if (this.#text_version_latest.getVal() !== '') {
-      this.#input_fw_update_binary_files_url.setVal(this.#latest_url)
+    this.#update_table_row_version_beta()
+    const available_version = this.#get_available_version()
+    const available_version_url = this.#get_available_version_url()
+    if (available_version !== '') {
+      this.#input_fw_update_binary_files_url.setVal(available_version_url)
+      this.#on_change_software_update_source()
       return
     }
+
     this.#button_upgrade.disable()
     this.#div_in_progress.show()
+    this.#tr_version_beta.hide()
 
     this.#set_software_update_status_empty()
 
@@ -138,6 +194,27 @@ class PageSoftwareUpdate {
     this.#on_change_url_fw_update_binary_files()
   }
 
+  #on_change_software_update_source() {
+    const available_version = this.#get_available_version()
+    const available_version_url = this.#get_available_version_url()
+    this.#input_fw_update_binary_files_url.setVal(available_version_url)
+
+    if (!this.#flagLatestFirmwareVersionSupported) {
+      this.#set_software_update_status_ok_latest_not_supported()
+    } else {
+      if (this.#text_version_current.getVal() === available_version) {
+        this.#div_in_button_continue_no_update.show()
+        this.#div_in_button_continue_without_update.hide()
+        this.#set_software_update_status_ok_already_latest()
+        this.#button_upgrade.disable()
+      } else {
+        this.#div_in_button_continue_no_update.hide()
+        this.#div_in_button_continue_without_update.show()
+        this.#set_software_update_status_ok_update_available()
+        this.#button_upgrade.enable()
+      }
+    }
+  }
 
   /**
    * @param {SwUpdateStatus} status
@@ -221,8 +298,8 @@ class PageSoftwareUpdate {
     }
     this.#latest_version = latest.version
     this.#latest_url = latest.url
-    const beta_version = beta?.version
-    const beta_url = beta?.url
+    this.#beta_version = beta?.version
+    this.#beta_url = beta?.url
 
     let m = this.#latest_version.match(/v(\d+)\.(\d+)\.(\d+)/)
     this.#flagLatestFirmwareVersionSupported = false
@@ -234,30 +311,16 @@ class PageSoftwareUpdate {
     }
 
     this.#div_in_progress.hide()
-    this.#text_version_latest.setVal(this.#latest_version)
-    if (this.#latest_version !== this.#text_version_current.getVal()) {
-      this.#div_in_button_continue_no_update.hide()
-      this.#div_in_button_continue_without_update.show()
-    } else {
-      this.#div_in_button_continue_no_update.show()
-      this.#div_in_button_continue_without_update.hide()
-    }
 
-    this.#input_fw_update_binary_files_url.setVal(this.#latest_url)
+    this.#text_version_latest.setVal(this.#latest_version)
+    this.#text_version_beta.setVal(this.#beta_version)
+
+    this.#update_table_row_version_beta()
+
+    this.#on_change_software_update_source()
 
     this.#sect_advanced.enable()
 
-    if (!this.#flagLatestFirmwareVersionSupported) {
-      this.#set_software_update_status_ok_latest_not_supported()
-    } else {
-      if (this.#text_version_current.getVal() === this.#text_version_latest.getVal()) {
-        this.#set_software_update_status_ok_already_latest()
-        this.#button_upgrade.disable()
-      } else {
-        this.#set_software_update_status_ok_update_available()
-        this.#button_upgrade.enable()
-      }
-    }
     return true
   }
 
@@ -286,13 +349,17 @@ class PageSoftwareUpdate {
       this.#button_continue.hide()
     } else {
       this.#div_fw_update_server.slideDown()
-      if (this.#text_version_latest.getVal() !== '') {
-        this.#input_fw_update_binary_files_url.setVal(this.#latest_url)
-        if (this.#text_version_latest.getVal() === '' || this.#text_version_current.getVal() === this.#text_version_latest.getVal()) {
+      const available_version = this.#get_available_version()
+      const available_version_url = this.#get_available_version_url()
+      if (available_version !== '') {
+        this.#input_fw_update_binary_files_url.setVal(available_version_url)
+        if (this.#text_version_current.getVal() === available_version) {
           this.#button_upgrade.disable()
         } else {
           this.#button_upgrade.enable()
         }
+      } else {
+        this.#button_upgrade.disable()
       }
       this.#input_fw_update_binary_files_url.clearValidationIcon()
       this.#div_fw_update_binary_files.slideUp()
@@ -376,6 +443,8 @@ class PageSoftwareUpdate {
 
     const timeout = 8 * 1000
     const json_data = { 'url': fw_update_url_val }
+
+    console.log(log_wrap(`POST /fw_update_url.json: ${(typeof json_data === 'object') ? JSON.stringify(json_data) : json_data}`))
     Network.httpPostJson('/fw_update_url.json', timeout, json_data).then((data) => {
       const status = data['status']
       let message = data['message']
@@ -433,6 +502,7 @@ class PageSoftwareUpdate {
 
     const timeout = 8 * 60 * 1000
     const json_data = { 'url': software_update_url_val }
+    console.log(log_wrap(`POST /fw_update.json: ${(typeof json_data === 'object') ? JSON.stringify(json_data) : json_data}`))
     Network.httpPostJson('/fw_update.json', timeout, json_data).then((data) => {
       const status = data['status']
       let message = data['message']

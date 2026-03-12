@@ -297,13 +297,13 @@ class AuthHTTPRequestHandler(SimpleHTTPRequestHandler):
         content = '''
 {
   "latest": {
-    "version": "v1.14.3",
-    "url": "https://fwupdate.ruuvi.com/v1.14.3",
+    "version": "v1.16.2",
+    "url": "https://fwupdate.ruuvi.com/v1.16.2",
     "created_at": "2023-10-06T11:26:07Z"
   },
   "beta": {
-    "version": "v1.14.2",
-    "url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.14.2",
+    "version": "v1.17.1",
+    "url": "https://github.com/ruuvi/ruuvi.gateway_esp.c/releases/download/v1.17.1",
     "created_at": "2023-09-19T11:16:48Z"
   }
 }
