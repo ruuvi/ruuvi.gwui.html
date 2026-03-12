@@ -116,15 +116,52 @@ class PageSoftwareUpdate {
     this.#text_version_current.setVal(gwCfg.info.fw_ver)
   }
 
+  #get_available_version() {
+    return (this.#radio_software_update_source_beta.isChecked()
+        ? ((this.#beta_version && this.#beta_url)
+            ? this.#beta_version : this.#latest_version)
+        : this.#latest_version) ?? ''
+  }
+
+  #get_available_version_url() {
+    return (this.#radio_software_update_source_beta.isChecked()
+        ? ((this.#beta_version && this.#beta_url)
+            ? this.#beta_url : this.#latest_url)
+        : this.#latest_url) ?? ''
+  }
+
+  #update_table_row_version_beta () {
+    if (!this.#gwCfg.auto_update.auto_update_cycle.isRegular() && this.#beta_version && this.#beta_url) {
+      this.#tr_version_beta.show()
+      if (this.#gwCfg.auto_update.auto_update_cycle.isBetaTester()) {
+        this.#tr_version_latest.hide()
+        this.#radio_software_update_source_beta.setChecked()
+      } else {
+        this.#tr_version_latest.show()
+        this.#radio_software_update_source_latest.setChecked()
+      }
+    } else {
+      this.#tr_version_latest.show()
+      this.#tr_version_beta.hide()
+      this.#radio_software_update_source_latest.setChecked()
+    }
+  }
+
   async #onShow () {
     console.log(log_wrap('section#page-software_update: onShow'))
     this.#checkbox_software_update_set_url_manually.setUnchecked()
-    if (this.#text_version_latest.getVal() !== '') {
-      this.#input_fw_update_binary_files_url.setVal(this.#latest_url)
+    this.#update_table_row_version_beta()
+    const available_version = this.#get_available_version()
+    const available_version_url = this.#get_available_version_url()
+    if (available_version !== '') {
+      this.#input_fw_update_binary_files_url.setVal(available_version_url)
+      this.#on_change_software_update_source();
       return
     }
+
     this.#button_upgrade.disable()
     this.#div_in_progress.show()
+    this.#tr_version_beta.hide()
 
     this.#set_software_update_status_empty()
 
@@ -158,19 +195,14 @@ class PageSoftwareUpdate {
   }
 
   #on_change_software_update_source() {
-    let version_available_for_update = this.#latest_version
-    let version_available_for_update_url = this.#latest_url
-
-    if (this.#radio_software_update_source_beta.isChecked()) {
-      version_available_for_update = this.#beta_version
-      version_available_for_update_url = this.#beta_url
-    }
-    this.#input_fw_update_binary_files_url.setVal(version_available_for_update_url)
+    const available_version = this.#get_available_version()
+    const available_version_url = this.#get_available_version_url()
+    this.#input_fw_update_binary_files_url.setVal(available_version_url)
 
     if (!this.#flagLatestFirmwareVersionSupported) {
       this.#set_software_update_status_ok_latest_not_supported()
     } else {
-      if (this.#text_version_current.getVal() === version_available_for_update) {
+      if (this.#text_version_current.getVal() === available_version) {
         this.#div_in_button_continue_no_update.show()
         this.#div_in_button_continue_without_update.hide()
         this.#set_software_update_status_ok_already_latest()
@@ -283,20 +315,7 @@ class PageSoftwareUpdate {
     this.#text_version_latest.setVal(this.#latest_version)
     this.#text_version_beta.setVal(this.#beta_version)
 
-    if (!this.#gwCfg.auto_update.auto_update_cycle.isRegular() && this.#beta_version && this.#beta_url) {
-      this.#tr_version_beta.show()
-      if (this.#gwCfg.auto_update.auto_update_cycle.isBetaTester()) {
-        this.#tr_version_latest.hide()
-        this.#radio_software_update_source_beta.setChecked()
-      } else {
-        this.#tr_version_latest.show()
-        this.#radio_software_update_source_latest.setChecked()
-      }
-    } else {
-      this.#tr_version_latest.show()
-      this.#tr_version_beta.hide()
-      this.#radio_software_update_source_latest.setChecked()
-    }
+    this.#update_table_row_version_beta()
 
     this.#on_change_software_update_source()
 
@@ -330,13 +349,17 @@ class PageSoftwareUpdate {
       this.#button_continue.hide()
     } else {
       this.#div_fw_update_server.slideDown()
-      if (this.#text_version_latest.getVal() !== '') {
-        this.#input_fw_update_binary_files_url.setVal(this.#latest_url)
-        if (this.#text_version_latest.getVal() === '' || this.#text_version_current.getVal() === this.#text_version_latest.getVal()) {
+      const available_version = this.#get_available_version()
+      const available_version_url = this.#get_available_version_url()
+      if (available_version !== '') {
+        this.#input_fw_update_binary_files_url.setVal(available_version_url)
+        if (this.#text_version_current.getVal() === available_version) {
           this.#button_upgrade.disable()
         } else {
           this.#button_upgrade.enable()
         }
+      } else {
+        this.#button_upgrade.disable()
       }
       this.#input_fw_update_binary_files_url.clearValidationIcon()
       this.#div_fw_update_binary_files.slideUp()
