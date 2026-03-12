@@ -91,11 +91,8 @@ class Network {
       } else {
         throw new Error(`Unknown type of json_data: ${typeof json_data}`)
       }
-      console.log(log_wrap(`${method} ${url}: data='${params.body}'`))
-    } else {
-      console.log(log_wrap(`${method} ${url}`))
     }
-
+    console.log(log_wrap(`${method} ${url}`))
 
     if (this.#timeoutId) {
       throw Error('Another fetch_json is active')

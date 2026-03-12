@@ -443,6 +443,8 @@ class PageSoftwareUpdate {
 
     const timeout = 8 * 1000
     const json_data = { 'url': fw_update_url_val }
+
+    console.log(log_wrap(`POST /fw_update_url.json: ${(typeof json_data === 'object') ? JSON.stringify(json_data) : json_data}`))
     Network.httpPostJson('/fw_update_url.json', timeout, json_data).then((data) => {
       const status = data['status']
       let message = data['message']
@@ -500,6 +502,7 @@ class PageSoftwareUpdate {
 
     const timeout = 8 * 60 * 1000
     const json_data = { 'url': software_update_url_val }
+    console.log(log_wrap(`POST /fw_update.json: ${(typeof json_data === 'object') ? JSON.stringify(json_data) : json_data}`))
     Network.httpPostJson('/fw_update.json', timeout, json_data).then((data) => {
       const status = data['status']
       let message = data['message']
