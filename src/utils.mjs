@@ -84,8 +84,16 @@ export async function networkDisconnect () {
   GwStatus.startCheckingStatus()
 }
 
-export async function networkConnect (ssid, password, auth) {
+export async function networkConnect (ssid, password, auth,
+                                      timeout_ms = 20000,
+                                      cbOnConnected = null,
+                                      signal=null) {
   GwStatus.setSelectedSSID(ssid)
+  GwStatus.setTimeInvalid()
+
+  if (signal?.aborted) {
+    throw new Error('AbortError')
+  }
 
   if (password === undefined) {
     password = null
@@ -101,9 +109,10 @@ export async function networkConnect (ssid, password, auth) {
 
   console.log(log_wrap('POST /connect.json'))
 
-  const promiseConnecting = GwStatus.setStateToConnecting()
+  const promiseConnecting = GwStatus.setStateToConnecting(timeout_ms, cbOnConnected, signal)
+
   try {
-    console.log(log_wrap('POST /connect.json: successful'))
+    console.log(log_wrap('POST /connect.json'))
     console.log(log_wrap('Waiting for the connection to be established'))
     await Network.httpEncryptAndPostJson(auth, '/connect.json', 5000, json_content)
     console.log(log_wrap('Start periodic status check'))
@@ -117,12 +126,15 @@ export async function networkConnect (ssid, password, auth) {
   }
 }
 
-export async function networkConnectWPS (auth) {
+export async function networkConnectWPS (auth,
+                                         timeout_ms = 20000,
+                                         cbOnConnected = null,
+                                         signal=null) {
   console.log(log_wrap('POST /connect_wps'))
 
-  const promiseConnecting = GwStatus.setStateToConnecting()
+  const promiseConnecting = GwStatus.setStateToConnecting(timeout_ms, cbOnConnected, signal)
   try {
-    console.log(log_wrap('POST /connect_wps: successful'))
+    console.log(log_wrap('POST /connect_wps'))
     console.log(log_wrap('Waiting for the connection to be established'))
     await Network.httpEncryptAndPostJson(auth, '/connect_wps', 5000, '{}')
     console.log(log_wrap('Start periodic status check'))

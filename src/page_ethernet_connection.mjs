@@ -37,7 +37,13 @@ export class PageEthernetConnection {
   #subSectionManualSettings = new GuiText($('#page-ethernet_connection-section-manual_settings'))
   #timerEthConnection = null
   #overlay_connect_ethernet = new GuiOverlay($('#overlay-connect_ethernet'))
-  #buttonCancelFromOverlay = new GuiButton($('#overlay-connect_ethernet-cancel'))
+  #buttonCancelFromOverlayWaitConnection = new GuiButton($('#overlay-connect_ethernet-cancel'))
+  #overlay_wait_time_sync = new GuiOverlay($('#overlay-wait_time_sync'))
+  #buttonCancelFromOverlayWaitTimeSync = new GuiButton($('#overlay-wait_time_sync-cancel'))
+  #overlay_time_sync_failed = new GuiOverlay($('#overlay-time_sync_failed'))
+  #buttonContinueFromOverlayTimeSyncFailed = new GuiButton($('#overlay-time_sync_failed-continue'))
+  #connectTimeout_ms = 15000;
+  #networkConnectAbortController = null
 
   constructor (gwCfg, auth) {
     this.#gwCfg = gwCfg
@@ -55,11 +61,13 @@ export class PageEthernetConnection {
     this.#input_eth_dns2.on_change(() => this.#ethernet_connection_check_validity())
 
     this.#buttonContinue.on_click(() => this.#onClickButtonContinue())
-    this.#buttonCancelFromOverlay.on_click(() => this.#onClickButtonCancelFromOverlay())
+    this.#buttonCancelFromOverlayWaitConnection.on_click(() => this.#onClickButtonCancelFromOverlayWaitConnection())
   }
 
   async #onShow () {
     console.log(log_wrap('section#page-ethernet_connection: onShow'))
+    this.#buttonCancelFromOverlayWaitTimeSync.on_click(() => this.#onClickButtonCancelFromOverlayWaitTimeSync())
+    this.#buttonContinueFromOverlayTimeSyncFailed.on_click(() => this.#onClickButtonContinueFromOverlayTimeSyncFailed())
     this.#checkbox_eth_dhcp.setState(this.#gwCfg.eth.eth_dhcp)
     if (this.#gwCfg.eth.eth_dhcp) {
       this.#subSectionManualSettings.hide()
@@ -89,7 +97,10 @@ export class PageEthernetConnection {
 
   async #onHide () {
     console.log(log_wrap('section#page-ethernet_connection: onHide'))
+    this.#buttonCancelFromOverlayWaitTimeSync.off_click()
+    this.#buttonContinueFromOverlayTimeSyncFailed.off_click()
     this.#overlay_connect_ethernet.fadeOut()
+    this.#overlay_wait_time_sync.fadeOut()
     $('#page-ethernet_connection-no_cable').hide()
     this.#buttonContinue.enable()
     if (this.#timerEthConnection) {
@@ -109,6 +120,12 @@ export class PageEthernetConnection {
     this.#ethernet_connection_check_validity()
   }
 
+  #cbOnConnected() {
+    console.log(log_wrap(`cbOnConnected`))
+    this.#overlay_connect_ethernet.fadeOut();
+    this.#overlay_wait_time_sync.fadeIn();
+  }
+
   async #save_network_config_and_connect_to_ethernet () {
     let isSuccessful = false
     try {
@@ -118,40 +135,69 @@ export class PageEthernetConnection {
       this.#gwCfg.wifi_ap_cfg.setWiFiChannel(1)
       this.#updateGwCfg()
       await this.#gwCfg.saveNetworkConfig(this.#auth)
-      isSuccessful = await networkConnect(null, null, this.#auth)
+      this.#networkConnectAbortController = new AbortController()
+      isSuccessful = await networkConnect(null, null, this.#auth,
+          this.#connectTimeout_ms,
+          this.#cbOnConnected.bind(this),
+          this.#networkConnectAbortController.signal);
       console.log(log_wrap(`networkConnect: ${isSuccessful}`))
     } catch (err) {
-      console.log(log_wrap(`save_network_config_and_connect_to_ethernet failed: ${err}`))
+      console.log(log_wrap(`networkConnect failed: ${err}`))
     }
+    this.#overlay_connect_ethernet.fadeOut();
+    this.#overlay_wait_time_sync.fadeOut();
     logger.info('Start periodic status check')
     GwStatus.startCheckingStatus()
     if (isSuccessful) {
       Navigation.change_page_to_software_update()
+    } else {
+      if (GwStatus.isWaitingForTimeSync()) {
+        this.#overlay_time_sync_failed.fadeIn();
+      } else {
+        networkDisconnect().then(() => {
+        });
+        $('#page-ethernet_connection-no_cable').show();
+      }
+      this.#buttonContinue.enable()
     }
   }
 
   #onClickButtonContinue () {
-    this.#overlay_connect_ethernet.fadeIn()
-    this.#buttonContinue.disable()
-    this.#timerEthConnection = setTimeout(() => {
-      this.#timerEthConnection = null
-      networkDisconnect().then(() => {})
-      this.#overlay_connect_ethernet.fadeOut()
-      $('#page-ethernet_connection-no_cable').show()
-    }, 15 * 1000)
+    if (GwStatus.isConnectedAndTimeSynced()) {
+      Navigation.change_page_to_software_update();
+      return;
+    }
+    if (GwStatus.isWaitingForTimeSync()) {
+      Navigation.change_page_to_software_update();
+      return;
+    }
+    this.#overlay_connect_ethernet.fadeIn();
+    this.#buttonContinue.disable();
+    $('#page-ethernet_connection-no_cable').hide()
 
-    this.#save_network_config_and_connect_to_ethernet().then(() => {})
+    this.#save_network_config_and_connect_to_ethernet().then(() => {
+    });
   }
 
-  #onClickButtonCancelFromOverlay() {
+  #onClickButtonCancelFromOverlayWaitConnection() {
     if (this.#timerEthConnection) {
       clearTimeout(this.#timerEthConnection)
       this.#timerEthConnection = null
     }
-    networkDisconnect().then(() => {
-    })
-    this.#overlay_connect_ethernet.fadeOut()
-    this.#buttonContinue.enable()
+    this.#networkConnectAbortController.abort();
+  }
+
+  #onClickButtonCancelFromOverlayWaitTimeSync() {
+    if (this.#timerEthConnection) {
+      clearTimeout(this.#timerEthConnection)
+      this.#timerEthConnection = null
+    }
+    this.#networkConnectAbortController.abort();
+  }
+
+  #onClickButtonContinueFromOverlayTimeSyncFailed() {
+    this.#overlay_time_sync_failed.fadeOut();
+    Navigation.change_page_to_software_update()
   }
 
   #input_validity_check_by_regex (input_elem, reg_ex, flag_allow_empty) {
@@ -189,5 +235,4 @@ export class PageEthernetConnection {
     }
     this.#buttonContinue.setEnabled(flag_all_fields_valid)
   }
-
 }
