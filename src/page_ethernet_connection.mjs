@@ -179,12 +179,12 @@ export class PageEthernetConnection {
       Navigation.change_page_to_software_update();
       return;
     }
-    this.#overlay_connect_ethernet.fadeIn();
     this.#buttonContinue.disable();
     $('#page-ethernet_connection-no_cable').hide()
 
     this.#save_network_config_and_connect_to_ethernet().then(() => {
     });
+    this.#overlay_connect_ethernet.fadeIn();
   }
 
   #onClickButtonCancelFromOverlayWaitConnection() {
