@@ -4,6 +4,8 @@
  */
 
 import * as utils from './utils.mjs'
+import GwStatus from './gw_status.mjs'
+import Network from './network.mjs'
 
 import chai from 'chai'
 import sinon from 'sinon'
@@ -325,6 +327,115 @@ describe('Utils', () => {
 
       expect(() => utils.fetchListKeyFromData(data, 'key3', false)).to.throw(Error,
           'Value of \'key3\' must be a List.')
+    })
+  })
+
+  describe('Utils.networkConnect / Utils.networkConnectWPS', () => {
+    let auth
+
+    beforeEach(() => {
+      auth = { ecdhEncrypt: sandbox.stub().returns('{}') }
+    })
+
+    it('should reject before POST when signal is already aborted', async () => {
+      const setSelectedSSIDStub = sandbox.stub(GwStatus, 'setSelectedSSID')
+      const setTimeInvalidStub = sandbox.stub(GwStatus, 'setTimeInvalid')
+      const setStateToConnectingStub = sandbox.stub(GwStatus, 'setStateToConnecting')
+      const postStub = sandbox.stub(Network, 'httpEncryptAndPostJson')
+
+      const controller = new AbortController()
+      controller.abort()
+
+      try {
+        await utils.networkConnect('ssid_test', 'pass_test', auth, 20000, null, controller.signal)
+        expect.fail('Expected networkConnect to throw AbortError')
+      } catch (err) {
+        expect(err.message).to.equal('AbortError')
+      }
+
+      expect(setSelectedSSIDStub.calledOnceWithExactly('ssid_test')).to.be.true
+      expect(setTimeInvalidStub.calledOnce).to.be.true
+      expect(setStateToConnectingStub.notCalled).to.be.true
+      expect(postStub.notCalled).to.be.true
+    })
+
+    it('should reject while waiting when signal is aborted', async () => {
+      const setTimeInvalidStub = sandbox.stub(GwStatus, 'setTimeInvalid')
+      const setStateToConnectingStub = sandbox.stub(GwStatus, 'setStateToConnecting')
+      const startCheckingStatusStub = sandbox.stub(GwStatus, 'startCheckingStatus')
+      const postStub = sandbox.stub(Network, 'httpEncryptAndPostJson').resolves()
+
+      setStateToConnectingStub.callsFake((_timeout, _cbOnConnected, signal) => {
+        return new Promise((resolve, reject) => {
+          signal.addEventListener('abort', () => reject(new Error('AbortError')), { once: true })
+        })
+      })
+
+      const controller = new AbortController()
+      const connectPromise = utils.networkConnectWPS(auth, 20000, null, controller.signal)
+      controller.abort()
+
+      try {
+        await connectPromise
+        expect.fail('Expected networkConnectWPS to throw AbortError')
+      } catch (err) {
+        expect(err.message).to.equal('AbortError')
+      }
+
+      expect(setTimeInvalidStub.calledOnce).to.be.true
+      expect(setStateToConnectingStub.calledOnce).to.be.true
+      expect(postStub.calledOnceWithExactly(auth, '/connect_wps', 5000, '{}')).to.be.true
+      expect(startCheckingStatusStub.calledOnce).to.be.true
+    })
+
+    it('should reject when GwStatus connection waiting times out', async () => {
+      sandbox.stub(GwStatus, 'setSelectedSSID')
+      sandbox.stub(GwStatus, 'setTimeInvalid')
+      const setStateToConnectingStub = sandbox.stub(GwStatus, 'setStateToConnecting')
+      const startCheckingStatusStub = sandbox.stub(GwStatus, 'startCheckingStatus')
+      const postStub = sandbox.stub(Network, 'httpEncryptAndPostJson').resolves()
+
+      setStateToConnectingStub.rejects(new Error('Connection timed out'))
+
+      try {
+        await utils.networkConnect('ssid_test', 'pass_test', auth, 1500)
+        expect.fail('Expected networkConnect to throw timeout error')
+      } catch (err) {
+        expect(err.message).to.equal('Connection timed out')
+      }
+
+      expect(setStateToConnectingStub.calledOnceWithExactly(1500, null, null)).to.be.true
+      expect(postStub.calledOnce).to.be.true
+      expect(startCheckingStatusStub.calledOnce).to.be.true
+    })
+
+    it('should resolve only after connection waiting promise resolves', async () => {
+      sandbox.stub(GwStatus, 'setSelectedSSID')
+      sandbox.stub(GwStatus, 'setTimeInvalid')
+      const setStateToConnectingStub = sandbox.stub(GwStatus, 'setStateToConnecting')
+      const startCheckingStatusStub = sandbox.stub(GwStatus, 'startCheckingStatus')
+      const postStub = sandbox.stub(Network, 'httpEncryptAndPostJson').resolves()
+
+      const deferred = utils.createDeferredPromise()
+      setStateToConnectingStub.returns(deferred.promise)
+
+      let settled = false
+      const connectPromise = utils.networkConnect('ssid_test', 'pass_test', auth, 20000)
+          .then((res) => {
+            settled = true
+            return res
+          })
+
+      await Promise.resolve()
+      expect(postStub.calledOnce).to.be.true
+      expect(startCheckingStatusStub.calledOnce).to.be.true
+      expect(settled).to.be.false
+
+      deferred.resolve(true)
+      const result = await connectPromise
+
+      expect(result).to.equal(true)
+      expect(settled).to.be.true
     })
   })
 
