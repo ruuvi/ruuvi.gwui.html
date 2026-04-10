@@ -83,7 +83,6 @@ export class PageWiFiConnection {
 
     this.#checkAndUpdatePageWiFiListButtonNext()
     $('#page-wifi_connection-ssid_password').hide()
-    this.#button_continue.enable()
     if (!this.#checkbox_use_wps.isChecked()) {
       gui_loading.bodyClassLoadingAdd()
     }
@@ -555,7 +554,7 @@ export class PageWiFiConnection {
   }
 
   #checkAndUpdatePageWiFiListButtonNext () {
-    if (this.#checkWiFiSSIDAndPassword()) {
+    if (this.#checkbox_use_wps.isChecked() || this.#checkWiFiSSIDAndPassword()) {
       if (!this.#button_continue.isEnabled()) {
         console.log(log_wrap('page-wifi_connection-button-continue: enable'))
         this.#button_continue.enable()
