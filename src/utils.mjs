@@ -130,9 +130,15 @@ export async function networkConnectWPS (auth,
                                          timeout_ms = 20000,
                                          cbOnConnected = null,
                                          signal=null) {
+  GwStatus.setTimeInvalid()
+  if (signal?.aborted) {
+    throw new Error('AbortError')
+  }
+
   console.log(log_wrap('POST /connect_wps'))
 
   const promiseConnecting = GwStatus.setStateToConnecting(timeout_ms, cbOnConnected, signal)
+
   try {
     console.log(log_wrap('POST /connect_wps'))
     console.log(log_wrap('Waiting for the connection to be established'))

@@ -44,6 +44,7 @@ export class PageEthernetConnection {
   #buttonContinueFromOverlayTimeSyncFailed = new GuiButton($('#overlay-time_sync_failed-continue'))
   #connectTimeout_ms = 15000;
   #networkConnectAbortController = null
+  #flagAbortWaitingConnection = false;
 
   constructor (gwCfg, auth) {
     this.#gwCfg = gwCfg
@@ -135,6 +136,7 @@ export class PageEthernetConnection {
       this.#gwCfg.wifi_ap_cfg.setWiFiChannel(1)
       this.#updateGwCfg()
       await this.#gwCfg.saveNetworkConfig(this.#auth)
+      this.#flagAbortWaitingConnection = false;
       this.#networkConnectAbortController = new AbortController()
       isSuccessful = await networkConnect(null, null, this.#auth,
           this.#connectTimeout_ms,
@@ -156,7 +158,9 @@ export class PageEthernetConnection {
       } else {
         networkDisconnect().then(() => {
         });
-        $('#page-ethernet_connection-no_cable').show();
+        if (!this.#flagAbortWaitingConnection) {
+          $('#page-ethernet_connection-no_cable').show();
+        }
       }
       this.#buttonContinue.enable()
     }
@@ -168,6 +172,10 @@ export class PageEthernetConnection {
       return;
     }
     if (GwStatus.isWaitingForTimeSync()) {
+      // If the user aborted while waiting for time sync,
+      // we can navigate to the Software Update page immediately.
+      // However, firmware update checks may fail because the device time
+      // may still be invalid.
       Navigation.change_page_to_software_update();
       return;
     }
@@ -184,6 +192,7 @@ export class PageEthernetConnection {
       clearTimeout(this.#timerEthConnection)
       this.#timerEthConnection = null
     }
+    this.#flagAbortWaitingConnection = true;
     this.#networkConnectAbortController.abort();
   }
 

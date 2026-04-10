@@ -274,7 +274,7 @@ class GwStatus {
       case CONNECTION_STATE.NOT_CONNECTED:
       case CONNECTION_STATE.CONNECTING:
         this.#connectionState = CONNECTION_STATE.CONNECTED_WAITING_TIME_SYNC;
-        gw_status.#timestampConnected = new Date();
+        this.#timestampConnected = new Date();
         if (this.#cbOnConnected) {
           this.#cbOnConnected();
           this.#cbOnConnected = null;

@@ -345,6 +345,9 @@ export class PageWiFiConnection {
   #onClickButtonCancelFromOverlayWaitTimeSync() {
     this.#flagAbortWaitingTimeSync = true
     this.#networkConnectAbortController.abort();
+    // Aborting here will cause networkConnect/networkConnectWPS to exit.
+    // save_network_config_and_connect_to_wifi/connect_to_wifi_with_wps will handle the abort
+    // and then re-enable AP refresh or the relevant buttons for the next step.
   }
 
   #onClickButtonContinueFromOverlayTimeSyncFailed() {
