@@ -205,6 +205,7 @@ class GwStatus {
         gw_status.#rejectConnecting = null;
         gw_status.#timestampStartConnecting = null;
         gw_status.#timestampConnected = null;
+        gw_status.#cbOnConnected = null;
         if (gw_status.#connectionState === CONNECTION_STATE.CONNECTING) {
           gw_status.#connectionState = CONNECTION_STATE.NOT_CONNECTED;
         }
@@ -398,7 +399,7 @@ class GwStatus {
 
     this.#isTimeValid = data.hasOwnProperty('is_time_valid') && (data['is_time_valid'] === 1);
 
-    if (this.#timestampConnected !== null) {
+    if (this.#connectionState === CONNECTION_STATE.CONNECTED_WAITING_TIME_SYNC) {
       if (this.#syncTimeTimeout !== null) {
         const diff_ms = new Date() - this.#timestampConnected;
         if (diff_ms >= this.#syncTimeTimeout) {
@@ -408,9 +409,11 @@ class GwStatus {
           this.#rejectConnecting = null;
           this.#resolveOnConnected = null;
           this.#timestampStartConnecting = null;
+          // Leave #connectionState without modification here because we need to be able to go to the next
+          // steps of the configuration process and reconfigure NTP servers if needed.
         }
       }
-    } else if (this.#timestampStartConnecting !== null && this.#connectionTimeout !== null) {
+    } else if (this.#connectionState === CONNECTION_STATE.CONNECTING && this.#connectionTimeout !== null) {
       const diff_ms = new Date() - this.#timestampStartConnecting;
       if (diff_ms >= this.#connectionTimeout) {
         if (this.#rejectConnecting) {
@@ -419,6 +422,7 @@ class GwStatus {
         this.#rejectConnecting = null;
         this.#resolveOnConnected = null;
         this.#timestampStartConnecting = null;
+        this.#connectionState = CONNECTION_STATE.FAILED
       }
     }
 
