@@ -202,6 +202,10 @@ export class PageWiFiConnection {
     } finally {
       console.log(log_wrap('Start periodic status check'))
       this.#overlay_wait_time_sync.fadeOut();
+      if (this.#checkbox_use_wps.isChecked()) {
+        this.#button_back.show()
+        this.#overlay_connect_wifi_wps.fadeOut()
+      }
       GwStatus.startCheckingStatus()
       this.#button_continue.enable()
       if (isSuccessful) {
@@ -210,6 +214,8 @@ export class PageWiFiConnection {
         if (GwStatus.isWaitingForTimeSync()) {
           if (!this.#flagAbortWaitingTimeSync) {
             this.#overlay_time_sync_failed.fadeIn();
+          } else {
+            Navigation.change_page_to_software_update()
           }
         } else {
           $('#wifi-connection-status-block').show()
@@ -267,6 +273,8 @@ export class PageWiFiConnection {
         if (GwStatus.isWaitingForTimeSync()) {
           if (!this.#flagAbortWaitingTimeSync) {
             this.#overlay_time_sync_failed.fadeIn();
+          } else {
+            Navigation.change_page_to_software_update()
           }
         } else {
           $('#wifi-connection-status-block').show()
@@ -284,8 +292,6 @@ export class PageWiFiConnection {
       this.#button_continue.disable()
       $('#wifi-connection-status-block').hide()
       this.#connect_to_wifi_with_wps().then(() => {
-        this.#button_back.show()
-        this.#overlay_connect_wifi_wps.fadeOut()
       })
       return
     }
@@ -336,18 +342,16 @@ export class PageWiFiConnection {
   }
 
   #onClickButtonCancelFromOverlayWaitConnectionWPS() {
-    this.#disconnectFromWiFiAndStartRefreshingAP()
-    this.#overlay_connect_wifi_wps.fadeOut()
-    this.#button_back.show()
-    this.#button_continue.enable()
+    if (this.#networkConnectAbortController) {
+      this.#networkConnectAbortController.abort();
+    }
   }
 
   #onClickButtonCancelFromOverlayWaitTimeSync() {
     this.#flagAbortWaitingTimeSync = true
     this.#networkConnectAbortController.abort();
     // Aborting here will cause networkConnect/networkConnectWPS to exit.
-    // save_network_config_and_connect_to_wifi/connect_to_wifi_with_wps will handle the abort
-    // and then re-enable AP refresh or the relevant buttons for the next step.
+    // save_network_config_and_connect_to_wifi/connect_to_wifi_with_wps will handle the abort.
   }
 
   #onClickButtonContinueFromOverlayTimeSyncFailed() {

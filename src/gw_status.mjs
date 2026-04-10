@@ -224,7 +224,16 @@ class GwStatus {
 
   static setStateNetworkDisconnected() {
     let gw_status = GwStatus.getInstance();
+    let resolve_on_connected = gw_status.#resolveOnConnected;
+    gw_status.#resolveOnConnected = null;
+    gw_status.#rejectConnecting = null;
+    gw_status.#timestampStartConnecting = null;
+    gw_status.#timestampConnected = null;
+    gw_status.#cbOnConnected = null;
     gw_status.#connectionState = CONNECTION_STATE.NOT_CONNECTED;
+    if (resolve_on_connected) {
+      resolve_on_connected(false);
+    }
   }
 
   static isTimeValid() {
@@ -273,6 +282,7 @@ class GwStatus {
 
     switch (this.#connectionState) {
       case CONNECTION_STATE.NOT_CONNECTED:
+      case CONNECTION_STATE.FAILED:
       case CONNECTION_STATE.CONNECTING:
         this.#connectionState = CONNECTION_STATE.CONNECTED_WAITING_TIME_SYNC;
         this.#timestampConnected = new Date();
@@ -293,8 +303,6 @@ class GwStatus {
           this.#resolveOnConnected = null;
           this.#rejectConnecting = null;
         }
-        break;
-      case CONNECTION_STATE.FAILED:
         break;
     }
   }

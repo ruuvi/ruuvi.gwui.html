@@ -139,7 +139,6 @@ export async function networkConnectWPS (auth,
   const promiseConnecting = GwStatus.setStateToConnecting(timeout_ms, cbOnConnected, signal)
 
   try {
-    console.log(log_wrap('POST /connect_wps'))
     console.log(log_wrap('Waiting for the connection to be established'))
     await Network.httpEncryptAndPostJson(auth, '/connect_wps', 5000, '{}')
     console.log(log_wrap('Start periodic status check'))
