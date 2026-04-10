@@ -35,7 +35,6 @@ export class PageEthernetConnection {
   #input_eth_dns1 = new GuiInputTextWithValidation($('#eth_dns1'))
   #input_eth_dns2 = new GuiInputTextWithValidation($('#eth_dns2'))
   #subSectionManualSettings = new GuiText($('#page-ethernet_connection-section-manual_settings'))
-  #timerEthConnection = null
   #overlay_connect_ethernet = new GuiOverlay($('#overlay-connect_ethernet'))
   #buttonCancelFromOverlayWaitConnection = new GuiButton($('#overlay-connect_ethernet-cancel'))
   #overlay_wait_time_sync = new GuiOverlay($('#overlay-wait_time_sync'))
@@ -104,11 +103,6 @@ export class PageEthernetConnection {
     this.#overlay_wait_time_sync.fadeOut()
     $('#page-ethernet_connection-no_cable').hide()
     this.#buttonContinue.enable()
-    if (this.#timerEthConnection) {
-      clearTimeout(this.#timerEthConnection)
-      this.#timerEthConnection = null
-    }
-
     this.#updateGwCfg()
   }
 
@@ -129,6 +123,8 @@ export class PageEthernetConnection {
 
   async #save_network_config_and_connect_to_ethernet () {
     let isSuccessful = false
+    this.#flagAbortWaitingConnection = false;
+    this.#networkConnectAbortController = new AbortController()
     try {
       GwStatus.stopCheckingStatus()
       GwAP.stopRefreshingAP()
@@ -136,8 +132,6 @@ export class PageEthernetConnection {
       this.#gwCfg.wifi_ap_cfg.setWiFiChannel(1)
       this.#updateGwCfg()
       await this.#gwCfg.saveNetworkConfig(this.#auth)
-      this.#flagAbortWaitingConnection = false;
-      this.#networkConnectAbortController = new AbortController()
       isSuccessful = await networkConnect(null, null, this.#auth,
           this.#connectTimeout_ms,
           this.#cbOnConnected.bind(this),
@@ -188,19 +182,11 @@ export class PageEthernetConnection {
   }
 
   #onClickButtonCancelFromOverlayWaitConnection() {
-    if (this.#timerEthConnection) {
-      clearTimeout(this.#timerEthConnection)
-      this.#timerEthConnection = null
-    }
     this.#flagAbortWaitingConnection = true;
     this.#networkConnectAbortController.abort();
   }
 
   #onClickButtonCancelFromOverlayWaitTimeSync() {
-    if (this.#timerEthConnection) {
-      clearTimeout(this.#timerEthConnection)
-      this.#timerEthConnection = null
-    }
     this.#networkConnectAbortController.abort();
   }
 

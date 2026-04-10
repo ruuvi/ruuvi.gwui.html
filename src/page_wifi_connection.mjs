@@ -181,6 +181,7 @@ export class PageWiFiConnection {
 
   #cbOnConnected() {
     console.log(log_wrap(`cbOnConnected`))
+    this.#overlay_connect_wifi_wps.fadeOut();
     this.#overlay_wait_time_sync.fadeIn();
   }
 
