@@ -95,6 +95,7 @@ export class PageWiFiConnection {
     this.#buttonContinueFromOverlayTimeSyncFailed.off_click()
     this.#overlay_connect_wifi_wps.fadeOut()
     this.#overlay_wait_time_sync.fadeOut()
+    this.#overlay_time_sync_failed.fadeOut()
     this.#button_continue.enable()
     $('#page-wifi_connection-ssid_password').hide()
     $('#page-wifi_connection-list_of_ssid').html('')
@@ -192,6 +193,7 @@ export class PageWiFiConnection {
       GwAP.stopRefreshingAP()
       await Network.waitWhileInProgress()
       this.#networkConnectAbortController = new AbortController()
+      this.#flagAbortWaitingTimeSync = false
       isSuccessful = await networkConnectWPS(this.#auth,
           this.#connectTimeoutWPS_ms,
           this.#cbOnConnected.bind(this),
@@ -212,10 +214,10 @@ export class PageWiFiConnection {
         Navigation.change_page_to_software_update()
       } else {
         if (GwStatus.isWaitingForTimeSync()) {
-          if (!this.#flagAbortWaitingTimeSync) {
-            this.#overlay_time_sync_failed.fadeIn();
-          } else {
+          if (this.#flagAbortWaitingTimeSync) {
             Navigation.change_page_to_software_update()
+          } else {
+            this.#overlay_time_sync_failed.fadeIn();
           }
         } else {
           $('#wifi-connection-status-block').show()
@@ -271,10 +273,10 @@ export class PageWiFiConnection {
         Navigation.change_page_to_software_update()
       } else {
         if (GwStatus.isWaitingForTimeSync()) {
-          if (!this.#flagAbortWaitingTimeSync) {
-            this.#overlay_time_sync_failed.fadeIn();
-          } else {
+          if (this.#flagAbortWaitingTimeSync) {
             Navigation.change_page_to_software_update()
+          } else {
+            this.#overlay_time_sync_failed.fadeIn();
           }
         } else {
           $('#wifi-connection-status-block').show()

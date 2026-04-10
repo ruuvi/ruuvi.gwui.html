@@ -43,6 +43,7 @@ export class PageEthernetConnection {
   #buttonContinueFromOverlayTimeSyncFailed = new GuiButton($('#overlay-time_sync_failed-continue'))
   #connectTimeout_ms = 15000;
   #networkConnectAbortController = null
+  #flagAbortWaitingTimeSync = false
   #flagAbortWaitingConnection = false;
 
   constructor (gwCfg, auth) {
@@ -101,6 +102,7 @@ export class PageEthernetConnection {
     this.#buttonContinueFromOverlayTimeSyncFailed.off_click()
     this.#overlay_connect_ethernet.fadeOut()
     this.#overlay_wait_time_sync.fadeOut()
+    this.#overlay_time_sync_failed.fadeOut()
     $('#page-ethernet_connection-no_cable').hide()
     this.#buttonContinue.enable()
     this.#updateGwCfg()
@@ -132,6 +134,7 @@ export class PageEthernetConnection {
       this.#gwCfg.wifi_ap_cfg.setWiFiChannel(1)
       this.#updateGwCfg()
       await this.#gwCfg.saveNetworkConfig(this.#auth)
+      this.#flagAbortWaitingTimeSync = false
       isSuccessful = await networkConnect(null, null, this.#auth,
           this.#connectTimeout_ms,
           this.#cbOnConnected.bind(this),
@@ -148,7 +151,11 @@ export class PageEthernetConnection {
       Navigation.change_page_to_software_update()
     } else {
       if (GwStatus.isWaitingForTimeSync()) {
-        this.#overlay_time_sync_failed.fadeIn();
+        if (this.#flagAbortWaitingTimeSync) {
+          Navigation.change_page_to_software_update()
+        } else {
+          this.#overlay_time_sync_failed.fadeIn();
+        }
       } else {
         networkDisconnect().then(() => {
         });
@@ -187,6 +194,7 @@ export class PageEthernetConnection {
   }
 
   #onClickButtonCancelFromOverlayWaitTimeSync() {
+    this.#flagAbortWaitingTimeSync = true
     this.#networkConnectAbortController.abort();
   }
 

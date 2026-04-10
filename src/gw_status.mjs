@@ -429,7 +429,9 @@ class GwStatus {
         }
         this.#rejectConnecting = null;
         this.#resolveOnConnected = null;
+        this.#cbOnConnected = null;
         this.#timestampStartConnecting = null;
+        this.#timestampConnected = null;
         this.#connectionState = CONNECTION_STATE.FAILED
       }
     }
