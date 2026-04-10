@@ -412,7 +412,7 @@ class GwStatus {
         const diff_ms = new Date() - this.#timestampConnected;
         if (diff_ms >= this.#syncTimeTimeout) {
           if (this.#rejectConnecting) {
-            this.#rejectConnecting(new Error('Timeout'));
+            this.#rejectConnecting(new Error('Time synchronisation timed out'));
           }
           this.#rejectConnecting = null;
           this.#resolveOnConnected = null;
