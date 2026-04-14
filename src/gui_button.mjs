@@ -50,6 +50,10 @@ class GuiButton {
     })
   }
 
+  off_click () {
+    this.#obj.off('click')
+  }
+
   addClass (css_class) {
     this.#obj.addClass(css_class)
   }

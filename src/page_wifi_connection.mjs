@@ -37,7 +37,15 @@ export class PageWiFiConnection {
   #button_continue = new GuiButtonContinue($('#page-wifi_connection-button-continue'))
   #button_back = new GuiButtonBack($('#page-wifi_connection-button-back'))
   #overlay_connect_wifi_wps = new GuiOverlay($('#overlay-connect_wifi_wps'))
-  #buttonCancelFromOverlay = new GuiButton($('#overlay-connect_wifi_wps-cancel'))
+  #buttonCancelFromOverlayWaitConnectionWPS = new GuiButton($('#overlay-connect_wifi_wps-cancel'))
+  #overlay_wait_time_sync = new GuiOverlay($('#overlay-wait_time_sync'))
+  #buttonCancelFromOverlayWaitTimeSync = new GuiButton($('#overlay-wait_time_sync-cancel'))
+  #overlay_time_sync_failed = new GuiOverlay($('#overlay-time_sync_failed'))
+  #buttonContinueFromOverlayTimeSyncFailed = new GuiButton($('#overlay-time_sync_failed-continue'))
+  #connectTimeout_ms = 20000;
+  #connectTimeoutWPS_ms = 30000;
+  #networkConnectAbortController = null
+  #flagAbortWaitingTimeSync = false
   #apList = null
   #flag_sort_by_rssi = false
   #flag_initial_refresh = false
@@ -64,31 +72,46 @@ export class PageWiFiConnection {
 
     this.#sect_advanced.on_click(() => this.#onClickButtonAdvanced())
     this.#button_continue.on_click(() => this.#onClickButtonContinue())
-    this.#buttonCancelFromOverlay.on_click(() => this.#onClickButtonCancelFromOverlay())
+    this.#buttonCancelFromOverlayWaitConnectionWPS.on_click(() => this.#onClickButtonCancelFromOverlayWaitConnectionWPS())
   }
 
   async #onShow () {
     console.log(log_wrap('section#page-wifi_connection: onShow'))
 
-    gui_loading.bodyClassLoadingAdd()
+    this.#buttonCancelFromOverlayWaitTimeSync.on_click(() => this.#onClickButtonCancelFromOverlayWaitTimeSync())
+    this.#buttonContinueFromOverlayTimeSyncFailed.on_click(() => this.#onClickButtonContinueFromOverlayTimeSyncFailed())
+
     this.#checkAndUpdatePageWiFiListButtonNext()
     $('#page-wifi_connection-ssid_password').hide()
-    networkDisconnect().then(() => {
-    }).catch((err) => {
-      console.log(log_wrap(`networkDisconnect error: ${err}`))
-    }).finally(() => {
-      this.#flag_initial_refresh = true
-      GwAP.startRefreshingAP(0, (data) => {this.#refreshAPHTML(data)})
-    })
+    if (!this.#checkbox_use_wps.isChecked()) {
+      gui_loading.bodyClassLoadingAdd()
+    }
+    this.#disconnectFromWiFiAndStartRefreshingAP(true)
   }
 
   async #onHide () {
     console.log(log_wrap('section#page-wifi_connection: onHide'))
+    this.#buttonCancelFromOverlayWaitTimeSync.off_click()
+    this.#buttonContinueFromOverlayTimeSyncFailed.off_click()
     this.#overlay_connect_wifi_wps.fadeOut()
+    this.#overlay_wait_time_sync.fadeOut()
+    this.#overlay_time_sync_failed.fadeOut()
     this.#button_continue.enable()
     $('#page-wifi_connection-ssid_password').hide()
     $('#page-wifi_connection-list_of_ssid').html('')
     GwAP.stopRefreshingAP()
+  }
+
+  #disconnectFromWiFiAndStartRefreshingAP (flag_initial_refresh=false) {
+    networkDisconnect().then(() => {
+    }).catch((err) => {
+      console.log(log_wrap(`networkDisconnect error: ${err}`))
+    }).finally(() => {
+      if (!this.#checkbox_use_wps.isChecked()) {
+        this.#flag_initial_refresh = flag_initial_refresh
+        GwAP.startRefreshingAP(0, (data) => {this.#refreshAPHTML(data)})
+      }
+    })
   }
 
   async #onChangeUseWPS () {
@@ -99,7 +122,7 @@ export class PageWiFiConnection {
       await Network.waitWhileInProgress()
       this.#button_continue.enable()
     } else {
-      GwAP.startRefreshingAP()
+      GwAP.startRefreshingAP(0, (data) => {this.#refreshAPHTML(data)})
       this.#div_list_of_wifi.slideDown()
       this.#checkAndUpdatePageWiFiListButtonNext()
       this.#updatePositionOfWiFiPasswordInput()
@@ -157,25 +180,49 @@ export class PageWiFiConnection {
     }
   }
 
+  #cbOnConnected() {
+    console.log(log_wrap(`cbOnConnected`))
+    this.#overlay_connect_wifi_wps.fadeOut();
+    this.#overlay_wait_time_sync.fadeIn();
+  }
+
   async #connect_to_wifi_with_wps() {
     let isSuccessful = false
     try {
       GwStatus.stopCheckingStatus()
       GwAP.stopRefreshingAP()
       await Network.waitWhileInProgress()
-      isSuccessful = await networkConnectWPS(this.#auth)
+      this.#networkConnectAbortController = new AbortController()
+      this.#flagAbortWaitingTimeSync = false
+      isSuccessful = await networkConnectWPS(this.#auth,
+          this.#connectTimeoutWPS_ms,
+          this.#cbOnConnected.bind(this),
+          this.#networkConnectAbortController.signal)
       console.log(log_wrap(`networkConnectWPS: ${isSuccessful}`))
     } catch (err) {
       console.log(log_wrap(`connect_to_wifi_with_wps failed: ${err}`))
     } finally {
       console.log(log_wrap('Start periodic status check'))
+      this.#overlay_wait_time_sync.fadeOut();
+      if (this.#checkbox_use_wps.isChecked()) {
+        this.#button_back.show()
+        this.#overlay_connect_wifi_wps.fadeOut()
+      }
       GwStatus.startCheckingStatus()
       this.#button_continue.enable()
       if (isSuccessful) {
         Navigation.change_page_to_software_update()
       } else {
-        $('#wifi-connection-status-block').show()
-        GwAP.startRefreshingAP()
+        if (GwStatus.isWaitingForTimeSync()) {
+          if (this.#flagAbortWaitingTimeSync) {
+            Navigation.change_page_to_software_update()
+          } else {
+            this.#overlay_time_sync_failed.fadeIn();
+          }
+        } else {
+          $('#wifi-connection-status-block').show()
+          this.#disconnectFromWiFiAndStartRefreshingAP()
+        }
       }
     }
   }
@@ -207,7 +254,12 @@ export class PageWiFiConnection {
       if (!flag_network_config_saved) {
         await this.#gwCfg.saveNetworkConfig(this.#auth)
       }
-      isSuccessful = await networkConnect(ssid, password, this.#auth)
+      this.#networkConnectAbortController = new AbortController()
+      this.#flagAbortWaitingTimeSync = false
+      isSuccessful = await networkConnect(ssid, password, this.#auth,
+          this.#connectTimeout_ms,
+          this.#cbOnConnected.bind(this),
+          this.#networkConnectAbortController.signal)
       console.log(log_wrap(`networkConnect: ${isSuccessful}`))
     } catch (err) {
       console.log(log_wrap(`save_network_config_and_connect_to_wifi failed: ${err}`))
@@ -215,13 +267,22 @@ export class PageWiFiConnection {
       console.log(log_wrap('Start periodic status check'))
       GwStatus.startCheckingStatus()
       this.#button_continue.enable()
+      this.#overlay_wait_time_sync.fadeOut();
       gui_loading.bodyClassLoadingRemove()
       if (isSuccessful) {
         Navigation.change_page_to_software_update()
       } else {
-        $('#wifi-connection-status-block').show()
-        this.#updatePositionOfWiFiPasswordInput()
-        GwAP.startRefreshingAP()
+        if (GwStatus.isWaitingForTimeSync()) {
+          if (this.#flagAbortWaitingTimeSync) {
+            Navigation.change_page_to_software_update()
+          } else {
+            this.#overlay_time_sync_failed.fadeIn();
+          }
+        } else {
+          $('#wifi-connection-status-block').show()
+          this.#updatePositionOfWiFiPasswordInput()
+          GwAP.startRefreshingAP(0, (data) => {this.#refreshAPHTML(data)})
+        }
       }
     }
   }
@@ -233,8 +294,6 @@ export class PageWiFiConnection {
       this.#button_continue.disable()
       $('#wifi-connection-status-block').hide()
       this.#connect_to_wifi_with_wps().then(() => {
-        this.#button_back.show()
-        this.#overlay_connect_wifi_wps.fadeOut()
       })
       return
     }
@@ -284,12 +343,22 @@ export class PageWiFiConnection {
     this.#save_network_config_and_connect_to_wifi(wifi_channel, ssid, password).then(() => {})
   }
 
-  #onClickButtonCancelFromOverlay() {
-    networkDisconnect().then(() => {
-    })
-    this.#overlay_connect_wifi_wps.fadeOut()
-    this.#button_back.show()
-    this.#button_continue.enable()
+  #onClickButtonCancelFromOverlayWaitConnectionWPS() {
+    if (this.#networkConnectAbortController) {
+      this.#networkConnectAbortController.abort();
+    }
+  }
+
+  #onClickButtonCancelFromOverlayWaitTimeSync() {
+    this.#flagAbortWaitingTimeSync = true
+    this.#networkConnectAbortController.abort();
+    // Aborting here will cause networkConnect/networkConnectWPS to exit.
+    // save_network_config_and_connect_to_wifi/connect_to_wifi_with_wps will handle the abort.
+  }
+
+  #onClickButtonContinueFromOverlayTimeSyncFailed() {
+    this.#overlay_time_sync_failed.fadeOut();
+    Navigation.change_page_to_software_update()
   }
 
   #refreshAPHTML (data) {
@@ -492,11 +561,7 @@ export class PageWiFiConnection {
   }
 
   #checkAndUpdatePageWiFiListButtonNext () {
-    if (GwStatus.isWaitingForNetworkConnection()) {
-      return
-    }
-
-    if (this.#checkWiFiSSIDAndPassword()) {
+    if (this.#checkbox_use_wps.isChecked() || this.#checkWiFiSSIDAndPassword()) {
       if (!this.#button_continue.isEnabled()) {
         console.log(log_wrap('page-wifi_connection-button-continue: enable'))
         this.#button_continue.enable()
@@ -536,5 +601,4 @@ export class PageWiFiConnection {
       div_page_wifi_list_ssid_password.show()
     }
   }
-
 }

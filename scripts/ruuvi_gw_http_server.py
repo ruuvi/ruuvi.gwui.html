@@ -35,7 +35,8 @@ g_flag_access_from_lan = False
 
 GET_AP_JSON_TIMEOUT = 0.25
 GET_HISTORY_JSON_TIMEOUT = 0.25
-NETWORK_CONNECTION_TIMEOUT = 0.25
+NETWORK_CONNECTION_TIMEOUT = 3.25
+TIME_SYNC_TIMEOUT = 3.25
 GET_FIRMWARE_UPDATE_TIMEOUT = 0.25
 
 LAN_AUTH_TYPE_DEFAULT = 'lan_auth_default'
@@ -86,6 +87,7 @@ g_ssid = None
 g_saved_ssid = None
 g_password = None
 g_timestamp = None
+g_flag_time_synced = False
 g_auto_toggle_cnt = 0
 g_flag_toggle_history_json = False
 g_gw_mac = "AA:BB:CC:DD:EE:FF"
@@ -1094,15 +1096,20 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(tosend.encode('ascii'))
 
     @staticmethod
-    def _generate_status_json(urc, ssid, ip='0', netmask='0', gw='0', fw_updating_stage=0,
-                              percentage=0, fw_updating_msg=None):
+    def _generate_status_json(urc, ssid,
+                              ip='0', netmask='0', gw='0', dhcp='0',
+                              is_time_synced=False,
+                              fw_updating_stage=0,
+                              percentage=0,
+                              fw_updating_msg=None):
+        time_sync_info = f'"is_time_valid":{1 if is_time_synced else 0}'
         if fw_updating_stage == 0:
-            return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc}}}'
+            return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","dhcp":"{dhcp}","urc":{urc},{time_sync_info}}}'
         else:
             if fw_updating_msg is None:
-                return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}}}}}'
+                return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","dhcp":"{dhcp}","urc":{urc},{time_sync_info},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}}}}}'
             else:
-                return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","urc":{urc},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}, "message":"{fw_updating_msg}"}}}}'
+                return f'{{{ssid},"ip":"{ip}","netmask":"{netmask}","gw":"{gw}","dhcp":"{dhcp}","urc":{urc},{time_sync_info},"extra":{{"fw_updating":{fw_updating_stage},"percentage":{percentage}, "message":"{fw_updating_msg}"}}}}'
 
     def _check_auth(self):
         global g_ruuvi_dict
@@ -1653,13 +1660,14 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                     netmask = '255.255.255.0'
                     gw = '192.168.100.1'
                 else:
-                    ip = g_ruuvi_dict['eth_static_ip']
-                    netmask = g_ruuvi_dict['eth_netmask']
-                    gw = g_ruuvi_dict['eth_gw']
+                    ip = str(g_ruuvi_dict['eth_static_ip'])
+                    netmask = str(g_ruuvi_dict['eth_netmask'])
+                    gw = str(g_ruuvi_dict['eth_gw'])
             else:
                 ip = '192.168.1.119'
                 netmask = '255.255.255.0'
                 gw = '192.168.1.1'
+            dhcp = '192.168.1.1'
 
             fw_updating_msg = None
             if SOFTWARE_UPDATE_STAGE_0_NONE < g_software_update_stage <= SOFTWARE_UPDATE_STAGE_3_DOWNLOAD_NRF52:
@@ -1680,8 +1688,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 fw_updating_msg = "Failed to update nRF52 firmware"
 
             content = self._generate_status_json(STATUS_JSON_URC_CONNECTED,
-                                                 ssid_key_with_val, ip, netmask, gw, g_software_update_stage,
-                                                 g_software_update_percentage, fw_updating_msg=fw_updating_msg)
+                                                 ssid_key_with_val,
+                                                 ip, netmask, gw, dhcp,
+                                                 g_flag_time_synced,
+                                                 g_software_update_stage,
+                                                 g_software_update_percentage,
+                                                 fw_updating_msg=fw_updating_msg)
 
         elif g_simulation_mode == SIMULATION_MODE_WIFI_FAILED_ATTEMPT:
             content = self._generate_status_json(STATUS_JSON_URC_WIFI_FAILED_ATTEMPT,
@@ -2001,6 +2013,8 @@ def handle_wifi_connect():
     global g_saved_ssid
     global g_password
     global g_timestamp
+    global g_flag_time_synced
+    timestamp_network_connected = None
     while True:
         if g_timestamp is not None:
             if (time.time() - g_timestamp) > NETWORK_CONNECTION_TIMEOUT:
@@ -2026,6 +2040,13 @@ def handle_wifi_connect():
                     g_simulation_mode = SIMULATION_MODE_WIFI_FAILED_ATTEMPT
                     g_saved_ssid = None
                 g_timestamp = None
+            if timestamp_network_connected is None and (
+                    g_simulation_mode == SIMULATION_MODE_ETH_CONNECTED or g_simulation_mode == SIMULATION_MODE_WIFI_CONNECTED):
+                g_flag_time_synced = False
+                timestamp_network_connected = time.time()
+        if timestamp_network_connected is not None:
+            if (time.time() - timestamp_network_connected) > TIME_SYNC_TIMEOUT:
+                g_flag_time_synced = True
         time.sleep(0.5)
     pass
 
