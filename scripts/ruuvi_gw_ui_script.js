@@ -1542,6 +1542,9 @@ export class UiScriptStepDo extends UiScriptStep {
     }
 
     const words = statement_params.match(/(?:[^\s'"]+|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')+/g);
+    if (!words || words.length === 0) {
+      throw new Error("UiScriptControlStatementDo: 'do' must not be empty or whitespace only.");
+    }
     const [action, ...args] = words;
     args.forEach(arg => {
       if (arg.startsWith('"')) {
