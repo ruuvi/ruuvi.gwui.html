@@ -86,7 +86,7 @@ async function directoryExists(path) {
 
 async function removeDirectory(path) {
   if(await directoryExists(path)) {
-    await fs.promises.rmdir(path, {recursive: true});
+    await fs.promises.rm(path, {recursive: true, force: true});
   }
 }
 
