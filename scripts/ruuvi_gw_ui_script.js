@@ -1541,9 +1541,39 @@ export class UiScriptStepDo extends UiScriptStep {
       throw new Error(`UiScriptControlStatementDo: Unexpected key(s) found: '${Object.keys(emptyStatement)}'.`);
     }
 
-    const words = statement_params.match(/(?:[^\s"]+|"[^"]*")+/g);
+    const words = statement_params.match(/(?:[^\s'"]+|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')+/g);
+    if (!words || words.length === 0) {
+      throw new Error("UiScriptControlStatementDo: 'do' must not be empty or whitespace only.");
+    }
     const [action, ...args] = words;
-    const argsWithoutQuotes = args.map(arg => arg.replace(/^"|"$/g, ''));
+    args.forEach(arg => {
+      if (arg.startsWith('"')) {
+        if (!arg.endsWith('"')) {
+          throw new Error(`UiScriptControlStatementDo: Argument starts with a double quote but does not end with one: ${arg}`);
+        }
+        const inner = arg.slice(1, -1);
+        if (inner.replace(/\\"/g, '').includes('"')) {
+          throw new Error(`UiScriptControlStatementDo: Argument contains nested double quotes inside double-quoted string (use \\" to escape): ${arg}`);
+        }
+      } else if (arg.startsWith("'")) {
+        if (!arg.endsWith("'")) {
+          throw new Error(`UiScriptControlStatementDo: Argument starts with a single quote but does not end with one: ${arg}`);
+        }
+        const inner = arg.slice(1, -1);
+        if (inner.replace(/\\'/g, '').includes("'")) {
+          throw new Error(`UiScriptControlStatementDo: Argument contains nested single quotes inside single-quoted string (use \\' to escape): ${arg}`);
+        }
+      }
+    });
+    const argsWithoutQuotes = args.map(arg => {
+      if (arg.startsWith('"') && arg.endsWith('"')) {
+        return arg.slice(1, -1).replace(/\\"/g, '"');
+      }
+      if (arg.startsWith("'") && arg.endsWith("'")) {
+        return arg.slice(1, -1).replace(/\\'/g, "'");
+      }
+      return arg;
+    });
     let params = step['params'];
     if (params) {
       if (typeof params !== 'object') {
