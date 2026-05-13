@@ -1937,6 +1937,40 @@
                             <span lang="fi">URL-osoite</span>
                         </div>
                     </div>
+                    <label class="control control-checkbox">
+                        <span lang="en">Use a long URL</span>
+                        <span lang="fi">Käytä pitkää URL-osoitetta</span>
+                        <input type="checkbox" id="use_http_long_url">
+                        <span class="control_indicator"></span>
+                    </label>
+                    <div id="conf-settings-http_long_url" class="indent hidden">
+                        <h3>
+                            <label for="http_url_extra_http_path">
+                                <span lang="en">HTTP URL: path part (up to 8 KiB)</span>
+                                <span lang="fi">HTTP URL: polun osa (enintään 8 kt)</span>
+                            </label>
+                        </h3>
+                        <div>
+                            <input type="text" id="http_url_extra_http_path">
+                            <div class="input-placeholder">
+                                <span lang="en">path part</span>
+                                <span lang="fi">polun osa</span>
+                            </div>
+                        </div>
+                        <h3>
+                            <label for="http_url_extra_http_query">
+                                <span lang="en">HTTP URL: query part (up to 8 KiB)</span>
+                                <span lang="fi">HTTP URL: kyselyosa (enintään 8 kt)</span>
+                            </label>
+                        </h3>
+                        <div>
+                            <input type="text" id="http_url_extra_http_query">
+                            <div class="input-placeholder">
+                                <span lang="en">query part</span>
+                                <span lang="fi">kyselyosa</span>
+                            </div>
+                        </div>
+                    </div>
                     <div id="page-custom_server-http_validation_error" class="err-message hidden">
                         <div class="block-centered">
                             <span lang="en">Validation failed</span>
@@ -2143,6 +2177,29 @@
                             </div>
                         </div>
                         <div class="border"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="control control-checkbox">
+                        <span lang="en">Add HTTP headers</span>
+                        <span lang="fi">Lisää HTTP-otsikot</span>
+                        <input type="checkbox" id="http_use_extra_http_headers">
+                        <span class="control_indicator"></span>
+                    </label>
+                    <div id="http-extra_http_headers-options" class="hidden indent">
+                        <h3>
+                            <label for="http-extra_http_headers-value">
+                                <span lang="en">HTTP Headers (up to 8 KiB)</span>
+                                <span lang="fi">HTTP-otsikot (enintään 8 kt)</span>
+                            </label>
+                        </h3>
+                        <div class="input-with_validity_check">
+                                <textarea id="http-extra_http_headers-value" rows="3">
+                                </textarea>
+                            <div class="input-with_validity_check-icon">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -3290,8 +3347,8 @@
         <section id="section-init_ssl_storage" class="info-icon-overlay hidden">
             <div class="info-icon-popup">
                 <div class="popup-title">
-                    <span lang="en">SSL certificate storage initialisation required</span>
-                    <span lang="fi">SSL-varmenteen tallennuksen alustus vaaditaan</span>
+                    <span lang="en">Extra storage initialisation required</span>
+                    <span lang="fi">Ylimääräisen tallennuksen alustus vaaditaan</span>
                 </div>
 
                 <a href="" id="section-init_ssl_storage-button-close" class="btn-back info-icon-popup-close">&times;</a>
@@ -3299,11 +3356,11 @@
                 <div class="info-icon-content">
                     <p>
                         <span lang="en">The partition table must be overwritten in order to initialise
-                            the SSL certificate storage. This is a potentially unsafe operation,
+                            the extra storage. This is a potentially unsafe operation,
                             please do not unplug or restart the gateway. It only takes a second to update
                             the partition table and Ruuvi Gateway will automatically reboot.
                         </span>
-                        <span lang="fi">Osiotaulukko on korvattava SSL-sertifikaattivaraston alustamiseksi.
+                        <span lang="fi">Osiotaulukko on korvattava ylimääräistä säilytystilaa.
                             Tämä on mahdollisesti vaarallinen toiminta, älä irrota tai käynnistä yhdyskäytävää
                             uudelleen. Osiotaulukon päivittäminen kestää vain pienen hetken, jonka jälkeen Ruuvi Gateway käynnistyy
                             automaattisesti uudelleen.
@@ -3313,8 +3370,8 @@
 
                 <div id="section-init_ssl_storage-status-ok" class="gr hidden">
                     <div class="block-centered">
-                        <span lang="en">SSL storage has been successfully initialised.</span>
-                        <span lang="fi">SSL-tallennustila on alustettu onnistuneesti.</span>
+                        <span lang="en">Extra storage has been successfully initialised.</span>
+                        <span lang="fi">Ylimääräistä säilytystilaa on alustettu onnistuneesti.</span>
                     </div>
                 </div>
                 <div id="section-init_ssl_storage-status-rebooting" class="hidden">
