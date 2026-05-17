@@ -600,6 +600,10 @@ select {
 	}
 }
 
+textarea::placeholder {
+	white-space: pre-line;
+}
+
 .input-password {
 	position: relative
 }
