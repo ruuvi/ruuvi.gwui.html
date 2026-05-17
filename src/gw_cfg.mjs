@@ -19,6 +19,7 @@ import { GwCfgCoordinates } from './gw_cfg_coordinates.mjs'
 import { GwCfgWifiAPCfg } from './gw_cfg_wifi_ap_config.mjs'
 import { GwCfgWifiStaCfg } from './gw_cfg_wifi_sta_config.mjs'
 import { GwCfgFwUpdateUrl } from "./gw_cfg_fw_update_url.mjs";
+import {log_wrap} from "./utils.mjs";
 
 export class GwCfg {
   info = new GwCfgInfo()
@@ -36,6 +37,9 @@ export class GwCfg {
   fw_update_url = new GwCfgFwUpdateUrl()
   wifi_ap_cfg = new GwCfgWifiAPCfg()
   wifi_sta_cfg = new GwCfgWifiStaCfg()
+  extra_http_path = null
+  extra_http_query = null
+  extra_http_headers = null
 
   constructor () {
   }
@@ -80,6 +84,49 @@ export class GwCfg {
     const data = await Network.httpGetJson('/ruuvi.json', 10000)
     // logger.debug(`FetchGwCfg: data: ${JSON.stringify(data)}`)
     this.#parseResponse(data)
+    if (this.info.storage_ready) {
+      if (this.info.storage_http_extra_http_path) {
+        this.extra_http_path = await Network.httpGetPlainText('/extra_cfg?file=http_path', 20000)
+        if (this.extra_http_path === null) {
+          console.log(log_wrap('Failed to fetch extra HTTP headers: /extra_cfg?file=http_path'))
+          alert('Failed to fetch extra HTTP headers: /extra_cfg?file=http_path - disable it in the settings')
+          this.extra_http_path = null
+        }
+      } else {
+        this.extra_http_path = null
+      }
+      if (this.extra_http_path === null) {
+        this.http.http_use_extra_http_path = false
+      }
+
+      if (this.info.storage_http_extra_http_query) {
+        this.extra_http_query = await Network.httpGetPlainText('/extra_cfg?file=http_query', 20000)
+        if (this.extra_http_query === null) {
+          console.log(log_wrap('Failed to fetch extra HTTP headers: /extra_cfg?file=http_query'))
+          alert('Failed to fetch extra HTTP headers: /extra_cfg?file=http_query - disable it in the settings')
+          this.extra_http_query = null
+        }
+      } else {
+        this.extra_http_query = null
+      }
+      if (this.extra_http_query === null) {
+        this.http.http_use_extra_http_query = false
+      }
+
+      if (this.info.storage_http_extra_http_headers) {
+        this.extra_http_headers = await Network.httpGetPlainText('/extra_cfg?file=http_headers', 20000)
+        if (this.extra_http_headers === null) {
+          console.log(log_wrap('Failed to fetch extra HTTP headers: /extra_cfg?file=http_headers'))
+          alert('Failed to fetch extra HTTP headers: /extra_cfg?file=http_headers - disable it in the settings')
+          this.extra_http_headers = null
+        }
+      } else {
+        this.extra_http_headers = null
+      }
+      if (this.extra_http_headers === null) {
+        this.http.http_use_extra_http_headers = false
+      }
+    }
   }
 
   async #prepNetworkConfig () {
@@ -168,6 +215,9 @@ export class GwCfg {
     }
     data.http_use_ssl_client_cert = this.http.http_use_ssl_client_cert
     data.http_use_ssl_server_cert = this.http.http_use_ssl_server_cert
+    data.http_use_extra_http_path = this.http.http_use_extra_http_path
+    data.http_use_extra_http_query = this.http.http_use_extra_http_query
+    data.http_use_extra_http_headers = this.http.http_use_extra_http_headers
 
     data.use_http_stat = this.http_stat.use_http_stat
     data.http_stat_url = this.http_stat.http_stat_url

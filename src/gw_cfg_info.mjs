@@ -10,6 +10,9 @@ export class GwCfgInfo {
   nrf52_fw_ver = null
   gw_mac = null
   storage_ready = false
+  storage_http_extra_http_path = false
+  storage_http_extra_http_query = false
+  storage_http_extra_http_headers = false
   storage_http_cli_cert = false
   storage_http_cli_key = false
   storage_http_srv_cert = false
@@ -33,6 +36,10 @@ export class GwCfgInfo {
       return
     }
     this.storage_ready = utils.fetchBoolKeyFromData(storage, 'storage_ready', false, false)
+
+    this.storage_http_extra_http_path = utils.fetchBoolKeyFromData(storage, 'http_path', false, false)
+    this.storage_http_extra_http_query = utils.fetchBoolKeyFromData(storage, 'http_query', false, false)
+    this.storage_http_extra_http_headers = utils.fetchBoolKeyFromData(storage, 'http_headers', false, false)
 
     this.storage_http_cli_cert = utils.fetchBoolKeyFromData(storage, 'http_cli_cert', false, false)
     this.storage_http_cli_key = utils.fetchBoolKeyFromData(storage, 'http_cli_key', false, false)

@@ -33,6 +33,76 @@ describe('GwCfgInfo', () => {
     expect(info.fw_ver).to.equal('1.13.0')
     expect(info.nrf52_fw_ver).to.equal('1.0.0')
     expect(info.gw_mac).to.equal('AA:BB:CC:DD:EE:FF')
+    expect(info.storage_ready).to.be.false
+    expect(info.storage_http_extra_http_path).to.be.false
+    expect(info.storage_http_extra_http_query).to.be.false
+    expect(info.storage_http_extra_http_headers).to.be.false
+    expect(Object.keys(data).length).to.equal(0)
+  })
+
+  it('should check valid data with storage containing extra http flags', () => {
+    let data = {
+      fw_ver: '1.13.0',
+      nrf52_fw_ver: '1.0.0',
+      gw_mac: 'AA:BB:CC:DD:EE:FF',
+      storage: {
+        storage_ready: true,
+        http_path: true,
+        http_query: true,
+        http_headers: true,
+        http_cli_cert: false,
+        http_cli_key: false,
+        http_srv_cert: false,
+        stat_cli_cert: false,
+        stat_cli_key: false,
+        stat_srv_cert: false,
+        rcfg_cli_cert: false,
+        rcfg_cli_key: false,
+        rcfg_srv_cert: false,
+        mqtt_cli_cert: false,
+        mqtt_cli_key: false,
+        mqtt_srv_cert: false,
+      },
+    }
+    let info = new GwCfgInfo()
+    info.parse(data)
+    expect(info.fw_ver).to.equal('1.13.0')
+    expect(info.nrf52_fw_ver).to.equal('1.0.0')
+    expect(info.gw_mac).to.equal('AA:BB:CC:DD:EE:FF')
+    expect(info.storage_ready).to.be.true
+    expect(info.storage_http_extra_http_path).to.be.true
+    expect(info.storage_http_extra_http_query).to.be.true
+    expect(info.storage_http_extra_http_headers).to.be.true
+    expect(Object.keys(data).length).to.equal(0)
+  })
+
+  it('should check valid data with storage without extra http flags', () => {
+    let data = {
+      fw_ver: '1.13.0',
+      nrf52_fw_ver: '1.0.0',
+      gw_mac: 'AA:BB:CC:DD:EE:FF',
+      storage: {
+        storage_ready: true,
+        http_cli_cert: false,
+        http_cli_key: false,
+        http_srv_cert: false,
+        stat_cli_cert: false,
+        stat_cli_key: false,
+        stat_srv_cert: false,
+        rcfg_cli_cert: false,
+        rcfg_cli_key: false,
+        rcfg_srv_cert: false,
+        mqtt_cli_cert: false,
+        mqtt_cli_key: false,
+        mqtt_srv_cert: false,
+      },
+    }
+    let info = new GwCfgInfo()
+    info.parse(data)
+    expect(info.storage_ready).to.be.true
+    expect(info.storage_http_extra_http_path).to.be.false
+    expect(info.storage_http_extra_http_query).to.be.false
+    expect(info.storage_http_extra_http_headers).to.be.false
     expect(Object.keys(data).length).to.equal(0)
   })
 
