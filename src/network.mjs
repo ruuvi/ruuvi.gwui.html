@@ -70,14 +70,16 @@ class Network {
       options = {
         extra_headers: undefined,
         list_of_allowed_statuses: undefined,
-      }) {
+      },
+      flag_accept_plain_text = false) {
 
     const list_of_allowed_statuses = options.list_of_allowed_statuses ? options.list_of_allowed_statuses : [200]
 
+    const header_accept = flag_accept_plain_text ? 'text/plain, */*' : 'application/json, text/plain, */*'
     const params = {
       method: method,
       headers: {
-        'Accept': 'application/json, text/plain, */*',
+        'Accept': header_accept,
         'Cache-Control': 'no-cache',
         ...options.extra_headers,
       },
@@ -109,12 +111,20 @@ class Network {
       throw err
     }
     const contentType = this.#response.headers.get('content-type')
-    if (!contentType || !contentType.includes('application/json')) {
+    if (!contentType || (!flag_accept_plain_text && !contentType.includes('application/json'))) {
       let error_msg = `Response HTTP status=${this.#response.status}, statusText=${this.#response.statusText}, content-type=${contentType}`
       if (bodyText) {
         error_msg += `, message='${bodyText}'`
       }
       throw new Error(error_msg)
+    }
+
+    if (flag_accept_plain_text) {
+      if (!this.#response.ok) {
+        return null
+      }
+      console.log(log_wrap(`fetch_json: success, bodyText=${bodyText}`))
+      return bodyText
     }
 
     let jsonData
@@ -148,6 +158,10 @@ class Network {
 
   static async httpGetJson (url, timeout, options) {
     return this.fetch_json('GET', url, timeout, null, options)
+  }
+
+  static async httpGetPlainText (url, timeout, options) {
+    return this.fetch_json('GET', url, timeout, null, options, true)
   }
 
   static async httpPostJson (url, timeout, json_data, options) {
