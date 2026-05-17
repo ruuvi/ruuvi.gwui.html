@@ -84,7 +84,7 @@ class GuiInputText extends GuiObj {
   }
 
   on_change (fn) {
-    this._obj.on('input change keyup paste', () => fn())
+    this._obj.on('input change paste', () => fn())
   }
 
   focus() {
