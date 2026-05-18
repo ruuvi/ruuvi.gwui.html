@@ -102,6 +102,26 @@ g_lan_auth_default_password_hashed = hashlib.md5(f'{LAN_AUTH_DEFAULT_USER}:{RUUV
 g_fw_ver = 'v1.15.0'
 g_nrf52_fw_ver = 'v1.0.0'
 
+g_ruuvi_storage_dict = {
+    'http_cli_cert': None,
+    'http_cli_key': None,
+    'stat_cli_cert': None,
+    'stat_cli_key': None,
+    'rcfg_cli_cert': None,
+    'rcfg_cli_key': None,
+    'mqtt_cli_cert': None,
+    'mqtt_cli_key': None,
+
+    'http_srv_cert': None,
+    'stat_srv_cert': None,
+    'rcfg_srv_cert': None,
+    'mqtt_srv_cert': None,
+
+    'http_path': None,
+    'http_query': None,
+    'http_headers': None,
+}
+
 g_ruuvi_dict = {
     'fw_ver': g_fw_ver,
     'nrf52_fw_ver': g_nrf52_fw_ver,
@@ -121,6 +141,10 @@ g_ruuvi_dict = {
         'stat_srv_cert': False,
         'rcfg_srv_cert': False,
         'mqtt_srv_cert': False,
+
+        'http_path': False,
+        'http_query': False,
+        'http_headers': False,
     },
     'use_eth': False,
     'eth_dhcp': True,
@@ -143,6 +167,9 @@ g_ruuvi_dict = {
     'http_data_format': 'ruuvi',
     'http_use_ssl_client_cert': False,
     'http_use_ssl_server_cert': False,
+    'http_use_extra_http_path': False,
+    'http_use_extra_http_query': False,
+    'http_use_extra_http_headers': False,
     # 'http_user': '',
     # 'http_bearer_token': '',
     # 'http_api_key': '',
@@ -368,18 +395,18 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(resp)
 
     def _on_post_resp_400(self, desc=''):
-        content = f'''
-<html>
-<head><title>400 Bad Request</title></head>
-<body>
-<center><h1>400 Bad Request</h1></center>
-<hr>
-<center>Ruuvi Gateway</center>
-<p>{desc}</p>
-</body>
-</html>
-'''
-        self._on_post_resp('400 Bad Request', 'text/html; charset=utf-8', content)
+            content = f'''
+    <html>
+    <head><title>400 Bad Request</title></head>
+    <body>
+    <center><h1>400 Bad Request</h1></center>
+    <hr>
+    <center>Ruuvi Gateway</center>
+    <p>{desc}</p>
+    </body>
+    </html>
+    '''
+            self._on_post_resp('400 Bad Request', 'text/html; charset=utf-8', content)
 
     def _on_post_resp_404(self):
         content = '''
@@ -885,12 +912,20 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         time.sleep(1.5)
         self.wfile.write(resp)
 
-    def _do_post_ssl_cert(self, query_params):
+    def _do_post_extra_cfg(self, query_params):
+        global g_ruuvi_dict
+        global g_ruuvi_storage_dict
         file_name = query_params.get("file", [None])[0]
         if file_name is None:
+            print(f'Error: file query parameter is missing')
             self._on_post_resp_400()
             return
         file_content = self._ecdh_decrypt_request(g_aes_key)
+
+        if not g_ruuvi_dict['storage']['storage_ready']:
+            print(f'Error: storage is not ready')
+            self._on_post_resp_400()
+            return
 
         if file_name == 'http_cli_cert':
             g_ruuvi_dict['storage'][file_name] = True
@@ -916,9 +951,22 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             g_ruuvi_dict['storage'][file_name] = True
         elif file_name == 'mqtt_srv_cert':
             g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'http_path':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'http_query':
+            g_ruuvi_dict['storage'][file_name] = True
+        elif file_name == 'http_headers':
+            g_ruuvi_dict['storage'][file_name] = True
+            if file_content and not file_content.endswith('\r\n'):
+                print(f'Error: "http_headers" must end with "CRLF"')
+                self._on_post_resp_400()
+                return
         else:
+            print(f'Error: unknown file name: {file_name}')
             self._on_post_resp_400()
             return
+
+        g_ruuvi_storage_dict[file_name] = file_content
 
         content = '{}'
         content_encoded = content.encode('utf-8')
@@ -957,8 +1005,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self._do_post_fw_update_reset()
         elif self.path == '/init_storage':
             self._do_post_init_storage()
-        elif parsed_url.path == '/ssl_cert':
-            self._do_post_ssl_cert(query_params)
+        elif parsed_url.path == '/ssl_cert':  # deprecated
+            self._do_post_extra_cfg(query_params)
+        elif parsed_url.path == '/extra_cfg':
+            self._do_post_extra_cfg(query_params)
         else:
             resp = b''
             resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
@@ -966,6 +1016,66 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             resp += f'\r\n'.encode('ascii')
             self.wfile.write(resp)
         return
+
+    def _do_delete_extra_cfg(self, query_params):
+        file_name = query_params.get("file", [None])[0]
+        if file_name is None:
+            self._on_post_resp_400()
+            return
+
+        if not g_ruuvi_dict['storage']['storage_ready']:
+            print(f'Error: Storage is not ready')
+            self._on_post_resp_400()
+            return
+
+        if file_name == 'http_cli_cert':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'stat_cli_cert':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'rcfg_cli_cert':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'mqtt_cli_cert':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'http_cli_key':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'stat_cli_key':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'rcfg_cli_key':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'mqtt_cli_key':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'http_srv_cert':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'stat_srv_cert':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'rcfg_srv_cert':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'mqtt_srv_cert':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'http_path':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'http_query':
+            g_ruuvi_dict['storage'][file_name] = False
+        elif file_name == 'http_headers':
+            g_ruuvi_dict['storage'][file_name] = False
+        else:
+            print(f'Error: Unknown file name: {file_name}')
+            self._on_post_resp_400()
+            return
+
+        g_ruuvi_storage_dict[file_name] = None
+
+        content = '{}'
+        content_encoded = content.encode('utf-8')
+        resp = b''
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: application/json\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += content_encoded
+        self.wfile.write(resp)
 
     def do_DELETE(self):
         global g_ssid
@@ -1013,51 +1123,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
             content = '{}'
             self._write_json_response(content)
-        elif parsed_url.path == '/ssl_cert':
-            file_name = query_params.get("file", [None])[0]
-            if file_name is None:
-                self._on_post_resp_400()
-                return
-
-            if file_name == 'http_cli_cert':
-                g_ruuvi_dict['storage'][file_name] = False
-            elif file_name == 'stat_cli_cert':
-                g_ruuvi_dict['storage'][file_name] = False
-            elif file_name == 'rcfg_cli_cert':
-                g_ruuvi_dict['storage'][file_name] = False
-            elif file_name == 'mqtt_cli_cert':
-                g_ruuvi_dict['storage'][file_name] = False
-            elif file_name == 'http_cli_key':
-                g_ruuvi_dict['storage'][file_name] = False
-            elif file_name == 'stat_cli_key':
-                g_ruuvi_dict['storage'][file_name] = False
-            elif file_name == 'rcfg_cli_key':
-                g_ruuvi_dict['storage'][file_name] = False
-            elif file_name == 'mqtt_cli_key':
-                g_ruuvi_dict['storage'][file_name] = False
-            elif file_name == 'http_srv_cert':
-                g_ruuvi_dict['storage'][file_name] = False
-            elif file_name == 'stat_srv_cert':
-                g_ruuvi_dict['storage'][file_name] = False
-            elif file_name == 'rcfg_srv_cert':
-                g_ruuvi_dict['storage'][file_name] = False
-            elif file_name == 'mqtt_srv_cert':
-                g_ruuvi_dict['storage'][file_name] = False
-            else:
-                self._on_post_resp_400()
-                return
-
-            content = '{}'
-            content_encoded = content.encode('utf-8')
-            resp = b''
-            resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
-            resp += f'Content-type: application/json\r\n'.encode('ascii')
-            resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
-            resp += f'Pragma: no-cache\r\n'.encode('ascii')
-            resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
-            resp += f'\r\n'.encode('ascii')
-            resp += content_encoded
-            self.wfile.write(resp)
+        elif parsed_url.path == '/ssl_cert' or parsed_url.path == '/extra_cfg':
+            self._do_delete_extra_cfg(query_params)
         else:
             resp = b''
             resp += f'HTTP/1.0 400 Bad Request\r\n'.encode('ascii')
@@ -1402,6 +1469,22 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         print(f'Response: {resp}')
         self.wfile.write(resp)
 
+    def _resp_403(self):
+        resp = b''
+        resp += f'HTTP/1.0 403 Access Denied\r\n'.encode('ascii')
+        resp += f'Content-Length: 0\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        print(f'Response: {resp}')
+        self.wfile.write(resp)
+
+    def _resp_404(self):
+        resp = b''
+        resp += f'HTTP/1.0 404 Not Found\r\n'.encode('ascii')
+        resp += f'Content-Length: 0\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        print(f'Response: {resp}')
+        self.wfile.write(resp)
+
     def _resp_500(self):
         content = '{}'
         resp = b''
@@ -1414,6 +1497,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(resp)
 
     def _validate_url_check_post_advs(self, url, user, password):
+        print(f'Validate URL: {url}, user={user}, password={password}')
         if url == 'http://':
             return self._resp_500()
         elif url == 'http://qwe':
@@ -1430,6 +1514,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             elif user == 'user1' and (password is None or password == 'pass1'):
                 return self._resp_200_json_validate_url_status(200)
             return self._resp_200_json_validate_url_status(401)
+        elif url == 'https://network2.ruuvi.com/short_api_path?param1=val123':
+            return self._resp_200_json_validate_url_status(200)
         return self._resp_200_json_validate_url_status(400, "Error description")
 
     def _validate_url_check_post_stat(self, url, user, password):
@@ -1526,23 +1612,45 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         return self._resp_200_json_validate_url_status(400, "Error description")
 
     def _validate_url(self, url_with_params):
+        global g_ruuvi_storage_dict
         parsed_url = urlparse(url_with_params)
-        url = parse_qs(parsed_url.query)['url'][0]
-        validate_type = parse_qs(parsed_url.query)['validate_type'][0]
+        params_dict = parse_qs(parsed_url.query)
+        url = params_dict['url'][0]
+        validate_type = params_dict['validate_type'][0]
+
+        use_extra_http_path = params_dict.get('use_extra_http_path', ['false'])[0] == 'true'
+        if use_extra_http_path:
+            if 'http_path' not in g_ruuvi_storage_dict or g_ruuvi_storage_dict['http_path'] is None:
+                print(f'Error: http_path not set in storage')
+                return self._resp_400()
+            url = url + '/' + g_ruuvi_storage_dict['http_path']
+
+        use_extra_http_query = params_dict.get('use_extra_http_query', ['false'])[0] == 'true'
+        if use_extra_http_query:
+            if 'http_query' not in g_ruuvi_storage_dict or g_ruuvi_storage_dict['http_query'] is None:
+                print(f'Error: http_query not set in storage')
+                return self._resp_400()
+            url = url + '?' + g_ruuvi_storage_dict['http_query']
+
+        use_extra_http_headers = params_dict.get('use_extra_http_headers', ['false'])[0] == 'true'
+        if use_extra_http_headers and ('http_headers' not in g_ruuvi_storage_dict or g_ruuvi_storage_dict['http_headers'] is None):
+            print(f'Error: http_headers not set in storage')
+            return self._resp_400()
+
         try:
-            user = parse_qs(parsed_url.query)['user'][0]
+            user = params_dict['user'][0]
         except KeyError:
             user = None
         try:
-            encrypted_password = parse_qs(parsed_url.query)['encrypted_password'][0]
+            encrypted_password = params_dict['encrypted_password'][0]
         except KeyError:
             encrypted_password = None
 
         password = None
         if encrypted_password is not None:
             try:
-                encrypted_password_iv = parse_qs(parsed_url.query)['encrypted_password_iv'][0]
-                encrypted_password_hash = parse_qs(parsed_url.query)['encrypted_password_hash'][0]
+                encrypted_password_iv = params_dict['encrypted_password_iv'][0]
+                encrypted_password_hash = params_dict['encrypted_password_hash'][0]
             except KeyError:
                 return self._resp_400()
             password = self._ecdh_decrypt(g_aes_key, encrypted_password, encrypted_password_iv, encrypted_password_hash)
@@ -1554,10 +1662,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         elif validate_type == 'check_post_stat':
             return self._validate_url_check_post_stat(url, user, password)
         elif validate_type == 'check_mqtt':
-            return self._validate_url_check_mqtt(url, user, password, parse_qs(parsed_url.query)['mqtt_topic_prefix'][0],
-                                                 parse_qs(parsed_url.query)['mqtt_client_id'][0])
+            return self._validate_url_check_mqtt(url, user, password, params_dict['mqtt_topic_prefix'][0],
+                                                 params_dict['mqtt_client_id'][0])
         elif validate_type == 'check_remote_cfg':
-            return self._validate_url_check_remote_cfg(url, user, password, parse_qs(parsed_url.query)['auth_type'][0])
+            return self._validate_url_check_remote_cfg(url, user, password, params_dict['auth_type'][0])
         elif validate_type == 'check_fw_update_url':
             return self._validate_url_check_check_fw_update_url(url)
         return self._resp_400()
@@ -1895,11 +2003,86 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         time.sleep(GET_HISTORY_JSON_TIMEOUT)
         self._write_json_response(content)
 
+    def _do_get_extra_cfg(self, query_params):
+        file_name = query_params.get("file", [None])[0]
+        if file_name is None:
+            self._on_post_resp_400()
+            return
+
+        if not g_ruuvi_dict['storage']['storage_ready']:
+            print(f'Error: Storage is not ready')
+            self._on_post_resp_400()
+            return
+
+        content = None
+        is_access_allowed = False
+        if file_name == 'http_cli_cert':
+            pass
+        elif file_name == 'stat_cli_cert':
+            pass
+        elif file_name == 'rcfg_cli_cert':
+            pass
+        elif file_name == 'mqtt_cli_cert':
+            pass
+        elif file_name == 'http_cli_key':
+            pass
+        elif file_name == 'stat_cli_key':
+            pass
+        elif file_name == 'rcfg_cli_key':
+            pass
+        elif file_name == 'mqtt_cli_key':
+            pass
+        elif file_name == 'http_srv_cert':
+            pass
+        elif file_name == 'stat_srv_cert':
+            pass
+        elif file_name == 'rcfg_srv_cert':
+            pass
+        elif file_name == 'mqtt_srv_cert':
+            pass
+        elif file_name == 'http_path':
+            is_access_allowed = True
+            if g_ruuvi_dict['storage'][file_name]:
+                content = g_ruuvi_storage_dict[file_name]
+        elif file_name == 'http_query':
+            is_access_allowed = True
+            if g_ruuvi_dict['storage'][file_name]:
+                content = g_ruuvi_storage_dict[file_name]
+        elif file_name == 'http_headers':
+            is_access_allowed = True
+            if g_ruuvi_dict['storage'][file_name]:
+                content = g_ruuvi_storage_dict[file_name]
+        else:
+            print(f'Error: Unknown file name: {file_name}')
+            self._resp_404()
+            return
+        if not is_access_allowed:
+            self._resp_403()
+            return
+        if content is None:
+            self._resp_404()
+            return
+
+        content_encoded = content.encode('utf-8')
+        print(f'Resp: {content}')
+
+        resp = b''
+        resp += f'HTTP/1.0 200 OK\r\n'.encode('ascii')
+        resp += f'Content-type: text/plain\r\n'.encode('ascii')
+        resp += f'Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\n'.encode('ascii')
+        resp += f'Pragma: no-cache\r\n'.encode('ascii')
+        resp += f'Content-Length: {len(content_encoded)}\r\n'.encode('ascii')
+        resp += f'\r\n'.encode('ascii')
+        resp += content_encoded
+        self.wfile.write(resp)
+
     def do_GET(self):
         global g_ruuvi_dict
         global g_login_session
         print('GET %s' % self.path)
-        file_path = self.path.split('?')[0]
+        parsed_url = urlparse(self.path)
+        query_params = parse_qs(parsed_url.query)
+        file_path = parsed_url.path
         if file_path == '/auth':
             self._do_get_auth()
             return
@@ -1933,6 +2116,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self._do_get_metrics(file_path)
         elif file_path == '/history':
             self._do_get_history()
+        elif file_path == '/extra_cfg':
+            self._do_get_extra_cfg(query_params)
         else:
             if file_path == '/':
                 file_path = 'index.html'

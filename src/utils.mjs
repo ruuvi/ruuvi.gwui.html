@@ -204,6 +204,24 @@ function generate_url_for_validation (auth, url_to_validate, validate_type, auth
   }
   url += '&use_ssl_server_cert=' + flag_use_ssl_server_cert
 
+  let flag_use_extra_http_path = false
+  if ('use_extra_http_path' in params) {
+    flag_use_extra_http_path = params['use_extra_http_path']
+  }
+  url += '&use_extra_http_path=' + flag_use_extra_http_path
+
+  let flag_use_extra_http_query = false
+  if ('use_extra_http_query' in params) {
+    flag_use_extra_http_query = params['use_extra_http_query']
+  }
+  url += '&use_extra_http_query=' + flag_use_extra_http_query
+
+  let flag_use_extra_http_headers = false
+  if ('use_extra_http_headers' in params) {
+    flag_use_extra_http_headers = params['use_extra_http_headers']
+  }
+  url += '&use_extra_http_headers=' + flag_use_extra_http_headers
+
   if ('input_user' in params && 'input_pass' in params) {
     let input_user = params['input_user']
     let input_pass = params['input_pass']
@@ -343,7 +361,7 @@ export function validate_url (auth, url_to_validate, validate_type, auth_type, p
 
   set_error_message(params, '')
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let input_url = params['input_url']
     let input_url_port = params['input_url_port']
     if ('input_url' in params) {

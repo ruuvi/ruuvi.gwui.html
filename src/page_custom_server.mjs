@@ -25,6 +25,8 @@ import GuiInputTokenWithValidation from './gui_input_token_with_validation.mjs'
 import Network from './network.mjs'
 import GuiButtonUpload from "./gui_button_upload.mjs";
 import GuiButton from "./gui_button.mjs";
+import PageInitSslStorage from "./page_init_ssl_storage.mjs";
+import GuiTextArea from "./gui_textarea.mjs";
 
 class PageCustomServer {
     /** @type GwCfg */
@@ -33,12 +35,20 @@ class PageCustomServer {
     /** @type Auth */
     #auth
 
+    #timeout_upload_file = 15000
+    #max_short_url_length = 255
+    #max_extra_file_length = 8 * 1024
+
     #section = $('section#page-custom_server')
 
     #checkbox_use_http_ruuvi = new GuiCheckboxWithValidation($('#use_http_ruuvi'))
     #checkbox_use_http = new GuiCheckbox($('#use_http'))
+    #checkbox_use_http_long_url = new GuiCheckbox($('#use_http_long_url'))
     #div_settings_http = new GuiDiv($('#conf-settings-http'))
+    #div_settings_http_long_url = new GuiDiv($('#conf-settings-http_long_url'))
     #input_http_url = new GuiInputTextWithValidation($('#http_url'))
+    #input_http_url_extra_http_path = new GuiInputText($('#http_url_extra_http_path'))
+    #input_http_url_extra_http_query = new GuiInputText($('#http_url_extra_http_query'))
     #div_http_ruuvi_validation_error = new GuiDiv($('#page-custom_server-http_ruuvi-validation_error'))
     #text_http_ruuvi_validation_error_desc = new GuiText($('#page-custom_server-http_ruuvi-validation_error-desc'))
     #div_http_validation_error = new GuiDiv($('#page-custom_server-http_validation_error'))
@@ -76,6 +86,10 @@ class PageCustomServer {
     #input_http_auth_token_api_key = new GuiInputTokenWithValidation($('#http_auth_token_api_key'))
     #div_http_auth_apikey_params = new GuiDiv($('#http_auth-api_key-params'))
     #input_http_auth_apikey_value = new GuiInputTokenWithValidation($('#http_auth-api_key-value'))
+
+    #checkbox_http_use_extra_http_headers = new GuiCheckbox($('#http_use_extra_http_headers'))
+    #div_http_use_extra_http_headers_options = new GuiDiv($('#http-extra_http_headers-options'))
+    #input_extra_http_headers_value = new GuiTextArea($('#http-extra_http_headers-value'))
 
     #checkbox_http_use_client_ssl_cert = new GuiCheckbox($('#http_use_client_ssl_cert'))
     #div_http_use_client_ssl_cert_options = new GuiDiv($('#http_use_client_ssl_cert_options'))
@@ -203,6 +217,7 @@ class PageCustomServer {
         this.#radio_http_auth_bearer = this.#radio_http_auth.addOption('http_auth_bearer', false)
         this.#radio_http_auth_token = this.#radio_http_auth.addOption('http_auth_token', false)
         this.#radio_http_auth_apikey = this.#radio_http_auth.addOption('http_auth-api_key', false)
+        this.#checkbox_http_use_extra_http_headers.on_change(() => this.#onChangeUseExtraHttpHeaders())
         this.#checkbox_http_use_client_ssl_cert.on_change(() => this.#onChangeUseClientSslCertHttp())
         this.#checkbox_http_use_server_ssl_cert.on_change(() => this.#onChangeUseServerSslCertHttp())
         this.#button_http_remove_client_cert_and_key.on_click(async () => this.#onRemoveClientCertAndKeyHttp())
@@ -226,6 +241,7 @@ class PageCustomServer {
 
         this.#checkbox_use_http_ruuvi.on_change(() => this.#onChangeUseHttpRuuvi())
         this.#checkbox_use_http.on_change(() => this.#onChangeUseHttpCustom())
+        this.#checkbox_use_http_long_url.on_change(() => this.#onChangeUseHttpLongUrl())
 
         this.#radio_http_data_format_ruuvi.on_click(() => this.#onChangeHttpDataFormat())
         this.#radio_http_data_format_ruuvi_raw_and_decoded.on_click(() => this.#onChangeHttpDataFormat())
@@ -244,6 +260,9 @@ class PageCustomServer {
         this.#button_stat_remove_server_cert.on_click(async () => this.#onRemoveServerCertStat())
 
         this.#input_http_url.on_change(() => this.#onChangeHttpUrl())
+        this.#input_http_url_extra_http_path.on_change(() => this.#onChangeHttpUrlPath())
+        this.#input_http_url_extra_http_query.on_change(() => this.#onChangeHttpUrlQuery())
+        this.#input_extra_http_headers_value.on_change(() => this.#onChangeHttpExtraHeadersValue())
         this.#input_http_period.on_change(() => this.#onChangeHttpPeriod())
         this.#input_http_auth_basic_user.on_change(() => this.#onChangeHttpUser())
         this.#input_http_auth_basic_pass.on_change(() => this.#onChangeHttpPass())
@@ -308,6 +327,17 @@ class PageCustomServer {
         }
 
         this.#input_http_url.setVal(this.#gwCfg.http.http_url)
+        if (this.#gwCfg.http.http_use_extra_http_path) {
+            this.#input_http_url_extra_http_path.setVal('/' +
+                (this.#gwCfg.extra_http_path ? this.#gwCfg.extra_http_path : ''))
+            this.#checkbox_use_http_long_url.setChecked()
+        }
+        if (this.#gwCfg.http.http_use_extra_http_query) {
+            this.#input_http_url_extra_http_query.setVal('?' +
+                (this.#gwCfg.extra_http_query ? this.#gwCfg.extra_http_query : ''))
+            this.#checkbox_use_http_long_url.setChecked()
+            this.#checkbox_use_http_long_url.setChecked()
+        }
         this.#input_http_period.setVal(this.#gwCfg.http.http_period)
 
         if (this.#gwCfg.http.http_data_format.isRuuvi()) {
@@ -334,6 +364,13 @@ class PageCustomServer {
         } else if (this.#gwCfg.http.http_auth.isApiKey()) {
             this.#checkbox_use_http_auth.setChecked()
             this.#radio_http_auth_apikey.setChecked()
+        }
+
+        if (this.#gwCfg.http.http_use_extra_http_headers) {
+            this.#checkbox_http_use_extra_http_headers.setChecked()
+            this.#input_extra_http_headers_value.setVal(this.#gwCfg.extra_http_headers
+                ? this.#gwCfg.extra_http_headers.replace(/\r\n/g, '\n')
+                : '')
         }
 
         this.#checkbox_http_use_client_ssl_cert.setState(this.#gwCfg.http.http_use_ssl_client_cert)
@@ -477,6 +514,26 @@ class PageCustomServer {
         this.#gwCfg.http.use_http = this.#checkbox_use_http.isChecked()
         if (this.#checkbox_use_http.isChecked()) {
             this.#gwCfg.http.http_url = this.#input_http_url.getVal()
+            let extra_http_path = ''
+            let extra_http_query = ''
+            if (this.#checkbox_use_http_long_url.isChecked()) {
+                extra_http_path = this.#input_http_url_extra_http_path.getVal().trim()
+                if (extra_http_path.length > 0) {
+                    if (extra_http_path[0] === '/') {
+                        extra_http_path = extra_http_path.substring(1)
+                    }
+                }
+                extra_http_query = this.#input_http_url_extra_http_query.getVal().trim()
+                if (extra_http_query.length > 0) {
+                    if (extra_http_query[0] === '?') {
+                        extra_http_query = extra_http_query.substring(1)
+                    }
+                }
+            }
+            this.#gwCfg.http.http_use_extra_http_path = extra_http_path.length > 0;
+            this.#gwCfg.http.http_use_extra_http_query = extra_http_query.length > 0;
+            this.#gwCfg.http.http_use_extra_http_headers = this.#checkbox_http_use_extra_http_headers.isChecked()
+
             const http_period = parseInt(this.#input_http_period.getVal())
             if (!isNaN(http_period)) {
                 this.#gwCfg.http.http_period = http_period
@@ -522,6 +579,9 @@ class PageCustomServer {
             this.#gwCfg.http.http_api_key = ''
             this.#gwCfg.http.http_use_ssl_client_cert = false
             this.#gwCfg.http.http_use_ssl_server_cert = false
+            this.#gwCfg.http.http_use_extra_http_path = false
+            this.#gwCfg.http.http_use_extra_http_query = false
+            this.#gwCfg.http.http_use_extra_http_headers = false
         }
 
         if (this.#radio_statistics_use_ruuvi.isChecked()) {
@@ -593,15 +653,146 @@ class PageCustomServer {
         }
     }
 
+    async #postExtraCfg(filename, content) {
+        try {
+            await Network.httpEncryptAndPostFile(this.#auth,
+                `/extra_cfg?file=${filename}`,
+                this.#timeout_upload_file,
+                content)
+            console.log(log_wrap(`POST /extra_cfg?file=${filename}: successful`))
+        } catch (err) {
+            console.log(log_wrap(`POST /extra_cfg?file=${filename}: failure: ${err}`))
+            throw err
+        }
+    }
+
+    async #deleteExtraCfg(filename) {
+        try {
+            const data = {'timestamp': Date.now()}
+            await Network.httpDeleteJson(`/extra_cfg?file=${filename}`,
+                this.#timeout_upload_file,
+                JSON.stringify(data))
+            console.log(log_wrap(`DELETE /extra_cfg?file=${filename}: successful`))
+        } catch (err) {
+            console.log(log_wrap(`DELETE /extra_cfg?file=${filename}: failure: ${err}`))
+            throw err
+        }
+    }
+
+    async #updateHttpExtraPathQueryAndHeaders() {
+        let httpPathContent = this.#input_http_url_extra_http_path.getVal()
+        if (httpPathContent.startsWith('/')) {
+            httpPathContent = httpPathContent.substring(1);
+        }
+        let httpQueryContent = this.#input_http_url_extra_http_query.getVal()
+        if (httpQueryContent.startsWith('?')) {
+            httpQueryContent = httpQueryContent.substring(1);
+        }
+        let httpHeadersContent = this.#input_extra_http_headers_value.getVal().trim()
+        if (httpHeadersContent.length > 0) {
+            httpHeadersContent = httpHeadersContent.replace(/\r?\n/g, '\r\n')   // normalize all line endings to CRLF
+                .split('\r\n')
+                .filter(line => line.length > 0)
+                .join('\r\n')
+            if (!httpHeadersContent.endsWith('\r\n')) {
+                httpHeadersContent += '\r\n'
+            }
+        }
+
+        let flagUploadHttpPath = false
+        let flagUploadHttpQuery = false
+        let flagUploadHttpHeaders = false
+        let flagDeleteHttpPath = false
+        let flagDeleteHttpQuery = false
+        let flagDeleteHttpHeaders = false
+
+        if (this.#checkbox_use_http_long_url.isChecked()) {
+            if (httpPathContent.length > 0) {
+                flagUploadHttpPath = true
+            } else {
+                if (this.#gwCfg.info.storage_http_extra_http_path) {
+                    flagDeleteHttpPath = true
+                }
+            }
+            if (httpQueryContent.length > 0) {
+                flagUploadHttpQuery = true
+            } else {
+                if (this.#gwCfg.info.storage_http_extra_http_query) {
+                    flagDeleteHttpQuery = true
+                }
+            }
+        } else {
+            if (this.#gwCfg.info.storage_http_extra_http_path) {
+                flagDeleteHttpPath = true
+            }
+            if (this.#gwCfg.info.storage_http_extra_http_query) {
+                flagDeleteHttpQuery = true
+            }
+            if (this.#gwCfg.info.storage_http_extra_http_headers) {
+                flagDeleteHttpHeaders = true
+            }
+        }
+        if (this.#checkbox_http_use_extra_http_headers.isChecked()) {
+            if (httpHeadersContent.length > 0) {
+                flagUploadHttpHeaders = true
+            } else {
+                if (this.#gwCfg.info.storage_http_extra_http_headers) {
+                    flagDeleteHttpHeaders = true
+                }
+            }
+        } else {
+            if (this.#gwCfg.info.storage_http_extra_http_headers) {
+                flagDeleteHttpHeaders = true
+            }
+        }
+        if (flagUploadHttpPath) {
+            flagDeleteHttpPath = false
+        }
+        if (flagUploadHttpQuery) {
+            flagDeleteHttpQuery = false
+        }
+        if (flagUploadHttpHeaders) {
+            flagDeleteHttpHeaders = false
+        }
+        if (!flagDeleteHttpPath && !flagDeleteHttpQuery && !flagDeleteHttpHeaders &&
+            !flagUploadHttpPath && !flagUploadHttpQuery && !flagUploadHttpHeaders) {
+            return
+        }
+        if (flagDeleteHttpPath) {
+            await this.#deleteExtraCfg('http_path')
+            this.#gwCfg.info.storage_http_extra_http_path = false
+        }
+        if (flagDeleteHttpQuery) {
+            await this.#deleteExtraCfg('http_query')
+            this.#gwCfg.info.storage_http_extra_http_query = false
+        }
+        if (flagDeleteHttpHeaders) {
+            await this.#deleteExtraCfg('http_headers')
+            this.#gwCfg.info.storage_http_extra_http_headers = false
+        }
+        if (flagUploadHttpPath) {
+            await this.#postExtraCfg('http_path', httpPathContent)
+            this.#gwCfg.info.storage_http_extra_http_path = true
+        }
+        if (flagUploadHttpQuery) {
+            await this.#postExtraCfg('http_query', httpQueryContent)
+            this.#gwCfg.info.storage_http_extra_http_query = true
+        }
+        if (flagUploadHttpHeaders) {
+            await this.#postExtraCfg('http_headers', httpHeadersContent)
+            this.#gwCfg.info.storage_http_extra_http_headers = true
+        }
+    }
+
     async #onUploadClientCertHttp(fileTextContent) {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=http_cli_cert', 5000, fileTextContent)
-            console.log(log_wrap('POST /ssl_cert: successful'))
+            await Network.httpEncryptAndPostFile(this.#auth, '/extra_cfg?file=http_cli_cert', 5000, fileTextContent)
+            console.log(log_wrap('POST /extra_cfg: successful'))
             this.#gwCfg.info.storage_http_cli_cert = true
         } catch (err) {
-            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            console.log(log_wrap(`POST /extra_cfg: failure: ${err}`))
             throw err
         } finally {
             GwStatus.startCheckingStatus()
@@ -614,11 +805,11 @@ class PageCustomServer {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=stat_cli_cert', 5000, fileTextContent)
-            console.log(log_wrap('POST /ssl_cert: successful'))
+            await Network.httpEncryptAndPostFile(this.#auth, '/extra_cfg?file=stat_cli_cert', 5000, fileTextContent)
+            console.log(log_wrap('POST /extra_cfg: successful'))
             this.#gwCfg.info.storage_stat_cli_cert = true
         } catch (err) {
-            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            console.log(log_wrap(`POST /extra_cfg: failure: ${err}`))
             throw err
         } finally {
             GwStatus.startCheckingStatus()
@@ -631,11 +822,11 @@ class PageCustomServer {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=mqtt_cli_cert', 5000, fileTextContent)
-            console.log(log_wrap('POST /ssl_cert: successful'))
+            await Network.httpEncryptAndPostFile(this.#auth, '/extra_cfg?file=mqtt_cli_cert', 5000, fileTextContent)
+            console.log(log_wrap('POST /extra_cfg: successful'))
             this.#gwCfg.info.storage_mqtt_cli_cert = true
         } catch (err) {
-            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            console.log(log_wrap(`POST /extra_cfg: failure: ${err}`))
             throw err
         } finally {
             GwStatus.startCheckingStatus()
@@ -649,11 +840,11 @@ class PageCustomServer {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=http_cli_key', 5000, fileTextContent)
-            console.log(log_wrap('POST /ssl_cert: successful'))
+            await Network.httpEncryptAndPostFile(this.#auth, '/extra_cfg?file=http_cli_key', 5000, fileTextContent)
+            console.log(log_wrap('POST /extra_cfg: successful'))
             this.#gwCfg.info.storage_http_cli_key = true
         } catch (err) {
-            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            console.log(log_wrap(`POST /extra_cfg: failure: ${err}`))
             throw err
         } finally {
             GwStatus.startCheckingStatus()
@@ -666,11 +857,11 @@ class PageCustomServer {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=stat_cli_key', 5000, fileTextContent)
-            console.log(log_wrap('POST /ssl_cert: successful'))
+            await Network.httpEncryptAndPostFile(this.#auth, '/extra_cfg?file=stat_cli_key', 5000, fileTextContent)
+            console.log(log_wrap('POST /extra_cfg: successful'))
             this.#gwCfg.info.storage_stat_cli_key = true
         } catch (err) {
-            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            console.log(log_wrap(`POST /extra_cfg: failure: ${err}`))
             throw err
         } finally {
             GwStatus.startCheckingStatus()
@@ -683,11 +874,11 @@ class PageCustomServer {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=mqtt_cli_key', 5000, fileTextContent)
-            console.log(log_wrap('POST /ssl_cert: successful'))
+            await Network.httpEncryptAndPostFile(this.#auth, '/extra_cfg?file=mqtt_cli_key', 5000, fileTextContent)
+            console.log(log_wrap('POST /extra_cfg: successful'))
             this.#gwCfg.info.storage_mqtt_cli_key = true
         } catch (err) {
-            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            console.log(log_wrap(`POST /extra_cfg: failure: ${err}`))
             throw err
         } finally {
             GwStatus.startCheckingStatus()
@@ -703,19 +894,19 @@ class PageCustomServer {
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=http_cli_cert', 5000, JSON.stringify(data))
-                console.log(log_wrap('DELETE /ssl_cert: successful'))
+                await Network.httpDeleteJson('/extra_cfg?file=http_cli_cert', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /extra_cfg: successful'))
                 this.#gwCfg.info.storage_http_cli_cert = false
             } catch (err) {
-                console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
+                console.log(log_wrap(`DELETE /extra_cfg: failure: ${err}`))
             }
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=http_cli_key', 5000, JSON.stringify(data))
-                console.log(log_wrap('DELETE /ssl_key: successful'))
+                await Network.httpDeleteJson('/extra_cfg?file=http_cli_key', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /extra_cfg: successful'))
                 this.#gwCfg.info.storage_http_cli_key = false
             } catch (err) {
-                console.log(log_wrap(`DELETE /ssl_key: failure: ${err}`))
+                console.log(log_wrap(`DELETE /extra_cfg: failure: ${err}`))
             }
         } finally {
             GwStatus.startCheckingStatus()
@@ -730,19 +921,19 @@ class PageCustomServer {
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=stat_cli_cert', 5000, JSON.stringify(data))
-                console.log(log_wrap('DELETE /ssl_cert: successful'))
+                await Network.httpDeleteJson('/extra_cfg?file=stat_cli_cert', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /extra_cfg: successful'))
                 this.#gwCfg.info.storage_stat_cli_cert = false
             } catch (err) {
-                console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
+                console.log(log_wrap(`DELETE /extra_cfg: failure: ${err}`))
             }
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=stat_cli_key', 5000, JSON.stringify(data))
-                console.log(log_wrap('DELETE /ssl_key: successful'))
+                await Network.httpDeleteJson('/extra_cfg?file=stat_cli_key', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /extra_cfg: successful'))
                 this.#gwCfg.info.storage_stat_cli_key = false
             } catch (err) {
-                console.log(log_wrap(`DELETE /ssl_key: failure: ${err}`))
+                console.log(log_wrap(`DELETE /extra_cfg: failure: ${err}`))
             }
         } finally {
             GwStatus.startCheckingStatus()
@@ -757,19 +948,19 @@ class PageCustomServer {
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=mqtt_cli_cert', 5000, JSON.stringify(data))
-                console.log(log_wrap('DELETE /ssl_cert: successful'))
+                await Network.httpDeleteJson('/extra_cfg?file=mqtt_cli_cert', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /extra_cfg: successful'))
                 this.#gwCfg.info.storage_mqtt_cli_cert = false
             } catch (err) {
-                console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
+                console.log(log_wrap(`DELETE /extra_cfg: failure: ${err}`))
             }
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=mqtt_cli_key', 5000, JSON.stringify(data))
-                console.log(log_wrap('DELETE /ssl_key: successful'))
+                await Network.httpDeleteJson('/extra_cfg?file=mqtt_cli_key', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /extra_cfg: successful'))
                 this.#gwCfg.info.storage_mqtt_cli_key = false
             } catch (err) {
-                console.log(log_wrap(`DELETE /ssl_key: failure: ${err}`))
+                console.log(log_wrap(`DELETE /extra_cfg: failure: ${err}`))
             }
         } finally {
             GwStatus.startCheckingStatus()
@@ -783,11 +974,11 @@ class PageCustomServer {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=http_srv_cert', 5000, fileTextContent)
-            console.log(log_wrap('POST /ssl_cert: successful'))
+            await Network.httpEncryptAndPostFile(this.#auth, '/extra_cfg?file=http_srv_cert', 5000, fileTextContent)
+            console.log(log_wrap('POST /extra_cfg: successful'))
             this.#gwCfg.info.storage_http_srv_cert = true
         } catch (err) {
-            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            console.log(log_wrap(`POST /extra_cfg: failure: ${err}`))
             throw err
         } finally {
             GwStatus.startCheckingStatus()
@@ -800,11 +991,11 @@ class PageCustomServer {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=stat_srv_cert', 5000, fileTextContent)
-            console.log(log_wrap('POST /ssl_cert: successful'))
+            await Network.httpEncryptAndPostFile(this.#auth, '/extra_cfg?file=stat_srv_cert', 5000, fileTextContent)
+            console.log(log_wrap('POST /extra_cfg: successful'))
             this.#gwCfg.info.storage_stat_srv_cert = true
         } catch (err) {
-            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            console.log(log_wrap(`POST /extra_cfg: failure: ${err}`))
             throw err
         } finally {
             GwStatus.startCheckingStatus()
@@ -817,11 +1008,11 @@ class PageCustomServer {
         GwStatus.stopCheckingStatus()
         await Network.waitWhileInProgress()
         try {
-            await Network.httpEncryptAndPostFile(this.#auth, '/ssl_cert?file=mqtt_srv_cert', 5000, fileTextContent)
-            console.log(log_wrap('POST /ssl_cert: successful'))
+            await Network.httpEncryptAndPostFile(this.#auth, '/extra_cfg?file=mqtt_srv_cert', 5000, fileTextContent)
+            console.log(log_wrap('POST /extra_cfg: successful'))
             this.#gwCfg.info.storage_mqtt_srv_cert = true
         } catch (err) {
-            console.log(log_wrap(`POST /ssl_cert: failure: ${err}`))
+            console.log(log_wrap(`POST /extra_cfg: failure: ${err}`))
             throw err
         } finally {
             GwStatus.startCheckingStatus()
@@ -837,11 +1028,11 @@ class PageCustomServer {
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=http_srv_cert', 5000, JSON.stringify(data))
-                console.log(log_wrap('DELETE /ssl_cert: successful'))
+                await Network.httpDeleteJson('/extra_cfg?file=http_srv_cert', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /extra_cfg: successful'))
                 this.#gwCfg.info.storage_http_srv_cert = false
             } catch (err) {
-                console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
+                console.log(log_wrap(`DELETE /extra_cfg: failure: ${err}`))
             }
         } finally {
             GwStatus.startCheckingStatus()
@@ -856,11 +1047,11 @@ class PageCustomServer {
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=stat_srv_cert', 5000, JSON.stringify(data))
-                console.log(log_wrap('DELETE /ssl_cert: successful'))
+                await Network.httpDeleteJson('/extra_cfg?file=stat_srv_cert', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /extra_cfg: successful'))
                 this.#gwCfg.info.storage_stat_srv_cert = false
             } catch (err) {
-                console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
+                console.log(log_wrap(`DELETE /extra_cfg: failure: ${err}`))
             }
         } finally {
             GwStatus.startCheckingStatus()
@@ -875,11 +1066,11 @@ class PageCustomServer {
         try {
             try {
                 const data = {'timestamp': Date.now()}
-                await Network.httpDeleteJson('/ssl_cert?file=mqtt_srv_cert', 5000, JSON.stringify(data))
-                console.log(log_wrap('DELETE /ssl_cert: successful'))
+                await Network.httpDeleteJson('/extra_cfg?file=mqtt_srv_cert', 5000, JSON.stringify(data))
+                console.log(log_wrap('DELETE /extra_cfg: successful'))
                 this.#gwCfg.info.storage_mqtt_srv_cert = false
             } catch (err) {
-                console.log(log_wrap(`DELETE /ssl_cert: failure: ${err}`))
+                console.log(log_wrap(`DELETE /extra_cfg: failure: ${err}`))
             }
         } finally {
             GwStatus.startCheckingStatus()
@@ -948,6 +1139,41 @@ class PageCustomServer {
         this.#on_custom_server_url_changed()
     }
 
+    #onChangeUseHttpLongUrl() {
+        if (this.#checkbox_use_http_long_url.isChecked()) {
+            this.#sanitizeInputUrlExtraPathAndQuery()
+        } else {
+            let path = this.#input_http_url_extra_http_path.getVal().trim()
+            if (!path.startsWith('/')) {
+                path = '/' + path
+            }
+            let query = this.#input_http_url_extra_http_query.getVal().trim()
+            if (query.length > 0) {
+                if (query === '?') {
+                    query = ''
+                } else {
+                    if (!query.startsWith('?')) {
+                        query = '?' + query
+                    }
+                }
+            }
+            let url = this.#input_http_url.getVal().trim()
+            if (!url.includes('://')) {
+                url = 'http://' + url
+            }
+            try {
+                let urlObj = new URL(url)
+                url = urlObj.origin + path + query
+                if (url.length <= this.#max_short_url_length) {
+                    this.#input_http_url.setVal(url)
+                }
+            } catch (err) {
+            }
+        }
+        this.#on_custom_connection_type_changed()
+        this.#on_custom_server_url_changed()
+    }
+
     #onChangeHttpDataFormat() {
         this.#input_http_url.setValidationRequired()
         this.#div_http_validation_error.hide()
@@ -992,10 +1218,187 @@ class PageCustomServer {
         this.#on_custom_server_url_changed()
     }
 
-    #onChangeHttpUrl() {
+    #parseHttpUrlParts(urlRaw) {
+        if (!urlRaw || urlRaw.trim() === '') {
+            return {base: '', path: '', query: ''}
+        }
+
+        let candidate = urlRaw.trim()
+        // Keep existing behavior: allow user input without scheme while editing.
+        if (!candidate.includes('://')) {
+            candidate = 'http://' + candidate
+        }
+
+        let parsed
+        try {
+            parsed = new URL(candidate)
+        } catch (_) {
+            return {base: '', path: '', query: ''}
+        }
+
+        return {
+            base: `${parsed.protocol}//${parsed.host}`,
+            path: parsed.pathname || '',
+            query: parsed.search ? parsed.search.substring(1) : '',
+        }
+    }
+
+    #onChangeHttpUrlParts() {
         this.#input_http_url.setValidationRequired()
         this.#div_http_validation_error.hide()
         this.#on_custom_server_url_changed()
+    }
+
+    #sanitizeInputUrlExtraPathAndQuery() {
+        let flagUpdateValidationRequired = false
+        let url = this.#input_http_url.getVal()
+        if ((url.length < 3) || !this.#is_valid_http_url(url) ||
+            ['http:', 'http:/', 'http://', 'https:', 'https:/', 'https://'].includes(url)) {
+            return
+        }
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'http://' + url
+        }
+        if (!this.#checkbox_use_http_long_url.isChecked()) {
+            if (url.length > this.#max_short_url_length) {
+                flagUpdateValidationRequired = true
+                this.#checkbox_use_http_long_url.setChecked()
+                this.#div_settings_http_long_url.show()
+            }
+        }
+        if (this.#checkbox_use_http_long_url.isChecked()) {
+            const flagUrlEndsWithSlash = url.endsWith('/')
+            const parts = this.#parseHttpUrlParts(url)
+            if (parts.base !== '') {
+                url = url.substring(url.indexOf('://') + 3)
+                let url_base = parts.base.substring(parts.base.indexOf('://') + 3)
+                let url_port_separator = url.indexOf(':')
+                if (url_port_separator !== -1) {
+                    url = url.substring(0, url_port_separator)
+                }
+                let base_port_separator = url_base.indexOf(':')
+                if (base_port_separator !== -1) {
+                    url_base = url_base.substring(0, base_port_separator)
+                }
+
+                let flagLengthTrimmed = false
+                let newURL = parts.base
+                if (newURL.length > this.#max_short_url_length) {
+                    newURL = newURL.substring(0, this.#max_short_url_length)
+                    flagLengthTrimmed = true
+                }
+                if (flagLengthTrimmed || (url_base !== url) || flagUrlEndsWithSlash || (parts.path !== "/")) {
+                    this.#input_http_url.setVal(newURL)
+                    flagUpdateValidationRequired = true
+                }
+
+                if (parts.path !== "/") {
+                    this.#input_http_url_extra_http_path.setVal(parts.path)
+                    let query = parts.query
+                    if (query[0] === '?') {
+                        query = query.substring(1)
+                    }
+                    if (query) {
+                        this.#input_http_url_extra_http_query.setVal('?' + query)
+                    } else {
+                        this.#input_http_url_extra_http_query.setVal('')
+                    }
+                }
+            }
+        }
+        if (flagUpdateValidationRequired) {
+            this.#input_http_url.setValidationRequired()
+        }
+    }
+
+    #onChangeHttpUrl() {
+        this.#sanitizeInputUrlExtraPathAndQuery()
+        this.#onChangeHttpUrlParts()
+    }
+
+    #onChangeHttpUrlPath() {
+        const origVal = this.#input_http_url_extra_http_path.getVal()
+        let trimmedVal = origVal.trim()
+        if (!trimmedVal.startsWith('/')) {
+            trimmedVal = '/' + trimmedVal
+        }
+        if (trimmedVal.length > (this.#max_extra_file_length + 1)) {
+            trimmedVal = trimmedVal.substring(0, this.#max_extra_file_length + 1)
+        }
+        if (origVal !== trimmedVal) {
+            this.#input_http_url_extra_http_path.setVal(trimmedVal)
+        }
+        this.#onChangeHttpUrlParts()
+    }
+
+    #onChangeHttpUrlQuery() {
+        const origVal = this.#input_http_url_extra_http_query.getVal()
+        let trimmedVal = origVal.trim()
+        if ((trimmedVal.length > 0) && !trimmedVal.startsWith('?')) {
+            trimmedVal = '?' + trimmedVal
+        }
+        if (trimmedVal.length > (this.#max_extra_file_length + 1)) {
+            trimmedVal = trimmedVal.substring(0, this.#max_extra_file_length + 1)
+        }
+        if (origVal !== trimmedVal) {
+            this.#input_http_url_extra_http_query.setVal(trimmedVal)
+        }
+        this.#onChangeHttpUrlParts()
+    }
+
+    #onChangeUseExtraHttpHeaders() {
+        this.#onChangeHttpUrlParts()
+        this.#on_custom_connection_type_changed()
+    }
+
+    #onChangeHttpExtraHeadersValue() {
+        const val_orig = this.#input_extra_http_headers_value.getVal()
+        const lines = val_orig.split(/\r?\n/)
+        const normalizedLines = lines.map(line => {
+            let val = line.replace(/^[ \t]+/, '')
+            const colonIdx = val.indexOf(':')
+            if (colonIdx === -1) {
+                val = val.replace(/[ \t]+$/, '')
+            } else {
+                const key = val.slice(0, colonIdx).replace(/[ \t]+$/, '')
+                let rest = val.slice(colonIdx + 1)
+                if (rest.length > 0 && rest[0] !== ' ') {
+                    rest = ' ' + rest
+                } else {
+                    rest = rest.replace(/^[ \t]{2,}/, ' ')
+                }
+                val = key + ':' + rest
+            }
+            return val
+        })
+        let trimmedVal = normalizedLines.join('\n')
+        if (trimmedVal.length > 0) {
+            let fileContent = trimmedVal.replace(/\r?\n/g, '\r\n')   // normalize all line endings to CRLF
+                .split('\r\n')
+                .filter(line => line.length > 0)
+                .join('\r\n')
+            if (!fileContent.endsWith('\r\n')) {
+                fileContent += '\r\n'
+            }
+            if (fileContent.length > this.#max_extra_file_length) {
+                const delta = fileContent.length - this.#max_extra_file_length
+                trimmedVal = trimmedVal.substring(0, trimmedVal.length - delta)
+            }
+        }
+        if (trimmedVal !== val_orig) {
+            this.#input_extra_http_headers_value.setVal(trimmedVal)
+        } else {
+            this.#onChangeHttpUrlParts()
+        }
+    }
+
+    #sanitizeHttpExtraHeaders() {
+        this.#onChangeHttpExtraHeadersValue()
+        const val = this.#input_extra_http_headers_value.getVal()
+        const filtered = val.split(/\r?\n/).filter(line => line.trim() !== '').join('\n')
+        if (filtered !== val) {
+            this.#input_extra_http_headers_value.setVal(filtered)
+        }
     }
 
     #onChangeHttpPeriod() {
@@ -1245,10 +1648,11 @@ class PageCustomServer {
             this.#checkbox_use_http_ruuvi.setValidationRequired()
         }
 
-        if (!this.#input_http_url.getVal().startsWith('http://') && !this.#input_http_url.getVal().startsWith('https://')) {
-            this.#input_http_url.setVal('http://' + this.#input_http_url.getVal())
-            this.#input_http_url.setValidationRequired()
+        this.#sanitizeInputUrlExtraPathAndQuery()
+        if (this.#checkbox_use_http.isChecked() && this.#checkbox_http_use_extra_http_headers.isChecked()) {
+            this.#sanitizeHttpExtraHeaders()
         }
+
         if (this.#input_http_url.isInvalid() || this.#input_http_url.isValidationRequired()) {
             this.#input_http_url.clearValidationIcon()
             this.#input_http_url.setValidationRequired()
@@ -1276,6 +1680,13 @@ class PageCustomServer {
             this.#input_http_stat_pass.clearValidationIcon()
         }
 
+        if (!this.#gwCfg.info.storage_ready) {
+            if (this.#checkbox_use_http.isChecked() && this.#checkbox_use_http_long_url.isChecked()) {
+                PageInitSslStorage.show()
+                return;
+            }
+        }
+
         await this.#custom_server_validate_urls()
     }
 
@@ -1284,6 +1695,18 @@ class PageCustomServer {
             this.#div_settings_http.show()
         } else {
             this.#div_settings_http.hide()
+        }
+
+        if (this.#checkbox_use_http_long_url.isChecked()) {
+            this.#div_settings_http_long_url.show()
+        } else {
+            this.#div_settings_http_long_url.hide()
+        }
+
+        if (this.#checkbox_http_use_extra_http_headers.isChecked()) {
+            this.#div_http_use_extra_http_headers_options.show()
+        } else {
+            this.#div_http_use_extra_http_headers_options.hide()
         }
 
         if (this.#checkbox_use_http_auth.isChecked()) {
@@ -1378,11 +1801,9 @@ class PageCustomServer {
                     flag_url_validation_failed = true
                 }
             }
-            let flag_http_period_valid = true
             let http_period = parseIntegerString(this.#input_http_period.getVal())
             if (!http_period || (http_period < 10) || (http_period > 60 * 60)) {
                 this.#input_http_period.setInvalid()
-                flag_http_period_valid = false
                 flag_url_validation_failed = true
             } else {
                 this.#input_http_period.setValid()
@@ -1562,6 +1983,7 @@ class PageCustomServer {
 
     async #custom_server_validate_urls() {
         console.log('custom_server_validate_urls')
+
         gui_loading.bodyClassLoadingAdd()
         GwStatus.stopCheckingStatus()
         this.#button_continue.disable()
@@ -1569,15 +1991,17 @@ class PageCustomServer {
 
         await Network.waitWhileInProgress()
 
-        this.#custom_server_validate_url_http_ruuvi()
-            .then(() => this.#custom_server_validate_url_http())
-            .then(() => this.#custom_server_validate_url_http_stat())
-            .then(() => this.#custom_server_validate_url_mqtt())
-            .finally(() => {
-                this.#on_custom_server_url_changed();
-                gui_loading.bodyClassLoadingRemove()
-                GwStatus.startCheckingStatus()
-            })
+        try {
+            await this.#updateHttpExtraPathQueryAndHeaders()
+            await this.#custom_server_validate_url_http_ruuvi()
+            await this.#custom_server_validate_url_http()
+            await this.#custom_server_validate_url_http_stat()
+            await this.#custom_server_validate_url_mqtt()
+        } finally {
+            this.#on_custom_server_url_changed()
+            gui_loading.bodyClassLoadingRemove()
+            GwStatus.startCheckingStatus()
+        }
     }
 
     #custom_server_validate_url_http_ruuvi() {
@@ -1622,15 +2046,23 @@ class PageCustomServer {
             })
         }
 
+        const params = {}
+        params.input_url = this.#input_http_url
+        params.use_ssl_client_cert = this.#checkbox_http_use_client_ssl_cert.isChecked()
+        params.use_ssl_server_cert = this.#checkbox_http_use_server_ssl_cert.isChecked()
+        params.use_extra_http_path = this.#checkbox_use_http_long_url.isChecked() &&
+            (this.#input_http_url_extra_http_path.getVal().trim() !== '/') &&
+            (this.#input_http_url_extra_http_path.getVal().trim() !== '')
+        params.use_extra_http_query = this.#checkbox_use_http_long_url.isChecked() &&
+            (this.#input_http_url_extra_http_query.getVal().trim() !== '?') &&
+            (this.#input_http_url_extra_http_query.getVal().trim() !== '')
+        params.use_extra_http_headers = this.#checkbox_http_use_extra_http_headers.isChecked() &&
+            (this.#input_extra_http_headers_value.getVal().trim() !== '')
+        params.error = this.#text_http_validation_error_desc
+        params.div_status = this.#div_http_validation_error
+        let auth_type = null
         if (!this.#checkbox_use_http_auth.isChecked()) {
-            const auth_type = HTTP_AUTH.none
-            return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
-                input_url: this.#input_http_url,
-                use_ssl_client_cert: this.#checkbox_http_use_client_ssl_cert.isChecked(),
-                use_ssl_server_cert: this.#checkbox_http_use_server_ssl_cert.isChecked(),
-                error: this.#text_http_validation_error_desc,
-                div_status: this.#div_http_validation_error,
-            })
+            auth_type = HTTP_AUTH.none
         } else {
             if (this.#radio_http_auth_basic.isChecked()) {
                 if (this.#input_http_auth_basic_user.getVal() === '') {
@@ -1641,14 +2073,9 @@ class PageCustomServer {
                         resolve(true)
                     })
                 }
-                const auth_type = HTTP_AUTH.basic
-                return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
-                    input_url: this.#input_http_url,
-                    input_user: this.#input_http_auth_basic_user,
-                    input_pass: this.#input_http_auth_basic_pass,
-                    error: this.#text_http_validation_error_desc,
-                    div_status: this.#div_http_validation_error,
-                })
+                auth_type = HTTP_AUTH.basic
+                params.input_user = this.#input_http_auth_basic_user
+                params.input_pass = this.#input_http_auth_basic_pass
             } else if (this.#radio_http_auth_bearer.isChecked()) {
                 if (this.#input_http_auth_bearer_token.getVal() === '') {
                     this.#input_http_auth_bearer_token.setInvalid()
@@ -1658,13 +2085,8 @@ class PageCustomServer {
                         resolve(true)
                     })
                 }
-                const auth_type = HTTP_AUTH.bearer
-                return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
-                    input_url: this.#input_http_url,
-                    input_token: this.#input_http_auth_bearer_token,
-                    error: this.#text_http_validation_error_desc,
-                    div_status: this.#div_http_validation_error,
-                })
+                auth_type = HTTP_AUTH.bearer
+                params.input_token = this.#input_http_auth_bearer_token
             } else if (this.#radio_http_auth_token.isChecked()) {
                 if (this.#input_http_auth_token_api_key.getVal() === '') {
                     this.#input_http_auth_token_api_key.setInvalid()
@@ -1674,13 +2096,8 @@ class PageCustomServer {
                         resolve(true)
                     })
                 }
-                const auth_type = HTTP_AUTH.token
-                return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
-                    input_url: this.#input_http_url,
-                    input_token: this.#input_http_auth_token_api_key,
-                    error: this.#text_http_validation_error_desc,
-                    div_status: this.#div_http_validation_error,
-                })
+                auth_type = HTTP_AUTH.token
+                params.input_token = this.#input_http_auth_token_api_key
             } else if (this.#radio_http_auth_apikey.isChecked()) {
                 if (this.#input_http_auth_apikey_value.getVal() === '') {
                     this.#input_http_auth_apikey_value.setInvalid()
@@ -1690,17 +2107,14 @@ class PageCustomServer {
                         resolve(true)
                     })
                 }
-                const auth_type = HTTP_AUTH.api_key
-                return validate_url(this.#auth, this.#input_http_url.getVal(), 'check_post_advs', auth_type, {
-                    input_url: this.#input_http_url,
-                    input_token: this.#input_http_auth_apikey_value,
-                    error: this.#text_http_validation_error_desc,
-                    div_status: this.#div_http_validation_error,
-                })
+                auth_type = HTTP_AUTH.api_key
+                params.input_token = this.#input_http_auth_apikey_value
             } else {
                 throw new Error(`Unknown http_auth_type`)
             }
         }
+        return validate_url(this.#auth, this.#input_http_url.getVal(),
+            'check_post_advs', auth_type, params)
     }
 
     #custom_server_validate_url_http_stat() {
@@ -1783,21 +2197,6 @@ class PageCustomServer {
             mqtt_url_prefix = 'wss://'
         }
         return mqtt_url_prefix
-    }
-
-    #isValidNumberInRange(str, min, max) {
-        // Regular expression to check if the string is a positive integer
-        let regex = /^\d+$/;
-
-        // First, check if the string is a positive integer
-        if (regex.test(str)) {
-            let num = Number(str);
-
-            // Then, check if the number is within the range 1 to 65535
-            return num >= min && num <= max;
-        }
-
-        return false;
     }
 
     #custom_server_validate_url_mqtt() {

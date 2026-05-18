@@ -242,6 +242,166 @@ describe('Network', () => {
       await expect(promise).to.be.rejectedWith('Fetch error')
       expect(Network.isInProgress()).to.be.false
     })
+
+    it('should use Accept: text/plain, */* header when flag_accept_plain_text is true', async () => {
+      fetchMock.mock('http://example.com', {
+        status: 200,
+        body: 'plain text response',
+        headers: { 'Content-Type': 'text/plain' },
+      })
+
+      await Network.fetch_json('GET', 'http://example.com', 500, null, {}, true)
+      expect(Network.isInProgress()).to.be.false
+
+      const [, options] = fetchMock.lastCall()
+      expect(options.headers['Accept']).to.equal('text/plain, */*')
+    })
+
+    it('should return plain text body when status 200 with text/plain content-type and flag_accept_plain_text is true', async () => {
+      const bodyText = 'plain text response'
+      fetchMock.mock('http://example.com', {
+        status: 200,
+        body: bodyText,
+        headers: { 'Content-Type': 'text/plain' },
+      })
+
+      const data = await Network.fetch_json('GET', 'http://example.com', 500, null, {}, true)
+      expect(Network.isInProgress()).to.be.false
+      expect(data).to.equal(bodyText)
+      expect(Network.getResponse().status).to.equal(200)
+    })
+
+    it('should return raw text body (not parsed) when status 200 with application/json content-type and flag_accept_plain_text is true', async () => {
+      const bodyText = '{"key":"value"}'
+      fetchMock.mock('http://example.com', {
+        status: 200,
+        body: bodyText,
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      const data = await Network.fetch_json('GET', 'http://example.com', 500, null, {}, true)
+      expect(Network.isInProgress()).to.be.false
+      expect(data).to.equal(bodyText)
+      expect(Network.getResponse().status).to.equal(200)
+    })
+
+    it('should return null when response status 400 and flag_accept_plain_text is true', async () => {
+      fetchMock.mock('http://example.com', {
+        status: 400,
+        body: 'error message',
+        headers: { 'Content-Type': 'text/plain' },
+      })
+
+      const data = await Network.fetch_json('GET', 'http://example.com', 500, null, {}, true)
+      expect(Network.isInProgress()).to.be.false
+      expect(data).to.be.null
+      expect(Network.getResponse().status).to.equal(400)
+    })
+
+    it('should return null when response status 401 and flag_accept_plain_text is true', async () => {
+      fetchMock.mock('http://example.com', {
+        status: 401,
+        body: 'unauthorized',
+        headers: { 'Content-Type': 'text/plain' },
+      })
+
+      const data = await Network.fetch_json('GET', 'http://example.com', 500, null, {}, true)
+      expect(Network.isInProgress()).to.be.false
+      expect(data).to.be.null
+      expect(Network.getResponse().status).to.equal(401)
+    })
+
+    it('should return null when response status 500 and flag_accept_plain_text is true', async () => {
+      fetchMock.mock('http://example.com', {
+        status: 500,
+        body: 'internal server error',
+        headers: { 'Content-Type': 'text/plain' },
+      })
+
+      const data = await Network.fetch_json('GET', 'http://example.com', 500, null, {}, true)
+      expect(Network.isInProgress()).to.be.false
+      expect(data).to.be.null
+      expect(Network.getResponse().status).to.equal(500)
+    })
+  })
+
+  describe('httpGetPlainText', () => {
+    it('should return plain text when status 200', async () => {
+      const bodyText = 'plain text response'
+      fetchMock.mock('http://example.com', {
+        status: 200,
+        body: bodyText,
+        headers: { 'Content-Type': 'text/plain' },
+      })
+
+      const data = await Network.httpGetPlainText('http://example.com', 500)
+      expect(Network.isInProgress()).to.be.false
+      expect(data).to.equal(bodyText)
+      expect(Network.getResponse().status).to.equal(200)
+    })
+
+    it('should use GET method and Accept: text/plain, */* header', async () => {
+      fetchMock.mock('http://example.com', {
+        status: 200,
+        body: 'text',
+        headers: { 'Content-Type': 'text/plain' },
+      })
+
+      await Network.httpGetPlainText('http://example.com', 500)
+
+      const [, options] = fetchMock.lastCall()
+      expect(options.method).to.equal('GET')
+      expect(options.headers['Accept']).to.equal('text/plain, */*')
+    })
+
+    it('should return null when response status 400', async () => {
+      fetchMock.mock('http://example.com', {
+        status: 400,
+        body: 'error',
+        headers: { 'Content-Type': 'text/plain' },
+      })
+
+      const data = await Network.httpGetPlainText('http://example.com', 500)
+      expect(Network.isInProgress()).to.be.false
+      expect(data).to.be.null
+    })
+
+    it('should return null when response status 401', async () => {
+      fetchMock.mock('http://example.com', {
+        status: 401,
+        body: 'unauthorized',
+        headers: { 'Content-Type': 'text/plain' },
+      })
+
+      const data = await Network.httpGetPlainText('http://example.com', 500)
+      expect(Network.isInProgress()).to.be.false
+      expect(data).to.be.null
+    })
+
+    it('should reject when the request times out', async () => {
+      fetchMock.mock('http://example.com',
+          () => new Promise(
+              (resolve) => setTimeout(
+                  () => resolve({
+                    status: 200,
+                    body: 'text',
+                    headers: { 'Content-Type': 'text/plain' },
+                  }), 10000)))
+
+      const promise = Network.httpGetPlainText('http://example.com', 600)
+
+      await expect(promise).to.be.rejectedWith('Request timed out after 600ms')
+      expect(Network.isInProgress()).to.be.false
+    })
+
+    it('should reject when the fetch throws an error', async () => {
+      fetchMock.mock('http://example.com', { throws: new Error('Fetch error') })
+
+      const promise = Network.httpGetPlainText('http://example.com', 600)
+
+      await expect(promise).to.be.rejectedWith('Fetch error')
+      expect(Network.isInProgress()).to.be.false
+    })
   })
 
 })

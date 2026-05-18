@@ -39,6 +39,9 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
     expect(cfg_http.http_api_key).to.be.undefined
+    expect(cfg_http.http_use_extra_http_path).to.be.false
+    expect(cfg_http.http_use_extra_http_query).to.be.false
+    expect(cfg_http.http_use_extra_http_headers).to.be.false
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -62,6 +65,9 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
     expect(cfg_http.http_api_key).to.be.undefined
+    expect(cfg_http.http_use_extra_http_path).to.be.false
+    expect(cfg_http.http_use_extra_http_query).to.be.false
+    expect(cfg_http.http_use_extra_http_headers).to.be.false
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -86,6 +92,9 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_pass).to.be.undefined
     expect(cfg_http.http_bearer_token).to.be.undefined
     expect(cfg_http.http_api_key).to.be.undefined
+    expect(cfg_http.http_use_extra_http_path).to.be.false
+    expect(cfg_http.http_use_extra_http_query).to.be.false
+    expect(cfg_http.http_use_extra_http_headers).to.be.false
     expect(Object.keys(data).length).to.equal(0)
   })
 
@@ -203,6 +212,50 @@ describe('GwCfgHttp', () => {
     expect(cfg_http.http_bearer_token).to.be.undefined
     expect(cfg_http.http_api_key).to.be.undefined
     expect(Object.keys(data).length).to.equal(0)
+  })
+
+  it('should check use_http=true with extra http flags', () => {
+    let data = {
+      use_http_ruuvi: false,
+      use_http: true,
+      http_url: 'https://myserver.com:8080',
+      http_data_format: 'ruuvi',
+      http_auth: 'none',
+      http_use_extra_http_path: true,
+      http_use_extra_http_query: true,
+      http_use_extra_http_headers: true,
+    }
+    let cfg_http = new GwCfgHttp()
+    cfg_http.parse(data)
+    expect(cfg_http.use_http_ruuvi).to.be.false
+    expect(cfg_http.use_http).to.be.true
+    expect(cfg_http.http_url).to.equal('https://myserver.com:8080')
+    expect(cfg_http.http_use_extra_http_path).to.be.true
+    expect(cfg_http.http_use_extra_http_query).to.be.true
+    expect(cfg_http.http_use_extra_http_headers).to.be.true
+    expect(Object.keys(data).length).to.equal(0)
+  })
+
+  it('should check set_default resets extra http flags', () => {
+    let data = {
+      use_http_ruuvi: false,
+      use_http: true,
+      http_url: 'https://myserver.com:8080',
+      http_data_format: 'ruuvi',
+      http_auth: 'none',
+      http_use_extra_http_path: true,
+      http_use_extra_http_query: true,
+      http_use_extra_http_headers: true,
+    }
+    let cfg_http = new GwCfgHttp()
+    cfg_http.parse(data)
+    expect(cfg_http.http_use_extra_http_path).to.be.true
+    expect(cfg_http.http_use_extra_http_query).to.be.true
+    expect(cfg_http.http_use_extra_http_headers).to.be.true
+    cfg_http.set_default()
+    expect(cfg_http.http_use_extra_http_path).to.be.false
+    expect(cfg_http.http_use_extra_http_query).to.be.false
+    expect(cfg_http.http_use_extra_http_headers).to.be.false
   })
 
   it('should check missing use_http_ruuvi', () => {

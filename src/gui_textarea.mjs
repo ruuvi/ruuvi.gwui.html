@@ -6,24 +6,24 @@
 import GuiObj from './gui_obj.mjs'
 import Lang from "./lang.mjs"
 
-class GuiInputText extends GuiObj {
+class GuiTextArea extends GuiObj {
   #input_obj
   #placeholder_lang_dict
 
-  constructor (obj, attrType = 'text', className = 'GuiInputText') {
-    super(className, obj, 'INPUT', 'type', attrType)
+  constructor (obj, className = 'GuiTextArea') {
+    super(className, obj, 'TEXTAREA')
     this.#input_obj = obj
     let parent = obj.parent()
     if (parent.prop('tagName') === 'LABEL') {
       parent = parent.parent()
     }
     if (parent.prop('tagName') !== 'DIV') {
-      throw new Error(`GuiInputText: Parent class must be a DIV element.`)
+      throw new Error(`GuiTextArea: Parent class must be a DIV element.`)
     }
     let input_placeholder_div = parent.children('.input-placeholder')
     if (input_placeholder_div && input_placeholder_div.length) {
       if (input_placeholder_div.prop('tagName') !== 'DIV') {
-        throw new Error(`GuiInputText: Child with class '.input-placeholder' must be a DIV element.`)
+        throw new Error(`GuiTextArea: Child with class '.input-placeholder' must be a DIV element.`)
       }
 
       let placeholder_lang_dict = {}
@@ -31,7 +31,7 @@ class GuiInputText extends GuiObj {
       let spans = input_placeholder_div[0].querySelectorAll('span[lang]')
       spans.forEach(function (span) {
         let lang = span.getAttribute('lang')
-        placeholder_lang_dict[lang] = span.textContent
+        placeholder_lang_dict[lang] = span.innerHTML.replace(/<br\s*\/?>/gi, '\n')
       })
       this.#placeholder_lang_dict = placeholder_lang_dict
 
@@ -104,4 +104,4 @@ class GuiInputText extends GuiObj {
   }
 }
 
-export default GuiInputText
+export default GuiTextArea

@@ -143,6 +143,10 @@ export class GwCfgHttp {
   http_use_ssl_client_cert = null
   http_use_ssl_server_cert = null
 
+  http_use_extra_http_path = false
+  http_use_extra_http_query = false
+  http_use_extra_http_headers = false
+
   parse (data) {
     this.use_http_ruuvi = utils.fetchBoolKeyFromData(data, 'use_http_ruuvi', true)
     this.use_http = utils.fetchBoolKeyFromData(data, 'use_http', true)
@@ -155,6 +159,9 @@ export class GwCfgHttp {
     }
     this.http_use_ssl_client_cert = utils.fetchBoolKeyFromData(data, 'http_use_ssl_client_cert', false, false)
     this.http_use_ssl_server_cert = utils.fetchBoolKeyFromData(data, 'http_use_ssl_server_cert', false, false)
+    this.http_use_extra_http_path = utils.fetchBoolKeyFromData(data, 'http_use_extra_http_path', false, false)
+    this.http_use_extra_http_query = utils.fetchBoolKeyFromData(data, 'http_use_extra_http_query', false, false)
+    this.http_use_extra_http_headers = utils.fetchBoolKeyFromData(data, 'http_use_extra_http_headers', false, false)
     if (this.use_http && this.http_url === GwCfgHttp.HTTP_URL_DEFAULT && this.http_auth.isNone()) {
       this.use_http_ruuvi = true
       this.use_http = false
@@ -178,5 +185,8 @@ export class GwCfgHttp {
     this.http_api_key = ''
     this.http_use_ssl_client_cert = false
     this.http_use_ssl_server_cert = false
+    this.http_use_extra_http_path = false
+    this.http_use_extra_http_query = false
+    this.http_use_extra_http_headers = false
   }
 }
