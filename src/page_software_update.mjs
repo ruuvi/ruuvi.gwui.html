@@ -177,7 +177,7 @@ class PageSoftwareUpdate {
     await Network.waitWhileInProgress()
 
     // Get current Unix timestamp in seconds
-    const unixTimestamp = Math.floor(Date.now() / 1000).toString();
+    const unixTimestamp = Math.floor(Date.now() / 1000).toString()
 
     Network.httpGetJson('/firmware_update.json', 40000,
         { 'extra_headers': { 'X-Request-Timestamp': unixTimestamp } }).then((data) => {
