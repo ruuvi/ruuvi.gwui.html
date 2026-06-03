@@ -176,7 +176,11 @@ class PageSoftwareUpdate {
     GwStatus.stopCheckingStatus()
     await Network.waitWhileInProgress()
 
-    Network.httpGetJson('/firmware_update.json', 40000).then((data) => {
+    // Get current Unix timestamp in seconds
+    const unixTimestamp = Math.floor(Date.now() / 1000).toString()
+
+    Network.httpGetJson('/firmware_update.json', 40000,
+        { 'extra_headers': { 'X-Request-Timestamp': unixTimestamp } }).then((data) => {
       this.#on_get_latest_release_info(data)
     }).catch((err) => {
       console.log(log_wrap(`GET firmware_update.json failed: ${err}`))
