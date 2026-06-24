@@ -41,14 +41,14 @@
   },
   "homepage": "https://github.com/ruuvi/ruuvi.gwui.html#readme",
   "devDependencies": {
-    "@babel/core": "^7.21.8",
-    "@babel/preset-env": "^7.21.5",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
     "babel-plugin-transform-object-hasown": "^1.1.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "css-loader": "^6.7.3",
     "esm": "^3.2.25",
-    "fetch-mock": "^9.11.0",
+    "fetch-mock": "^12.6.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "js-yaml": "^4.1.1",
@@ -66,7 +66,7 @@
     "yargs": "^17.7.2"
   },
   "dependencies": {
-    "babel-loader": "^9.1.2",
+    "babel-loader": "^10.1.1",
     "buffer": "^6.0.3",
     "crypto-js": "^4.2.0",
     "elliptic": "^6.6.1",
