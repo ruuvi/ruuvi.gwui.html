@@ -683,7 +683,7 @@ describe('Auth', () => {
         'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
       ])
 
-      const postCalls = fetchMock.callHistory.calls().filter(({ options }) => options.method === 'post')
+      const postCalls = fetchMock.callHistory.calls().filter(({ options }) => options?.method?.toUpperCase() === 'POST')
       const [, request1] = postCalls[0].args
 
       expect(request1.headers).to.deep.equal({

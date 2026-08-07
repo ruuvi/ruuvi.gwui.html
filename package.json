@@ -20,14 +20,22 @@
         {
           "targets": {
             "safari": "12"
-          },
-          "useBuiltIns": "entry",
-          "corejs": 3
+          }
         }
       ]
     ],
     "plugins": [
-      "babel-plugin-transform-object-hasown"
+      "babel-plugin-transform-object-hasown",
+      [
+        "babel-plugin-polyfill-corejs3",
+        {
+          "method": "usage-global",
+          "version": "3.50",
+          "targets": {
+            "safari": "12"
+          }
+        }
+      ]
     ]
   },
   "repository": {
@@ -43,6 +51,7 @@
   "devDependencies": {
     "@babel/core": "^8.0.1",
     "@babel/preset-env": "^8.0.2",
+    "babel-plugin-polyfill-corejs3": "^1.0.0",
     "babel-plugin-transform-object-hasown": "^1.1.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
@@ -68,6 +77,7 @@
   "dependencies": {
     "babel-loader": "^10.1.1",
     "buffer": "^6.0.3",
+    "core-js": "^3.50.0",
     "crypto-js": "^4.2.0",
     "elliptic": "^6.6.1",
     "jquery": "^3.6.4",
