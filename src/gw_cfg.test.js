@@ -20,6 +20,8 @@ describe('GwCfg', () => {
   let loggerDebugStub
   let defaultGwCfgJson
   beforeEach(() => {
+    fetchMock.config.allowRelativeUrls = true
+    fetchMock.mockGlobal()
     sandbox = sinon.createSandbox()
     consoleLogStub = sandbox.stub(console, 'log')
     loggerInfoStub = sinon.stub(logger, 'info')
@@ -108,7 +110,7 @@ describe('GwCfg', () => {
     sandbox.restore()
     logger.info.restore()
     logger.debug.restore()
-    fetchMock.restore()
+    fetchMock.hardReset()
   })
 
   describe('fetchGwCfg', () => {

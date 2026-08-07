@@ -39,6 +39,8 @@ describe('Auth', () => {
   let appInfoMocks
 
   beforeEach(() => {
+    fetchMock.config.allowRelativeUrls = true
+    fetchMock.mockGlobal()
     mockPageAuth = new PageAuthMock()
     mockAppInfo = new AppInfoMock()
     mockWindowLocation = new WindowLocationMock()
@@ -51,7 +53,7 @@ describe('Auth', () => {
   afterEach(() => {
     sandbox.restore()
     logger.info.restore()
-    fetchMock.restore()
+    fetchMock.hardReset()
   })
 
   describe('checkAuth', () => {
@@ -568,7 +570,7 @@ describe('Auth', () => {
         'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
       ])
 
-      const [url, request] = fetchMock.lastCall('/auth', 'POST')
+      const [, request] = fetchMock.callHistory.lastCall().args
 
       expect(request.headers).to.deep.equal({
         'Accept': 'application/json, text/plain, */*',
@@ -681,7 +683,8 @@ describe('Auth', () => {
         'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
       ])
 
-      const [url1, request1] = fetchMock.calls('/auth', 'POST')[0]
+      const postCalls = fetchMock.callHistory.calls().filter(({ options }) => options.method === 'post')
+      const [, request1] = postCalls[0].args
 
       expect(request1.headers).to.deep.equal({
         'Accept': 'application/json, text/plain, */*',
@@ -694,7 +697,7 @@ describe('Auth', () => {
         'login': user, 'password': password_sha256_1
       })
 
-      const [url2, request2] = fetchMock.calls('/auth', 'POST')[1]
+      const [, request2] = postCalls[1].args
 
       expect(request2.headers).to.deep.equal({
         'Accept': 'application/json, text/plain, */*',
@@ -889,7 +892,7 @@ describe('Auth', () => {
         'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
       ])
 
-      const [url, request] = fetchMock.lastCall('/auth', 'POST')
+      const [, request] = fetchMock.callHistory.lastCall().args
 
       expect(request.headers).to.deep.equal({
         'Accept': 'application/json, text/plain, */*',

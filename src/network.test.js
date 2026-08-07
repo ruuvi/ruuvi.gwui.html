@@ -18,18 +18,19 @@ describe('Network', () => {
   let consoleLogStub
 
   beforeEach(() => {
-    fetchMock.reset()
+    fetchMock.mockGlobal()
     sandbox = sinon.createSandbox()
     consoleLogStub = sandbox.stub(console, 'log')
   })
 
   afterEach(() => {
     sandbox.restore()
+    fetchMock.hardReset()
   })
 
   describe('fetchWithTimeout', () => {
     it('should resolve when the fetch is successful', async () => {
-      fetchMock.mock('http://example.com', { status: 200, body: 'response_body' })
+      fetchMock.route('http://example.com', { status: 200, body: 'response_body' })
 
       const response = await Network.fetchWithTimeout('http://example.com', {}, 1000)
       expect(Network.isInProgress()).to.be.true
@@ -43,7 +44,7 @@ describe('Network', () => {
     })
 
     it('should resolve when the fetch is unsuccessful with status 401', async () => {
-      fetchMock.mock('http://example.com', { status: 401, body: 'response_body' })
+      fetchMock.route('http://example.com', { status: 401, body: 'response_body' })
 
       const response = await Network.fetchWithTimeout('http://example.com', {}, 1000)
       const text = await response.text()
@@ -54,7 +55,7 @@ describe('Network', () => {
     })
 
     it('should resolve when the fetch is unsuccessful with status 500 and without body', async () => {
-      fetchMock.mock('http://example.com', { status: 500 })
+      fetchMock.route('http://example.com', { status: 500 })
 
       const response = await Network.fetchWithTimeout('http://example.com', {}, 1000)
       const text = await response.text()
@@ -66,7 +67,7 @@ describe('Network', () => {
 
     it('should reject when the request takes longer than the specified timeout', async () => {
       // Mock the fetch request to delay the response for 1000ms (longer than the timeout 500 ms)
-      fetchMock.mock('http://example.com', () => new Promise((resolve) => setTimeout(() => resolve({
+      fetchMock.route('http://example.com', () => new Promise((resolve) => setTimeout(() => resolve({
         status: 200,
         body: 'OK'
       }), 1000)))
@@ -78,7 +79,7 @@ describe('Network', () => {
     })
 
     it('should reject when the connection is reset by peer', async () => {
-      fetchMock.mock('http://example.com', { throws: new Error('ECONNRESET: Connection reset by peer') })
+      fetchMock.route('http://example.com', { throws: new Error('ECONNRESET: Connection reset by peer') })
 
       const promise = Network.fetchWithTimeout('http://example.com', {}, 1000)
 
@@ -90,7 +91,7 @@ describe('Network', () => {
   describe('fetch_json', () => {
     it('should return json data when the response status 200', async () => {
       const mockData = { key: 'value' }
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 200,
         body: JSON.stringify(mockData),
         headers: { 'Content-Type': 'application/json' },
@@ -104,7 +105,7 @@ describe('Network', () => {
 
     it('should reject when the response status 200, but content-type header is not json', async () => {
       const mockData = { key: 'value' }
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 200,
         body: JSON.stringify(mockData),
       })
@@ -117,7 +118,7 @@ describe('Network', () => {
 
     it('should reject when the response status 200, but json is invalid', async () => {
       const invalidJsonBody = 'invalid_json_1234'
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 200,
         body: invalidJsonBody,
         headers: { 'Content-Type': 'application/json' },
@@ -132,7 +133,7 @@ describe('Network', () => {
 
     it('should reject when the response status 401 and it is not in the allowed list', async () => {
       const mockData = { key: 'value' }
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 401,
         body: JSON.stringify(mockData),
         headers: { 'Content-Type': 'application/json' },
@@ -146,7 +147,7 @@ describe('Network', () => {
 
     it('should reject when the response status 401 and it is not in the allowed list, get err message from json', async () => {
       const mockData = { key: 'value', message: 'my_err123' }
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 401,
         body: JSON.stringify(mockData),
         headers: { 'Content-Type': 'application/json' },
@@ -160,7 +161,7 @@ describe('Network', () => {
 
     it('should return json data when the response status 401 and it is in the allowed list', async () => {
       const mockData = { key: 'value' }
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 401,
         body: JSON.stringify(mockData),
         headers: { 'Content-Type': 'application/json' },
@@ -173,7 +174,7 @@ describe('Network', () => {
     })
 
     it('should reject when the response status 400, body is not json', async () => {
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 400,
         body: 'text error desc',
       })
@@ -185,7 +186,7 @@ describe('Network', () => {
 
     it('should send extra headers when provided', async () => {
       const mockData = { key: 'value' }
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 200,
         body: JSON.stringify(mockData),
         headers: { 'Content-Type': 'application/json' },
@@ -195,13 +196,13 @@ describe('Network', () => {
       await Network.fetch_json('GET', 'http://example.com', 600, null, { extra_headers: extraHeaders })
       expect(Network.isInProgress()).to.be.false
 
-      const [, options] = fetchMock.lastCall()
+      const [, options] = fetchMock.callHistory.lastCall().args
       expect(options.headers).to.include(extraHeaders)
     })
 
     it('should send JSON data in the request body when provided', async () => {
       const mockData = { key: 'value' }
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 200,
         body: JSON.stringify(mockData),
         headers: { 'Content-Type': 'application/json' },
@@ -211,7 +212,7 @@ describe('Network', () => {
       await Network.fetch_json('POST', 'http://example.com', 600, JSON.stringify(jsonData))
       expect(Network.isInProgress()).to.be.false
 
-      const [, options] = fetchMock.lastCall()
+      const [, options] = fetchMock.callHistory.lastCall().args
       expect(options.body).to.equal(JSON.stringify(jsonData))
       expect(options.headers).to.include({ 'Content-Type': 'application/json; charset=utf-8' })
     })
@@ -219,7 +220,7 @@ describe('Network', () => {
     it('should reject when the request takes longer than the specified timeout', async () => {
       // Mock the fetch request to delay the response for 1000ms (longer than the timeout)
       const mockData = { key: 'value' }
-      fetchMock.mock('http://example.com',
+      fetchMock.route('http://example.com',
           () => new Promise(
               (resolve) => setTimeout(
                   () => resolve({
@@ -235,7 +236,7 @@ describe('Network', () => {
     })
 
     it('should reject when the fetch throws an error', async () => {
-      fetchMock.mock('http://example.com', { throws: new Error('Fetch error') })
+      fetchMock.route('http://example.com', { throws: new Error('Fetch error') })
 
       const promise = Network.fetch_json('GET', 'http://example.com', 600)
 
@@ -244,7 +245,7 @@ describe('Network', () => {
     })
 
     it('should use Accept: text/plain, */* header when flag_accept_plain_text is true', async () => {
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 200,
         body: 'plain text response',
         headers: { 'Content-Type': 'text/plain' },
@@ -253,13 +254,13 @@ describe('Network', () => {
       await Network.fetch_json('GET', 'http://example.com', 500, null, {}, true)
       expect(Network.isInProgress()).to.be.false
 
-      const [, options] = fetchMock.lastCall()
+      const [, options] = fetchMock.callHistory.lastCall().args
       expect(options.headers['Accept']).to.equal('text/plain, */*')
     })
 
     it('should return plain text body when status 200 with text/plain content-type and flag_accept_plain_text is true', async () => {
       const bodyText = 'plain text response'
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 200,
         body: bodyText,
         headers: { 'Content-Type': 'text/plain' },
@@ -273,7 +274,7 @@ describe('Network', () => {
 
     it('should return raw text body (not parsed) when status 200 with application/json content-type and flag_accept_plain_text is true', async () => {
       const bodyText = '{"key":"value"}'
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 200,
         body: bodyText,
         headers: { 'Content-Type': 'application/json' },
@@ -286,7 +287,7 @@ describe('Network', () => {
     })
 
     it('should return null when response status 400 and flag_accept_plain_text is true', async () => {
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 400,
         body: 'error message',
         headers: { 'Content-Type': 'text/plain' },
@@ -299,7 +300,7 @@ describe('Network', () => {
     })
 
     it('should return null when response status 401 and flag_accept_plain_text is true', async () => {
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 401,
         body: 'unauthorized',
         headers: { 'Content-Type': 'text/plain' },
@@ -312,7 +313,7 @@ describe('Network', () => {
     })
 
     it('should return null when response status 500 and flag_accept_plain_text is true', async () => {
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 500,
         body: 'internal server error',
         headers: { 'Content-Type': 'text/plain' },
@@ -328,7 +329,7 @@ describe('Network', () => {
   describe('httpGetPlainText', () => {
     it('should return plain text when status 200', async () => {
       const bodyText = 'plain text response'
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 200,
         body: bodyText,
         headers: { 'Content-Type': 'text/plain' },
@@ -341,7 +342,7 @@ describe('Network', () => {
     })
 
     it('should use GET method and Accept: text/plain, */* header', async () => {
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 200,
         body: 'text',
         headers: { 'Content-Type': 'text/plain' },
@@ -349,13 +350,13 @@ describe('Network', () => {
 
       await Network.httpGetPlainText('http://example.com', 500)
 
-      const [, options] = fetchMock.lastCall()
+      const [, options] = fetchMock.callHistory.lastCall().args
       expect(options.method).to.equal('GET')
       expect(options.headers['Accept']).to.equal('text/plain, */*')
     })
 
     it('should return null when response status 400', async () => {
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 400,
         body: 'error',
         headers: { 'Content-Type': 'text/plain' },
@@ -367,7 +368,7 @@ describe('Network', () => {
     })
 
     it('should return null when response status 401', async () => {
-      fetchMock.mock('http://example.com', {
+      fetchMock.route('http://example.com', {
         status: 401,
         body: 'unauthorized',
         headers: { 'Content-Type': 'text/plain' },
@@ -379,7 +380,7 @@ describe('Network', () => {
     })
 
     it('should reject when the request times out', async () => {
-      fetchMock.mock('http://example.com',
+      fetchMock.route('http://example.com',
           () => new Promise(
               (resolve) => setTimeout(
                   () => resolve({
@@ -395,7 +396,7 @@ describe('Network', () => {
     })
 
     it('should reject when the fetch throws an error', async () => {
-      fetchMock.mock('http://example.com', { throws: new Error('Fetch error') })
+      fetchMock.route('http://example.com', { throws: new Error('Fetch error') })
 
       const promise = Network.httpGetPlainText('http://example.com', 600)
 
