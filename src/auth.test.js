@@ -144,6 +144,33 @@ describe('Auth', () => {
       expect(mockWindowLocation.assign.notCalled).to.be.true
     })
 
+    it('should handle successful authentication and redirection to the previous URL', async () => {
+      const ecdhInstanceCli = new crypto.ECDH()
+      const ecdhInstanceSrv = new crypto.ECDH()
+
+      fetchMock.get('/auth', {
+        status: 200,
+        body: {
+          gateway_name: 'RuuviGatewayAABB', fw_ver: '1.13.0', nrf52_fw_ver: '1.0.0', lan_auth_type: 'default', lan: true
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
+          'Ruuvi-prev-url': '/previous-page',
+        },
+      })
+
+      const auth = createAuth(null, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstanceCli)
+      const result = await auth.waitAuth()
+      expect(result).to.be.false
+
+      expect(mockPageAuth.on_auth_successful.calledOnce).to.be.true
+      expect(auth.flagAccessFromLAN).to.be.true
+      expect(mockWindowLocation.replace.calledOnce).to.be.true
+      sinon.assert.calledWithExactly(mockWindowLocation.replace, '/previous-page')
+      expect(mockWindowLocation.assign.notCalled).to.be.true
+    })
+
     it('should handle successful authentication but with missing gateway_name', async () => {
       const ecdhInstanceCli = new crypto.ECDH()
       const ecdhInstanceSrv = new crypto.ECDH()
@@ -268,6 +295,33 @@ describe('Auth', () => {
       expect(appInfoMocks.setFirmwareVersions.calledOnce).to.be.true
       expect(appInfoMocks.setFirmwareVersions.calledWith('1.13.0', '')).to.be.true
 
+      expect(mockWindowLocation.replace.notCalled).to.be.true
+      expect(mockWindowLocation.assign.notCalled).to.be.true
+    })
+
+    it('should handle successful authentication with both firmware versions missing', async () => {
+      const ecdhInstanceCli = new crypto.ECDH()
+
+      fetchMock.get('/auth', {
+        status: 200,
+        body: {
+          gateway_name: 'RuuviGatewayAABB', lan_auth_type: 'default'
+        },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const auth = createAuth(null, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstanceCli)
+      const result = await auth.waitAuth()
+      expect(result).to.be.true
+
+      expect(mockPageAuth.on_auth_successful.calledOnce).to.be.true
+      expect(mockPageAuth.show_error_message.notCalled).to.be.true
+      expect(appInfoMocks.setGatewayNameSuffix.calledOnce).to.be.true
+      sinon.assert.calledWithExactly(appInfoMocks.setGatewayNameSuffix, 'AABB')
+      expect(appInfoMocks.setFirmwareVersions.calledOnce).to.be.true
+      sinon.assert.calledWithExactly(appInfoMocks.setFirmwareVersions, '', '')
       expect(mockWindowLocation.replace.notCalled).to.be.true
       expect(mockWindowLocation.assign.notCalled).to.be.true
     })
@@ -929,6 +983,53 @@ describe('Auth', () => {
 
       // expect(mockWindowLocation.assign.getCall(3).calledBefore(mockWindowLocation.replace.getCall(0))).to.be.true
     })
+  })
 
+  describe('ecdhEncrypt', () => {
+    it('should throw when the AES key has not been initialized', () => {
+      const auth = createAuth(null, mockPageAuth, mockAppInfo, mockWindowLocation, new crypto.ECDH())
+
+      expect(() => auth.ecdhEncrypt('message')).to.throw('AES key has not yet been initialized.')
+    })
+
+    it('should encrypt a message after the ECDH handshake', async () => {
+      const ecdhInstanceCli = new crypto.ECDH()
+      const ecdhInstanceSrv = new crypto.ECDH()
+
+      fetchMock.get('/auth', {
+        status: 200,
+        body: {
+          gateway_name: 'RuuviGatewayAABB', lan_auth_type: 'default'
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
+        },
+      })
+
+      const auth = createAuth(null, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstanceCli)
+      expect(await auth.waitAuth()).to.be.true
+
+      const msg = 'test message'
+      const encrypted = JSON.parse(auth.ecdhEncrypt(msg))
+      const sharedSecret = ecdhInstanceSrv.computeSecret(ecdhInstanceCli.getPublicKey('base64'), 'base64')
+      const aesKey = crypto.SHA256(sharedSecret)
+      const decrypted = crypto.AES.decrypt(encrypted.encrypted, aesKey, {
+        iv: crypto.enc.Base64.parse(encrypted.iv)
+      })
+
+      expect(decrypted.toString()).to.equal(Buffer.from(msg).toString('hex'))
+      expect(encrypted.hash).to.equal(crypto.enc.Base64.stringify(crypto.SHA256(msg)))
+    })
+  })
+
+  describe('openHomePage', () => {
+    it('should navigate to the home page', () => {
+      const auth = createAuth(null, mockPageAuth, mockAppInfo, mockWindowLocation, new crypto.ECDH())
+
+      auth.openHomePage()
+
+      sinon.assert.calledWithExactly(mockWindowLocation.replace, '/')
+    })
   })
 })
