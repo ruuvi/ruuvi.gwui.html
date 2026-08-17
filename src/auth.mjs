@@ -73,14 +73,16 @@ class AuthResp {
     this.gatewayNameSuffix = this.gatewayName.slice(-4)
 
     if (!data.hasOwnProperty('fw_ver')) {
-      throw Error(`Invalid auth json - missing key 'fw_ver', json='${JSON.stringify(data)}'`)
+      this.fw_ver = ''
+    } else {
+      this.fw_ver = data.fw_ver
     }
-    this.fw_ver = data.fw_ver
 
     if (!data.hasOwnProperty('nrf52_fw_ver')) {
-      throw Error(`Invalid auth json - missing key 'nrf52_fw_ver', json='${JSON.stringify(data)}'`)
+      this.nrf52_fw_ver = ''
+    } else {
+      this.nrf52_fw_ver = data.nrf52_fw_ver
     }
-    this.nrf52_fw_ver = data.nrf52_fw_ver
 
     if (!data.hasOwnProperty('lan_auth_type')) {
       throw Error(`Invalid auth json - missing key 'lan_auth_type', json='${JSON.stringify(data)}'`)

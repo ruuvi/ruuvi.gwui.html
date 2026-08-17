@@ -144,6 +144,33 @@ describe('Auth', () => {
       expect(mockWindowLocation.assign.notCalled).to.be.true
     })
 
+    it('should handle successful authentication and redirection to the previous URL', async () => {
+      const ecdhInstanceCli = new crypto.ECDH()
+      const ecdhInstanceSrv = new crypto.ECDH()
+
+      fetchMock.get('/auth', {
+        status: 200,
+        body: {
+          gateway_name: 'RuuviGatewayAABB', fw_ver: '1.13.0', nrf52_fw_ver: '1.0.0', lan_auth_type: 'default', lan: true
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
+          'Ruuvi-prev-url': '/previous-page',
+        },
+      })
+
+      const auth = createAuth(null, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstanceCli)
+      const result = await auth.waitAuth()
+      expect(result).to.be.false
+
+      expect(mockPageAuth.on_auth_successful.calledOnce).to.be.true
+      expect(auth.flagAccessFromLAN).to.be.true
+      expect(mockWindowLocation.replace.calledOnce).to.be.true
+      sinon.assert.calledWithExactly(mockWindowLocation.replace, '/previous-page')
+      expect(mockWindowLocation.assign.notCalled).to.be.true
+    })
+
     it('should handle successful authentication but with missing gateway_name', async () => {
       const ecdhInstanceCli = new crypto.ECDH()
       const ecdhInstanceSrv = new crypto.ECDH()
@@ -205,24 +232,25 @@ describe('Auth', () => {
       const anchor = null
       const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstanceCli)
       const result = await auth.waitAuth()
-      expect(result).to.equal(false)
+      expect(result).to.be.true
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
         `ECDH PubKey(Cli): ${ecdhInstanceCli.getPublicKey('base64')}`,
         'FetchAuth: success, status=200',
         `ECDH PubKey(Srv): ${ecdhInstanceSrv.getPublicKey('base64')}`,
-        'CheckAuth: exception: Error: Invalid auth json - missing key \'fw_ver\', json=\'{"gateway_name":"RuuviGatewayAABB","nrf52_fw_ver":"1.0.0","lan_auth_type":"default"}\'',
+        'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
       ])
 
-      expect(mockPageAuth.on_auth_successful.notCalled).to.be.true
+      expect(mockPageAuth.on_auth_successful.calledOnce).to.be.true
       expect(mockPageAuth.on_auth_unauthorized.notCalled).to.be.true
       expect(mockPageAuth.on_auth_forbidden.notCalled).to.be.true
-      expect(mockPageAuth.show_error_message.calledOnce).to.be.true
-      sinon.assert.calledWith(mockPageAuth.show_error_message, 'Invalid auth json - missing key \'fw_ver\', json=\'{"gateway_name":"RuuviGatewayAABB","nrf52_fw_ver":"1.0.0","lan_auth_type":"default"}\'')
+      expect(mockPageAuth.show_error_message.notCalled).to.be.true
 
-      expect(appInfoMocks.setGatewayNameSuffix.notCalled).to.be.true
-      expect(appInfoMocks.setFirmwareVersions.notCalled).to.be.true
+      expect(appInfoMocks.setGatewayNameSuffix.calledOnce).to.be.true
+      expect(appInfoMocks.setGatewayNameSuffix.calledWith('AABB')).to.be.true
+      expect(appInfoMocks.setFirmwareVersions.calledOnce).to.be.true
+      expect(appInfoMocks.setFirmwareVersions.calledWith('', '1.0.0')).to.be.true
 
       expect(mockWindowLocation.replace.notCalled).to.be.true
       expect(mockWindowLocation.assign.notCalled).to.be.true
@@ -247,25 +275,53 @@ describe('Auth', () => {
       const anchor = null
       const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstanceCli)
       const result = await auth.waitAuth()
-      expect(result).to.equal(false)
+      expect(result).to.be.true
 
       expect(loggerStub.getCalls().map(call => call.args[0])).to.deep.equal([
         'Auth: anchor: null',
         `ECDH PubKey(Cli): ${ecdhInstanceCli.getPublicKey('base64')}`,
         'FetchAuth: success, status=200',
         `ECDH PubKey(Srv): ${ecdhInstanceSrv.getPublicKey('base64')}`,
-        'CheckAuth: exception: Error: Invalid auth json - missing key \'nrf52_fw_ver\', json=\'{"gateway_name":"RuuviGatewayAABB","fw_ver":"1.13.0","lan_auth_type":"default"}\'',
+        'CheckAuth: AuthStatus.OK, lan_auth_type=default, gatewayName=RuuviGatewayAABB',
       ])
 
-      expect(mockPageAuth.on_auth_successful.notCalled).to.be.true
+      expect(mockPageAuth.on_auth_successful.calledOnce).to.be.true
       expect(mockPageAuth.on_auth_unauthorized.notCalled).to.be.true
       expect(mockPageAuth.on_auth_forbidden.notCalled).to.be.true
-      expect(mockPageAuth.show_error_message.calledOnce).to.be.true
-      sinon.assert.calledWith(mockPageAuth.show_error_message, 'Invalid auth json - missing key \'nrf52_fw_ver\', json=\'{"gateway_name":"RuuviGatewayAABB","fw_ver":"1.13.0","lan_auth_type":"default"}\'')
+      expect(mockPageAuth.show_error_message.notCalled).to.be.true
 
-      expect(appInfoMocks.setGatewayNameSuffix.notCalled).to.be.true
-      expect(appInfoMocks.setFirmwareVersions.notCalled).to.be.true
+      expect(appInfoMocks.setGatewayNameSuffix.calledOnce).to.be.true
+      expect(appInfoMocks.setGatewayNameSuffix.calledWith('AABB')).to.be.true
+      expect(appInfoMocks.setFirmwareVersions.calledOnce).to.be.true
+      expect(appInfoMocks.setFirmwareVersions.calledWith('1.13.0', '')).to.be.true
 
+      expect(mockWindowLocation.replace.notCalled).to.be.true
+      expect(mockWindowLocation.assign.notCalled).to.be.true
+    })
+
+    it('should handle successful authentication with both firmware versions missing', async () => {
+      const ecdhInstanceCli = new crypto.ECDH()
+
+      fetchMock.get('/auth', {
+        status: 200,
+        body: {
+          gateway_name: 'RuuviGatewayAABB', lan_auth_type: 'default'
+        },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const auth = createAuth(null, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstanceCli)
+      const result = await auth.waitAuth()
+      expect(result).to.be.true
+
+      expect(mockPageAuth.on_auth_successful.calledOnce).to.be.true
+      expect(mockPageAuth.show_error_message.notCalled).to.be.true
+      expect(appInfoMocks.setGatewayNameSuffix.calledOnce).to.be.true
+      sinon.assert.calledWithExactly(appInfoMocks.setGatewayNameSuffix, 'AABB')
+      expect(appInfoMocks.setFirmwareVersions.calledOnce).to.be.true
+      sinon.assert.calledWithExactly(appInfoMocks.setFirmwareVersions, '', '')
       expect(mockWindowLocation.replace.notCalled).to.be.true
       expect(mockWindowLocation.assign.notCalled).to.be.true
     })
@@ -453,7 +509,6 @@ describe('Auth', () => {
       })
 
       const anchor = null
-      const ecdhInstance = new crypto.ECDH()
       const auth = createAuth(anchor, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstanceCli)
       const result = await auth.waitAuth()
       expect(result).to.equal(false)
@@ -528,7 +583,7 @@ describe('Auth', () => {
       fetchMock.getOnce('/auth', {
         status: 401,
         body: {
-          gateway_name: gateway_name, fw_ver: '1.13.0', nrf52_fw_ver: '1.0.0', lan_auth_type: 'default'
+          gateway_name: gateway_name, lan_auth_type: 'default'
         },
         headers: {
           'WWW-Authenticate': `x-ruuvi-interactive realm="${gateway_name}" challenge="${challenge}" session_cookie="COOKIE_RUUVISESSION" session_id="session_id"`,
@@ -592,7 +647,8 @@ describe('Auth', () => {
       expect(appInfoMocks.setGatewayNameSuffix.callCount).to.equal(2)
       expect(appInfoMocks.setGatewayNameSuffix.calledWith('AABB')).to.be.true
       expect(appInfoMocks.setFirmwareVersions.callCount).to.equal(2)
-      expect(appInfoMocks.setFirmwareVersions.calledWith('1.13.0', '1.0.0')).to.be.true
+      sinon.assert.calledWithExactly(appInfoMocks.setFirmwareVersions.getCall(0), '', '')
+      sinon.assert.calledWithExactly(appInfoMocks.setFirmwareVersions.getCall(1), '1.13.0', '1.0.0')
 
       expect(mockWindowLocation.replace.notCalled).to.be.true
       expect(mockWindowLocation.assign.callCount).to.equal(2)
@@ -617,7 +673,7 @@ describe('Auth', () => {
       fetchMock.getOnce('/auth', {
         status: 401,
         body: {
-          gateway_name: gateway_name, fw_ver: '1.13.0', nrf52_fw_ver: '1.0.0', lan_auth_type: 'default'
+          gateway_name: gateway_name, lan_auth_type: 'default'
         },
         headers: {
           'WWW-Authenticate': `x-ruuvi-interactive realm="${gateway_name}" challenge="${challenge}" session_cookie="COOKIE_RUUVISESSION" session_id="session_id"`,
@@ -628,8 +684,6 @@ describe('Auth', () => {
         status: 401,
         body: {
           gateway_name: 'RuuviGatewayAABB',
-          fw_ver: '1.13.0',
-          nrf52_fw_ver: '1.0.0',
           lan_auth_type: 'default',
           message: 'Incorrect username or password'
         },
@@ -718,7 +772,9 @@ describe('Auth', () => {
       expect(appInfoMocks.setGatewayNameSuffix.callCount).to.equal(3)
       expect(appInfoMocks.setGatewayNameSuffix.calledWith('AABB')).to.be.true
       expect(appInfoMocks.setFirmwareVersions.callCount).to.equal(3)
-      expect(appInfoMocks.setFirmwareVersions.calledWith('1.13.0', '1.0.0')).to.be.true
+      sinon.assert.calledWithExactly(appInfoMocks.setFirmwareVersions.getCall(0), '', '')
+      sinon.assert.calledWithExactly(appInfoMocks.setFirmwareVersions.getCall(1), '', '')
+      sinon.assert.calledWithExactly(appInfoMocks.setFirmwareVersions.getCall(2), '1.13.0', '1.0.0')
 
       expect(mockWindowLocation.replace.notCalled).to.be.true
       sinon.assert.calledWith(mockWindowLocation.assign, '#page-auth')
@@ -778,7 +834,7 @@ describe('Auth', () => {
       fetchMock.get('/auth', {
         status: 403,
         body: {
-          gateway_name: 'RuuviGatewayAABB', fw_ver: '1.13.0', nrf52_fw_ver: '1.0.0', lan_auth_type: 'lan_auth_deny'
+          gateway_name: 'RuuviGatewayAABB', lan_auth_type: 'lan_auth_deny'
         },
         headers: {
           'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64')
@@ -809,7 +865,7 @@ describe('Auth', () => {
       expect(appInfoMocks.setGatewayNameSuffix.calledOnce).to.be.true
       expect(appInfoMocks.setGatewayNameSuffix.calledWith('AABB')).to.be.true
       expect(appInfoMocks.setFirmwareVersions.calledOnce).to.be.true
-      expect(appInfoMocks.setFirmwareVersions.calledWith('1.13.0', '1.0.0')).to.be.true
+      expect(appInfoMocks.setFirmwareVersions.calledWith('', '')).to.be.true
 
       expect(mockWindowLocation.replace.notCalled).to.be.true
       expect(mockWindowLocation.assign.callCount).to.equal(2)
@@ -833,7 +889,7 @@ describe('Auth', () => {
       fetchMock.getOnce('/auth', {
         status: 401,
         body: {
-          gateway_name: gateway_name, fw_ver: '1.13.0', nrf52_fw_ver: '1.0.0', lan_auth_type: 'ruuvi'
+          gateway_name: gateway_name, lan_auth_type: 'ruuvi'
         },
         headers: {
           'WWW-Authenticate': `x-ruuvi-interactive realm="${gateway_name}" challenge="${challenge}" session_cookie="COOKIE_RUUVISESSION" session_id="session_id"`,
@@ -843,7 +899,7 @@ describe('Auth', () => {
       fetchMock.post('/auth', {
         status: 403,
         body: {
-          gateway_name: 'RuuviGatewayAABB', fw_ver: '1.13.0', nrf52_fw_ver: '1.0.0', lan_auth_type: 'ruuvi',
+          gateway_name: 'RuuviGatewayAABB', lan_auth_type: 'ruuvi',
         },
         headers: {
           'WWW-Authenticate': `x-ruuvi-interactive realm="${gateway_name}" challenge="${challenge}" session_cookie="COOKIE_RUUVISESSION" session_id="session_id"`,
@@ -914,7 +970,9 @@ describe('Auth', () => {
       expect(appInfoMocks.setGatewayNameSuffix.callCount).to.equal(3)
       expect(appInfoMocks.setGatewayNameSuffix.calledWith('AABB')).to.be.true
       expect(appInfoMocks.setFirmwareVersions.callCount).to.equal(3)
-      expect(appInfoMocks.setFirmwareVersions.calledWith('1.13.0', '1.0.0')).to.be.true
+      sinon.assert.calledWithExactly(appInfoMocks.setFirmwareVersions.getCall(0), '', '')
+      sinon.assert.calledWithExactly(appInfoMocks.setFirmwareVersions.getCall(1), '', '')
+      sinon.assert.calledWithExactly(appInfoMocks.setFirmwareVersions.getCall(2), '1.13.0', '1.0.0')
 
       expect(mockWindowLocation.assign.callCount).to.equal(4)
       sinon.assert.calledWith(mockWindowLocation.assign.getCall(0), null)
@@ -925,6 +983,53 @@ describe('Auth', () => {
 
       // expect(mockWindowLocation.assign.getCall(3).calledBefore(mockWindowLocation.replace.getCall(0))).to.be.true
     })
+  })
 
+  describe('ecdhEncrypt', () => {
+    it('should throw when the AES key has not been initialized', () => {
+      const auth = createAuth(null, mockPageAuth, mockAppInfo, mockWindowLocation, new crypto.ECDH())
+
+      expect(() => auth.ecdhEncrypt('message')).to.throw('AES key has not yet been initialized.')
+    })
+
+    it('should encrypt a message after the ECDH handshake', async () => {
+      const ecdhInstanceCli = new crypto.ECDH()
+      const ecdhInstanceSrv = new crypto.ECDH()
+
+      fetchMock.get('/auth', {
+        status: 200,
+        body: {
+          gateway_name: 'RuuviGatewayAABB', lan_auth_type: 'default'
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Ruuvi-Ecdh-Pub-Key': ecdhInstanceSrv.getPublicKey('base64'),
+        },
+      })
+
+      const auth = createAuth(null, mockPageAuth, mockAppInfo, mockWindowLocation, ecdhInstanceCli)
+      expect(await auth.waitAuth()).to.be.true
+
+      const msg = 'test message'
+      const encrypted = JSON.parse(auth.ecdhEncrypt(msg))
+      const sharedSecret = ecdhInstanceSrv.computeSecret(ecdhInstanceCli.getPublicKey('base64'), 'base64')
+      const aesKey = crypto.SHA256(sharedSecret)
+      const decrypted = crypto.AES.decrypt(encrypted.encrypted, aesKey, {
+        iv: crypto.enc.Base64.parse(encrypted.iv)
+      })
+
+      expect(decrypted.toString()).to.equal(Buffer.from(msg).toString('hex'))
+      expect(encrypted.hash).to.equal(crypto.enc.Base64.stringify(crypto.SHA256(msg)))
+    })
+  })
+
+  describe('openHomePage', () => {
+    it('should navigate to the home page', () => {
+      const auth = createAuth(null, mockPageAuth, mockAppInfo, mockWindowLocation, new crypto.ECDH())
+
+      auth.openHomePage()
+
+      sinon.assert.calledWithExactly(mockWindowLocation.replace, '/')
+    })
   })
 })
