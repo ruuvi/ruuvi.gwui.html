@@ -10,12 +10,12 @@ on:
 
 jobs:
   build:
-    name: Run npm test
+    name: Test and build (Node.js ${{ matrix.node-version }})
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x, 24.x]
 
     steps:
       - name: Checkout code
@@ -31,3 +31,9 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Build development bundle
+        run: npm run build-dev
+
+      - name: Build production bundle
+        run: npm run build-prod
