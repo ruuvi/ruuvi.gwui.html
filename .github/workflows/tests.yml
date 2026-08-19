@@ -31,3 +31,9 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Run build-dev
+        run: npm run build-dev
+
+      - name: Run build-prod
+        run: npm run build-prod
