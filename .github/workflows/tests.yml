@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Run npm test
+    name: Test and build (Node.js ${{ matrix.node-version }})
     runs-on: ubuntu-latest
 
     strategy:
@@ -32,8 +32,8 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Run build-dev
+      - name: Build development bundle
         run: npm run build-dev
 
-      - name: Run build-prod
+      - name: Build production bundle
         run: npm run build-prod
