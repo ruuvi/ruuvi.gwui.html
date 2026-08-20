@@ -61,12 +61,11 @@
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "js-yaml": "^4.3.1",
-    "mocha": "^10.8.2",
+    "mocha": "11.3.0",
     "node-fetch": "^2.6.9",
     "puppeteer": "^25.8.0",
     "sass": "^1.59.2",
     "sass-loader": "^13.2.0",
-    "serialize-javascript": "^7.0.5",
     "sinon": "^15.0.2",
     "sinon-chai": "^3.7.0",
     "string-argv": "^0.3.2",
@@ -83,5 +82,13 @@
     "elliptic": "^6.6.1",
     "jquery": "^3.6.4",
     "winston": "^3.13.0"
+  },
+  "overrides": {
+    "mocha": {
+      "serialize-javascript": "7.0.5"
+    }
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24.11.0"
   }
 }
