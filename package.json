@@ -84,7 +84,9 @@
     "winston": "^3.13.0"
   },
   "overrides": {
-    "serialize-javascript": "7.0.5"
+    "mocha": {
+      "serialize-javascript": "7.0.5"
+    }
   },
   "engines": {
     "node": "^22.18.0 || >=24.11.0"
