@@ -1700,16 +1700,18 @@
                             <span lang="en">Access Ruuvi Gateway from LAN using bearer authentication with an API key
                                 (token). You can enable read-only access (to retrieve data in polling mode via the
                                 /history endpoint) or read-write access (to read any data or change the configuration).
-                                <br><strong>Note:</strong> API tokens are transmitted unencrypted over local HTTP (Port
-                                80); ensure your local network is trusted, or use a TLS reverse proxy (e.g. NGINX HTTPS
+                                <br><strong>Note:</strong> The API key (token) is transmitted unencrypted over local
+                                HTTP (Port 80), and anyone who obtains it can reuse it with its associated permissions.
+                                Ensure your local network is trusted, or use a TLS reverse proxy (e.g. NGINX HTTPS
                                 proxy) if accessing across untrusted networks. For more detailed instructions, refer to
                                 docs.ruuvi.com.</span>
                             <span lang="fi">Käytä API-avainta (token) Ruuvi Gatewayn bearer-todennukseen lähiverkossa.
                                 Voit sallia vain luku -oikeuden (tietojen noutamiseen kyselytilassa
                                 /history-rajapinnasta) tai luku- ja kirjoitusoikeuden (kaikkien tietojen lukemiseen tai
                                 asetusten muuttamiseen).
-                                <br><strong>Huomautus:</strong> API-avaimet siirretään salaamattomina paikallisen
-                                HTTP-yhteyden (portti 80) kautta; varmista, että lähiverkkosi on luotettu, tai käytä
+                                <br><strong>Huomautus:</strong> API-avain (token) siirretään salaamattomana paikallisen
+                                HTTP-yhteyden (portti 80) kautta, ja kuka tahansa sen haltuunsa saanut voi käyttää sitä
+                                avaimelle myönnetyillä oikeuksilla. Varmista, että lähiverkkosi on luotettu, tai käytä
                                 TLS-käänteisvälityspalvelinta (esim. NGINX HTTPS -välityspalvelinta), jos yhteyttä
                                 käytetään suojaamattomien verkkojen yli. Tarkemmat ohjeet löydät osoitteesta
                                 docs.ruuvi.com.</span>
