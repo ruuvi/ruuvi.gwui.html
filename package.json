@@ -60,7 +60,7 @@
     "fetch-mock": "^12.6.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
-    "js-yaml": "^4.3.1",
+    "js-yaml": "^4.3.2",
     "mocha": "11.3.0",
     "node-fetch": "^2.6.9",
     "puppeteer": "^25.8.0",
